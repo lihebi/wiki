@@ -1,0 +1,7 @@
+*.pdf
+*.html
+
+dist
+_minted-js
+_wiki
+*.tex

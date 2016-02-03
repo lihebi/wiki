@@ -1,0 +1,30 @@
+* Introduction
+
+This is the wiki.
+It is not intended to export to a whole pdf file.
+This index file will just do as its name states, giving the index.
+There's no way to organize those chapters, so if needed, I will just export them individually.
+But there's an option to export a "sitemap", which may be useful.
+
+# #+INCLUDE: emacs.org
+# #+INCLUDE: shell.org
+
+* [[file:./emacs.org][emacs]]
+* [[file:./shell.org][shell]]
+* [[file:js.org][js]]
+
+
+
+* FAQ
+** Why change to a new one instead of the [[http://wiki.lihebi.com][old wiki]]?
+The old one is awesome in terms of that it uses pure Jekyll,
+and it is configured in the sense that it recognizes the new markdown files and organize them by their directory structures.
+
+1. The main downside is it is not systematic. It is so distributed that I can not easily find where to add new items.
+2. Second, it lacks of some approach to generate a systematic pdf book for printing.
+3. What's more, I added some web packages like Katex for formulas. It works fine, except I need to have an ugly `$formula$` markup for parsing, and the parsing code needs to be maintained too.
+4. Fourth, markdown is not powerful enough.
+5. Org mode has a strong cross reference system, and has powerful Babel evaluating. Most of all, org mode is so tightly integrated with Emacs.
+6. Last but not least, I don't want to use another layer of software, jekyll. I just need to document something, in a reasonable easy to browse format.
+
+So here we go, with org mode, exproting .org into everything, including papers and books.
