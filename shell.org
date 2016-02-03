@@ -1,4 +1,4 @@
-* shell
+#+TITLE: Shell
 
 #+begin_src shell
 find . -type f -name *.flac -exec mv {} ../out/ \;

@@ -1,0 +1,9 @@
+#+TITLE: Sitemap for project wiki
+
+   + subdir
+     + [[file:subdir/test.org][test]]
+   + [[file:math.org][Math algorithms]]
+   + [[file:emacs.org][Emacs]]
+   + [[file:index.org][The HebiWiki^{TM}]]
+   + [[file:js.org][Javascript]]
+   + [[file:shell.org][Shell]]

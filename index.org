@@ -1,3 +1,4 @@
+#+TITLE: The HebiWiki^{TM}
 * Introduction
 
 This is the wiki.
@@ -9,14 +10,17 @@ But there's an option to export a "sitemap", which may be useful.
 # #+INCLUDE: emacs.org
 # #+INCLUDE: shell.org
 
-* [[file:./emacs.org][emacs]]
-* [[file:./shell.org][shell]]
-* [[file:js.org][js]]
+* sitemap
+Use index here or use the [[file:sitemap.org][sitemap]].
+** [[file:./emacs.org][emacs]]
+** [[file:./shell.org][shell]]
+** [[file:js.org][js]]
+** [[file:math.org][math]]
 
 
 
 * FAQ
-** Why change to a new one instead of the [[http://wiki.lihebi.com][old wiki]]?
+** Why change to a new one instead of the [[http://wiki-old.lihebi.com][old wiki]]?
 The old one is awesome in terms of that it uses pure Jekyll,
 and it is configured in the sense that it recognizes the new markdown files and organize them by their directory structures.
 
