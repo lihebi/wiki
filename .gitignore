@@ -5,3 +5,11 @@ dist
 _minted-js
 _wiki
 *.tex
+
+.DS_Store
+*.fdb_latexmk
+*.aux
+*.fls
+*.out
+*.log
+*.toc

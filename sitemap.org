@@ -1,9 +1,20 @@
 #+TITLE: Sitemap for project wiki
 
+   + math
+     + 511
+       + [[file:math/511/lp.org][Linear Programming]]
+       + [[file:math/511/approximation.org][approximation]]
+       + [[file:math/511/jargon.org][jargon]]
+       + [[file:math/511/np.org][np]]
+       + [[file:math/511/np-problems.org][np problems]]
+     + 531
+       + [[file:math/531/decidability.org][Decidability]]
+       + [[file:math/531/NPC.org][NPC]]
+       + [[file:math/531/tm.org][Turing Machine]]
+     + [[file:math/index.org][Math Index]]
    + subdir
      + [[file:subdir/test.org][test]]
-   + [[file:math.org][Math algorithms]]
    + [[file:emacs.org][Emacs]]
-   + [[file:index.org][The HebiWiki^{TM}]]
    + [[file:js.org][Javascript]]
    + [[file:shell.org][Shell]]
+   + [[file:index.org][The HebiWiki^{TM}]]

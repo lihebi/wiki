@@ -2,4 +2,7 @@
 
 #+begin_src shell
 find . -type f -name *.flac -exec mv {} ../out/ \;
+du -sm * | sort -nr
 #+end_src
+
+

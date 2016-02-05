@@ -1,4 +1,15 @@
-#+TITLE: Math algorithms
+#+TITLE: Math Index
+
+* Index
+ * 511
+  * [[file:511/np.org][NP]]
+  * [[file:511/np-problems.org][NP problems]]
+  * [[file:511/lp.org][Linear Programming]]
+  * [[file:511/approximation.org][approximation]]
+ * 531
+  * [[file:531/NPC.org][NPC]]
+  * [[file:531/decidability.org][decidability]]
+  * [[file:531/tm.org][Turing Machine]]
 
 * Branch & Bound algorithm
 ** problem

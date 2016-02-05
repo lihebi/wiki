@@ -15,7 +15,7 @@ Use index here or use the [[file:sitemap.org][sitemap]].
 ** [[file:./emacs.org][emacs]]
 ** [[file:./shell.org][shell]]
 ** [[file:js.org][js]]
-** [[file:math.org][math]]
+** [[file:math/index.org][math]]
 
 
 
