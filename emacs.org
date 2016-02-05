@@ -52,3 +52,6 @@ It is a list of commands useful. It serves as a extremely tight reference.
   * ~dired-prev-subdir~
   * ~dired-tree-up~
   * ~dired-tree-down~
+
+* packages
+In ~*package*~ buffer, ~Ux~ to update all packages.
