@@ -1,0 +1,83 @@
+#+TITLE: google test
+
+* setup
+Download google test, make and make install.
+Or use package manager to install gtest.
+
+Inside your program, just insert
+
+#+begin_src C
+#include <gtest/gtest.h>
+TEST(TestCaseName, TestName) {
+}
+#+end_src
+
+compile use -lgtest
+
+should supply a main function in ONE file:
+
+#+begin_src C
+#include <gtest/gtest.h>
+int main(int argc, char** argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+#+end_src
+
+* assertion
+ * ASSERT_TRUE
+ * ASSERT_FALSE
+ * ASSERT_EQ(expected, actual)
+ * ASSERT_NE
+
+all the assertions can be changed into EXPECT_XX.
+
+
+* fixture
+Code to test:
+#+begin_src C++
+template <typename E> // E is the element type.
+class Queue {
+ public:
+  Queue();
+  void Enqueue(const E& element);
+  E* Dequeue(); // Returns NULL if the queue is empty.
+  size_t size() const;
+  ...
+};
+#+end_src
+
+testing code:
+
+#+begin_src C++
+class QueueTest : public ::testing::Test {
+ protected:
+  virtual void SetUp() {
+    q1_.Enqueue(1);
+    q2_.Enqueue(2);
+    q2_.Enqueue(3);
+  }
+
+  // virtual void TearDown() {}
+
+  Queue<int> q0_;
+  Queue<int> q1_;
+  Queue<int> q2_;
+};
+#+end_src
+
+You need to inherit from ~::testing::Test~.
+
+You can setup the project in either constructor or SetUp method.
+The calling sequence is: constructor, setup, test, teardown, another test.
+The object is deleted after each test,
+so it is not designed for object reuse, but for code reuse.
+
+#+begin_src C++
+TEST_F(QueueTest, IsEmptyInitially) {
+  EXPECT_EQ(0, q0_.size());
+}
+#+end_src
+
+You need to use TEST_F, and the first argument to the macro should be the Test class name.
+Note that q0_ is immediately available.

@@ -5,7 +5,10 @@ This is the wiki.
 It is not intended to export to a whole pdf file.
 This index file will just do as its name states, giving the index.
 There's no way to organize those chapters, so if needed, I will just export them individually.
-But there's an option to export a "sitemap", which may be useful.
+
+#+BEGIN_QUOTE
+你必须非常努力，才能看起来毫不费力。
+#+END_QUOTE
 
 # #+INCLUDE: emacs.org
 # #+INCLUDE: shell.org

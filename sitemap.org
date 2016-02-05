@@ -18,3 +18,4 @@
    + [[file:js.org][Javascript]]
    + [[file:shell.org][Shell]]
    + [[file:index.org][The HebiWiki^{TM}]]
+   + [[file:google-test.org][google test]]
