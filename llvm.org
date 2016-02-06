@@ -1,0 +1,114 @@
+#+TITLE: LLVM
+
+llvm version used: 3.9.0svn
+
+* Build and install LLVM system
+
+#+begin_src shell
+svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
+cd llvm/tools
+svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
+cd llvm/projects
+svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt
+cd ../..
+mkdir build
+cmake -G "Unix Makefiles" ../llvm
+make
+make install
+#+end_src
+
+* try the llvm toolchain
+#+begin_src shell
+clang --help
+clang file.c -fsyntax-only # (check for correctness)
+clang file.c -S -emit-llvm -o - # (print out unoptimized llvm code)
+clang file.c -S -emit-llvm -o - -O3
+clang file.c -S -O3 -o - # (output native machine code)
+
+
+#+end_src
+
+from http://llvm.org/docs/GettingStarted.html
+
+#+begin_src C
+#include <stdio.h>
+int main() {
+  printf("hello world\n");
+  return 0;
+}
+#+end_src
+
+#+begin_src shell
+# one way to run
+clang hello.c -o hello
+./hello
+# the other way: bitcode
+clang -O3 -emit-llvm hello.c -c -o hello.bc
+lli hello.bc
+# the third way
+# look at the assemble code
+llvm-dis < hello.bc | less
+# compine to native assemble
+llc hello.bc -o hello.s
+# assemble it
+gcc hello.s -o hello.native
+./hello.native
+#+end_src
+
+* writing a pass outside source tree using cmake
+http://llvm.org/docs/WritingAnLLVMPass.html
+
+** pass-project/CMakeLists.txt
+
+#+begin_src cmake
+find_package(LLVM REQUIRED CONFIG)
+
+add_definitions(${LLVM_DEFINITIONS})
+include_directories(${LLVM_INCLUDE_DIRS})
+
+add_definitions(-std=c++11) # patch: used c++ 11
+# patch: I didn't compile LLVM with rtti,
+# so I need to disable rtti when compiling pass
+# or I will get error when opt -load my pass
+SET(CMAKE_CXX_FLAGS "-Wall -fno-rtti")
+
+add_subdirectory(hellopass)
+#+end_src
+
+** pass-project/hellopass/CMakeLists.txt
+
+#+begin_src cmake
+add_library(HebiPass MODULE Pass.cpp)
+#+end_src
+
+** pass-project/hellopass/Pass.cpp
+
+#+begin_src C++
+#include "llvm/Pass.h"
+#include "llvm/IR/Function.h"
+#include "llvm/Support/raw_ostream.h"
+
+using namespace llvm;
+
+namespace {
+  struct Hello : public FunctionPass {
+    static char ID;
+    Hello() : FunctionPass(ID) {}
+    bool runOnFunction(Function &F) override {
+      errs() << "Hello: ";
+      errs().write_escaped(F.getName()) << "\n";
+      return false;
+    }
+  };
+}
+char Hello::ID = 0;
+static RegisterPass<Hello> X("hello", "Hello World Pass", false, false);
+#+end_src
+
+cmake, and make, generate the file ~hellopass/libHebiPass.so~.
+
+#+begin_src shell
+opt -load ./hellopass/libHebiPass.so -hello < hello.bc
+#+end_src
+
+
