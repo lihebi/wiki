@@ -6,9 +6,22 @@ It is not intended to export to a whole pdf file.
 This index file will just do as its name states, giving the index.
 There's no way to organize those chapters, so if needed, I will just export them individually.
 
-#+BEGIN_QUOTE
-你必须非常努力，才能看起来毫不费力。
-#+END_QUOTE
+# #+BEGIN_QUOTE
+# 你必须非常努力，才能看起来毫不费力。
+# #+END_QUOTE
+
+#+BEGIN_HTML html
+<blockquote id="quote">
+<script>
+var i = Math.round(Math.random()*100);
+var quotes = [
+"你一出场别人都显得不过如此。",
+"你必须非常努力，才能看起来毫不费力。"
+];
+document.getElementById("quote").innerHTML = quotes[i % quotes.length];
+</script>
+</blockquote>
+#+END_HTML
 
 # #+INCLUDE: emacs.org
 # #+INCLUDE: shell.org
