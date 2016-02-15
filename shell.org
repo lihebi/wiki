@@ -6,3 +6,9 @@ du -sm * | sort -nr
 #+end_src
 
 
+* diff and patch
+#+begin_src shell
+diff -u old new > patch
+diff -Naur olddir newdir > patch
+patch -p<num> <patch
+#+end_src
