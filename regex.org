@@ -1,0 +1,253 @@
+#+TITLE: Regular Expression
+
+* Some Articles
+
+https://swtch.com/~rsc/regexp/
+
+* 符号表
+
+| 符号         | 含义                          |
+|--------------+-------------------------------|
+| .            | 除了换行符以外的任何字符      |
+| \b           | 单词的开始或结束              |
+| \d           | 一位数字                      |
+| \s           | 任意空白字符(' ', \t, \ n 等) |
+| \w           | 字母,数字,下划线,汉字 等      |
+| x{8}         | x 要重复8次                   |
+| x{5,8}       | x 的重复次数>=5,<=12          |
+| x{5,}        | 重复5+                        |
+| *            | 重复0 或1 次                  |
+| +            | 重复1+次                      |
+| ?            | 重复0或1次                    |
+| ^            | 字符串开始                    |
+| $            | 字符串结束                    |
+| [aeiou?,0-9] | 匹配这个里面的任何一个        |
+| [^aeiou]     | 除了aeiou 以外的任何字符      |
+| \B,\D,\S,\W  | 与小写字母相反                |
+| [a-zA-Z0-9]  |                               |
+
+* Lookahead
+
+ * Positive look ahead: `(?=ABC)`. e.g. `hello(?=ABC)`
+ * Negative look ahead: `(?!ABC)`: e.g. `hello(?!ABC)`
+ * Positive look behind: `(?<=ABC)`: e.g. `(?<=ABC)hello`
+ * Negative look behind: `(?<!ABC)`: e.g. `(?<!ABC)hello`
+
+* Capturing Group
+
+ * `(ABC)`
+ * `(ABC)abc\1` Backreference. `\1` matches the result of the first capturing group
+ * `(?:ABC)` non-capturing group
+ * `$1` insert the first captured group
+
+* Identifier
+
+`p = /xxx/[gim]`
+
+| 标识 | 含义                          |
+|------+-------------------------------|
+| g    | 全局的（匹配多次）            |
+| i    | 大小写不敏感                  |
+| m    | 多行，`^` `$`可以匹配行结束符 |
+
+* Regex for C
+Only supported by C++11
+
+** constructor
+
+#+begin_src C
+explicit basic_regex(const CharT* s);
+basic_regex(const basic_regex& other);
+#+end_src
+
+** std::match_results
+std::match_results
+
+#+begin_src C
+template<
+class BidirIt,
+class Alloc = std::allocator<std::sub_match<BidirIt>>
+> class match_results;
+#+end_src
+
+| type    | definition                                  |
+|:--------|:--------------------------------------------|
+| cmatch  | match_results<const char*>                  |
+| wcmatch | match_results<const wchar_t*>               |
+| smatch  | match_results<std::string::const_iterator>  |
+| wsmatch | match_results<std::wstring::const_iterator> |
+
+*** member functions
+ * empty
+ * size
+ * operator[]
+
+`std::match_results` holds `std::sub_match`es,
+each of which is a pair of iterators into the original character sequence that was matched,
+it's undefined behavior to examine std::match_results
+if the original character sequence was destroyed
+or iterators to it were invalidated for other reasons.
+
+** std::sub_match
+std::sub_match inherits from std::pair
+
+| type        | definition                              |
+|:------------|:----------------------------------------|
+| csub_match  | sub_match<const char*>                  |
+| wcsub_match | sub_match<const wchar_t*>               |
+| ssub_match  | sub_match<std::string::const_iterator>  |
+| wssub_match | sub_match<std::wstring::const_iterator> |
+
+
+
+** regex_search
+
+API
+
+#+begin_src C
+bool regex_search
+(
+  const std::basic_string<CharT,STraits,SAlloc>& s,
+  const std::basic_regex<CharT,Traits>& e
+);
+bool regex_search
+(
+  const std::basic_string<CharT,STraits,SAlloc>&&,
+  std::match_results&,
+  const std::basic_regex<CharT, Traits>&
+);
+#+end_src
+
+#+begin_src C
+#include <iostream>
+#include <string>
+#include <regex>
+
+int main() {
+  std::string line = "xxx";
+  std::regex color_regex("([a-f0-9]{2})");
+  std::regex_search(line, color_regex);
+
+  std::smatch color_match;
+  std::regex_search(line, color_match, color_regex);
+  for (int i=0;i<color_match.size();i++) {
+    // the first is entire match
+    // the followings are () matches
+    color_match[i]; // string
+  }
+}
+#+end_src
+
+** std::regex_match
+
+#+begin_src C
+std::regex_match(fname, base_match, base_regex);
+// The first sub_match is the whole string; the next
+// sub_match is the first parenthesized expression.
+if (std::regex_match(fname, pieces_match, pieces_regex)) {
+  std::cout << fname << '\n';
+  for (size_t i = 0; i < pieces_match.size(); ++i) {
+    std::ssub_match sub_match = pieces_match[i];
+    std::string piece = sub_match.str();
+    // can also piece = sub_match, implicit convertion
+  }   
+}  
+#+end_src
+
+** std::regex_replace
+
+API
+
+#+begin_src C
+std::basic_string<CharT,STraits,SAlloc>
+regex_replace(
+  const std::basic_string<CharT,STraits,SAlloc>& s,
+  const std::basic_regex<CharT,Traits>& re,
+  const CharT* fmt
+);
+std::basic_string<CharT>
+regex_replace(
+  const CharT* s,
+  const std::basic_regex<CharT,Traits>& re,
+  const std::basic_string<CharT,STraits,SAlloc>& fmt
+);
+std::basic_string<CharT>
+regex_replace(
+  const CharT* s,
+  const std::basic_regex<CharT,Traits>& re,
+  const CharT* fmt
+);
+#+end_src
+
+#+begin_src C
+std::regex_replace(s, reg, "");
+#+end_src
+
+** iterator
+#+begin_src C
+int main()
+{
+  const std::string s = "Quick brown fox.";
+
+  std::regex words_regex("[^\\s]+");
+  std::sregex_iterator words_begin = std::sregex_iterator(s.begin(), s.end(), words_regex);
+  std::sregex_iterator words_end = std::sregex_iterator();
+
+  std::cout << "Found "
+  << std::distance(words_begin, words_end)
+  << " words:\n";
+
+  for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
+    std::smatch match = * i;                                                 
+    std::string match_str = match.str(); 
+    std::cout << match_str << '\n';
+  }   
+}
+#+end_src
+
+* Regex for Java
+#+begin_src java
+Pattern p = Pattern.compile("a*b");
+Matcher m = p.matcher("aaaaab");
+boolean b = m.matches();
+m.group(3); // => String
+#+end_src
+
+* Regex for JS
+#+begin_src js
+// (xxx) 捕获型分组
+// (?:xxx) 非捕获型分组
+var pattern = /(xxx)(?:xxx)/;
+var result = pattern.exec('string here');
+// => result = ['match', '分组1', '分组2', ...]
+var result = pattern.test('string here');
+// => result = true or false
+#+end_src
+
+* Regex for Python
+#+begin_src python
+import re
+
+pattern = re.compile('\d+.*$')
+type(pattern) # _sre.SRE_Pattern
+s = 'this is a test string'
+pattern.match(s)    //return True or False
+pattern.findall(s)
+
+m = re.match("[pattern]", "string")
+#match 需要全匹配。 若不匹配，返回None
+type(m) # _sre.SRE_Match
+type(m.re) # _sre.SRE_Match
+m.group() # 匹配的字符串
+
+m = re.search("[pattern]", "string")
+# search只要有就行
+# if can't find anything, m will simply be None.
+type(m) # _sre.SRE_Match
+m.group()
+
+re.search("pattern", "string", re.IGNORECASE)
+
+m = re.findall("[pattern]", "string")
+type(m) # list, a list of string that match
+#+end_src

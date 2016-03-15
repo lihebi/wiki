@@ -1,18 +1,41 @@
 #+TITLE: Emacs
 
-This is what I all need about emacs.
-It is a list of commands useful. It serves as a extremely tight reference.
+* Getting Help
+ * =describe-key-briefly=: defaults to =C-h c=, return the command name of a key stroke.
+ * =where-is=: defaults to =C-h w=, return the current shortcut for a command
+ * =info=: defaults to =C-h i=, open the built-in info reader.
 
-* text transformation
+* Window and Frame
+** window manage
+  * ~balance-window~
+  * ~toggle-window-split~
+** dired
+  * ~dired-next-subdir~
+  * ~dired-prev-subdir~
+  * ~dired-tree-up~
+  * ~dired-tree-down~
+** packages
+In ~*package*~ buffer, ~Ux~ to update all packages.
 
+* Editing
+** text transformation
   * ~replace-rectangle~
   * ~upcase-word~
   * ~downcase-word~
   * ~transpose-words~
   * ~transpose-lines~
+To insert a control sequence, use ~C-q xxx~.
 
-* marking
+** killing
+  * ~zap-to-char~
+  * ~zap-up-to-char~
 
+** spell checking
+Use =ispell=, and =flycheck= to check on-the-fly. Check emacs manual for detail.
+* Navigating
+  * ~forward-sexp~: forward semantic block
+  * ~backward-sexp~
+** marking
   * ~exhange-point-and-mark~
   * ~mark-word~
   * ~mark-sexp~
@@ -27,31 +50,50 @@ It is a list of commands useful. It serves as a extremely tight reference.
   * ~C-u C-SPC~: pop to previous mark in mark ring. current is stored at the end of mark ring(rotating)
   * ~pop-global-mark~: will store both position and buffer
 
-* window manage
+All events that set the mark:
+ * ~C-SPC C-SPC~
+ * ~C-w~
+ * search
+** register
+ * ~jump-to-register~: the register can store a file
+ * ~copy-to-register~
+ * ~insert-register~
 
-  * ~balance-window~
-  * ~toggle-window-split~
 
-* navigating
+* Advanced Topics
+** Info
+Info is a document system.
+It is closely bundled with emacs, so I put it here.
+To install some new info document in the system,
+issue the following commands (using =gnu-c-manual= as an example):
 
-  * ~forward-sexp~
-  * ~backward-sexp~
+#+BEGIN_SRC shell
+# download the gnu-c-manual code
+make gnu-c-manual.info
+mv gnu-c-manual.info /usr/local/share/info
+cd /usr/local/share/info
+sudo install-info --info-file=gnu-c-manual.info --info-dir=.
+#+END_SRC
 
-* register
+*** Operations
+| key       | description                                          |
+|-----------+------------------------------------------------------|
+| SPC       | page down, can cross node                            |
+| BACKSPACE | page up, can cross node                              |
+| M-n       | ~clone-buffer~, create a new independent info window |
+| n         | next node on same level                              |
+| p         | previous                                             |
+| ]         | next node regardless of level                        |
+| [         | previous                                             |
+| u         | up node                                              |
+| l         | back                                                 |
+| r         | forward                                              |
+| m         | ~Info-menu~, convenient for search node title        |
+| s         | TODO search  a text in the whole info file           |
+| i         | TODO search indices only                             |
 
-  * ~jump-to-register~: the register can store a file
+** Elisp
 
-* killing
-
-  * ~zap-to-char~
-  * ~zap-up-to-char~
-
-* dired
-
-  * ~dired-next-subdir~
-  * ~dired-prev-subdir~
-  * ~dired-tree-up~
-  * ~dired-tree-down~
-
-* packages
-In ~*package*~ buffer, ~Ux~ to update all packages.
+#+begin_src elisp
+(cl-prettyprint (font-family-list)) ;; see all font family available on this system
+#+end_src

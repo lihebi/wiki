@@ -1,0 +1,51 @@
+#+TITLE: Org Mode
+
+* Org mode latex exporting
+** doc class & options
+
+#+begin_src org
+#+LATEX_CLASS: fse
+#+OPTIONS: toc:nil author:nil
+
+#+BIBLIOGRAPHY: slicing plain
+#+INCLUDE: "appendix.org" :minlevel 1
+#+end_src
+
+** appendix
+
+#+begin_src org
+#+LaTeX: \appendix
+
+#+INCLUDE: "appendix-todo.org" :minlevel 1
+#+INCLUDE: "appendix-context.org" :minlevel 1
+#+INCLUDE: "appendix-helium-guard.org" :minlevel 1
+#+INCLUDE: "appendix-valgrind-exp.org" :minlevel 1
+#+end_src
+
+** table
+
+#+begin_src org
+#+CAPTION: The caption
+#+NAME: tab:stack-vs
+#+ATTR_LATEX: :float multicolumn
+
+[[tab:stack-vs]]
+#+end_src
+
+** code referencing
+
+#+begin_src org
+    src = array[i]; (ref:1)
+    buf = p;        (ref:2)
+    sum += i;       (ref:3)
+
+[[(ref:1)]]
+[[(ref:1)][name]]
+#+end_src
+
+* Spreadsheet
+#+begin_src org
+#+TBLFM: $4=$2/10
+#+TBLFM: $4=$2*100/$3
+#+TBLFM: $4=(round $4)
+#+end_src

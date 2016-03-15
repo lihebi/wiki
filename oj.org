@@ -1,0 +1,70 @@
+#+TITLE: Online Judge Excerpts
+
+* Binary Tree Postorder Traversal /Iteratively/:
+
+#+begin_src text
+1.1 Create an empty stack
+2.1 Do following while root is not NULL
+    a) Push root's right child and then root to stack.
+    b) Set root as root's left child.
+2.2 Pop an item from stack and set it as root.
+    a) If the popped item has a right child and the right child 
+       is at top of stack, then remove the right child from stack,
+       push the root back and set root as root's right child.
+    b) Else print root's data and set root as NULL.
+2.3 Repeat steps 2.1 and 2.2 while stack is not empty.
+#+end_src
+
+#+begin_src C++
+  vector<int> postorderTraversal(TreeNode* root) {
+    vector<int> result;
+    stack<TreeNode*> worklist;
+    TreeNode *node = root;
+    if (root==NULL) return result;
+    do {
+      while (node != NULL) {
+        if (node->right != NULL) {
+          worklist.push(node->right);
+        }
+        worklist.push(node);
+        node = node->left;
+      }
+      node = worklist.top();
+      worklist.pop();
+      if (node->right != NULL && !worklist.empty() && worklist.top() == node->right) {
+        // the node has right child to process
+        TreeNode *right = node->right;
+        worklist.pop();
+        worklist.push(node);
+        node = right;
+      } else {
+        result.push_back(node->val);
+        node = NULL;
+      }
+    } while (!worklist.empty());
+    return result;
+  }
+#+end_src
+
+* middle order traversal's two different implement:
+
+#+begin_src C
+bfs(node) {
+  bfs(node->left);
+  visit(node);
+  bfs(node->right);
+}
+#+end_src
+
+#+begin_src C
+while(stack.size()>0 || node != NULL) {
+  if (node) {
+    stack.push(node);
+    node = node->left;
+  } else {
+    node = stack.pop();
+    visit(node);
+    node = node->right;
+  }
+}
+#+end_src

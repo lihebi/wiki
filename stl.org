@@ -1,0 +1,546 @@
+#+TITLE: STL
+
+* Containers
+** Comparison
+| container | time complexity                                     | iterator validity                               |
+| /         | <                                                   | <                                               |
+|-----------+-----------------------------------------------------+-------------------------------------------------|
+| ~vector~  | constant at beginning, linear in middle and end     | Memory allocate; Insert at beginning and middle |
+| ~deque~   | constant at beginning and end, linear in the middle | All insertions; Erase in middle.                |
+| ~set~     |                                                     | erase invalidates the element removed           |
+
+*** convert set to vector
+=std::copy= doesn't add elements to the container into which you are inserting: it can't; it only has an iterator into the container.
+Because of this, if you pass an output iterator directly to =std::copy=, you must make sure it points to a range that is at least large enough to hold the input range.
+
+=std::back_inserter= creates an output iterator that calls push_back on a container for each element, so each element is inserted into the container.
+Alternatively, you could have created a sufficient number of elements in the std::vector to hold the range being copied.
+#+BEGIN_SRC C++
+// method 1
+std::copy(input.begin(), input.end(), std::back_inserter(output));
+// method 2
+// note that std::copy will NOT allocate memory
+// so make sure the vector is large enough before copy
+std::vector<double> output(input.size());
+std::copy(input.begin(), input.end(), output.begin());
+// method 3
+std::vector<double> output(input.begin(), input.end()); 
+#+END_SRC
+
+reference: http://stackoverflow.com/questions/5034211/c-copy-set-to-vector
+
+** vector
+Time complexity: constant time insertion or removal at the end, linear at the beginning or middle.
+
+Iterator invalidity: Memory will be allocated automatically, which, when happens, invalidates all iterators.
+Reserve() causes a reallocation manually.
+inserting or deleting an element in the middle of a vector invalidates all iterators that point to elements /following the insertion or deletion point/.
+
+The initiation of vector can have the following forms:
+#+begin_src C++
+// ONLY WITH C++11, compile with flag =-std=c++11=
+// 1
+vector<int> v {1,2,3};
+// 2
+int row,col;
+vector< vector<int> > heights(row, vector<int>(col));
+// 3
+char init[] = "1111";
+vector<char> v(init, end(init)-1); // remove '\0'
+#+end_src
+
+Reserve() causes a reallocation manually.
+The main reason for using reserve() is efficiency: if you know the capacity to which your vector must eventually grow,
+then it is usually more efficient to allocate that memory all at once rather than relying on the automatic reallocation scheme.
+The other reason for using reserve() is so that you can control the invalidation of iterators
+
+Do not use =vector<bool>=.
+It actually not store bool,
+but proxy object, as the design to save space.
+
+** set
+Set has the important property that inserting a new element into a set does not invalidate iterators that point to existing elements.
+Erasing an element from a set also does not invalidate any iterators, except, of course, for iterators that actually point to the element that is being erased.
+
+** map
+The map is usually used as the following example:
+#+begin_src C++
+map<int,int> m;
+m[2]=3;
+m[3]=4;
+for(map<int,int>::iterator it=m.begin;it!=m.end();it++) {
+  it->first;
+  it->second;
+}
+#+end_src
+
+In a map, when using =[]= operator, the item will be inserted and init to default value for that type, e.g. 0 for a =int=.
+
+*** =multimap=
+=multimap= do not have =[]= operator!
+The following is an example for the usage of =multimap=:
+#+begin_src C++
+std::multimap<char,int> mymm;
+
+mymm.insert(std::pair<char,int>('a',10));
+mymm.insert(std::pair<char,int>('b',20));
+mymm.insert(std::pair<char,int>('b',30));
+mymm.insert(std::pair<char,int>('b',40));
+mymm.insert(std::make_pair('c',50));
+mymm.insert(std::pair<char,int>('c',60));
+mymm.insert(std::pair<char,int>('d',60));
+
+std::cout << "mymm contains:\n";
+for (char ch='a'; ch<='d'; ch++)
+{
+  std::pair <std::multimap<char,int>::iterator, std::multimap<char,int>::iterator> ret;
+  ret = mymm.equal_range(ch);
+  std::cout << ch << " =>";
+  for (std::multimap<char,int>::iterator it=ret.first; it!=ret.second; ++it) {
+    std::cout << ' ' << it->second;
+  }
+}
+#+end_src
+
+** deque
+=deque= refers to /Double Ended Queue/.
+It differs from =vector= in the sense that the insertion at the front is constant time.
+Like =vector=, insertion in the end is constant, and insertion in the middle is =n=.
+
+Iterator Validity:
+ * Insert (including push_front and push_back) invalidates all iterators that refer to a deque.
+ * Erase in the middle of a deque invalidates all iterators that refer to the deque.
+ * Erase at the beginning or end of a deque (including pop_front and pop_back) invalidates an iterator only if it points to the erased element.
+
+** pass to legacy API
+*** vector
+#+begin_src C++
+vector<int> v;
+void func(const int* pi, size_t num);
+// wrong, the size of v may be 0
+func(&v[0], v.size());
+if (!v.empty()) {
+  func(&v[0], v.size());
+}
+#+end_src
+
+do not use =v.begin()= instead of =&v[0]=, because:
+
+ * v.begin() is a iterator, not always a pointer
+ * =&*v.begin()= is same as =&v[0]=, but ...
+
+Note, the legacy API should not add/remove items,
+because no way for the container to know the size.
+
+*** String
+Only vectors are guarnteed to have the same underlying memory layout as arrays.
+String not.
+
+ * data for strings is not guaranteed to be stored in contiguous memory.
+ * is not guaranteed to be null terminated
+
+so put the data into a =vector<char>= first, and use vector trick.
+
+* Algorithms
+** comparison function
+
+
+Always have comparison functions return false for equal values.
+
+#+begin_src C++
+set<int, less_equal<int> > s;
+s.insert(10);
+s.insert(10);
+#+end_src
+
+check equivalence:
+
+#+begin_src C++
+!(10A<=10B) && !(10B<=10A);
+!true && !true
+false
+#+end_src
+
+a easy-to-made error:
+
+#+begin_src C++
+bool operator()(const string* ps1, const string* ps2) onst {
+  return !(* ps1<* ps2); // always pay attention to negative
+}
+#+end_src
+
+
+
+
+** Algorithm
+
+*** ~count~ & ~count_if~
+ #+begin_src C++
+ template< class InputIt, class T >
+ typename iterator_traits<InputIt>::difference_type
+ count(
+   InputIt first,
+   InputIt last,
+   const T &value
+ );
+ template< class InputIt, class UnaryPredicate >
+ typename iterator_traits<InputIt>::difference_type
+ count_if(
+   InputIt first,
+   InputIt last,
+   UnaryPredicate p
+ );
+ #+end_src
+
+*** ~std::find~
+
+ Returns an iterator to the first element in the range [first,last) that compares equal to val. If no such element is found, the function returns last.
+
+ #+begin_src C++
+ template<class InputIterator, class T>
+ InputIterator find (InputIterator first, InputIterator last, const T& val)
+ {
+   while (first!=last) {
+     if (*first==val) return first; //*
+     ++first;
+   }
+   return last;
+ }
+ #+end_src
+
+*** ~std::find_if~
+
+ Returns an iterator to the first element in the range [first,last) for which pred returns true. If no such element is found, the function returns last.
+
+ #+begin_src C++
+ template<class InputIterator, class UnaryPredicate>
+ InputIterator find_if (InputIterator first, InputIterator last, UnaryPredicate pred)
+ {
+   while (first!=last) {
+     if (pred(* first)) return first;
+     ++first;
+   }
+   return last;
+ }
+ #+end_src
+
+ for example
+
+ #+begin_src C++
+ template <typename T>
+ class is_greater_than
+ {
+ public:
+   is_greater_than (const T & n)
+   : value(n)
+ {}
+
+   bool operator() (const T & element) const
+ {
+   return element > value;
+ }
+
+ private:
+   T value;
+ };
+ #+end_src
+
+ use here:
+
+ #+begin_src C++
+ find_if (values.begin(), values.end(), is_greater_than<int> (5)) != values.end();
+ #+end_src
+
+*** for
+
+ #+begin_src C++
+ vector<int> v;
+ for (auto i : v) {
+   // do with i
+ }
+ #+end_src
+
+ here ~auto~ means ~vector<int>::value_type~.
+
+ is equal-valent to:
+
+ #+begin_src C++
+ vector<int> v;
+ for (std::vector<int>::const_iterator it=v.begin();it!=v.end();it++) {
+   auto i=*it; //*
+   // do with i
+ }
+ #+end_src
+
+*** ~std::for_each~
+
+ #+begin_src C++
+ void myfunction (int i) {  // function:
+   std::cout << ' ' << i;
+ }
+
+ struct myclass {           // function object type:
+   void operator() (int i) {std::cout << ' ' << i;}
+ } myobject;
+
+ std::vector<int> myvector;
+
+ for_each (myvector.begin(), myvector.end(), myfunction);
+ for_each (myvector.begin(), myvector.end(), myobject);
+ for_each (v.begin(),v.end(),[](int i) { cout<<i; });
+ #+end_src
+
+*** ~mem_fun~
+ #+begin_src C++
+ list<Widget*> lpw;
+ for_each(
+   lpw.begin(),
+   lpw.end(),
+   // because the test is the member function of Widget
+   // and we want to call it on all for_each item.
+   // If no mem_fun, it can not compile
+   mem_fun(&Widget::test)
+ );
+ #+end_src
+
+ TODO:
+
+  * ptr_fun
+  * mem_fun_ref
+
+*** ~std::move~
+ ~#include <utility>~
+
+ transfer ownership of the assets and properties of an object directly without having to copy them when the argument is an rvalue.
+
+ moved-from object is left in a valid but unspecified state
+
+ #+begin_src C++
+ std::string foo = "foo-string";
+ std::string bar = "bar-string";
+ std::vector<std::string> myvector;
+ myvector.push_back (foo);                    // copies. foo remain.
+ myvector.push_back (std::move(bar));         // moves. bar contain unspecified value.
+ #+end_src
+
+ #+begin_src C++
+ int main()
+ {
+   std::string str = "Hello";
+   std::vector<std::string> v;
+
+   // uses the push_back(const T&) overload, which means
+   // we'll incur the cost of copying str
+   v.push_back(str);
+   std::cout << "After copy, str is \"" << str << "\"\n";
+
+   // uses the rvalue reference push_back(T&&) overload,
+   // which means no strings will be copied; instead, the contents
+   // of str will be moved into the vector.  This is less
+   // expensive, but also means str might now be empty.
+   v.push_back(std::move(str));
+   std::cout << "After move, str is \"" << str << "\"\n";
+
+   std::cout << "The contents of the vector are \"" << v[0]
+   << "\", \"" << v[1] << "\"\n";
+
+   // string move assignment operator is often implemented as swap,
+   // in this case, the moved-from object is NOT empty
+   std::string str2 = "Good-bye";
+   std::cout << "Before move from str2, str2 = '" << str2 << "'\n";
+   v[0] = std::move(str2);
+   std::cout << "After move from str2, str2 = '" << str2 << "'\n";
+ }
+ #+end_src
+
+ Possible output:
+
+ #+begin_src text
+ After copy, str is "Hello"
+ After move, str is ""
+ The contents of the vector are "Hello", "Hello"
+ Before move from str2, str2 = 'Good-bye'
+ After move from str2, str2 = 'Hello'
+ #+end_src
+
+*** not1
+ #+begin_src C++
+ template< class Predicate >
+ std::unary_negate<Predicate> not1(const Predicate& pred);
+ template< class Predicate >
+ constexpr std::unary_negate<Predicate> not1(const Predicate& pred);
+ #+end_src
+
+ not1 is a helper function to create a function object that returns the complement of the unary predicate function passed.
+
+ example:
+
+ #+begin_src C++
+ struct LessThan7 : std::unary_function<int, bool>
+ {
+   bool operator()(int i) const { return i < 7; }
+ };
+ std::not1(LessThan7());
+ std::function<int(int)> less_than_9 = [](int x){ return x < 9; };
+ std::not1(less_than_9);
+ #+end_src
+
+*** reverse
+
+ #+begin_src C++
+ reverse(v.begin(), v.end());
+ #+end_src
+
+*** sort
+
+ Do not use ~qsort~ for some unknown reason..
+
+ faster to slower:
+
+ 1. partition
+ 2. stable_partition
+ 3. nth_element
+ 4. partial_sort
+ 5. sort
+ 6. stable_sort
+
+ stable means the order of equal element is guaranteed to maintain.
+
+**** ~partition~
+ The returned iterator is middle.
+ From first to middle, the predicate is true.
+ From middle to last, the predicate is false.
+
+ API:
+
+ #+begin_src C++
+ template< class BidirIt, class UnaryPredicate >
+ BidirIt partition(
+   BidirIt first,
+   BidirIt last,
+   UnaryPredicate p
+ );
+ template< class ForwardIt, class UnaryPredicate >
+ ForwardIt partition(
+   ForwardIt first,
+   ForwardIt last,
+   UnaryPredicate p
+ );
+ #+end_src
+
+
+**** ~nth_element~
+ The first n elements in the container are best, but not sorted.
+
+ API:
+
+ #+begin_src C++
+ template< class RandomIt >
+ void nth_element(
+   RandomIt first,
+   RandomIt nth,
+   RandomIt last
+ );
+ template< class RandomIt, class Compare >
+ void nth_element(
+   RandomIt first,
+   RandomIt nth,
+   RandomIt last,
+   Compare comp
+ );
+ #+end_src
+
+**** ~partial_sort~
+ The first n elements in the container are the best, and in order.
+
+ API:
+
+ #+begin_src C++
+ template< class RandomIt >
+ void partial_sort(
+   RandomIt first,
+   RandomIt middle,
+   RandomIt last
+ );
+ template< class RandomIt, class Compare >
+ void partial_sort(
+   RandomIt first,
+   RandomIt middle,
+   RandomIt last,
+   Compare comp
+ );
+ #+end_src
+
+ example:
+
+ #+begin_src C++
+ partial_sort(
+   v.begin(),
+   v.begin()+20,
+   v.end(),
+   compare
+ );
+ #+end_src
+
+*** transform
+
+ #+begin_src C++
+ template< class InputIt, class OutputIt, class UnaryOperation >
+ OutputIt transform(
+   InputIt first1,
+   InputIt last1,
+   OutputIt d_first,
+   UnaryOperation unary_op
+ );
+ template< class InputIt1, class InputIt2, class OutputIt, class BinaryOperation >
+ OutputIt transform(
+   InputIt1 first1,
+   InputIt1 last1,
+   InputIt2 first2,
+   OutputIt d_first,
+   BinaryOperation binary_op
+ );
+ #+end_src
+
+ ~std::transform~ applies the given function to a range and stores the result in another range, beginning at d_first.
+
+
+* Idioms
+** erase-remove idiom
+To erase certain elements in a container, the =remove= and =remove_if= is provided in =<algorithm>=.
+Algorithms operate on a range of elements denoted by two forward iterators, they have no knowledge of the underlying container or collection.
+Thus, no elements are actually removed from the container.
+Rather, all elements which don't fit the remove criteria are brought together to the front of the range, in the same relative order.
+The remaining elements are left in a valid, but unspecified, state.
+So, after using =remove=, the =size()= of the container is unchanged.
+To actually remove those, it should be used together with the =erase()= member function of the container.
+
+When the =remove= function is done, remove returns an iterator pointing one element past the last unremoved element.
+So the erase is used as follows:
+
+#+BEGIN_SRC C++
+v.erase( std::remove( v.begin(), v.end(), 5 ), v.end() ); 
+#+END_SRC
+
+However, this is not the case for =map= and =set=.
+#+BEGIN_QUOTE
+In simple associative containers, where the elements are the keys, the elements are completely immutable;
+the nested types iterator and const_iterator are therefore the same.
+#+END_QUOTE
+That means the =iterator= and =const_iterator= are actually the same for =set= and =map=.
+The /erase-remove idiom/ cannot be used here.
+Rather, it should use the following loop:
+
+#+BEGIN_SRC C++
+  typedef std::set::iterator set_iter; 
+  for( set_iter it = s.begin(); it != s.end(); /* blank */ ) {
+    if( some_condition() ) {
+      // s.erase( it++ );       // Note the subtlety here
+      // I think this is better, erase return iterator to the next element
+      it = s.erase(it);
+    }
+    else {
+      ++it;
+    }
+   }
+#+END_SRC

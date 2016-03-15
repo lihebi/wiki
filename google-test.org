@@ -81,3 +81,27 @@ TEST_F(QueueTest, IsEmptyInitially) {
 
 You need to use TEST_F, and the first argument to the macro should be the Test class name.
 Note that q0_ is immediately available.
+
+* Run A Subset of Tests
+The format of a filter is a ':'-separated list of wildcard patterns
+(called the positive patterns)
+optionally followed by a '-'
+and another ':'-separated pattern list
+(called the negative patterns).
+A test matches the filter if and only if
+it matches any of the positive patterns
+but does not match any of the negative patterns.
+
+In short, =<pos1>:<pos2>:<pos3>-<neg1>:<neg2>=.
+#+BEGIN_SRC shell
+./foo_test --gtest_filter=*
+# Runs everything in test case FooTest
+./foo_test --gtest_filter=FooTest.*
+# Runs any test whose full name contains either "Null" or "Constructor"
+./foo_test --gtest_filter=*Null*:*Constructor*
+# Runs all non-death tests.
+# - negativate the pattern
+./foo_test --gtest_filter=-*DeathTest.*
+# Runs everything in test case FooTest except FooTest.Bar
+./foo_test --gtest_filter=FooTest.*-FooTest.Bar
+#+END_SRC

@@ -1,0 +1,22 @@
+#+TITLE: Graphviz/Dot
+
+command line usage:
+
+#+BEGIN_SRC shell
+dot -Tpng input.dot -o output.png
+#+END_SRC
+
+Dot language examples:
+
+#+BEGIN_SRC dot
+  digraph {
+    a -> b;     /* also comment */
+    a -> {c d}; // equivalent to a->c; a->d;
+    a -> {c ; d} // this format seems the same, in dot official guide
+    NodeName[lable="this will be on the graph", shape=box, style=filled, color="red"];
+    e -> f[style=dotted]; // edge is dotted
+  }
+  graph {
+    a -- b;
+  }
+#+END_SRC

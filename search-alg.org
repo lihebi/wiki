@@ -1,0 +1,61 @@
+#+TITLE: Search ALgorithm
+
+* Branch & Bound algorithm
+** problem
+The problem is to minimize a function f(x) of variables $x_1,...,x_n$ over a region of feasible solutions S.
+$$min_{x\in S} f(x)$$
+The solutions state space S is formed as a /rooted tree/.
+The key to this algorithm is the efficient estimation of lower or upper bound.
+The problem is NP-hard.
+
+** notation
+f(x) is called /objective function/.
+a function g(x) is the lower bound, defines on S with the property that g(x) \le f(x) for all x \in S.
+
+** Algorithm
+1. use a heuristic, find a solution x_h. Store its value B \leftarrow f(x_h). B is the global best solution so far. If no solution found, init B to \infty
+2. init a queue with the root ??
+3. loop until the queue is empty
+  1. take a node N off the queue
+  2. if N represents a single candidate solution x (N is a leaf?) and f(x) < B, then B = f(x).
+  3. Else, branch on N to produce new nodes $N_1,...,N_i$. For each new node:
+    1. if g(N_i) > B, do nothing.
+    2. else store N_i onto the queue
+
+** natual langauge description
+The problem is to minimize (or maximize) the objective function f(x) over $x_1,..,x_n$.
+The feasible solution search state space is a tree.
+The initial best known value is B=f(x_h) or \infty if no solution x_h found by heuristic.
+From the root, everytime branch into two or more branches.
+For those branches, compute the lower bound.
+If the lower bound is larger than current best, then do not need to go into these branch.
+Thus we can eliminate the computation of this branch.
+
+The assumption is the lower (or upper) bound is efficient to compute.
+Every time branch may or may not overlap, as long as the optimal solution is inside at least one branch.
+
+* A* algorithm
+** Problem
+from an initial node, find the least-cost path to one /goal node/ (out of one or more possible goals).
+
+** noatation
+$$f(n) = g(n) + h(n)$$
+
+where n is current node.
+f(n) is the cost function.
+g(n) is the known cost of getting from initial node to n.
+h(n) is a heuristic esitimate of the cost to get from n to any goal node.
+h(n) must be /admissible/, i.e. it never overestimates the actual cost, i.e. it is always less then or equal to the actual cost.
+
+** algorithm
+from initial node, it maintains a priority queue of nodes.
+The lower $f(n)$, the higher its priority.
+At each step, the node with lowest $f(x)$ is removed, and $f$ and $g$ of its neighbors are updated.
+Add these neighbors into the queue.
+The algorithm terminates when one goal node has a lower $f$ value than any node in the queue.
+
+** natual language description
+from the start point, try all neighbors, and remember both the actual cost from the initial node,
+and the estimate from this node to one goal.
+Repeat trying neighbors until reach goal nodes.
+Stop when the goal nodes has the lowest cost function value.

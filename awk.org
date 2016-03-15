@@ -1,0 +1,43 @@
+#+TITLE: awk
+
+* usage
+in shell:
+
+#+begin_src shell
+awk 'pattern {action}'
+awk 'pattern {action}' input.txt
+awk -f script.awk input.txt
+#+end_src
+
+=pattern {action}=
+
+A missing { action } means print the line;
+a missing pattern always matches.
+Pattern-action statements are separated by newlines or semicolons.
+
+* patterns
+
+Patterns are arbitrary Boolean combinations (with =!= =||= =&&=)
+of regular expressions and relational expressions.
+
+A pattern may consist of two patterns separated by a comma;
+in this case, the action is performed for all lines from an occurrence of the first pattern though an occurrence of the second.
+
+special patterns: =BEGIN=, =END=.
+Cannot combine with other patterns.
+
+* actions
+
+An action is a sequence of statements.
+Statements are terminated by semicolons, newlines or right braces
+
+* variable
+awk is line-based, and the content of lines are splited into fields =$1=, =$2=, ... by the separator =FS=.
+=$0= refers to the entire line.
+
+* examples
+An example is better than a thousand of words.
+
+#+begin_src shell
+awk 'NR==10 {print}' input.txt # output 10th line, or empty is less than 10 lines
+#+end_src

@@ -1,0 +1,78 @@
+#+TITLE: Search Algorithm
+
+* Meta heuristic
+In computer science and mathematical optimization,
+a metaheuristic is a higher-level procedure or heuristic designed to
+find, generate, or select a heuristic (partial search algorithm)
+that may provide a sufficiently good solution to an optimization problem,
+especially with incomplete or imperfect information or limited computation capacity.
+
+
+wikipedia link: https://en.wikipedia.org/wiki/Metaheuristic
+
+a big book: file:~/smartscholar/Metaheuristics.pdf
+another big paper: file:~/smartscholar/paper-ma-towards-memetic-algorithms.pdf
+
+[[cite:moscato1989evolution]]
+
+** local search-based metaheuristic (single solution)
+Meta heuristics are proposed to help local search.
+
+*** simulated annealing(SA)
+Accepting worse solutions is a fundamental property of metaheuristics
+because it allows for a more extensive search for the optimal solution.
+
+This is essentially the key for SA: have probability to accept a move to worse state.
+A move from state s0 to s1 means go to that solution, and then do iteration.
+Stop until the energy is small enough or total budget runs out.
+The goal is to make the energy of the system smallest.
+
+P(e,e',T) is /acceptance probability function/, which decides whether to move from e to e'.
+Well, if e'<e, then it should be 1, so that always goes to smaller state if found.
+But this is not required.
+
+*** tabu search(TS)
+/Tabu/ is a word from Polynesia,
+indicating things that cannot be touched because they are sacred.
+
+At each step worsening moves can be accepted if no improving move is available.
+Prohibitions (henceforth the term tabu) are introduced
+to discourage the search from coming back to previously-visited solutions.
+*** iterated local search(ILS)
+Tackle the same problem: local search stuck in local optimal.
+
+Iterating calls to the local search routine,
+each time starting from a different initial configuration.
+Produce better and better starting points for local search.
+
+*** guided local search(GLS)
+Guided Local Search builds up penalties during a search.
+It uses penalties to help local search algorithms escape from local minima and plateaus.
+When the given local search algorithm settles in a local optimum,
+GLS modifies the objective function using a specific scheme (explained below).
+Then the local search will operate using an augmented objective function,
+which is designed to bring the search out of the local optimum.
+The key is in the way that the objective function is modified.
+
+*** variable neighborhood search(VNS)
+firstly, descent to find a local optimum and finally,
+a perturbation phase to get out of the corresponding valley.
+
+** population-based metaheuristics
+*** ant colony optimization
+*** evolutionary computation
+*** particle swarm optimization(PSO)
+*** genetic algorithms
+
+
+* global search
+* local search
+** hill climbing
+Find an initial solution, which is much worse than optimal one.
+Attempts to find a better solution by incrementally
+changing a /single/ element of the solution.
+Repeat until no better can be found.
+
+** gradient descent
+
+#+BIBLIOGRAPHY: search-alg plain

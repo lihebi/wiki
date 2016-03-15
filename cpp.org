@@ -1,0 +1,1498 @@
+#+TITLE: C++
+* Class
+** Constructor
+
+*** auto-gen by compiler
+
+ If you don't write, the compiler will generate:
+
+  * a copy constructor
+  * a copy assignment operator
+  * a destructor
+  * a default constructor(if you defined no constructors at all)
+
+ #+begin_src C
+ class A {
+ public:
+   A() {...} // default
+   A(const A& rhs) {...} // copy
+   ~A() {...} // destructor
+   A& operator=(const A& rhs) {...} // copy assignment operator
+ };
+ #+end_src
+
+ But they are generated only if they are needed.
+ For the ~operator=~, compiler will generate it iff:
+  * resulting code is legal
+  * reasonable to make sense
+ e.g.
+ #+begin_src C
+ class A {
+ private:
+   std::string &name;
+   const int num;
+ };
+ #+end_src
+ compiler will reject to generate ~operator=~ because when doing assignment,
+ should the reference be modified?
+ _C++ doesn't allow make a reference refer to another object._
+ Should the referred string be modified? It will affect other objects!
+ It is not legal to modify a const member either.
+ If you want to support copy assignment in the class containing reference or const,
+ you must define it yourself.
+
+*** explicitly disallow the auto-gen
+
+/link time solution/:
+ Declare the copy constructor and the copy assignment operator private.
+ So that compiler will not generate, outside can not see them.
+ However, member and friend functions can still call them.
+
+/compile time solution/:
+Inheritate from =Uncopyable= class who declared but didn't define the copy constructor and assginment operator.
+This works because the compiler will try to
+generate copy constructor and copy assignment when anybody tries to copy it,
+but will of course fail.
+It will give error says no instance of copy instructor implemented,
+in other word you can't pass compilation.
+ #+begin_src C++
+ class Uncopyable {
+ protected:
+   Uncopyable() {}
+   ~Uncopyable() {}
+ private:
+   Uncopyable(const Uncopyable&);
+   Uncopyable& operator=(const Uncopyable&);
+ };
+ class A : private Uncopyable {}
+ #+end_src
+
+*** Copy Constructor & Copy Assignment Operator
+
+ #+begin_src C++
+   class A {
+   public:
+     A();
+     A(const A& rhs); // copy constructor
+     A& operator=(const A& rhs) { // copy assignment operator
+       return *this; // should return *this
+     }
+   };
+
+   A a1; // default constructor
+   A a2(a1); // copy constructor
+   a1 = a2; // copy assignment operator
+   A a3 = a2; // copy constructor
+ #+end_src
+
+ if new object is being defined, a constructor has to be called.
+ That's why ~a3~ is not calling a copy assignment operator.
+
+ copy constructor matters because it defines how an object is **passed by value**.
+ In particular, pass-by-value means "call the copy constructor".
+
+*** Copy-and-swap Idiom
+To create an exception safe implementation of overloaded assignment operator.
+The copy assignment opeartor implementation can cause two kinds of unsafety:
+ * self-assignment unsafe
+ * exception unsafe
+
+Self-assignment should be properly handled.
+It can appear often, e.g.
+~a[i] = a[j];~ in the case i=j,
+~*px = *py;~.
+
+The following code explain the two kinds of unsafe.
+ * self-assignment unsafe:
+  ~rhs.pa~ is already deleted if ~rhs == this~
+ * exception unsafe:
+  if exception happens during new, pa will contains a pointer to a deleted A.
+
+
+  #+begin_src C++
+    class A {};
+    class B {
+     private:
+      A * pa;
+    };
+    B& B::operator=(const B& rhs) {
+      if (this == &rhs) return * this; // get rid of self-assignment unsafe
+      delete pa;
+      pa = new A(* rhs.pa);
+      return * this;
+    }
+  #+end_src
+
+According to https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Copy-and-swap, the copy and swap is:
+#+BEGIN_QUOTE
+Create a temporary and swap idiom acquires new resource before it forfeits its current resource.
+To acquire the new resource, it uses RAII idiom.
+If the acquisition of the new resource is successful, it exchanges the resources using the non-throwing swap idiom.
+Finally, the old resource is released as a side effect of using RAII in the first step.
+#+END_QUOTE
+The code follows:
+  #+begin_src C++
+    class B {
+      // use std::swap?
+      void swap(B& rhs) {
+        std::swap(xx,rhs.xx);
+      }
+    };
+    // v1: explicitly create new. BAD
+    B& B::operator=(const B& rhs) {
+      B tmp(rhs);
+      swap(tmp);
+      return * this;
+    }
+    // v2: use pass-by-value as temporary value. GOOD.
+    // better optimization
+    B& B::operator=(B rhs) {
+      swap(rhs);
+      return * this;
+    }
+  #+end_src
+
+*** Move Constructor & Move Assignment Opeartor
+Move constructor enables you to implement move semantics, which can significantly improve the performance of your applications.
+Move semantics enables you to write code that transfers resources (such as dynamically allocated memory) from one object to another.
+Move semantics works because it enables resources to be transferred from temporary objects that cannot be referenced elsewhere in the program.
+
+To implement move semantics, you typically provide a move constructor, and optionally a move assignment operator (operator=), to your class.
+Copy and assignment operations whose sources are rvalues then automatically take advantage of move semantics.
+Reference: [[https://msdn.microsoft.com/en-us/library/dd293665.aspx][Move Constructors and Move Assignment Operators]] from Microsoft.
+
+Move Constructor Example:
+#+BEGIN_SRC C++
+  // Rvalue Reference
+  MemoryBlock(MemoryBlock&& other) : _data(nullptr) , _length(0) {
+    // copy
+    _data = other._data;
+    _length = other._length;
+    // set source object fields to default, to avoid multiple free
+    other._data = nullptr;
+    other._length = 0;
+  }
+#+END_SRC
+
+Move Assignment Operator Example:
+#+BEGIN_SRC C++
+  MemoryBlock& operator=(MemoryBlock&& other) {
+    // avoid self-assignment
+    if (this != &other) {
+      // Free the existing resource.
+      delete[] _data;
+      // Copy the data pointer and its length from the 
+      // source object.
+      _data = other._data;
+      _length = other._length;
+      // Release the data pointer from the source object so that
+      // the destructor does not free the memory multiple times.
+      other._data = nullptr;
+      other._length = 0;
+    }
+    return *this;
+  }
+#+END_SRC
+
+*** explicit constructor
+ The explicit prevents the class from being used to perform implicit type conversions,
+ though they may still be used for explicit type conversions.
+ Always declare it explicit unless you have a good reason
+ for allowing a constructor to be used for implicit type conversions.
+
+ #+begin_src C++
+ class A {
+ public:
+   explicit A(int x=0, bool b=true);
+   explicit A(char c); // non-default can also have explicit
+ };
+ void func(A a);
+
+ A a1;
+ func(a1); // ok
+ A a2(20); // ok
+ func(20); // error, cannot convert int to A implicitly
+ func(A(20)); // use B constructor to explicit convert
+ #+end_src
+
+*** initialization
+**** Default Constructor
+ One that can be called /without any arguments/ is called /default constructor/.
+ Compilers will automatically call default constructors
+ for data members of user-defined types
+ when those data members are not on initialization list.
+**** initialization
+Data members that are const or references must be initialized; they cant be assigned.
+Do /NOT/ call constructors within each other.
+If init is too many, move them into a private function,
+and call the function in all constructors.
+
+The initialization orders are defined by:
+Base classes are initialized before derived classes;
+within a class, data members are initialized in the order in which they declared,
+not the position in initialization list.
+
+** virtual
+*** Bottom Line
+  * polymorphic base classes should declare virtual destructors.
+   If a class has virtual functions, it should have virtual destructor
+  * Classes should not have virtual destructor if it is not designed to be
+   - base class, or
+   - used polymorphically
+*** Description
+ ~Factory Function~:
+ a function that returns a base class pointer
+ to a newly-created derived class object.
+
+ #+begin_src C++
+ class TimeKeeper {
+ public:
+   TimeKeeper();
+   virtual ~TimeKeeper(); // must have the virtual, or disaster
+ };
+ class AtomicClock : public TimeKeeper {};
+ class WaterClock : public TimeKeeper {};
+ class WristWatch : public TimeKeeper {};
+
+ TimeKeeper *getTimeKeeper(); // can return any one
+
+ TimeKeeper *ptk = getTimeKeeper();
+ // ...
+ delete ptk;
+ #+end_src
+
+ If no virtual, the ~delete ptk~ will call the destructor of TimeKeeper,
+ so the AtomicClock part of the struct will be never destroyed.
+
+ But do not declare every destructor virtual:
+ If a class does not contain virtual functions,
+ it is not meant to be used as a base class.
+ DO NOT use virtual destructor for it. Because:
+
+  * virtual requires the objects carry information that can be used at runtime to determine which virtual function to invoke. It will increase the size.
+  * it is not the same as the counterpart in C, not portable.
+
+ Never call virtual functions during construction or destruction.
+ Because during base construction,
+ virtual functions never go down into the derived class.
+
+*** Virtual vs. Non-Virtual
+
+ Without ~virtual~ you get **early binding**. Which implementation of the method is used gets decided at **compile time based on the type of the pointer that you call through**.
+
+ With ~virtual~ you get **late binding**. Which implementation of the method is used gets decided at **run time based on the type of the pointed-to object** - what it was originally constructed as. This is not necessarily what you'd think based on the type of the pointer that points to that object.
+
+ #+begin_src C++
+ class Base
+ {
+ public:
+   void Method1 ()  {  std::cout << "Base::Method1" << std::endl;  }
+   virtual void Method2 ()  {  std::cout << "Base::Method2" << std::endl;  }
+ };
+
+ class Derived : public Base
+ {
+ public:
+   void Method1 ()  {  std::cout << "Derived::Method1" << std::endl;  }
+   void Method2 ()  {  std::cout << "Derived::Method2" << std::endl;  }
+ };
+
+ Base* obj = new Derived ();
+ //  Note - constructed as Derived, but pointer stored as Base*
+
+ obj->Method1 ();  //  Prints "Base::Method1"
+ obj->Method2 ();  //  Prints "Derived::Method2"
+ #+end_src
+
+*** Virtual vs. Pure Virtual
+
+  * virtual function ~can~ be overriden
+  * the pure virtual ~must~ be implemented in non-abstract class
+
+** Inheritance
+
+*** public inheritance
+ "is-a" relation.
+
+ Private inheritance means "is-implemented-in-terms-of".
+ Private inheritance means nothing during software design,
+ only during software implementation.
+ Means Derived objects are implemented in terms of Base objects, nothing more.
+
+ Composition means either "has-a" or "is-implementated-in-terms-of".
+
+*** hide method
+
+ #+begin_src C++
+ class Base {
+ private:
+   int x;
+ public:
+   virtual void mf1() = 0;
+   virtual void mf1(int);
+
+   virtual void mf2();
+
+   void mf3();
+   void mf3(double);
+ };
+ class Derived : public Base {
+ public:
+   // using Base::mf1; // making all things in Base named mf1 and mf3
+   // using Base::mf3; // visible and public in Derived's scope
+   virtual void mf2() {  // forwarding function
+     Base::mf1();
+   }
+   virtual void mf1();
+   void mf3();
+   void mf4();
+ };
+ #+end_src
+
+ the ~mf3~ in Derived will hide both of the ~mf3~ in Base.
+ The rationale behind this behavior is that
+ it prevents you from accidentally inheriting overloads from distant base classes
+ when you create a new derived class in a library or application framework.
+
+*** make it visible
+  * ~using~ declarations
+  * forwarding functions
+
+** Overload
+ Same name but different signature.
+ #+begin_src C++
+ void print(int i) {
+   cout << "Printing int: " << i << endl;
+ }
+ void print(double  f) {
+   cout << "Printing float: " << f << endl;
+ }
+ void print(char* c) {
+   cout << "Printing character: " << c << endl;
+ }
+ #+end_src
+
+** Polymorphism
+ It is the ability to redefine methods for derived classes.
+
+ #+begin_src C++
+ class Polygon {
+ protected:
+   int width, height;
+ public:
+   void set_values (int a, int b)
+   { width=a; height=b; }
+ };
+ class Rectangle: public Polygon {
+ public:
+   int area()
+   { return width*height; }
+ };
+ class Triangle: public Polygon {
+ public:
+   int area()
+   { return width*height/2; }
+ };
+ #+end_src
+
+*** Static Polymorphism
+ The /Curiously Recurring Template Pattern (CRTP)/ is an idiom in C++ in which a class X derives from a class template instantiation using X itself as template argument[fn:1].
+It is also known as /F-bound polymorphism/\cite{canning1989f}.
+ One of the use case of CRTP is static polymorphism.
+ Generally speaking, I have a base class and some derived class,
+ and I want to have a ~~static virtual'' function that is implemented differently in different subclasses.
+ I think such ~~static virtual function'' does not exist.
+ But we can simulate it.
+
+ #+begin_src C++
+   template <class T> 
+   struct Base {
+     void interface() {
+       // ...
+       static_cast<T*>(this)->implementation();
+       // ...
+     } 
+     static void static_func() {
+       // ...
+       T::static_sub_func();
+       // ...
+     }
+   };
+
+   struct Derived : Base<Derived> {
+     void implementation();
+     static void static_sub_func();
+   };
+ #+end_src
+
+
+[fn:1] https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
+
+** non-member function
+
+ #+begin_src C++
+ void clearBrowser(WebBrowser& wb) {
+   wb.clearCache();
+   wb.clearHistory();
+   wb.removeCookies();
+ }
+ class WebBrowser {
+ public:
+   void clearCache();
+   void clearHistory();
+   void removeCookies();
+   void clearEverything();
+ };
+ #+end_src
+
+ Prefer use the non-member function,
+ because then less function can have access to private data,
+ thus better encapsulate.
+
+*** A common pattern
+
+ Putting all convenience functions in multiple header files,
+ but one namespace.
+
+ ~webbrowser.h~
+
+ #+begin_src C++
+ namespace WebBrowserStuff {
+   class WebBrowser {...};
+   void clearBrowser(WebBrowser& wb);
+   // ...
+ }
+ #+end_src
+
+ ~webbrowserbookmarks.h~
+
+ #+begin_src C++
+ namespace WebBrowserStuff {
+   // bookmark related functions
+ }
+ #+end_src
+
+** friendship
+
+*** Friend function
+ private and protected member cannot be accessed outside the class, except friends.
+
+ #+begin_src C++
+ class A {
+ public:
+   friend A func(A a); // declare friend
+ private:
+   int m;
+ };
+ A func(A& a) {
+   A res;
+   res.m = a.m; // access both param and return value
+   return res;
+ }
+ #+end_src
+
+*** Friend Class
+ a class whose member functions can access private and protected member of another class.
+
+ #+begin_src C++
+ class Rectangle {
+   int width, height;
+ public:
+   int area () {}
+   void convert (Square a) {
+     width = a.side; // access side in Square
+     height = a.side;
+   }
+ };
+
+ class Square {
+   friend class Rectangle; // friend declaration
+ private:
+   int side;
+ public:
+   Square (int a) : side(a) {}
+ };
+ #+end_src
+
+** Nested Class
+
+#+BEGIN_SRC C
+class enclose {
+    class nested1; // forward declaration
+    class nested2; // forward declaration
+    class nested1 {}; // definition of nested class
+};
+class enclose::nested2 { }; // definition of nested class
+#+END_SRC
+
+ * The nested class can access private and protected member of the enclosing class, but have separate ~this~ pointer.
+ * The friend of the nested class cannot access private and protected member of the enclosing class.
+
+
+* Concept
+** reference vs. value
+*** Pass-by Problems
+ Pass-by-value has two problems.
+ Apart from copy problem, there's also a slicing problem,
+ i.e. when a derived class object is passed by value as a base class object,
+ the base class constructor is called,
+ thus the part of the subclass outside the base class will be sliced away.
+
+ Also do /NOT/ just pass by value because the struct seems to be small.
+  * it can be large, by inheritance
+  * the copy constructor may be costly: a object contain little more than a pointer, but the constructor will copy everything they point to.
+  * some compiler treat built-in type and structure differently.
+   Some will refuse to put a struct that only contains a double into register,
+   but it will surely put a double into register.
+ So some situation pass by value is more efficient though:
+  * built-in type(e.g. int)
+  * iterators and function objects in STL, they are designed to pass by value
+
+ On the other hand, reference is often implemented as pointer.
+ However, there're situations where you have no way but to return a value.
+ Return a stack local variable as a reference does not make sense becasue the variable will not exist outside the function.
+ When you return a heap variable, be careful. E.g. in a ~operator*~ method, return a heap variable is a disaster.
+ ~w = x * y * z;~ the result of ~x*y~ will never be free-d.
+*** rvalue and lvalue
+ #+begin_src text
+     ______ ______
+   /       X      \
+  /       / \      \
+ |   l   | x |  pr  |
+  \       \ /      /
+   \______ X______/
+       gl    r
+ #+end_src
+**** lvalue
+ An /lvalue/ is an expression that identifies a non-temporary object or a non-member function.
+  * The name of a variable or function in scope
+  * Function call or overloaded operator expression if the function's or overloaded operator's return type is an lvalue reference
+  * string literal
+ A /glvalue/ (~~generalized'' lvalue) is an lvalue or an xvalue.
+**** rvalue
+ An /rvalue/ is an expression that is either a prvalue or an xvalue.
+ A /prvalue/ (~~pure'' rvalue) is an rvalue that is not an xvalue.
+***** prvalue
+ A prvalue ("pure" rvalue) is an expression that identifies a temporary object (or a subobject thereof)
+ or is a value not associated with any object.
+  * literal(except string literal): 42, true
+  * the result of calling a function whose return type is not a reference is a prvalue.
+***** xvalue
+ An ~xvalue~ (an “eXpiring” value) also refers to an object, usually near the end of its lifetime (so that its resources may be moved, for example).
+ An xvalue is the result of certain kinds of expressions involving rvalue references.
+ E.g. the result of calling a function whose return type is an rvalue reference is an xvalue.
+
+** rvalue reference
+ C++11 introduce /ravlue reference/ to enable /move semantic/.
+ std::vector<T> is essentially a C-style array and the size.
+ Say a std::vector<T> temporary is created or returned from a function.
+ To accept the return value, a new vector should be created, and all the internal C-array will be copied.
+ When using a /move constructor/,
+ it takes the rvalue reference of the temporary vector (~vector<>&&~),
+ and copy the /pointer/ to the internal C-style array /out of/ the rvalue into the new vector,
+ than set the pointer inside the temporary vector to NULL.
+ Since the temporary vector is about to expire, and no one would use it any more,
+ it is safe.
+ And since the pointer is NULL, no space will be freed upon deconstructing the temporay vector.
+
+Rvalue Reference is important because it supports the implementation of /move constructor/ and /perfect forwarding/.
+We discuss perfect forwarding here.
+
+*** Perfect Forwarding
+Perfect forwarding reduces the need for overloaded functions and helps avoid the forwarding problem.
+The forwarding problem can occur when you write a generic function that takes references as its parameters and it passes (or forwards) these parameters to another function.
+For example, if the generic function takes a parameter of type const T&, then the called function cannot modify the value of that parameter.
+If the generic function takes a parameter of type T&, then the function cannot be called by using an rvalue (such as a temporary object or integer literal).
+
+Ordinarily, to solve this problem, you must provide overloaded versions of the generic function that take both T& and const T& for each of its parameters.
+As a result, the number of overloaded functions increases exponentially with the number of parameters.
+(For instance the following code, to write a generic ~factory~ function,
+we need to try all combination of ~const T&~ and ~T&~ for every type pair of ~W,X,Y,Z~).
+Rvalue references enable you to write one version of a function that accepts arbitrary arguments
+and forwards them to another function as if the other function had been called directly.
+
+For example, following code
+#+BEGIN_SRC C++
+  struct W {
+    W(int&, int&) {}
+  };
+  struct X {
+    X(const int&, int&) {}
+  };
+  struct Y {
+    Y(int&, const int&) {}
+  };
+  struct Z {
+    Z(const int&, const int&) {}
+  };
+
+  // Version 1
+  template <typename T, typename A1, typename A2>
+  T* factory(A1& a1, A2& a2) {
+    return new T(a1, a2);
+  }
+  int a = 4, b = 5;
+  W* pw = factory<W>(a, b);
+  Z* pz = factory<Z>(2, 2); // error
+  // Version 2: using R reference
+  template <typename T, typename A1, typename A2>
+  T* factory(A1&& a1, A2&& a2) {
+    return new T(std::forward<A1>(a1), std::forward<A2>(a2));
+  }
+  Z* pz = factory<Z>(2, 2); // correct
+#+END_SRC
+std::forward function forwards the parameters of the factory function to the constructor of the template class.
+
+*** Other properties
+ * The compiler treats a named rvalue reference as an lvalue and an unnamed rvalue reference as an rvalue.
+ * You can cast an lvalue to an rvalue reference. ~static_cast<MemoryBlock&&>(block)~
+For detail, refer to [[https://msdn.microsoft.com/en-us/library/dd293668.aspx][Rvalue Reference]] by Microsoft.
+
+** lambda
+
+ Constructs a closure: an unnamed function object capable of capturing variables in scope.
+
+ reference:
+
+  * http://en.cppreference.com/w/cpp/language/lambda
+
+*** syntax
+
+  * Full declaration:
+
+ #+begin_src C++
+ [ capture-list ] ( params ) mutable(optional) exception attribute -> ret { body }
+ #+end_src
+
+  * Declaration of a const lambda: the objects captured by copy cannot be modified.
+
+ #+begin_src C++
+ [ capture-list ] ( params ) -> ret { body }
+ #+end_src
+
+ for example
+
+ #+begin_src C++
+ []()->int { return 2; }
+ #+end_src
+
+  * Omitted trailing-return-type
+
+ #+begin_src C++
+ [ capture-list ] ( params ) { body }
+ #+end_src
+
+ if the ~body~ contains nothing but a single return statement, the return type is that expression's type. Otherwise return type is ~void~.
+
+  * Omitted parameter list
+
+ take no parameters.
+
+ #+begin_src C++
+ [ capture-list ] { body }
+ #+end_src
+
+*** Explanations
+
+  * ~mutable~: allows body to modify the parameters captured by copy, and to call their non-const member functions
+  * ~exception~: provides the exception specification or the noexcept clause for operator() of the closure type
+  * ~attribute~: provides the attribute specification for operator() of the closure type
+  * ~capture-list~: a comma-separated list of zero or more captures
+   * ~[a,&b]~: where a is captured by value and b is captured by reference.
+   * ~[this]~: captures the this pointer by value
+   * ~[&]~: captures all automatic variables odr-used in the body of the lambda by reference
+   * ~[=]~: captures all automatic variables odr-used in the body of the lambda by value
+   * ~[]~: captures nothing
+
+** Smart Pointer
+
+ #+begin_src C++
+ std::unique_ptr<Type> ptr; // ensure that the pointer is deleted after going out of scope.
+ #+end_src
+
+
+* Library
+** Stream
+*** file stream
+
+ #+begin_src C++
+ #include <fstream>
+ ofstream myfile;
+ myfile.open("a.txt");
+ if (myfile.is_open()) {
+   myfile << "...";
+   myfile.close();
+ }
+ // after close, it can used to open another file
+ myfile.open("b.txt");
+ myfile.close();
+ #+end_src
+
+**** When to flush
+
+  * ~file.close()~
+  * buffer is full
+  * ~flush~, ~endl~ used as manipulators
+  * ~file.sync()~
+
+**** mode
+
+ open flag:
+
+ | flag        | desription                                                                        |
+ |:------------|:----------------------------------------------------------------------------------|
+ | ios::in     | input                                                                             |
+ | ios::out    | output                                                                            |
+ | ios::binary | binary mode                                                                       |
+ | ios::ate    | initial position to the end of file                                               |
+ | ios::app    | all **output** operations are performed at the end of the file, append            |
+ | ios::trunc  | if the file is opened for output and already exists, previous content is replaced |
+
+ Default:
+
+ | class    | default mode       | New flag action |
+ |:---------|:-------------------|:----------------|
+ | ofstream | ios::out           | add             |
+ | ifstream | ios::in            | add             |
+ | fstream  | ios::in 1 ios::out | overwrite       |
+
+ binary mode cannot use >>, <<, getline, but use
+
+ #+begin_src C++
+ write(memory_block, size);
+ read(memory_block, size);
+ #+end_src
+
+**** seek
+
+  * tellg(): get _get position_
+  * tellp(): get _put position_
+  * seekg(position): count from the beginning
+  * seekp(position)
+  * seekg(offset, direction);
+  * seekp(offset, direction);
+
+ | direction | description |
+ |:----------|:------------|
+ | ios::beg  | beginning   |
+ | ios::cur  | current     |
+ | ios::end  | end         |
+
+*** iostream
+
+ #+begin_src C++
+ #include <iostream>
+ int price;
+ cin>>price;
+ #+end_src
+
+ If the input is not integer, the program will **continue** without setting price's value.
+ Then if a is used afterwards, undefined behavior.
+
+ To add a validation process, we need to use stringstream:
+
+ #+begin_src C++
+ #include <sstream>
+ string mystr;
+ getline(cin, mystr);
+ stringstream ss = stringstream(mystr);
+ // validate ss
+ int price;
+ ss >> price;
+ #+end_src
+
+ *Always use getline instead of cin directly*
+
+ #+begin_src C++
+ while(getline(cin, line)) {;}
+ while(getline(fs, line)) {;}
+ #+end_src
+
+** String
+*** Constructor
+
+ #+begin_src C++
+ // default
+ string();
+ // copy
+ string (const string& str);
+ // substring
+ string (const string& str, size_t pos, size_t len = npos);
+ // from c-string
+ string (const char* s);
+ // from sequence
+ string (const char* s, size_t n);
+ // fill
+ string (size_t n, char c);
+ // range
+ template <class InputIterator>
+ string  (InputIterator first, InputIterator last);
+ #+end_src
+
+*** operator=
+
+ #+begin_src C++
+ // string
+ string& operator= (const string& str);
+ // c-string
+ string& operator= (const char* s);
+ // character
+ string& operator= (char c);
+ #+end_src
+
+*** handy routine
+
+
+**** trim a string
+
+ #+begin_src C++
+ #include <algorithm>
+ #include <functional>
+ #include <cctype>
+ #include <locale>
+
+ // trim from start
+ static inline std::string &ltrim(std::string &s) {
+   s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+   return s;
+ }
+
+ // trim from end
+ static inline std::string &rtrim(std::string &s) {
+   s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+   return s;
+ }
+
+ // trim from both ends
+ static inline std::string &trim(std::string &s) {
+   return ltrim(rtrim(s));
+ }
+ #+end_src
+
+**** split a string
+
+ #+begin_src C++
+ string s("Somewhere down the road");
+ istringstream iss(s);
+
+ do
+ {
+   string sub;
+   iss >> sub;
+   cout << "Substring: " << sub << endl;
+ } while (iss);
+ #+end_src
+
+ #+begin_src C++
+ std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+   std::stringstream ss(s);
+   std::string item;
+   while (std::getline(ss, item, delim)) {
+     elems.push_back(item);
+   }
+   return elems;
+ }
+
+
+ std::vector<std::string> split(const std::string &s, char delim) {
+   std::vector<std::string> elems;
+   split(s, delim, elems);
+   return elems;
+ }
+ #+end_src
+
+**** better split string
+ #+begin_src C++
+ // to std::cout
+ copy(
+   istream_iterator<string>(iss),
+   istream_iterator<string>(),
+   ostream_iterator<string>(cout, "\n")
+ );
+ // to a vector
+ vector<string> tokens;
+ copy(
+   istream_iterator<string>(iss),
+   istream_iterator<string>(),
+   back_inserter(tokens)
+ );
+ // construct the vector directly
+ vector<string> tokens{
+   istream_iterator<string>{iss},
+   istream_iterator<string>{}
+ };
+ #+end_src
+
+
+*** member function
+**** iterator
+  * begin()
+  * end()
+
+**** capacity
+  * size(): length of string
+  * length(): length of string
+  * empty()
+  * clear()
+
+**** access
+  * operator[]
+  * at()
+  * back(): A reference to the last character in the string
+**** mofifier
+  * operator+=
+
+ #+begin_src C++
+ // string (1)
+ string& operator+= (const string& str);
+ // c-string
+ string& operator+= (const char* s);
+ // character
+ string& operator+= (char c);
+ #+end_src
+
+  * append
+
+ #+begin_src C++
+ // string
+ string& append (const string& str);
+ // substring
+ string& append (const string& str, size_t subpos, size_t sublen);
+ // c-string
+ string& append (const char* s);
+ // buffer
+ string& append (const char* s, size_t n);
+ // fill
+ string& append (size_t n, char c);
+ // range
+ template <class InputIterator>
+ string& append (InputIterator first, InputIterator last);
+ #+end_src
+
+  * push_back(char): ~void push_back (char c);~
+
+  * insert(): before the character indicated by pos (or p)
+
+ #+begin_src C++
+ // string
+ string& insert (size_t pos, const string& str);
+ // substring
+ string& insert (size_t pos, const string& str, size_t subpos, size_t sublen);
+ // c-string
+ string& insert (size_t pos, const char* s);
+ // buffer
+ string& insert (size_t pos, const char* s, size_t n);
+ // fill
+ string& insert (size_t pos, size_t n, char c);
+ void insert (iterator p, size_t n, char c);
+ // single character
+ iterator insert (iterator p, char c);
+ // range
+ template <class InputIterator>
+ void insert (iterator p, InputIterator first, InputIterator last);
+ #+end_src
+
+  * erase(): erase part of the string
+
+ #+begin_src C++
+ // sequence
+ string& erase (size_t pos = 0, size_t len = npos);
+ // character: Erases the character pointed by p
+ iterator erase (iterator p);
+ // range: [first,last)
+ iterator erase (iterator first, iterator last);
+ #+end_src
+
+  * replace()
+
+ #+begin_src C++
+ // string
+ string& replace (size_t pos,  size_t len,  const string& str);
+ string& replace (iterator i1, iterator i2, const string& str);
+ // substring
+ string& replace (
+   size_t pos,  size_t len,  const string& str,
+   size_t subpos, size_t sublen
+ );
+ // c-string
+ string& replace (size_t pos,  size_t len,  const char* s);
+ string& replace (iterator i1, iterator i2, const char* s);
+ // buffer
+ string& replace (size_t pos,  size_t len,  const char* s, size_t n);
+ string& replace (iterator i1, iterator i2, const char* s, size_t n);
+ // fill
+ string& replace (size_t pos,  size_t len,  size_t n, char c);
+ string& replace (iterator i1, iterator i2, size_t n, char c);
+ // range
+ template <class InputIterator>
+ string& replace (iterator i1, iterator i2,
+   InputIterator first, InputIterator last
+ );
+ #+end_src
+
+**** operation
+  * c_str(): A program **shall not alter** any of the characters in this sequence.
+  * copy(): Copies a substring of the current value of the string object
+ into the array pointed by s.
+ **does not append null-terminator**
+
+ #+begin_src C++
+ size_t copy (char* s, size_t len, size_t pos = 0) const;
+ #+end_src
+
+  * find(): the first occurrence of the sequence specified after pos
+
+ #+begin_src C++
+ // string
+ size_t find (const string& str, size_t pos = 0) const;
+ // c-string
+ size_t find (const char* s, size_t pos = 0) const;
+ // buffer
+ size_t find (const char* s, size_t pos, size_t n) const;
+ // character
+ size_t find (char c, size_t pos = 0) const;
+ #+end_src
+
+  * substr(): Returns a newly constructed string object
+ with its value initialized to a copy of a substring of this object
+
+ #+begin_src C++
+ string substr (size_t pos = 0, size_t len = npos) const;
+ #+end_src
+
+  * compare()
+
+ #+begin_src C++
+ // string
+ int compare (const string& str) const;
+ // substrings
+ int compare (size_t pos, size_t len, const string& str) const;
+ int compare (size_t pos, size_t len, const string& str,
+   size_t subpos, size_t sublen
+ ) const;
+ // c-string
+ int compare (const char* s) const;
+ int compare (size_t pos, size_t len, const char* s) const;
+ // buffer
+ int compare (size_t pos, size_t len, const char* s, size_t n) const;
+ #+end_src
+
+ return: 0, -, +
+
+  * npos: max value of size_t
+
+ #+begin_src C++
+ static const size_t npos = -1;
+ #+end_src
+
+*** non-member function
+**** operator +
+ #+begin_src C++
+ // string
+ string operator+ (const string& lhs, const string& rhs);
+ // c-string
+ string operator+ (const string& lhs, const char*   rhs);
+ string operator+ (const char*   lhs, const string& rhs);
+ // character
+ string operator+ (const string& lhs, char          rhs);
+ string operator+ (char          lhs, const string& rhs);
+ #+end_src
+
+**** rational
+ #+begin_src C++
+ bool operator== (const string& lhs, const string& rhs);
+ bool operator== (const char*   lhs, const string& rhs);
+ bool operator== (const string& lhs, const char*   rhs);
+ bool operator!= (const string& lhs, const string& rhs);
+ bool operator!= (const char*   lhs, const string& rhs);
+ bool operator!= (const string& lhs, const char*   rhs);
+ bool operator<  (const string& lhs, const string& rhs);
+ bool operator<  (const char*   lhs, const string& rhs);
+ bool operator<  (const string& lhs, const char*   rhs);
+ bool operator<= (const string& lhs, const string& rhs);
+ bool operator<= (const char*   lhs, const string& rhs);
+ bool operator<= (const string& lhs, const char*   rhs);
+ bool operator>  (const string& lhs, const string& rhs);
+ bool operator>  (const char*   lhs, const string& rhs);
+ bool operator>  (const string& lhs, const char*   rhs);
+ bool operator>= (const string& lhs, const string& rhs);
+ bool operator>= (const char*   lhs, const string& rhs);
+ bool operator>= (const string& lhs, const char*   rhs);
+ #+end_src
+
+**** >>
+ extract string from stream
+
+ #+begin_src C++
+ istream& operator>> (istream& is, string& str);
+ ostream& operator<< (ostream& os, const string& str);
+ #+end_src
+
+**** getline
+ get line from stream into string
+
+ #+begin_src C++
+ istream& getline (istream& is, string& str, char delim); // delim
+ istream& getline (istream& is, string& str); // new line
+ #+end_src
+
+
+* Other
+** Tips
+  * ~main~函数的返回类型必须是 ~int~
+  * 发出警告: ~-Wall~
+  * ~cin>>a~ 遇到 ~EOF~ 为假。遇到 ~<C-D>~ 为假。
+  * ~./a.out <infile >outfile~
+*** function object
+
+ Objects that act like functions.
+ Such objects come from classes that overload ~operator()~.
+
+*** auto
+ #+begin_src C++
+ auto g = bind(f, a, b, _2, c, _1);
+ #+end_src
+ 此后，调用 ~g(-1,-2)~ 等价于调用f，并把 ~_1~ 换成 ~-1~, ~_2~ 换成 ~-2~.
+
+*** at
+ 适用于 ~string~, ~vector~, ~deque~, ~array~
+
+ ~c.at(n)~ 返回下表为~n~的元素的引用。如果下标越界，可以抛出 ~out_of_range~ 异常。
+
+*** decltype
+
+ #+begin_src C++
+ struct A {
+   double x;
+ };
+ const A* a = new A{0};
+
+ decltype( a->x ) x3;       // type of x3 is double (declared type)
+ decltype((a->x)) x4 = x3;  // type of x4 is const double& (lvalue expression)
+
+ auto f = [](int a, int b) -> int {
+   return a*b;
+ };
+
+ decltype(f) f2 = f; // the type of a lambda function is unique and unnamed
+ #+end_src
+
+*** pair
+
+ std::make_pair
+
+ #+begin_src C++
+ template <class T1,class T2>
+ pair<T1,T2> make_pair (T1 x, T2 y)
+ {
+   return ( pair<T1,T2>(x,y) );
+ }
+ #+end_src
+
+ for example:
+
+ #+begin_src C++
+ std::make_pair("hello", "world");
+ #+end_src
+
+ equals to:
+
+ #+begin_src C++
+ std::pair<string, string>("hello", "world");
+ #+end_src
+
+
+
+** constant
+
+ Prefer ~const~, ~enum~, and ~inline~ to ~#define~.
+
+*** Rationale
+
+ 1. prefer the compiler to preprocessor,
+ the define may never be seen by compiler,
+ thus less meaningful debug information,
+ less optimization.
+ 2. ~#define~ don't respect scope.
+
+*** How to use
+
+**** const
+
+ #+begin_src C++
+ const char* const name = "Hebi Li";
+ const std::string name("Hebi Li");
+ class A {
+ private:
+   static const int num = 5;
+ };
+ #+end_src
+
+***** data and pointer const
+
+ #+begin_src C++
+ char name[] = "Hebi Li";
+ char *p = name; // non-const
+ const char *p = name; // const data
+ char* const p = name; // const pointer
+ // data     pointer
+ const char* const p = name; // double const
+ #+end_src
+***** const return value of operator
+
+ #+begin_src C++
+ const A A::operator*(const A& lhs, const A& rhs);
+ if (a*b = c) ... // ERROR assign c to a*b
+ #+end_src
+
+ #+begin_src C++
+ char& B::operator[](std::size_t position);
+ B b[];
+ b[0] = 'x'; // need & in return value, or this assignment can't work because assign to a char
+ #+end_src
+
+
+**** enums
+ Some compilers don't support to init value at definition,
+ because they insist they need to get the when compiling the class.
+ In this case, use _enum hack_:
+
+ #+begin_src C++
+ class A {
+ private:
+   enum {Num = 5}; // the enum hack: make Num a symbolic name for 5
+ };
+ #+end_src
+
+**** inlines
+ replace
+
+ #+begin_src C++
+ #define CALL_WITH_MAX(a,b) f((a) > (b) ? (a) : (b))
+ #+end_src
+
+ with
+
+ #+begin_src C++
+ template<typename T> inline void callWithMax(const T& a, const T& b) {
+   f(a>b?a:b);
+ }
+ #+end_src
+
+ Because you need worry about the parenthesize for define:
+
+ #+begin_src C++
+ int a=5,b=0;
+ CALL_WITH_MAX(++a, b); // a increased twice
+ CALL_WITH_MAX(++a, b+10); // a increased once
+ #+end_src
+
+** undefined behavior
+
+ #+begin_src C++
+ int *p = 0; // null pointer
+ std::cout << *p; // UNDEFINED dereferencing a null pointer
+ char name[] = "Carla";
+ char c = name[10]; // UNDEFINED invalid array index
+ #+end_src
+
+ They most come from pointer and address.
+
+
+** Best Practices
+*** compilation dependence
+
+ The change of a single class can lead to a large amount of file to recompile,
+ because:
+
+  * Inheritance
+  * Use another class inside a class
+
+**** Forward-declaration doesn't work.
+
+ #+begin_src C++
+ int main() {
+   int x;
+   Person p(params);
+ }
+ #+end_src
+
+ Forward-declaration cannot make it because this is a define,
+ compiler need to know the size.
+
+**** Why Java don't have such problem?
+ Java treat the above code as
+
+ #+begin_src C++
+ int main() {
+   int x;
+   Person * p;
+ }
+ #+end_src
+
+**** Solution 1: pimpl(Pointer to implementation)
+ In C++, we can of course play the
+ "hide the object implementation behind a pointer" game ourself.
+
+ The key: _replacement of dependencies on definitions with dependencies on declarations._
+
+  * avoid using objects when object references and pointers will do
+  * depend on class declarations instead of class definitions whenever you can
+
+ Note: you never need a class definition to declare a function using that class,
+ not even if the function passes or returns the class type by value:
+
+ #+begin_src C++
+ class Date;
+ Date today();
+ void clearAppointment(Date d);
+ #+end_src
+
+ Because if anybody calls those functions, Date's definition must have been seen prior to the call.
+ So it is not that nobody calls them, it's that not everybody calls them.
+
+  * provide separate header flies for declarations and definitions
+
+ Classes that employ the pimpl idiom are often called Handle Classes.
+
+***** Example:
+ #+begin_src C++
+ #include <string>
+ #include <memory>
+ class PersonImpl; // forward decl
+ class Date;
+ class Address;
+ class Person {
+ public:
+   Person(const std::string& name, const Date& birthday, const Address& addr);
+   std::string name() const;
+   std::string birthDate() const;
+   std::string address() const;
+ private:
+   std::shared_ptr<PersonImpl> pImpl;
+ };
+ #+end_src
+
+ #+begin_src C++
+ #include "Person.h"
+ // we need include PersonImpl.h in order to call the member function
+ // PersonImpl has exactly the same API
+ #include "PersonImpl.h"
+ Person::Person(const std::string& name, const Date& birthday, const Address& addr)
+ : pImpl(new PersonImpl(name, birthday, addr)) {}
+
+ std::string Person::name() const {
+   return pImpl->name();
+ }
+ #+end_src
+
+**** Solution 2: Interface Class
+ The implementation of non-virtual functions should be the same for all classes in a hierarchy,
+ so it makes sense to implement such functions as part of the Interface class.
+
+ #+begin_src C++
+ class Person {
+ public:
+   virtual ~Person();
+   virtual std::string name() const = 0;
+   virtual std::string birthDate() const = 0;
+   virtual std::string address() const = 0;
+
+   static std::shard_ptr<Person>
+   create(const std::string& name, const Date& birthday, const Address& addr);
+ };
+ std::shared_ptr<Person>
+ create(const std::string& name, const Date& birthday, const Addrss& addr) {
+   return std::shared_ptr<Person>(new RealPerson(name, birthday, addr));
+ }
+ #+end_src
+
+ #+begin_src C++
+ class RealPerson : public Person {
+ public:
+   RealPerson(const std::string& name, const Date& birthday, const Address& addr)
+   : theName(name), theBirthDate(birthday), theAddress(addr) {}
+   virtual ~RealPerson() {}
+
+   std::string name() const; // implement
+   std::string birthDate() const;
+   std::string address() const;
+ private:
+   std::string theName;
+   Date theBirthDate;
+   Address theAddress;
+ };
+ #+end_src
+
+ Clients of interface class need not recompile unless the Interface class's interface is modified.
+** coding standards
+
+ ref: https://isocpp.org/wiki/faq/coding-standards
+
+*** <xxx> and <xxx.h>
+
+ C++ standard library is guaranteed to have 18 standard headers from C.
+ Two type of names: ~<cxxx>~ and ~<xxx.h>~
+
+  * ~<cxxx>~: provide in the ~std~ namespace only
+  * ~<xxx.h>~: make them available in both ~std~ and global. **Deprecated**
+
+*** using
+
+  * using-directive: ~using namespace std;~. Do not use.
+  * using-declaration: ~using std::cout;~. Can be used just as a statement, e.g. in a function.
+
+*** where to declare variables
+ Declare near the first use.
+
+ If you don't have enough information to initialize an object until the middle of the code,
+ create it there.
+ Don't initialize it to empty and reassign it later,
+ because performance.
+
+*** some lint-like guidelines
+  * A class ~Fred~’s assignment operator should return ~*this~ as a ~Fred&~ (allows chaining of assignments)
+  * A class with any virtual functions ought to have a virtual destructor
+  * A class with any of the following generally needs all 5
+   - destructor
+   - copy assignment operator
+   - copy constructor
+   - move assignment operator
+   - move constructor
+  * A class ~Fred~’s copy constructor and assignment operator should have const in the parameter: respectively ~Fred::Fred(const Fred&)~ and ~Fred& Fred::operator= (const Fred&)~
+  * When initializing an object’s member objects in the constructor, always use initialization lists rather than assignment. 3x performance.
+  * Assignment operators should make sure that self assignment does nothing, otherwise you may have a disaster
+
+*** some crazy unix abbr
+
+ ~abbr evthng n sght, usng vry shrt idntfr nms~
+
+
+#+BIBLIOGRAPHY: cite plain
+
+* C++ Standards
+** C++11
+*** Default and Delete
+The common idiom of "prohibiting copying" can now be expressed directly:
+#+BEGIN_SRC C++
+  class X {
+    // ...
+    X& operator=(const X&) = delete;        // Disallow copying
+    X(const X&) = delete;
+  };
+#+END_SRC
+
+Conversely, we can also say explicitly that we want to default copy behavior:
+#+BEGIN_SRC C++
+  class Y {
+    // ...
+    Y& operator=(const Y&) = default;       // default copy semantics
+    Y(const Y&) = default;
+  };
+#+END_SRC
+
+The "default" mechanism can be used for any function that has a default.
+The "delete" mechanism can be used for any function.
+But, just use them on copy constructor and assignment operator. 
+
+Reference: http://www.stroustrup.com/C++11FAQ.html#default
