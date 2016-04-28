@@ -100,6 +100,19 @@ for (char ch='a'; ch<='d'; ch++)
     std::cout << ' ' << it->second;
   }
 }
+
+// maybe it is helpful to just document some usage example
+multimap<int, int> mm;
+mm.emplace(3, 8); // using std::pair constructor
+for (auto elem : mm) {
+  mm.first; // 3
+  mm.second; // 8
+}
+auto range = mm.equal_range(3);
+for (auto it=mm.begin();it!=mm.end();++it) {
+  it->first; // 3
+  it->second; // 8
+}
 #+end_src
 
 ** deque

@@ -1,0 +1,162 @@
+#+TITLE: SuperCollider
+[[http://supercollider.github.io][SuperCollider]] constitutes of three parts: an IDE, a language (sclang), the server.
+
+This section records along the way I went through the tutorial and documentations of SuperCollider.
+
+* The IDE
+I found the IDE pretty easy to use, with color highlight and auto completion.
+
+At one line, =CMD-enter= to execute.
+In the following sections, "run the command" means run a line of code using this way.
+
+During playing of music, =CMD-.= to stop playing.
+When selecting some class, e.g. =SinOsc=, =CMD-d= will open the reference if one exists.
+
+* Concepts
+- /unit generator/ :: or =UGen= for shot.
+- /SinOsc/ :: sine wave oscillator.
+- /block/ :: SuperCollider calculates audio in groups of samples, called blocks.
+- /audio rate/ :: =ar= Audio rate means that the UGen will calculate a value for /each sample/ in the block.
+- /control rate/ :: =kr= calculate a single value for each block of samples. 
+
+* Playing sound
+
+#+BEGIN_EXAMPLE
+{[SinOsc.ar(440, 0, 0.2), SinOsc.ar(440, 0, 0.2)]}.play;
+#+END_EXAMPLE
+
+In the =SinOsc= function, the three parameters are
+- /frequency/ :: =Hertz=, or /cycles per second (cps)/
+- /phase/ ::  Phase refers to where it will start in the cycle of its waveform. Value ranges from =(0,2*pi)=
+- /mul/ :: multiple the signal
+- /add/ :: addition to the signal
+
+The /polymorphism/ in SuperCollider is pass one object as /one/ parameter to create another object.
+
+#+BEGIN_EXAMPLE
+(
+{ var ampOsc;
+  ampOsc = SinOsc.kr(0.5, 1.5pi, 0.5, 0.5); // this is control rate // mul 0.5, add 0.5 results in (0,1)
+  SinOsc.ar(440, 0, ampOsc); // the above (0,1) object is used as "mul" in this one.
+}.play;
+)
+#+END_EXAMPLE
+
+
+This defines a anonymous function, and call =.play= method on a function.
+This indicates the function:
+1) evaluate
+2) play the result on the server
+
+In addition to =.play=, such function also has =.plot=, which shows the phase graph.
+=.scope= shows the dynamic counterpart of =.plot=, which also starts to play it, of course.
+
+*** Multiple Channels
+Using arrays, you can define the left and right channels.
+See array section in grammar.
+
+* sclang
+*** Hello World
+#+BEGIN_EXAMPLE
+"hello world".postln;
+#+END_EXAMPLE
+
+*** Grammar
+semi-colon is the separator.
+# TODO: The full grammar
+
+Statements can be grouped to run at the same time.
+#+BEGIN_EXAMPLE
+(
+"hello".postln;
+"world".postln;
+)
+#+END_EXAMPLE
+*** the server
+The server must be started to play any sound.
+To start the server: =s.boot=, to stop it: =s.quit=.
+Note that the object =s= is reserved and means the server.
+*** built-in object
+#+BEGIN_EXAMPLE
+"string".postln;
+2.0.rand; // generate random value
+#+END_EXAMPLE
+*** Function
+Function is for reuse of a code. A function is an object.
+#+BEGIN_EXAMPLE
+f = { "Function evaluated".postln; }; // define a function // by the way this is comment
+f; // does not evaluate, seems to define one more time
+f.value; // will evaluate
+#+END_EXAMPLE
+
+=f;= will not evaluate it, but =f.value= does.
+
+#+BEGIN_EXAMPLE
+(
+f = { arg a, b=3; // argument, with default value
+  a - b;
+};
+f.value(5, 3); // evaluate with parameters
+f.value(b:3, a:5); // different order by "keyword arguments"
+)
+
+g = {|a,b| a+b;} // verticle line is the same as using "arg" keyword
+#+END_EXAMPLE
+*** Variables
+There're two places to declare a variable.
+**** Function variable
+Function can have variables. Does it mean only functions can have variables?
+#+BEGIN_EXAMPLE
+(
+f = { arg a, b;
+// the variables must be defined right after the argument componnent
+  var firstResult, finalResult; // declara variables, using keyword "var"
+  firstResult = a + b;
+  finalResult = firstResult * 2;
+  finalResult;
+};
+f.value(2, 3); // this will return (2 + 3) * 2 = 10
+)
+#+END_EXAMPLE
+**** Block variable
+Variables can also be declared /at the top/ of any block.
+
+#+BEGIN_EXAMPLE
+(
+var myFunc; // a custom function name must be declared, before assignment
+myFunc = { |input| input.postln; }; // assignment
+myFunc.value("foo"); // arg is a String
+myFunc.value("bar");
+)
+myFunc; // error, out of scope
+#+END_EXAMPLE
+
+The =a= to =z= are predefined in global scope.
+E.g. =f= for a function, and =s= for a server.
+You can use them without actually declare them.
+
+*** Array
+#+BEGIN_EXAMPLE
+a = ["foo", "bar"];
+a.at(0);
+a.at(1);
+a[0];
+#+END_EXAMPLE
+
+This enables multiple channel playing:
+
+#+BEGIN_EXAMPLE
+{ [SinOsc.ar(440, 0, 0.2), SinOsc.ar(442, 0, 0.2)] }.play;
+#+END_EXAMPLE
+
+This defines left and right channel.
+It can me more channels, but I don't know what it means to be three channels? ...
+
+*** Class
+Classes starts with uppercase letter.
+**** SinOsc
+**** PinkNoise
+**** Pan2
+**** Saw
+**** Mix
+

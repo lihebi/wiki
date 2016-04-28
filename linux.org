@@ -1,0 +1,15 @@
+#+TITLE: Linux
+
+* Centos Boost Up
+On installing a new instance of CentOS, issue the following commands:
+
+#+BEGIN_SRC shell
+# check the sshd status
+# should use opensshd
+service status sshd
+# add user, -m means create home folder
+useradd -m myname
+# oh, wait, I forget to add myself to wheel
+# -a means append, if no -a, the -G will accept a comma separated list, overwrite the previous setting
+usermod -aG wheel myname
+#+END_SRC

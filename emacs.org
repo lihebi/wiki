@@ -4,7 +4,18 @@
  * =describe-key-briefly=: defaults to =C-h c=, return the command name of a key stroke.
  * =where-is=: defaults to =C-h w=, return the current shortcut for a command
  * =info=: defaults to =C-h i=, open the built-in info reader.
+ * =view-echo-area-messages=
 
+* Configuration
+To configure a specific key map.
+Note that the =global-set-key= will /not/ overwrite a specific key map,
+because the specific one has a higher priority.
+
+#+BEGIN_SRC elisp
+  (define-key org-mode-map (kbd "C-j") (lambda()
+                                         (interactive)
+                                         (join-line -1)))
+#+END_SRC
 * Window and Frame
 ** window manage
   * ~balance-window~
@@ -16,6 +27,8 @@
   * ~dired-tree-down~
 ** packages
 In ~*package*~ buffer, ~Ux~ to update all packages.
+* File Operation
+- =revert-buffer=: Replace current buffer text with the text of the visited file on disk. I.e. Reload file.
 
 * Editing
 ** text transformation
@@ -25,6 +38,11 @@ In ~*package*~ buffer, ~Ux~ to update all packages.
   * ~transpose-words~
   * ~transpose-lines~
 To insert a control sequence, use ~C-q xxx~.
+- =capitalize-word=
+
+- =fill-paragraph=
+- =fill-region=
+- =auto-fill-mode=
 
 ** killing
   * ~zap-to-char~
@@ -35,6 +53,8 @@ Use =ispell=, and =flycheck= to check on-the-fly. Check emacs manual for detail.
 * Navigating
   * ~forward-sexp~: forward semantic block
   * ~backward-sexp~
+  * =org-forward-heading-same-level=: =C-c C-f=
+  * =org-backword-heading-same-level=: =C-c C-b=
 ** marking
   * ~exhange-point-and-mark~
   * ~mark-word~
@@ -59,6 +79,47 @@ All events that set the mark:
  * ~copy-to-register~
  * ~insert-register~
 
+** Tags
+- =helm-etags-select=
+
+* Special Modes
+** Tex Mode
+- =tex-validate-region=
+
+* Variables
+** File Local Variable
+On first line, emacs will try to find
+#+BEGIN_EXAMPLE
+-*- mode: Lisp; fill-column: 75; comment-column: 50; -*-=
+#+END_EXAMPLE
+
+=mode= defines the major mode for this file, while unlimited numbers of variables follows, separated by =;=
+Emacs looks for local variable specifications in the second line if the first line specifies an interpreter, e.g. /shebang/.
+
+A second way to specify file local variable is to have a "local variables list" near the end of the file
+(no more than 3000 characters from the end of the file).
+The =Local Variables:= and =End:= will be matched literally.
+
+#+BEGIN_EXAMPLE
+This     /* Local Variables:  */
+Is       /* mode: c           */
+Garbage  /* comment-column: 0 */
+Data     /* End:              */
+#+END_EXAMPLE
+
+** Directory Local Variable
+Put =.dir-locals.el= at the root directory, and it will be in effect for all the files under that directory, recursively.
+It should be an associate list, the car can be either a mode name (or =nil= applies to all modes) indicating the variables are for that mode,
+or a sub-directory name to apply only in that directory.
+#+BEGIN_SRC elisp
+  ((nil . ((indent-tabs-mode . t)
+           (fill-column . 80)))
+   (c-mode . ((c-file-style . "BSD")
+              (subdirs . nil)))
+   ("src/imported"
+    . ((nil . ((change-log-default-name
+                . "ChangeLog.local"))))))
+#+END_SRC
 
 * Advanced Topics
 ** Info
@@ -92,8 +153,17 @@ sudo install-info --info-file=gnu-c-manual.info --info-dir=.
 | s         | TODO search  a text in the whole info file           |
 | i         | TODO search indices only                             |
 
-** Elisp
+** Babel
+How to write a =ob-xxx.el= file?
 
-#+begin_src elisp
-(cl-prettyprint (font-family-list)) ;; see all font family available on this system
-#+end_src
+ * search org-mode babel, you will get a link: http://orgmode.org/worg/org-contrib/babel/
+ * In this link, there's a "languages" link. http://orgmode.org/worg/org-contrib/babel/languages.html
+ * Under "Develop support for new languages" section, there's link to ob-template.el: http://orgmode.org/w/worg.git/blob/HEAD:/org-contrib/babel/ob-template.el
+ * follow instruction to modify it.
+
+some good example to look at: ob-plantuml.el, ob-C.el
+
+* Reference
+Sacha's super long Emacs Config: http://pages.sachachua.com/.emacs.d/Sacha.html
+Some emacs.d I started with https://github.com/jordonbiondo/.emacs.d/blob/master/init.el
+C++ IDE and some tutorials: http://tuhdo.github.io/

@@ -1,51 +1,126 @@
 #+TITLE: Org Mode
 
-* Org mode latex exporting
-** doc class & options
+* Exporting
+** Latex Exporting
+*** doc class & options
 
-#+begin_src org
-#+LATEX_CLASS: fse
-#+OPTIONS: toc:nil author:nil
+ #+begin_example
+ #+LATEX_CLASS: fse
+ #+OPTIONS: toc:nil author:nil
 
-#+BIBLIOGRAPHY: slicing plain
-#+INCLUDE: "appendix.org" :minlevel 1
-#+end_src
+ #+BIBLIOGRAPHY: slicing plain
+ #+INCLUDE: "appendix.org" :minlevel 1
+ #+end_example
 
-** appendix
 
-#+begin_src org
-#+LaTeX: \appendix
 
-#+INCLUDE: "appendix-todo.org" :minlevel 1
-#+INCLUDE: "appendix-context.org" :minlevel 1
-#+INCLUDE: "appendix-helium-guard.org" :minlevel 1
-#+INCLUDE: "appendix-valgrind-exp.org" :minlevel 1
-#+end_src
+*** appendix
 
-** table
+ #+begin_example
+ #+LaTeX: \appendix
 
-#+begin_src org
-#+CAPTION: The caption
-#+NAME: tab:stack-vs
-#+ATTR_LATEX: :float multicolumn
+ #+INCLUDE: "appendix-todo.org" :minlevel 1
+ #+INCLUDE: "appendix-context.org" :minlevel 1
+ #+INCLUDE: "appendix-helium-guard.org" :minlevel 1
+ #+INCLUDE: "appendix-valgrind-exp.org" :minlevel 1
+ #+end_example
 
-[[tab:stack-vs]]
-#+end_src
+*** table
 
-** code referencing
+ #+begin_example
+ #+CAPTION: The caption
+ #+NAME: tab:stack-vs
+ #+ATTR_LATEX: :float multicolumn
+ \[\[tab:stack-vs\]\]
+ #+end_example
 
-#+begin_src org
-    src = array[i]; (ref:1)
-    buf = p;        (ref:2)
-    sum += i;       (ref:3)
+*** code referencing
 
-[[(ref:1)]]
-[[(ref:1)][name]]
-#+end_src
+ #+begin_example
+   src = array[i]; (ref:1)
+   buf = p;        (ref:2)
+   sum += i;       (ref:3)
+
+   \[\[(ref:1)\]\]
+   \[\[(ref:1)\]\[name\]\]
+ #+end_example
+
+*** =ATTR_LATEX=
+ #+BEGIN_EXAMPLE
+ #+ATTR_LATEX: :float sideways
+ #+ATTR_LATEX: :height 0.7\textheight :float t
+ #+END_EXAMPLE
+
+** Beamer
+The header setup:
+#+BEGIN_EXAMPLE
+#+STARTUP: beamer
+#+AUTHOR: Hebi Li
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [presentation]
+#+BEAMER_THEME: Madrid
+#+OPTIONS: H:2 toc:t num:t
+
+#+END_EXAMPLE
+The above configuration define "H" to be 2, meaning the frame is the second level heading (=**=).
+The top level heading (=*=) can be used to organize the presentation.
+To show the current section, add this just /after/ every top level heading.
+#+BEGIN_EXAMPLE
+#+TOC: headlines [currentsection]
+#+END_EXAMPLE
 
 * Spreadsheet
-#+begin_src org
+#+begin_example org
 #+TBLFM: $4=$2/10
 #+TBLFM: $4=$2*100/$3
 #+TBLFM: $4=(round $4)
-#+end_src
+#+end_example
+
+* Other Packages
+** org-ref
+Used to manage the cross reference in Org Mode.
+*** Configuration
+#+BEGIN_EXAMPLE elisp :exports none
+  (use-package org-ref
+    :config
+    (setq reftex-default-bibliography '("~/github/bibliography/references.bib"))
+    (setq org-ref-bibliography-notes "~/github/bibliography/notes.org"
+          org-ref-default-bibliography '("~/github/bibliography/references.bib")
+          org-ref-pdf-directory "~/github/bibliography/bibtex-pdfs/")
+    (setq helm-bibtex-bibliography "~/github/bibliography/references.bib")
+    (setq helm-bibtex-library-path "~/github/bibliography/bibtex-pdfs")
+    ;; open pdf with system pdf viewer (works on mac)
+    (setq helm-bibtex-pdf-open-function
+          (lambda (fpath)
+            (start-process "open" "*open*" "open" fpath)))
+    ;; alternative
+    ;; (setq helm-bibtex-pdf-open-function 'org-open-file)
+    (setq helm-bibtex-notes-path "~/github/bibliography/helm-bibtex-notes")
+
+    (require 'org-ref-pdf)
+    (require 'doi-utils)
+    (require 'org-ref-isbn)
+    (require 'org-ref-url-utils)
+    )
+#+END_EXAMPLE
+
+You will need to manually create =~/github/bibliography= and =$ORGREF/bibtex-pdfs= (=$ORGREF= just the alias of that path, I don't want to type it again)
+*** Commands
+- =C-c ]=: insert citation, typically with helm: =org-ref-helm-insert-cite-link=
+- =crossref-add-bibtex-entry=
+- =org-ref-helm-insert-label-link=
+- =org-ref-insert-ref-link=
+
+- =doi-utils-get-bibtex-entry-pdf=
+- =doi-utils-google-scholar=
+- =doi-utils-add-bibtex-entry-from-doi=
+- =doi-utils-add-bibtex-entry-from-crossref-query=: the same as =crossref-add-bibtex-entry=
+- =org-ref-open-bibtex-pdf=
+
+- =org-ref-clean-bibtex-entry=: in side a bibtex entry in a bib file, reformat it.
+- =org-ref-extract-bibtex-entries= will create a bibtex file from the citations in the current buffer.
+
+**** Navigation
+- =org-ref-bibtex-next-entry= M-n
+- =org-ref-bibtex-previous-entry= M-p
+

@@ -1,0 +1,16 @@
+#+TITLE: Boost
+
+* Filesystem
+Compilation flag: =-lboost_filesystem -lboost_system=
+
+common usage:
+#+BEGIN_SRC C++
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+fs::path path("./main.cpp");
+// absolute path, basically just add the prefix, but retain the ".." and "//"
+fs::path abs_path = fs::absolute(path);
+// absolute, follow symbol link, and remove dot and extra slashes. Will throw exception if file does not exist
+fs::path con_path = fs::canonical(path);
+fs::exists(path); // if path exists or not
+#+END_SRC

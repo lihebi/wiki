@@ -1,53 +1,235 @@
 #+TITLE: R
 
-#+begin_src R
+* Buffer
+http://www.public.iastate.edu/~hofmann/stat579/
+#+BEGIN_SRC R
+  read.csv(file, header = TRUE, sep = ",", quote = "\"",
+           dec = ".", fill = TRUE, comment.char = "", ...)
+#+END_SRC
+
+Example:
+#+BEGIN_SRC R
+a<-read.csv("filename.csv"); # this will be a matrix, each column with a named header
+x <- a$name1 # access by header name, this will be a vector
+#+END_SRC
+
+** jitter(x)
+#+BEGIN_SRC R
+jitter(x, factor = 1, amount = NULL)
+#+END_SRC
+Add a small amount of noise to a numeric vector.
+
+** plot(x, y, ...)
+Possible =...= arguments:
+- 'type' what type of plot: 
+  - "p" for points,
+  - "l" for lines,
+  - "b" for both,
+  - "h" for 'histogram' like (or 'high-density') vertical lines,
+- 'main' an overall title for the plot: see 'title'.
+- 'xlab' a title for the x axis: see 'title'.
+- 'ylab' a title for the y axis: see 'title'.
+** str(obj)
+Compactly Display the Structure of an Arbitrary R Object
+** class(obj)
+Get or set an object's class.
+This can serve as a debugging method, to see the class of a data object.
+It can also be used to declare an object: =class(x) <- value=
+** TODOs
+- =as.data.frame=
+
+** graphics (built-in)
+- =barplot=: TODO Creates a bar plot with vertical or horizontal bars.
+
+** plyr
+*** TODO count
+#+BEGIN_SRC R
+count(df, vars = NULL, wt_var = NULL)
+#+END_SRC
+
+* Installation
+** Install package
+
+Install this directly in R commandline.
+
+#+BEGIN_SRC R
+install.packages(c("dplyr"))
+#+END_SRC
+
+# Use Rstudio, install, select from local archive.
+# Download from CRAN website(binary), locate to that package in Rstudio to install.
+
+# *** Trouble shooting
+
+# Error message on mac os x:
+
+# #+begin_src text
+# package 'multicore' is not installed for 'arch=x86_64'
+# #+end_src
+
+# Now you need to install from source.
+# Download source code, then use
+
+# #+begin_src text
+# R --arch x86_64 CMD INSTALL multicore_0.1-3.tar.gz
+# R --arch=i386 CMD INSTALL --libs-only multicore_0.1-3.tgz
+# #+end_src
+
+# As Matthew said at http://www.matthewckeller.com/html/64_bit_r_on_mac.html
+
+# #+BEGIN_QUOTE
+# The first command installs the package multicore for 64-bit architecture.
+# It will erase any existing ‘multicore’ library that exists at the default location where libraries are installed
+# (Library/Frameworks/R.framework/Resources/library).
+# The second command installs the package for 32-bit use in case you want that.
+# Make sure on the second command to include the --libs-only option or else you’ll erase your 64-bit package
+# and replace it with a 32-bit one.
+# #+END_QUOTE
+
+
+* Usage
+** Include a library
+#+BEGIN_SRC R
 library(class)
+#+END_SRC
+
+** Path & Execute R scripts
+#+begin_src R
 setwd("/absolute/path")
 # the following can be the relative path to the above path
 source("./xxx.R") # load a script
 #+end_src
 
-* Install package
+** Command line interface
+Be sure to enter a new work directory because =R= may store something in current directory.
 
-Use Rstudio, install, select from local archive.
-Download from CRAN website(binary), locate to that package in Rstudio to install.
-
-** Trouble shooting
-
-Error message on mac os x:
-
-#+begin_src text
-package 'multicore' is not installed for 'arch=x86_64'
+*** Getting help information
+#+begin_src R
+R
+> q()
+> help(lm)
+> help("if")
+> ?lm
+> example(topic)
+> ??solve
 #+end_src
 
-Now you need to install from source.
-Download source code, then use
+*** Function command:
 
-#+begin_src text
-R --arch x86_64 CMD INSTALL multicore_0.1-3.tar.gz
-R --arch=i386 CMD INSTALL --libs-only multicore_0.1-3.tgz
+#+begin_src R
+> source("a.R") # load another file
+> sink("a.lis") # redirect output to a.lis
+> sink() # retore output to stdio
+> ls() # list the objects currently stored
+> objects() # create and store current objects
+> rm(x, y, z, ink, junk, temp, foo, bar) # remove objects
+
 #+end_src
 
-As Matthew said at http://www.matthewckeller.com/html/64_bit_r_on_mac.html
+** Emacs ESS
+*** with org mode
+In org mode, there's a babel for R, so just =C-c C-c= would work.
+It is possible to run each single line,
+use ~C-c <quote>~ to edit code, then =C-RET= to evaluate.
 
-#+BEGIN_QUOTE
-The first command installs the package multicore for 64-bit architecture.
-It will erase any existing ‘multicore’ library that exists at the default location where libraries are installed
-(Library/Frameworks/R.framework/Resources/library).
-The second command installs the package for 32-bit use in case you want that.
-Make sure on the second command to include the --libs-only option or else you’ll erase your 64-bit package
-and replace it with a 32-bit one.
-#+END_QUOTE
+To start ESS session, run command =S=.
+Or create a R file, and =C-c C-c= to evaluate.
+This will prompt to create a session.
+
+ESS will create a command interface as a buffer.
+Execute =?foo= will open the =R-doc= for the function =foo=.
+
+** With Org-mode
+Org file header:
+#+BEGIN_EXAMPLE
+#+OPTIONS: toc:nil
+#+LATEX_CLASS: article
+# #+LATEX_CLASS_OPTIONS: [a4paper, margin=0in, 11pt]
+#+LATEX_HEADER: \usepackage{geometry}
+#+LATEX_HEADER: \geometry{margin=1in}
+#+LATEX_HEADER: \usepackage{indentfirst}
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \pagestyle{fancy}
+#+LATEX_HEADER: \fancyhf{}
+#+LATEX_HEADER: \rhead{573 HW3}
+#+LATEX_HEADER: \lhead{Hebi Li}
+#+PROPERTY: session *R*
+#+END_EXAMPLE
+
+To make the code listing looks better, add this before the /first/ code listing.
+This will apply to all listing, as well as the output of R code whose format is "org".
+
+#+BEGIN_EXAMPLE
+#+ATTR_LATEX: :options frame=shadowbox
+#+END_EXAMPLE
+
+To export a graph:
+
+#+BEGIN_EXAMPLE
+:file hw3-1.png :results output graphics :exports both
+#+END_EXAMPLE
+
+To export ordinary result:
+
+#+BEGIN_EXAMPLE
+:exports both
+#+END_EXAMPLE
+
+To export some summary data:
+
+#+BEGIN_EXAMPLE
+:exports both :results output org
+#+END_EXAMPLE
+
+
+* Concepts & Language Reference
+** Numbers
+R will use double precision real numbers, or double precision complex numbers.
+
+Always supply complex numbers explicitly:
+=sqrt(-17)= will give NaN and a warning,
+but =sqrt(-17+0i)= will do it.
 
 
 
+** Logical
+
+=TRUE=, =FALSE=, =NA=
+
+ * =!a=
+ * =a & b=
+ * =a | b=
+
+ * =is.na(x)=. never use x==NA, that will output a vector of lengh(x) with all NA
+
+** String
+=paste()= function takes an arbitrary number of arguments
+and concatenates them one by one into character strings.
+Any numbers given among the arguments are coerced
+into character strings in the evident way,
+that is, in the same way they would be if they were printed.
+
+The recycling rule also takes place here.
+
+#+begin_src R
+> labs <- paste(c("X","Y"), 1:10, sep="")
+# c("X1", "Y2", "X3", "Y4", "X5", "Y6", "X7", "Y8", "X9", "Y10")
+#+end_src
+
+** Objects
+
+Two intrinsic attributes: mode and length.
+Have two system functions:
+=mode(object)= and =length(object)=.
+
+ * mode: the basic type of its fundamental constituents
 
 
+** Vectors
 
-
-
-* Vectors
-
+*** Declaration
+There are multiple ways to declare a vector:
+**** ~c~ operator
 all these assignments are equivalent
 
 #+begin_src R
@@ -61,216 +243,228 @@ all these assignments are equivalent
 > c(10.4, 5.6, 3.1, 6.4, 21.7) -> x
 #+end_src
 
-operation on vector
+**** Colon operator
+=1:30=: the same as: =c(1, 2, ..., 29, 30)=
+Colon operator can also specify a backward sequence: =30:1=
+Colon operater has higher priority: ~2*1:15~ is the same as =c(2, 4, …, 28, 30)=
 
+**** Seq
+~seq(2,10)~ produces ~2:10~
+~seq(from=1, to=30)~ is the same as ~seq(to=30, from=1)~
+
+ #+begin_src R
+ > seq(-5, 5, by=.2) -> s3
+ > s4 <- seq(length=51, from=-5, by=.2)
+ # x = [1,2,3]
+ > s5 <- rep(x, times=5) # put five copies of x end-to-end in s5
+ # [1,2,3,1,2,3,...]
+ > s6 <- rep(x, each=5) # repeats each element of x five times before moving on to the next.
+ # [1,1,1,1,1,2,2,2,2,2,...]
+ #+end_src
+
+**** Matrix
+ #+begin_src R
+ > dim(z) <- c(3,5,100)
+ # 3 by 5 by 100 array
+ > z[2,,] # is 5,100 array
+ > z[,,] # is the entire array
+ #+end_src
+
+
+*** Operations
+
+Operation on vector will work on each item of the vector, producing a vector.
+Operation among multiple vectors does not require the vectors to be of same length.
+The result is the longest, small ones repeat.
 #+begin_src R
 > 1/x # will use 1 divides all 5 values of x, just like matrix in matlab
 > y <- c(x, 0, x)
-# the oprand does not need to be the same length
-# The result is the longest, small ones repeat.
-> v <- 2*x + y + 1
+> v <- 2*x + y + 1 # small one repeat
 #+end_src
 
-* Numbers
-R will use double precision real numbers, or double precision complex numbers.
+**** outer product
 
-Always supply complex numbers explicitly:
-`sqrt(-17)` will give NaN and a warning,
-but `sqrt(-17+0i)` will do it.
+ #+begin_src R
+ > ab <- a %o% b
+ # the same as
+ > ab <- outer(a, b, "*")
+ #+end_src
 
+ we can change the function used in =outer=
 
+ #+begin_src R
+ > f <- function(x, y) cos(y)/(1 + x^2)
+ > z <- outer(x, y, f)
+ #+end_src
 
-* Logical
+**** matrix multiplication
 
-`TRUE`, `FALSE`, `NA`
+ #+begin_src R
+ > A * B # matrix of element by element products
+ > A %*% B # matrix product
+ > x %*% A %*% x # quadratic form ... 二次多项式 ax^2 + bxy + cy^2
+ #+end_src
 
- * `!a`
- * `a & b`
- * `a | b`
+**** solve linear equation
 
- * `is.na(x)`. never use x==NA, that will output a vector of lengh(x) with all NA
-
-* String
-`paste()` function takes an arbitrary number of arguments
-and concatenates them one by one into character strings.
-Any numbers given among the arguments are coerced
-into character strings in the evident way,
-that is, in the same way they would be if they were printed.
-
-The recycling rule also takes place here.
-
-#+begin_src R
-> labs <- paste(c("X","Y"), 1:10, sep="")
-# c("X1", "Y2", "X3", "Y4", "X5", "Y6", "X7", "Y8", "X9", "Y10")
-#+end_src
-
-* Objects
-
-Two intrinsic attributes: mode and length.
-Have two system functions:
-`mode(object)` and `length(object)`.
-
- * mode: the basic type of its fundamental constituents
+ #+begin_src R
+ > b <- A %*% x
+ # if b and A are given, but not x, x will contain the result
+ > solve(A,b) # will also solve the system.
+ # I'm not sure this should be execute after the previous statement.
+ #+end_src
 
 
 
-* array
-** Sequences
- * `1:30`: c(1, 2, …, 29, 30)
- * and the colon operater has higher priority: `2*1:15` => c(2, 4, …, 28, 30)
- * `30:1`: backward
- * `seq(2,10)` => `2:10`
- * `seq(from=1, to=30)` == `seq(to=30, from=1)`
+*** Vector Indexing/Subseting/Slicing
+**** Single Dimension
+ #+begin_src R
+ > y <- x[!is.na(x)]
+ # x's none-NA elements.
+ > (x+1)[(!is.na(x)) & x>0] -> z
+ > x[6] # 6th element
+ > x[1:10] # first 10 elements
+ > c("x","y")[rep(c(1,2,2,1), times=4)]
+ # a character vector of length 16 consisting of "x", "y", "y", "x" repeated four times.
+ > y <- x[-(1:5)]
+ # all but the first five elements of x.
+ #+end_src
 
-#+begin_src R
-> seq(-5, 5, by=.2) -> s3
-> s4 <- seq(length=51, from=-5, by=.2)
-# x = [1,2,3]
-> s5 <- rep(x, times=5) # put five copies of x end-to-end in s5
-# [1,2,3,1,2,3,...]
-> s6 <- rep(x, each=5) # repeats each element of x five times before moving on to the next.
-# [1,1,1,1,1,2,2,2,2,2,...]
-#+end_src
+ naming
+
+ #+begin_src R
+ > fruit <- c(5, 10, 1, 20)
+ > names(fruit) <- c("orange", "banana", "apple", "peach")
+ > lunch <- fruit[c("apple","orange")]
+ #+end_src
+
+ change the subset:
+
+ #+begin_src R
+ > x[is.na(x)] <- 0
+ # replaces any missing values in x by zeros
+ > y[y < 0] <- -y[y < 0]
+ # is same as:
+ > y <- abs(y)
+ #+end_src
+
+**** indexing matrix
+
+ #+begin_src R
+ > x <- array(1:20, dim=c(4,5))   # Generate a 4 by 5 array.
+ > x
+      [,1] [,2] [,3] [,4] [,5]
+ [1,]    1    5    9   13   17
+ [2,]    2    6   10   14   18
+ [3,]    3    7   11   15   19
+ [4,]    4    8   12   16   20
+ > i <- array(c(1:3,3:1), dim=c(3,2))
+ > i                             # i is a 3 by 2 index array.
+      [,1] [,2]
+ [1,]    1    3
+ [2,]    2    2
+ [3,]    3    1
+ > x[i]                          # Extract those elements
+ [1] 9 6 3
+ > x[i] <- 0                     # Replace those elements by zeros.
+ > x
+      [,1] [,2] [,3] [,4] [,5]
+ [1,]    1    5    0   13   17
+ [2,]    2    0   10   14   18
+ [3,]    0    7   11   15   19
+ [4,]    4    8   12   16   20
+ #+end_src
+
+** functions
+*** Basic Mathematics
+- =+=, =-=, =*=, =/=, =^= (power),
+- =log=, =exp=, =sin=, =cos=, =tan=, =sqrt=
+- =min=, =max=
+- =pmax= and =pmin=: parallel maximum and minimum functions
+   a vector (of length equal to their longest argument) that contains in each element the largest (smallest) element in that position in any of the input vectors
+
+*** common functions
+- =range=: same as =c(min(x),max(x))=
+- =length(x)=, =sum(x)=, =prod(x)= (product)
+- =mean(x)=: =sum(x)/length(x)=
+- ~var(x)~: ~sum((x-mean(x))^2)/(length(x)-1)~
+- ~sort(x)~: increasing order
+- ~order()~ or ~sort.list()~
 
 
-** Vector Indexing/Subseting/Slicing
+* Packages
+** ggplot2
+#+BEGIN_SRC R
+qplot(totbill, tip, geom="point", data=tips) # scatter plot
+qplot(totbill, tip, geom="point", data=tips) + geom_smooth(method="lm") # with linear relationship line
+qplot(tip, geom="histogram", data=tip) # histogram
+qplot(tip, geom="histogram", binwidth=1, data=tips) # with custom binwidth
+# box plots
+qplot(sex, tipperc, geom="boxplot", data=tips)
+qplot(smoker, tipperc, geom="boxplot", data=tips)
+qplot(sex:smoker, tipperc, geom="boxplot", data=tips) # combine! plot the two sets of graph in two one graph
+qplot(totbill, tip, geom="point", colour=day, data=tips) # scatter plot with colors, in regard to "day" column
+#+END_SRC
 
-#+begin_src R
-> y <- x[!is.na(x)]
-# x's none-NA elements.
-> (x+1)[(!is.na(x)) & x>0] -> z
-> x[6] # 6th element
-> x[1:10] # first 10 elements
-> c("x","y")[rep(c(1,2,2,1), times=4)]
-# a character vector of length 16 consisting of "x", "y", "y", "x" repeated four times.
-> y <- x[-(1:5)]
-# all but the first five elements of x.
-#+end_src
+** dplyr: A Grammar of Data Manipulation
+https://cran.r-project.org/web/packages/dplyr/index.html
+https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html
 
-naming
+* Some R Scripts I wrote
 
-#+begin_src R
-> fruit <- c(5, 10, 1, 20)
-> names(fruit) <- c("orange", "banana", "apple", "peach")
-> lunch <- fruit[c("apple","orange")]
-#+end_src
+** Plot the US map
+#+BEGIN_SRC R :file assets/images/usmap.png :results output graphics :exports both
+# load library and prepare data
+library(ggplot2)
+library(maps)
+states <- map_data("state")
 
-change the subset:
+# plot map
+map <- qplot(long, lat, geom="polygon", fill=I("lightgrey"), colour=I("white"), group=group, data=states)
+# inspecting map
+map
 
-#+begin_src R
-> x[is.na(x)] <- 0
-# replaces any missing values in x by zeros
-> y[y < 0] <- -y[y < 0]
-# is same as:
-> y <- abs(y)
-#+end_src
+# with different themes
+map + theme_classic()
+maptheme <- map + theme_classic() +
+  xlab("") + ylab("") + # no x or y labels
+    theme(axis.line=element_blank())
+# inspecting this theme
+maptheme
+
+## load city data
+data(us.cities)
+head(us.cities)
+# plot city data onto the same map, by "add" operation with "goem_point"
+maptheme + geom_point(aes(x=long, y=lat, group=1), data=us.cities)
+# the cities are in red
+maptheme + geom_point(aes(x=long, y=lat, group=1), data=us.cities, color="red")
 
 
-** Array
+## http://www.public.iastate.edu/~hofmann/stat579/lectures/15-polishing.html
+## 1. plot only capitals (capital != 0)
+## 2. do not plot cities outside US (xlim, ylim)
+## 3. label the city names (geom_text)
+## 4. adjust the position of city names so that it does not overlap the point (hjust, vjust in geom_text)
+## 5. Make the text grey and smaller
 
-#+begin_src R
-> dim(z) <- c(3,5,100)
-# 3 by 5 by 100 array
-> z[2,,] # is 5,100 array
-> z[,,] # is the entire array
-#+end_src
+us.capital = subset(us.cities, capital != 0)
+head(us.capital)
 
-** indexing matrix
+map <- qplot(
+    long, lat, geom="polygon", fill=I("lightgrey"), colour=I("white"),
+    group=group, data=states,
+    xlim=c(min(states$long), max(states$long)),
+    ylim=c(min(states$lat), max(states$lat)))
 
-#+begin_src R
-> x <- array(1:20, dim=c(4,5))   # Generate a 4 by 5 array.
-> x
-     [,1] [,2] [,3] [,4] [,5]
-[1,]    1    5    9   13   17
-[2,]    2    6   10   14   18
-[3,]    3    7   11   15   19
-[4,]    4    8   12   16   20
-> i <- array(c(1:3,3:1), dim=c(3,2))
-> i                             # i is a 3 by 2 index array.
-     [,1] [,2]
-[1,]    1    3
-[2,]    2    2
-[3,]    3    1
-> x[i]                          # Extract those elements
-[1] 9 6 3
-> x[i] <- 0                     # Replace those elements by zeros.
-> x
-     [,1] [,2] [,3] [,4] [,5]
-[1,]    1    5    0   13   17
-[2,]    2    0   10   14   18
-[3,]    0    7   11   15   19
-[4,]    4    8   12   16   20
-#+end_src
+map +
+    geom_point(aes(x=long, y=lat, group=1), data=us.capital, color="red") +
+    geom_text(
+        aes(x=long, y=lat, group=1), data=us.capital,
+        label=us.capital$name, hjust=0.5, vjust=1,
+        color="dimgrey", size=3)
+#+END_SRC
 
-** outer product
+#+RESULTS:
+[[file:assets/images/usmap.png]]
 
-#+begin_src R
-> ab <- a %o% b
-# the same as
-> ab <- outer(a, b, "*")
-#+end_src
-
-we can change the function used in `outer`
-
-#+begin_src R
-> f <- function(x, y) cos(y)/(1 + x^2)
-> z <- outer(x, y, f)
-#+end_src
-
-** matrix multiplication
-
-#+begin_src R
-> A * B # matrix of element by element products
-> A %*% B # matrix product
-> x %*% A %*% x # quadratic form ... 二次多项式 ax^2 + bxy + cy^2
-#+end_src
-
-** solve linear equation
-
-#+begin_src R
-> b <- A %*% x
-# if b and A are given, but not x, x will contain the result
-> solve(A,b) # will also solve the system.
-# I'm not sure this should be execute after the previous statement.
-#+end_src
-
-* functions
-
- * +,-,`*`,/,^(power),
- * `log`, `exp`, `sin`, `cos`, `tan`, `sqrt`
- * `min`, `max`
- * `pmax` and `pmin`: parallel maximum and minimum functions
-  a vector (of length equal to their longest argument) that contains in each element the largest (smallest) element in that position in any of the input vectors
- * `range` = c(min(x),max(x))
- * length(x), sum(x), prod(x) (product)
- * mean(x): sum(x)/length(x)
- * var(x): sum((x-mean(x))^2)/(length(x)-1)
- * sort(x): increasing order
- * order() or sort.list()
-
-* Interactive
-Be sure to enter a new work directory because `R` may store something in current directory.
-
-Basic help:
-
-#+begin_src R
-R
-> q()
-> help(lm)
-> help("if")
-> ?lm
-> example(topic)
-> ??solve
-#+end_src
-
-Function command:
-
-#+begin_src R
-> source("a.R") # load another file
-> sink("a.lis") # redirect output to a.lis
-> sink() # retore output to stdio
-> ls() # list the objects currently stored
-> objects() # create and store current objects
-> rm(x, y, z, ink, junk, temp, foo, bar) # remove objects
-
-#+end_src

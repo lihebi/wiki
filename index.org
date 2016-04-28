@@ -25,6 +25,10 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 #+END_HTML
 
 * Links
+
+Keep an eye on the most recent conference papers!
+- [[https://issta2016.cispa.saarland/program/][ISSTA16]]
+
 I found it is super important to notice who are the pioneers and what they are doing.
 [[http://www.stroustrup.com/][Bjarne Stroustrup]] invented C++!
 His close friend [[http://www.stepanovpapers.com/][Alexander A. Stepanov]], the author of STL.
@@ -32,12 +36,15 @@ His close friend [[http://www.stepanovpapers.com/][Alexander A. Stepanov]], the 
 Read about the [[https://github.com/isocpp/CppCoreGuidelines][CppCoreGuidelines]] project. It has nearly 10,000 stars on github.
 Maybe it is closely related to [[http://cppcon.org/][CppCon]].
 
+How can you miss [[http://www.aosabook.org/][these wonderful aosabook books]]?
+
 * sitemap
-Use index here or use the [[file:sitemap.org][sitemap]].
+Use indices here with  or use the [[file:sitemap.org][sitemap]].
 
 ** Programming
 Fundanmental of computing theory can be found in this [[file:csapp.org][CSAPP study note]].
-The [[file:./shell.org][shell]] is the fundamental knowledge to be linux master.
+The [[file:./shell.org][shell]] is the fundamental knowledge to be linux master,
+some [[file:shell-utils.org][shell utilities]] are documented in a different file.
 Utilities like [[file:awk.org][awk]] and [[file:sed.org][sed]] should be handy for text editing in scripts.
 [[file:tmux.org][Tmux]] is the choice to work on remote.
 [[file:regex.org][Regular Expression]] is considered the knowledge to make you productive.
@@ -48,6 +55,8 @@ C has a [[file:c-lib.org][standard library]].
 [[file:cpp.org][C++]] is generally more productive than C.
 [[file:stl.org][Standard Template Library(STL)]] is the NO.1 important library in C++.
 Traditional [[file:make.org][make]] system is prefered to build C projects.
+If you want to use some advanced functions or classes that are not provided by the core library of C++,
+you may refer to a much broader library, the [[file:boost.org][Boost]] Library.
 
 [[file:hungarian.org][Hungarian notation]] is one of the famous way to choose variable names.
 
@@ -57,19 +66,22 @@ There're a couple of C libraries to ease our lives.
 Write simple tests using [[file:google-test.org][Google Test]]
 can make your application much more robust and maintainable.
 
-[[file:r.org][R]] is so powerful at statistics.
+[[file:R.org][R]] is so powerful at statistics.
 
 Low level [[file:assembly.org][assembly]] code.
 
 As a computer scientist,
 the knowledge about compiler is a must.
-Check out the open source compiler framework [[file:llvm.org][LLVM]].
+Check out the open source [[file:compiler.org][compiler]] framework [[file:llvm.org][LLVM]].
 
 Write documents like a pro: [[file:latex.org][latex]].
 The famous [[file:markdown.org][markdown]] notation system is far less powerful than [[file:org.org][Org Mode]].
-It is like vim vs. [[file:./emacs.org][emacs]].
+It is like Vim vs. [[file:emacs.org][Emacs]]. [[file:lisp.org][Lisp]] is described in a separate file.
 XML is ok with the query language [[file:xpath.org][XPath]].
 Graph visualization can be done by [[file:dot.org][Graphviz/Dot]].
+
+[[file:sql.org][SQL]] is relational database query language.
+Use [[file:git.org][Git]] to do version control.
 
 ** Algorithm
 Math is the basis of everything.
@@ -92,6 +104,16 @@ Some [[file:data-structure.org][data]] structure knowledge I picked up in underg
 
 ** Web
 Web technique like [[file:js.org][js]] is interesting.
+
+** Misc
+Some wonderful [[file:chrome.org][chrome extension]].
+Here's something I need to know when I clean reinstall my [[file:mac.org][Mac]].
+
+Music can be produced by computer programs.
+[[file:supercollider.org][SuperCollider]] is a server and a language for music synthesizing.
+[[file:overtone.org][Overtone]] offers a /clojure/ wrapper and emacs environment for the SuperCollider backend.
+
+[[file:poem.org][Poems]] I recite.
 
 * A Buffer
  * =MIPS=: million instructions per second.

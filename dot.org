@@ -8,7 +8,7 @@ dot -Tpng input.dot -o output.png
 
 Dot language examples:
 
-#+BEGIN_SRC dot
+#+BEGIN_SRC dot :exports code
   digraph {
     a -> b;     /* also comment */
     a -> {c d}; // equivalent to a->c; a->d;

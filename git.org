@@ -1,0 +1,16 @@
+#+TITLE: Git
+
+* Configuration
+
+#+BEGIN_EXAMPLE
+git config --global user.email 'xxx@xxx'
+git config --global user.name 'xxx'
+git config --global credential.helper cache # cache 15 min by default
+git config --global credential.helper 'cache --timeout=3600' # set in sec
+#+END_EXAMPLE
+
+* Usage Tips
+show the diff together when inspecting log
+#+BEGIN_EXAMPLE
+git lg -p
+#+END_EXAMPLE

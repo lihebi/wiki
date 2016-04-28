@@ -1,0 +1,138 @@
+#+TITLE: Overtone
+
+* Installation
+** Server Side
+First, install =lein2=.
+Create new project:
+
+#+BEGIN_SRC shell
+lein new MyMusicProj
+cd MyMusicProj
+#+END_SRC
+
+In =project.clj=, add
+#+BEGIN_SRC text
+dependence overtone 0.9.1
+#+END_SRC
+
+Then install dependencies
+#+BEGIN_SRC shell
+lein deps
+#+END_SRC
+
+The =repl= server can be started at command line,
+but don't need to.
+It is more convenient to start the server from Emacs, see following.
+#+BEGIN_SRC shell
+lein repl # pay attention to the port number
+#+END_SRC
+
+** Emacs Side
+Install =clojure-mode= and =cider=.
+Then just go into the music project created by =lein new=.
+Then =M-x cider-jack-in=.
+
+* Music Source
+** Load Overtone
+First in your music source, you need to load overtone.
+The first way, load with namespace using =use=.
+Do not really need the namespace, just use the packages.
+In the document of clojure, it is mentioned that "use" is like "require",
+But also refers to each lib's namespace.
+
+#+BEGIN_SRC clojure
+(ns cmj.overtone
+    (:use [overtone.live]
+          [overtone.inst.piano]
+          ))
+#+END_SRC
+
+Alternatively you can just use the following direct way.
+It is preferred to use ":use" in a "ns" macro, like the above, than to use it directly.
+#+BEGIN_SRC clojure
+(use 'overtone.live)
+(use 'overtone.inst.piano)
+#+END_SRC
+
+** Piano
+Play simple built-in piano:
+#+BEGIN_SRC clojure
+(piano)
+(piano 72)
+(piano 80)
+(sampled-piano)
+#+END_SRC
+
+Or, you can define an instrument, and play it.
+Much like a =defun=.
+#+BEGIN_SRC clojure
+  (definst foo [] (saw 220))
+  (foo)               ; this will run the above
+  (kill 47)           ; 47 is got from the previous line, the playing id
+  (kill foo)          ; can also use the function name
+  (foo)               ; can start multiple phases
+  ;; this shows I can provide a parameter to customize frequency each time
+  (definst bar [freq 220]
+    (saw freq)
+    )
+  ;; to run it
+  (bar 220)
+  (bar 660)
+  (kill bar)                              ; kill all instance of "bar"
+  (stop)              ; stop all
+
+  ;; A more complicated example
+  (definst trem [freq 440 depth 10 rate 6 length 3]
+    (* 0.3                                ; * 0.3 means volumn 30%
+       (line:kr 0 1 length FREE)          ; stop after some seconds. FREE is common practive in such control, so I don't need to kill it.
+       (saw (+ freq (* depth (sin-osc:kr rate))))))
+  ;; rates: :ar and :kr
+  ;; :ar is audio rate, the rate of my audio card
+  ;; :kr is control rate, about 1/60 of :ar
+  ;; so :kr is often used in control signal, rather than outputing audio.
+
+  (trem)
+#+END_SRC
+
+A whole song example:
+
+#+BEGIN_SRC clojure
+;; define some instruments
+(definst kick [freq 120 dur 0.3 width 0.5]
+  (let [freq-env (* freq (env-gen (perc 0 (* 0.99 dur))))
+        env (env-gen (perc 0.01 dur) 1 1 0 1 FREE)
+        sqr (* (env-gen (perc 0 0.01)) (pulse (* 2 freq) width))
+        src (sin-osc freq-env)
+        drum (+ sqr (* env src))]
+    (compander drum drum 0.2 1 0.1 0.01 0.01)))
+
+;;(kick)
+
+(definst c-hat [amp 0.8 t 0.04]
+  (let [env (env-gen (perc 0.001 t) 1 1 0 1 FREE)
+        noise (white-noise)
+        sqr (* (env-gen (perc 0.01 0.04)) (pulse 880 0.2))
+        filt (bpf (+ sqr noise) 9000 0.5)]
+    (* amp env filt)))
+
+;;(c-hat)
+
+;; metronome: 节拍器
+;; BPM: beats per minute
+(def metro (metronome 128))
+
+(metro) ; => current beat number
+(metro 100) ; => timestamp of 100th beat
+
+;; define player
+(defn player [beat]
+  (at (metro beat) (kick))
+  (at (metro (+ 0.5 beat)) (c-hat))
+  ;; #'player is sent, so we are passing the variable "player" intead of the current value of var.
+  ;; this enable us to redefine while it is playing
+  (apply-by (metro (inc beat)) #'player (inc beat) []))
+
+(player (metro))                        ; play it
+
+(metro-bpm metro 60)                   ; evaluate this will live change the freqency
+#+END_SRC

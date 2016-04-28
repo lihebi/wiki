@@ -77,6 +77,60 @@ extern int i=1; // 定义，不可在函数体内部
 
 
 
+* Language Specification
+**  varargs functions (variadic functions)
+a function to take a variable number or type of arguments
+
+Receiving of arguments:
+You actually need both the number and type of the arguments to retrieve.
+
+1. create =va_list=
+2. initialize using =va_start=
+3. access using multiple =va_arg=. The first gives you the first arg, and so on.
+4. call =va_end=
+
+The macro prototypes (defined in =stdarg.h=). Note these are macros, not functions.
+- ~void va_start (va_list ap, last-required)~
+- ~type va_arg (va_list ap, type)~
+- ~void va_end (va_list ap)~
+
+An real world example:
+#+BEGIN_SRC C
+  #include <stdarg.h>
+  #include <stdio.h>
+
+  int
+  add_em_up (int count,...)
+  {
+    va_list ap;
+    int i, sum;
+    va_start (ap, count);         /* Initialize the argument list. */
+    sum = 0;
+    for (i = 0; i < count; i++)
+      sum += va_arg (ap, int);    /* Get the next argument value. */
+    va_end (ap);                  /* Clean up. */
+    return sum;
+  }
+  int
+  main (void)
+  {
+    /* This call prints 16. */
+    printf ("%d\n", add_em_up (3, 5, 5, 6));
+    /* This call prints 55. */
+    printf ("%d\n", add_em_up (10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+    return 0;
+  }
+#+END_SRC
+
+** Variadic Macros
+#+BEGIN_SRC C
+#define eprintf(format, ...) fprintf (stderr, format, __VA_ARGS__)
+#+END_SRC
+
+The ~__VA_ARGS__~ will be replaced with whatever in =...=.
+The variable argument is completely macro-expanded before it is inserted into the macro expansion,
+just like an ordinary argument.
+
 * idioms
 #+begin_src C
 typedef enum { false, true } bool;
@@ -456,3 +510,42 @@ it is just like the interrupt.
  the expression =sizeof (int) * p= is unambiguously interpreted as =(sizeof(int)) * p=,
  but not =sizeof((int)*p)=.
 *** In c++ table, the =?:= is also in 14 cell
+
+* Unix Library
+sleep
+#+BEGIN_SRC C
+#include <unistd.h>
+unsigned int sleep(unsigned int seconds); // seconds
+int usleep(useconds_t useconds); // microseconds
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
+#+END_SRC
+
+There's no implementation of =clock_gettime= as in Unix, the following serves as an portable solution.
+#+BEGIN_SRC C
+#ifdef __MACH__
+#include <sys/time.h>
+#define CLOCK_REALTIME 0
+#define CLOCK_MONOTONIC 0
+//clock_gettime is not implemented on OSX
+int clock_gettime(int /*clk_id*/, struct timespec* t) {
+    struct timeval now;
+    int rv = gettimeofday(&now, NULL);
+    if (rv) return rv;
+    t->tv_sec  = now.tv_sec;
+    t->tv_nsec = now.tv_usec * 1000;
+    return 0;
+}
+#endif
+#+END_SRC
+
+use it like this
+#+BEGIN_SRC C
+double get_time() {
+  struct timespec ts;
+  ts.tv_sec=0;
+  ts.tv_nsec=0;
+  clock_gettime(CLOCK_REALTIME, &ts);
+  double d = (double)ts.tv_sec + 1.0e-9*ts.tv_nsec;
+  return d;
+}
+#+END_SRC

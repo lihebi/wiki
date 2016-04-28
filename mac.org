@@ -1,0 +1,37 @@
+#+TITLE: Mac OS
+
+Periodically I want to get a clean reinstall of my Mac,
+possibly because the space gets blowed up.
+This page documents some important software and configuration I need to remember to bootstrap the workspace.
+
+* GUI
+[[https://pqrs.org/osx/karabiner/seil.html.en][Seil]] changes the =Caps Lock= key to =Ctrl=,
+and [[https://pqrs.org/osx/karabiner/index.html.en][Karabiner]] changes right =Command= to =Option= (for ease of Emacs).
+
+ * alfred
+Some common software that everyone has on their machine is Chrome, Netease music
+
+Mac will 乱码 if extract using default unarchiver for archives that contains CJK in path and content.
+Use [[http://unarchiver.c3.cx/unarchiver][The Unarchiver]] instead.
+
+[[https://github.com/jbtule/cdto][Cd to]] is the toolbar extension for finder to jump to terminal.
+
+Use Spice [[http://old.ovirt.org/SPICE_Remote-Viewer_on_OS_X][Remote-Viewer]] to connect to ISU virtual machine.
+
+# Inkscape can draw something, but it is X11 based.
+Use VLC to play videos, because you can control the play back speed.
+Disk inventory X is a really helpful tool telling you which space is occupied by which App.
+
+Clion is a C++ IDE with many static analysis capabilities. I'm about to try it.
+Install LaTeX.
+
+* CMD
+Install =Homebrew=, and than install the following packages
+
+To install emacs:
+
+#+BEGIN_SRC shell
+brew install --with-cocoa emacs
+#+END_SRC
+
+=Graphviz/Dot=.

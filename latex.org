@@ -194,6 +194,7 @@ use headers and footers
 | =\rightarrow=     | $\rightarrow$    |
 |-------------------+------------------|
 | =\infty=          | $\infty$         |
+| =\propto=         | $\propto$        |
 | =\forall=         | $\forall$        |
 | =\lfloor=         | $\lfloor$        |
 | =\rfloor=         | $\rfloor$        |

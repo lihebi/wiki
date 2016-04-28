@@ -1,29 +1,32 @@
 #+TITLE: Shell
 
- * source 只在本shell可用
- * export 声明为全局变量。只有全局变量可以被子shell继承
+* Common Tips
+- =source= will be in effect in current shell session, but not the sub-shells
+- =export= declare global variable, and will be in effect in sub-shells
+** grouping
+ * ~( list )~: a subshell is created, each command in list will execute in that shell
+ * ~{ list; }~: semicolon or newline is needed. No subshell is created, commands will run in current shell.
 
-#+begin_src shell
-find . -type f -name *.flac -exec mv {} ../out/ \;
-du -sm * | sort -nr
-#+end_src
+** Operation
+ * ~Ctrl-s~ 停止显示
+ * ~Ctrl-q~ 恢复显示
 
-* command interactions
+ * ~Shift-pageup/down~ pageup down
+ * ~shift-Insert~ 粘贴。鼠标中键。
 
+ * ~mkdir -p~ 同时建立父目录
+ * ~Ctrl-l~ 清屏
+
+* General Concepts
 ** pipeline
-each command execute in its own subshell.
+Each command execute in its own subshell.
+The exit status of a pipeline is the exist status of the last command.
 
 #+begin_src shell
 <cmd1> | <cmd2> # pipe
 <cmd1> |& <cmd2> # it is short hand for:
 <cmd1> 2>&1 | <cmd2>
 #+end_src
-
-The exit status of a pipeline is
-
- * the exist status of the last command
- * if ~pipefail~ option is enabled, the last command to exit with a non-zero status
- * if ~!~ precedes the pipeline, it is logical negation
 
 ** redirection
 #+begin_src shell
@@ -36,19 +39,48 @@ ls 2>&1 dirlist # wrong
 <<< word # use string directly as input
 #+end_src
 
-** list
+* Scripting Parameter
+In shell script, =cd -= will cause the folder name to be printed.
+To disable the output, simply =cd - > /dev/null=.
+** special parameters
+
+  * ~$*~: "$1c$2c$3c...", c is the first character of $IFS
+  * ~$@~: "$1" "$2" "$3" ...
+  * ~$#~: the number of positional parameters, for =a.out -h= it is 1
+  * ~$?~: exit status
+  * ~$-~: current option flags
+  * ~$$~: process ID of the shell
+  * ~$!~: process ID of the job most recently placed into the background
+  * ~$0~:
+  * ~$n~
+
+** 特殊变量
 
 #+begin_src shell
-<cmd1> && <cmd2>
-<cmd1> || <cmd2>
-<cmd1> & # background, return 0 immediately. input is redirected to /dev/null
-<cmd1> ; <cmd2> # return status is the last one
+$0 # 脚本名称
+$<n> # 第n个参数
+$# # 参数数量
+$* # 所有参数，作为一个字符串
+$@ # 所有参数，作为字符串数组
 #+end_src
 
-** grouping
- * ~( list )~: a subshell is created, each command in list will execute in that shell
- * ~{ list; }~: semicolon or newline is needed. No subshell is created, commands will run in current shell.
+#+begin_src shell
+# example
+./a.sh hello world
+"$0" => ./a.sh
+"$1" => hello
+"$2" => world
+"$#" => 2
+"$*" => "./a.sh hello world"
+"$@" => [ "./a.sh" "hello" "world" ]
+#+end_src
 
+#+begin_src shell
+$$ # 当前进程的PID
+$? # 上一个命令的返回值
+$! # 运行在后台的最后一个进程的PID。done了也算。
+$_ # 上个命令的最后一个字段
+#+end_src
 
 
 * Control Flow
@@ -64,6 +96,9 @@ while test-commands; do consequent-commands; done
 for name [ [in [words ...] ] ; ] do commands; done
 # if any expr is omit, it is like 1
 for (( expr1 ; expr2 ; expr3 )) ; do commands; done
+for i in $(seq 1 10); do say hello; done
+for ((i=0;i<10;i++)); do echo $i; done
+for i in {1..10}; do echo $i; done
 break
 continue
 #+end_src
@@ -101,19 +136,6 @@ select name [in words ...]; do commands; done
  * anything else will cause the name to be set to null
  * the line read is saved in variable ~REPLY~
 
-** (())
-#+begin_src shell
-(( exp ))
-#+end_src
-
-arithmetic expression is evaluated
-
-** [[]]
-#+begin_src shell
-[[exp]]
-#+end_src
-
-evaluation of conditional expression
 
 * Condition
 
@@ -146,127 +168,23 @@ evaluation of conditional expression
 | ~[ !true ]~                       | not                             |
 | ~\[\[ ture && false 11 ! true ]]~ |                                 |
 
+** (())
+#+begin_src shell
+(( exp ))
+#+end_src
+
+arithmetic expression is evaluated
+
+** [[]]
+#+begin_src shell
+[[exp]]
+#+end_src
+
+evaluation of conditional expression
 
 ** About [] [[]]
  * ~[~ is a synonym for test, and a builtin for efficiency. It is a command.
  * ~[[~ is a keyword, perform comparisons in a manner more familiar to programmers.
-
-
-* diff and patch
-#+begin_src shell
-diff -u old new > patch
-diff -Naur olddir newdir > patch
-patch -p<num> <patch
-#+end_src
-
-* My Scripts
-
-#+begin_src shell
-# papers.txt contains titles of papers, one per line
-# scholar.py is from web, an API-like project for Google Scholar
-while read -r line; do
-    ID=~./scholar.py -c 1 -t -p "\"$line\"" | grep "Cluster ID" | awk '{print $3}'~
-    ./scholar.py -c 1 -C $ID --citation=bt >> out.bib
-done < papers.txt
-#+end_src
-
-loop counter
-
-#+begin_src shell
-count=1
-while read -r line; do
-    echo $count
-    let count=count+1
-done < papers.txt
-#+end_src
-
-* Builtin Utilities
- * ~time <command>~: # the total user and system time consumed by the shell and its children
- * ~column~: formats its input into multiple columns. ~mount | column -t~
- * ~dd~: ~dd if=xxx.iso of=/dev/sdb bs=4m; sync~
- * ~convert~: ~convert xxx.jpg -resize 800 xxx.out.jpg # 800x<height>~
- * ~nl~: ~nl <filename>~ 添加行号。输出到stdout
- * ~ln~: ~ln -s <target> <linkname>~ 记忆：新的东西总要最后才发布。
- * ~ls~: order: ~-r~ reverse; ~-s~ file size; ~X~ extension; ~-t~ time
- * ~tree~
-  * ~-d~ 只显示目录
-  * ~-f~ 显示路径
-  * ~-F~ 条目后有 [\*/=@|]
-  * ~-r~ 倒序
-  * ~-t~ 修改时间排序
-  * ~-L(\d)~ 显示n层
- * ~cat~: ~-n~ output with line number
- * tail
-  * ~-<n>~ 显示后n行
-  * ~+<n>~ 显示第n行到结尾
-  * ~-F~ 跟踪显示不断增长的文件结尾
-
-
-** xargs
-相当于~~，并把输出放 /结尾/
-#+begin_src shell
-find /etc -name '*.conf' | xargs ls -l
-# the same as:
-ls -l ~find ...~
-#+end_src
-** grep
-#+begin_src shell
-# -i: 忽略大小写
-# -n: 显示行号
-# -v: 输出不匹配的行
-# -H: 同时输出此行所在的文件名
-grep <pattern> <file>
-#+end_src
-
-** man
-
-1. 普通用户可执行的命令
-2. 系统调用手册，内核函数说明
-3. 子程序手册，库函数说明
-4. 系统设备手册，~/dev~目录中设备文件的参考说明
-5. 配置文件格式手册
-6. 游戏说明手册
-7. 协议转换手册
-8. 系统管理工具手册
-9. linux系统例程手册
-
-~man [num] <item>~
-** find
-Copy file based on find, and take care of quotes and spaces:
-#+begin_src shell
-find CloudMusic -type f -name "*mp3" -exec cp "{}" all_music \;
-#+end_src
-
-
-** tr: translate characters
-
-tr <string1> <string2>
-
-the characters in string1 are translated into the characters in string2
-where the first character in string1 is translated into the first character in string2 and so on.  If string1 is longer than string2,
-the last character found in string2 is duplicated until string1 is exhausted.
-
-characters in the string can be:
-
-any characters will represent itself if not:
-
- * ~\\octal~: A backslash followed by 1, 2 or 3 octal digits
- * ~\n~, ~\t~
- * ~a-z~: inclusive, ascending
- * ~[:class:]~: space, upper, lower, alnum
-  - if ~[:upper:]~ and ~[:lower:]~ appears in the same relative position, they will correlate.
-
-** uniq: report or filter out repeated lines in a file
-Repeated lines in the input will not be detected if they are not adjacent,
-so it may be necessary to sort the files first.
-
- * ~uniq -c~: Precede each output line with the count of the number of times the line occurred in the input, followed by a single space.
- * ~-u~: Only output lines that are not repeated in the input.
- * ~-i~: Case insensitive comparison of lines.
-
-** sort
- * ~-n~: compare according to string numerical value
- * ~-r~: reverse
 
 
 * IO
@@ -274,8 +192,6 @@ so it may be necessary to sort the files first.
 read -p "please input: " a b c
 echo -e "\n\thello\tworld\n" # 可以使用\n等控制字符
 #+end_src
-
-
 
 * Unix Management
  * id # 显示用户和组的信息
@@ -324,17 +240,6 @@ echo -e "\n\thello\tworld\n" # 可以使用\n等控制字符
  * simple command: provided by POSIX 1003.1 ~waitpid~ function(less than 128)
  * if command terminated by signal ~n~, it is ~128+n~
  * all builtin returns 2 indicating incorrect usage
-
-
-* Unix Shell Operation
- * ~Ctrl-s~ 停止显示
- * ~Ctrl-q~ 恢复显示
-
- * ~Shift-pageup/down~ pageup down
- * ~shift-Insert~ 粘贴。鼠标中键。
-
- * ~mkdir -p~ 同时建立父目录
- * ~Ctrl-l~ 清屏
 
 
 * escape color
@@ -507,42 +412,24 @@ function name [()] compound-command [ redirections ]
  * arguments to function become the positional parameters
 
 * Script
-** special parameters
 
-  * ~$*~: "$1c$2c$3c...", c is the first character of $IFS
-  * ~$@~: "$1" "$2" "$3" ...
-  * ~$#~: the number of positional parameters
-  * ~$?~: exit status
-  * ~$-~: current option flags
-  * ~$$~: process ID of the shell
-  * ~$!~: process ID of the job most recently placed into the background
-  * ~$0~:
-  * ~$n~
-
-** 特殊变量
+* My Scripts
 
 #+begin_src shell
-$0 # 脚本名称
-$<n> # 第n个参数
-$# # 参数数量
-$* # 所有参数，作为一个字符串
-$@ # 所有参数，作为字符串数组
+# papers.txt contains titles of papers, one per line
+# scholar.py is from web, an API-like project for Google Scholar
+while read -r line; do
+    ID=~./scholar.py -c 1 -t -p "\"$line\"" | grep "Cluster ID" | awk '{print $3}'~
+    ./scholar.py -c 1 -C $ID --citation=bt >> out.bib
+done < papers.txt
 #+end_src
 
-#+begin_src shell
-# example
-./a.sh hello world
-"$0" => ./a.sh
-"$1" => hello
-"$2" => world
-"$#" => 2
-"$*" => "./a.sh hello world"
-"$@" => [ "./a.sh" "hello" "world" ]
-#+end_src
+loop counter
 
 #+begin_src shell
-$$ # 当前进程的PID
-$? # 上一个命令的返回值
-$! # 运行在后台的最后一个进程的PID。done了也算。
-$_ # 上个命令的最后一个字段
+count=1
+while read -r line; do
+    echo $count
+    let count=count+1
+done < papers.txt
 #+end_src

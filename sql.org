@@ -1,0 +1,91 @@
+#+TITLE: SQL
+
+SQL is VERY sensitive with the terminating colon!
+
+* Emacs Babels
+There're two babels: =sqlite= and =sql=. The SQL babel works for a RDBMS like MySQL.
+But a file-based sqlite database is easier to use, so we talk about =sqlite= babel here.
+
+To create a table, you probably want it to be silent.
+Use this header:
+=#+header: :results silent=
+to do that.
+
+You need a database file of course.
+=#+header: :dir ~/tmp/=
+and
+=#+header: :db test-sqlite.db=
+together will locate the database file.
+
+To show the result, the default is in table format, like most babels for emacs.
+If you also want the column names like those shown in command line interface, add
+=#+header: :colnames yes=
+
+In stead of showing as a table by default, =#+header: :results raw= will print the raw text.
+However the result will be appended if running multiple times instead of replacing.
+
+The following is an example.
+
+#+name: sqlite-populate-test
+#+header: :results silent
+#+header: :dir ~/tmp/
+#+header: :db test-sqlite.db
+#+BEGIN_SRC sqlite
+create table greeting(one varchar(10), two varchar(10));
+insert into greeting values('Hello', 'world!');
+#+END_SRC
+
+#+name: sqlite-populate-test
+#+header: :colnames yes
+#+header: :dir ~/tmp/
+#+header: :db test-sqlite.db
+#+BEGIN_SRC sqlite
+select * from greeting;
+#+END_SRC
+
+* Basic Statements
+** create & insert & delete
+#+BEGIN_SRC sqlite
+  create table greeting(one varchar(10), two varchar(10));
+  insert into greeting values('Hello', 'world!');
+  insert into tablename values (1, 'xxx', 34);
+  insert into tablename (col1, col3) values (1, 34);
+  update tablename set col1=3,col3=8 where col2='yyy';
+  delete from tablename where col1=3;
+  delete from tablename; -- same as:
+  delete * from tablename;
+#+END_SRC
+** select
+#+BEGIN_SRC sqlite
+  select * from tablename;
+  select col1,col2 from tablename;
+  select distinct col1,col2 from tablename;
+  -- 'xxx' depends on the type of that column, e.g. for integer, 123
+  -- operators can be =, <=, <>(not equal)
+  select * from tablename where col1='xxx';
+  select * from tablename where col1='xxx' and col2<>3 or col3=8;
+  select * from tablename order by col1 ASC, col2 DESC, col3;
+  select * from tablename where col1 in ('xxx', 'yyy');
+
+  select top 2 * from tablename;
+  select top 50 percent * from tablename;
+  select * from tablename limit 3;
+#+END_SRC
+
+** Aliasing
+#+BEGIN_SRC sqlite
+SELECT o.OrderID, o.OrderDate, c.CustomerName
+FROM Customers AS c, Orders AS o
+WHERE c.CustomerName="Around the Horn" AND c.CustomerID=o.CustomerID;
+#+END_SRC
+
+* SQLite
+This is a file-based database.
+There's no server, every read and write goes into the ordinary file.
+
+There're some special commands for sqlite command line client, the dot commands.
+To see the help, use =.help=.
+Some useful ones:
+- =.tables ?TABLE?= show the tables (optionally only the tables that match the pattern =?TABLE?=).
+  There's no statements like =show tables;= in MySQL.
+- =.schema ?TABLE?=: similar to =describe tablename;=

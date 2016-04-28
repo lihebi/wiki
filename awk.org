@@ -15,6 +15,17 @@ A missing { action } means print the line;
 a missing pattern always matches.
 Pattern-action statements are separated by newlines or semicolons.
 
+** Important Variables
+- =FS (Field Separator)= :: regular expression used to separate fields; also settable by option -Ffs.
+- =NF= :: number of fields in the current record
+- =NR= :: ordinal number of the current record
+- =FNR= :: ordinal number of the current record in the current file
+- =FILENAME= :: the name of the current input file
+- =RS= :: input record separator (default newline)
+- =OFS= :: output field separator (default blank)
+- =ORS= :: output record separator (default newline)
+
+
 * patterns
 
 Patterns are arbitrary Boolean combinations (with =!= =||= =&&=)

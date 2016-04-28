@@ -251,3 +251,7 @@ re.search("pattern", "string", re.IGNORECASE)
 m = re.findall("[pattern]", "string")
 type(m) # list, a list of string that match
 #+end_src
+
+* Regex for Emacs
+- =\sc= :: character with c syntax (e.g. \s- for whitespace char)
+- =\s-= :: whitespace

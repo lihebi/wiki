@@ -1,0 +1,7 @@
+#+TITLE: Chrome Extensions
+
+- =html5outliner=: give you a toc of the page. VERY NICE!
+- =markdown here= :: render for email
+- =unblockyouku=
+- =adblock=
+- =sight= & =syntaxtic= :: syntax highlighter
