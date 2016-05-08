@@ -1,0 +1,690 @@
+#+TITLE: Machine Learning
+#+LATEX_CLASS: fse
+
+* Introduction
+- Euclidean distance
+** General Concepts
+- X :: predictors, independent variables, features, variables
+- Y :: response, dependent variable
+
+\begin{eqnarray}
+Y = f(X) + \epsilon
+\end{eqnarray}
+
+- $\epsilon$ :: random error term, 1) independent of X and 2) has mean zero
+- statistical learning :: a set of approaches for estimating $f$.
+- reducible error :: $\hat{f}$ is not an accurate perfect estimate of $f$
+- irreducible error :: the error term $\epsilon$ This may due to unmeasured variables
+- overfitting :: follow error too closely
+- degree of freedom :: a quantity that summarizes the flexibility of a curve
+- indicator variable :: $I(y_i = \hat{y}_i)$ is 0 or 1
+
+** Different models
+- parametric method :: reduce the fitting problem to estimating a set of coefficients.
+  But it will be imprecise if the model choose-d is very different from the true model
+- non-parametric method :: a very large number of observations is required.
+- regression :: a quantitative response
+- classification :: a qualitative response
+
+** The purpose of estimate $f$
+- prediction :: $\hat{f}$ is treated as black box
+- inference :: understand the relationship between X and Y.
+  $\hat{f}$ cannot be treated as black box.
+
+
+** Classification
+- Bayes Classifier :: assign each observation to the most likely class, given its predictor values.
+- Bayes Error Rate :: Bayes classifier produces the lowest possible test error rate.
+  The Bayes error rate is analogous to the irreducible error.
+  This means it is the optimal value.
+  So Bayes classifier serves as an unattainable gold standard against which to compare other methods.
+- Bayes Decision Boundary :: determine the prediction
+- K-Nearest Neighbors :: K points in the training set that are closest to $x_0$, represented by $N_0$.
+  Use the largest probability.
+
+** Model Accuracy
+- mean square error (MSE) ::
+
+\begin{eqnarray}
+MSE = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{f}(x_i))^2
+\end{eqnarray}
+
+- training MSE ::
+- test MSE ::
+
+*** The bias-variance trade-off
+- variance :: the amount by which $\hat{f}$ would change if we estimated it using a different training data set.
+  /More flexible statistical methods have higher variance./
+- bias :: the error that is introduced by approximating a real-life problem.
+  E.g. it is unlikely that any real-life problem has simple linear relationship.
+  /More flexible methods result in less bias./
+
+
+* Linear Regression
+regress Y on X, or Y onto X.
+
+\begin{eqnarray}
+Y = \beta_0 + \beta_1 X
+\end{eqnarray}
+
+- intercept :: $\beta_0$
+- slope :: $\beta_1$
+
+** Estimate Coefficients
+- Residual Sum of Squares (RSS) ::
+
+\begin{eqnarray}
+RSS = e_1^2 + e_2^2 + \ldots + e_n^2 \\
+e_i = y_i - \hat{y}_i
+\end{eqnarray}
+
+
+So RSS can also be written as:
+\begin{eqnarray}
+RSS = \sum_{i=1}^n (y_i - \hat{y}_i)^2
+\end{eqnarray}
+
+Least square approach chooses $\beta_0$ and $\beta_1$ to minimize RSS.
+The result:
+
+\begin{eqnarray}
+\hat{\beta_1} & = & \frac{\sum_{i=1}^n (x_i - \bar{x}) (y_i - \bar{y})}{\sum_{i=1}^n (x_i - \bar{x})^2} \\
+\hat{\beta_0} & = & \bar{y} - \hat{\beta_1} \bar{x}
+\end{eqnarray}
+
+** accuracy
+*** accuracy of coefficients measure
+- $\hat{\mu}$ :: sample mean
+- $SE(\hat{\mu})$ :: standard error
+
+\begin{eqnarray}
+Var(\hat{\mu}) = SE(\hat{\mu})^2 = \frac{\sigma^2}{n}
+\end{eqnarray}
+
+- Residual Standard Error (RSE) ::
+
+\begin{eqnarray}
+RSE = \sqrt{RSS / (n-2)}
+\end{eqnarray}
+
+
+- 95% confidence interval :: a range of values such that with 95% probability, the range will contain the true unknown value of the parameter.
+
+For linear regression, the 95% confidence interval for $\beta_1$ is
+
+\begin{eqnarray}
+\hat{\beta_1} +- 2 SE(\hat{\beta_1})
+\end{eqnarray}
+
+**** Hypothesis Test
+Standard error can be used to perform Hypothesis test on coefficients.
+NULL hypothesis:
+#+BEGIN_QUOTE
+H_0: There is no relationship between X and Y.
+#+END_QUOTE
+
+alternative hypothesis:
+#+BEGIN_QUOTE
+H_a: There is some relationship between X and Y.
+#+END_QUOTE
+
+We can reject H_0 if $\beta_1$ is far enough from 0.
+The "far enough" depends on $SE(\hat{\beta_1})$.
+If standard error is small, a small $\beta_1$ is enough.
+We compute the /t-statistic/:
+
+\begin{eqnarray}
+t = \frac{\hat{\beta_1} - 0}{SE(\hat{\beta_1})}
+\end{eqnarray}
+
+It measures the number of standard deviations that $\hat{\beta_1}$ is away from 0.
+
+- p-value :: the probability of observing any value equal to $|t|$ or larger, assuming $\beta_1=0$.
+  Reject null hypothesis if p-value is small enough, often 1%.
+*** accuracy of model
+Use:
+- Residual Standard Error (RSE) ::
+- R^2 statistic :: RSE is measured in terms of units of Y. It is not a clear metrics.
+  R^2 is between 0 and 1.
+  Near 1 means a large proportion of the variability in the response has been explained by the regression.
+  Near 0 indicates the regression did not explain the variability very well.
+- Total Sum of Square (TSS) :: measures the total variance in the response Y,
+  and can be thought of as the amount of variability inherent in the response before the regression is performed.
+
+
+\begin{eqnarray}
+TSS = \sum (y_i - \bar{y})^2 \\
+R^2 = \frac{TSS - RSS}{TSS}
+\end{eqnarray}
+
+- F-statistic :: Used when we want to test null hypothesis for all the predictors at once.
+
+\begin{eqnarray}
+F = \frac{(TSS - RSS) / p}{RSS / (n-p-1)}
+\end{eqnarray}
+
+in the above formula, $n$ is the number of observation, $p$ is number of features.
+
+When there's no relationship between the response and predictors,
+one would expect the F-statistic to take on a value close to 1.
+If it is large, say 570, we can reject the NULL hypothesis.
+Now the hypothesis becomes
+#+BEGIN_QUOTE
+H_0: \beta_1 = \beta_2 = ... = \beta_p = 0
+#+END_QUOTE
+Meaning that there's at least one feature relates to the response.
+
+However, f-statistics is not always clear.
+When $n$ is large, an F-statistic a little larger than 1 might still provide evidence against $H_0$.
+We can also compute /p-value associated with F-statistic/.
+Again, a small p-value reject NULL hypothesis.
+
+
+
+** Assumptions
+
+*** Kris Note
+Note that in Kris's note, the assumptions and testing stragtage is pretty different.
+Three assumptions should be checked:
+- $E[e_i] = 0$
+- $Var[e_i] = \sigma^2$
+- $Cov(e_i, e_j) = 0, \forall i \neq j$
+
+The third one can be detected in /autocorrelation function/ (ACF).
+Every vertical line crossing the confidence interval (95%) is suspicious.
+**** Tests
+- Testing for randomness of the residuals: /Runs test/.
+- Testing for nonconstant variance of the residuals: /Breusch-Pagan test/ (for linear models).
+
+*** non-linearity of the response-predictor relationships
+**** Detection
+plot the /residual plots/.
+The residual is $e_i = y_i - \hat{y}_i$.
+Plot it versus the predictor $x_i$, or in case of multiple predictors, versus the fitted response.
+The shape should not have clear patterns, i.e. it should be a flat horizontal line.
+If it is "U shape", then it indicates non-linear
+**** Solution
+try some non-linear transformations of the predictors, such as $log X$, $\sqrt{X}$, $X^2$.
+*** correlation of error terms
+The error terms $\epsilon_i$ should be uncorrelated.
+**** Consequence
+Confidence and prediction intervals will be narrower.
+p-values associated with the model will be lower.
+**** Detection
+Plot the residuals.
+If the error terms are correlated, we will see /tracking/ in the residuals,
+i.e. adjacent residuals may have similar values.
+
+*** non-constant variance of error terms
+The linear regression model assumes the error terms have a constant variance, i.e. $Var(\epsilon_i) = \sigma^2$.
+**** Consequence
+Standard errors, confidence interval, hypothesis test.
+**** Detection
+E.g. the residuals increase with the value of response.
+To confirm it is constant, we can use /Breusch-Pagan test/.
+**** Solution
+Transform response Y to concave function such as $log Y$ or $\sqrt{Y}$.
+
+*** Outliers
+An outlier is a point for which y_i is far from the value predicted by the model.
+**** Consequence
+An outlier does not have much effect on the least squares fit.
+But it can cause RSE and R^2 to decrease.
+**** Detection
+Residual plots can be used.
+But more clearly to judge is to use /studentized residuals/,
+computing by dividing each residuals $e_i$ by its estimated standard error.
+If the value exceeds 3, it is possibly an outlier.
+**** Solution
+- remove the observation
+- think about a missing predictor
+
+*** High-leverage points
+observations with an unusual value for $x_i$.
+**** Consequence
+Impact on least squares line.
+**** Detection
+compute /leverage statistic/.
+\begin{eqnarray}
+h_i = \frac{1}{n} + \frac{(x_i - \bar{x})^2}{\sum_{i'=1}^n (x_{i'} - \bar{x})^2}
+\end{eqnarray}
+
+This value is always between $1/n$ and 1.
+The average value is $(p+1)/n$.
+If it greatly exceeds $(p+1)/n$, it is a high leverage point.
+
+
+*** collinearity
+Two or more predictor variables are closely related to one another.
+**** Consequence
+- Difficult to separate out the individual effects of collinear variables on the response.
+- Reduce the accuracy of estimates of the regression coefficients
+- standard error for $\hat{\beta}_j$ to grow
+- reduce the power of hypothesis test, i.e. may not be able to reject it
+
+**** Detection
+- look at correlation matrix, to see if correlated
+- multicollinearity: three or more variables correlated
+
+In multicollinearity, we need to compute /variance inflation factor/ (VIF).
+A VIF value that exceeds 5 or 10 indicates a problematic  amount of collinearity.
+
+** KNN regression
+1. find the K nearest observations, $N_0$
+2. estimate $f(x_0)$ using the average of all the training responses in $N_0$
+
+\begin{eqnarray}
+\hat{f}(x_0) = \frac{1}{K} \sum_{x_i \in N_0} y_i
+\end{eqnarray}
+
+
+* Classification
+** logistic regression
+Linear regression will have negative values.
+So we use logistic regression, the response is between 0 and 1.
+
+- logistic function ::
+
+\begin{eqnarray}
+p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}} \\
+\frac{p(X)}{1 - p(X)} = e^{\beta_0 + \beta_1 X} \\
+log(\frac{p(X)}{1 - p(X)}) = \beta_0 + \beta_1 X
+\end{eqnarray}
+
+The left hand side of last formula is called /log-odds/ or /logit/.
+So logistic regression model has a logit that is linear in X.
+
+*** Estimate the coefficients
+To fit the model, we use /maximum likelihood/.
+the likelihood function:
+\begin{eqnarray}
+l(\beta_0, \beta_1) = \prod_{i:y_i=1} p(x_i) \prod_{i':y_{i'} = 0} (1-p(x_{i'}))
+\end{eqnarray}
+
+*** multiple logistic regression
+\begin{eqnarray}
+log(\frac{p(X)}{1-p(X)}) = \beta_0 + \beta_1 X_1 + ... + \beta_p X_p
+\end{eqnarray}
+
+** Linear Discriminant Analysis (LDA)
+Assume the observations within each class are drawn from a multivariate Gaussian distribution.
+Then plug estimates into Bayes' theorem, in order to perform prediction.
+Many prior and posterior.
+
+It is an alternative to logistic regression.
+It is more stable, and popular for more than two response classes.
+it is closely related to logistic regression.
+** Quadratic Discriminant Analysis (QDA)
+It has similar assumptions as LDA except:
+- LDA assumes K classes share a common covariance matrix.
+- But QDA assume that each class has its own covariance matrix.
+
+*** How to choose from LDA or QDA
+The bias-variance trade-off.
+
+LDA is better:
+- LDA is a much less flexible classifier than QDA.
+- So it has a much lower variance.
+- It improve the prediction performance.
+
+QDA is better:
+- if the assumption of common covariance matrix is bad, LDA is bias
+- if the training set is very large, the variance of the classifier is not a major concern.
+
+
+** KNN
+
+* Re-sampling Methods
+- model assessment :: The process of evaluating a model's performance.
+- model selection :: the process of selecting the proper level of flexibility for a model
+** cross-validation
+Hold out a subset of training observations from the fitting process, for test.
+*** Validation set approach
+Randomly divide the available set of observations into two parts, a /training set/ and a /validation set/ or /hold-out set/.
+It has two drawbacks
+*** cross validation
+It is a refinement of validation set approach to address the two drawbacks.
+
+**** Leave-One-Out Cross-Validation (LOOCV)
+every time, a single observation pair is left out.
+Calculate the MSE.
+Repeat these steps for every observation pair, i.e. each one has the chance to be left out.
+The test MSE is the average
+
+\begin{eqnarray}
+CV_{(n)} = \frac{1}{n} \sum_{i=1}^n MSE_i
+\end{eqnarray}
+
+The advantage:
+- it is far less bias
+- perform multiple times will always get the same result, i.e. no randomness
+
+But it can be expensive. But there's an "amazing shortcut".
+**** k-Fold Cross-Validation
+randomly divide observations into k groups.
+Every group is left out, as in LOOCV.
+The test MSE is still the average.
+
+** bootstrap
+Can be used to estimate the standard errors of the coefficients from a linear regression fit.
+It can be easily applied to a wide range of statistical learning methods.
+
+We want to know the standard errors of our estimated coefficients.
+We sample from the original dataset, with replacement, 1000 samples.
+For each one, calculate the value.
+Then use the mean.
+With replacement means some observations can occur more than once.
+We can sample 6 items into a sample even if the total number of observations is only 3.
+
+* Linear Model Selection and Regularization
+** Subset Selection
+*** best subset selection
+Try all the combinations of the features.
+Pick the best model from $2^p$ possibilities.
+*** Stepwise Selection
+The best subset selection cannot be used with large $p$ value.
+**** forward stepwise selection
+adds predictors to the model, one at a time, until all of the predictors are in the model.
+At each step, the variable gives the greatest additional improvement to the fit is added.
+**** backward stepwise selection
+Start from all predictors, iteratively remove the least useful predictor, one at a time.
+**** hybrid approaches
+After adding each new variable, the method may also remove any variables that no longer provide an improvement.
+** Shrinkage
+*** Ridge Regression
+The ordinary least squares minimize:
+\begin{eqnarray}
+RSS = \sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij})^2
+\end{eqnarray}
+
+and ridge regression introduce a /shrinkage penalty/:
+
+\begin{eqnarray}
+RSS + \lambda \sum_{j=1}^p \beta^2_j
+\end{eqnarray}
+
+When $\beta_j$ is small toward 0, the above added penalty will be small.
+So it will make the $\beta_j$ smaller, i.e. shrinkage.
+The parameter $\lambda$ is critical for the influence of the penalty.
+
+Actually it uses the l_2 norm.
+\begin{eqnarray}
+||\beta||_2 = \sqrt{\sum_{j=1}^p} \beta^2_j
+\end{eqnarray}
+
+*** Lasso
+Ridge regression cannot remove any features, unless $\lambda = \infty$.
+This may not be a problem for prediction accuracy but it can create a challenge in model interpretation.
+
+The Lasso uses l_1 norm penalty.
+
+\begin{eqnarray}
+||\beta||_1 = \sum |\beta_j|
+\end{eqnarray}
+
+$l_1$ penalty has the effect of forcing some of the coefficient estimates to be
+/exactly/ equal to 0 when the tuning parameter $\lambda$ is sufficiently large.
+
+It is much easier to interpret, it yields /sparse/ model, i.e. models that involve only a subset of the variables.
+
+
+** Dimension Reduction
+linear combination of the predictors into M new predictors.
+
+\begin{eqnarray}
+Z_m = \sum_{j=1}^p \phi_{jm} X_j
+\end{eqnarray}
+
+
+
+*** Principal Components Regression
+**** Principal Component Analysis (PCA)
+The following are some criteria for the direction selection, they all talk about the same thing:
+- The first principal component direction is that along which the observation vary the most.
+- This also yields the highest variance.
+- It also defines the line that is as close as possible to the data.
+- projected observations are as close as possible to the original observations.
+
+The second principal component $Z_2$ is a linear combination of the variables that is uncorrelated with $Z_1$,
+and has largest variance subject to this constraint.
+Actually $Z_1$ and $Z_2$ are always orthogonal.
+**** Principal Component Regression (PCR)
+Construct the first M principal components, and do linear regression on the new predictors.
+*** Partial Least Squares (PLS)
+The directions identified by PCA is in an unsupervised way,
+i.e. it does not use response Y.
+
+Set each $\phi_{j1}$ equal to the coefficient from teh simple linear regression of Y onto X_j.
+Intuitively PLS places the highest weight on the variables that are most strongly related to the response.
+
+Second PLS direction is by
+1. adjust each of the variables for Z_1, by regressing each variable on Z_1 and taking residuals
+   This captures the remaining information that has not been explained by the first PLS direction
+2. use this orthogonalized data in exactly the same fashion as Z_1.
+3. Repeat M times.
+
+* Non-linear
+** polynomial regression
+It is just replace standard linear model to higher dimension ones (typically less than 4).
+The one with $X,X^2,X^3$ is called cubic regression.
+** step function
+Also called /piecewise constant regression/.
+It actually piecewise the data, and do linear regression.
+The linear model is
+\begin{eqnarray}
+y_i = \beta_0 + \beta_1 C_1(x_i) + \beta_2 C_2(x_i) + ... + \beta_K C_K(x_i) + \epsilon_i
+\end{eqnarray}
+
+Given a value X, there's at most one of $C_i$ can be non-zero.
+
+** basis function
+a set of basis function $b_i(X)$:
+\begin{eqnarray}
+y_i = \beta_0 + \beta_1 b_1(x_i) + \beta_2 b_2(x_i) + ... + \beta_K b_K(x_i) + \epsilon_i
+\end{eqnarray}
+
+
+** regression spline
+It is piecewise polynomial.
+But it ensures the smooth at the knots.
+
+We have K knots, and fit a cubic regression.
+At the knots, we need to ensure the 0,1,2 deviation is the same.
+** smoothing spline
+This is a different approach, but also produces a spline.
+Instead of making RSS minimal, we make the following minimal
+\begin{eqnarray}
+RSS = \sum_{i=1}^n (y_i - g(x_i))^2
+\end{eqnarray}
+
+We need to find a $g$.
+If we do not put any constraints, we can simply let $g$ equal to $y_i$.
+But this is overfitting.
+We need some constraints on $g$.
+We want to find the $g$ that minimizes:
+\begin{eqnarray}
+\sum_{i=1}^n (y_i - g(x_i))^2 + \lambda \int g''(t)^2dt
+\end{eqnarray}
+
+The function $g$ that minimizes it is a smoothing spline.
+
+The first term is a /loss function/, nd second is a /penalty term/.
+
+
+** local regression
+1. gather the fraction $s = k/n$ of training points whose $x_i$ are closest to $x_0$.
+2. assign a weight $K_{i0} = K(x_i, x_0)$ to each point, so that the point furthest from x_0 has weight 0, and closest has highest weight.
+   All but these k nearest neighbors get 0.
+3. fit a /weighted least squares regression/, by finding $\beta_0$ and $\beta_1$ that minimize
+\begin{eqnarray}
+\sum_{i=1}^n K_{i0} (y_i - \beta_0 - \beta_1 x_i)^2
+\end{eqnarray}
+
+local regression can perform poorly if p is much larger than 3 or 4,
+because there will be very few training observations close to x_0.
+
+** Generalized Additive Models (GAMs)
+It is called additive model because we calculate a separate $f_j$ for each $X_j$, and add together all of their contributions.
+* Tree-based Methods
+** Decision tree
+*** regression tree
+1. divide the predictor space into J distinct and non-overlapping regions $R_1,...,R_J$.
+2. for each observation fail into R_j, make the prediction using the mean in R_j.
+
+To get the regions, use /recursive binary splitting/, a top-down, greedy approach.
+- From the root
+- every split choose the best split that leads to the greatest possible reduction of RSS
+
+It is likely to overfit the data.
+So we can grow a very large tree, and then /prune/ it back in order to obtain a subtree.
+
+The whole algorithm goes here:
+1. recursive binary splitting to grow a large tree
+2. apply /cost complexity pruning/
+3. use /K-fold cross-validation/
+*** classification tree
+intuitive
+** bagging
+The decision tree suffers from high variance.
+If we split the training data into two parts at random, the result two trees can be very different.
+
+Bagging can reduce the variance.
+It is related to bootstrap.
+
+Bagging involves
+1. creating multiple copies of the original training data set using the bootstrap,
+2. fitting a separate decision tree to each copy,
+3. and then combining all of the trees in order to create a single predictive model.
+
+Each tree is built on a bootstrap data set, independent of the other trees.
+
+The key idea is averaging a set of observations reduces variance.
+** boosting
+This is another approach for improving the prediction results from a decision tree.
+The different from bagging is,
+- the trees are grown sequentially: 
+  each tree is grown using information from previously grown trees.
+- Boosting does not involve bootstrap sampling.
+  Each tree is fit on a modified version of the original data set.
+* Support Vector Machine
+the best “out of the box” classifiers.
+
+A hyperplane is something like this:
+\begin{eqnarray}
+\beta_0 + \beta_1 X_1 + \beta_2 X_2 = 0
+\end{eqnarray}
+
+A hyperplane can separate two clusters.
+** Maximal Margin Classifier
+Also known as /optimal separating hyperplane/.
+
+In fact exist an infinite number of such hyperplanes.
+This is the motivation.
+
+The separating hyperplane that is farthest from the training observations.
+That is, we can compute the (perpendicular) distance from each training observation to a given separating hyperplane;
+the smallest such distance is the minimal distance from the observations to the hyperplane, and is known as the margin
+
+The maximal margin hyperplane is the separating hyperplane for which the margin is largest—that is,
+it is the hyperplane that has the farthest minimum dis- tance to the training observations.
+
+The closest observations are /support vectors/.
+they “support” the maximal margin hyperplane in the sense that
+if these points were moved slightly then the maximal margin hyperplane would move as well.
+
+guarantees that each observation will be on the correct side of the hyper- plane, provided that M is positive.
+
+** Support Vector Classifier
+The above method is
+- not stable ::
+  An additional blue observation has been added, leading to a dramatic shift in the maximal margin hyperplane.
+- not allow mistake ::
+
+Also known as /soft margin classifier/.
+
+allow some observations to be on the incorrect side of the margin, or even the incorrect side of the hyperplane.
+
+The model formula is TODO.
+
+The parameters in the model:
+1. the slack variable εi tells us where the ith observation is located, relative to the hyperplane and relative to the margin
+2. C: determines the number and severity of the vio- lations to the margin (and to the hyperplane) that we will tolerate
+   C is treated as a tuning parameter that is generally chosen via cross-validation
+
+Some observations:
+1. only observations that either lie on the margin or that violate the margin will affect the hyperplane
+2. an observation that lies strictly on the correct side of the margin does not affect the support vector classifier
+3. Observations that lie directly on the margin, or on the wrong side of the margin for their class, are known as support vectors.
+4. When the tuning parameter C is large, then the margin is wide
+
+
+** Support Vector Machine
+enlarging the feature space in a specific way, using kernels.
+Can deal with non-linear, just use a non-linear kernel.
+
+linear kernel:
+
+\begin{eqnarray}
+K(x_i, x_{i'}) = \sum_{j=1}^p x_{ij} x_{i'j}
+\end{eqnarray}
+
+polynomial kernel:
+\begin{eqnarray}
+K(x_i, x_{i'}) = (1 + sum_{j=1}^p x_{ij} x_{i'j})^d
+\end{eqnarray}
+
+Radial kernel:
+\begin{eqnarray}
+K(x_i, x_{i'}) = exp(-\gamma \sum_{j=1}^p (x_{ij} - x{i'j})^2)
+\end{eqnarray}
+
+** SVMs with More than two classes
+*** one-versus-one classification
+compute all pairs SVMs.
+*** one-versus-all classification
+compute all one versus all other SVMs.
+
+
+
+
+* Unsupervised Learning (Clustering)
+- Euclidean distance ::
+
+** K-means
+- W(C_k) :: the amount by which the observations within a cluster differ from each other
+
+It says the total within-cluster variation, summed over all K clusters, is as small as possible.
+It defines the within-cluster variation.
+The formula for it is: the sum of all of the pairwise squared Euclidean distances between the observations in the kth cluster.
+
+\begin{eqnarray}
+W(C_k) = \frac{1}{|C_k|} \sum_{i,i' \in C_k} \sum_{j=1}^p (x_{ij} - x_{i'j})^2
+\end{eqnarray}
+
+where $|C_k|$ denotes the number of observations in the kth cluster.
+
+The algorithm:
+1. select a number K, randomly assign a clustering from 1 to K for each observation
+2. iterate until cluster assignments stop changing
+  2.1 for each cluster, compute /centroid/: the vector of the p features means for the observations in the kth cluster.
+  2.2 assign each observation to the cluster whose centroid is closest.
+
+This algorithm guarantee to decrease the objective formula above.
+** Hierarchical Clustering
+Does not predefine the number of clusters.
+The result is called a /dendrogram/, a tree-based representation of the observations.
+
+It is constructed bottom-up.
+The tree node means a fusion.
+The height of the fusion indicates how different the two observations are.
+Never compare the horizontal distance.
+
+Construction algorithm:
+examine all pairwise inter-cluster dissimilarities among all clusters.
+Fuse the most similar ones.
+
+The four most commonly used types of linkage:
+- complete: maximal intercluster dissimilarity
+- single: minimal intercluster dissimilarity
+- average: mean intercluster dissimilarity
+- centroid: dissimilarity between the centroid of cluster A and B

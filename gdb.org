@@ -1,0 +1,31 @@
+#+TITLE: GDB
+
+* Core Dump
+The "core" may not be there.
+On ubuntu, this is possibly because you have a core file size ulimit of 0.
+
+Use this to enable it:
+#+BEGIN_EXAMPLE shell
+ulimit -c unlimited
+#+END_EXAMPLE
+
+The core will be dumped to =./core= file.
+
+Use gdb to analyze the core:
+#+BEGIN_EXAMPLE
+gdb /path/to/executable ./core
+#+END_EXAMPLE
+
+print the stack trace:
+
+#+BEGIN_EXAMPLE
+bt
+bt full
+#+END_EXAMPLE
+
+* Batch mode
+It is useful to run gdb in batch mode instead of interactively.
+
+#+BEGIN_EXAMPLE
+gdb -batch -x commands.gdb /path/to/executable [/path/to/core/dump/file]
+#+END_EXAMPLE

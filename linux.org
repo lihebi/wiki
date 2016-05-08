@@ -13,3 +13,9 @@ useradd -m myname
 # -a means append, if no -a, the -G will accept a comma separated list, overwrite the previous setting
 usermod -aG wheel myname
 #+END_SRC
+
+* Job control
+=C-z= to suspend.
+=fg= to bring it to foreground.
+=jobs= to list all background jobs,
+and =kill %1= to kill the first.

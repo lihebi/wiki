@@ -1,0 +1,42 @@
+#+TITLE: Usage of Code Surfer
+
+* Installation
+
+* Build benchmark
+#+BEGIN_EXAMPLE
+csurf hook-build myproj cc a.c
+csurf hook-build myproj make
+#+END_EXAMPLE
+
+These commands will copy =$HOME/codesurfer-2.2p0/csurf/template.csconf=.
+One trick for getting more information (often required for many analysis)
+is to use highest build option:
+#+BEGIN_EXAMPLE
+PRESET_BUILD_OPTIONS = highest
+#+END_EXAMPLE
+
+Typically this is not highest, after you build =myproj= for the first time,
+you need to modify the last line of generated file =myproj.csconf= to uncomment it.
+But there's an easier way, just modify the master copy =$HOME/codesurfer-2.2p0/csurf/template.csconf=.
+
+* Plug-ins
+** Write a plug-in
+#+BEGIN_EXAMPLE
+gcc -shared $< -o $@ -fPIC -O
+#+END_EXAMPLE
+
+** Run a plug-in
+
+Suppose the plug-in is compiled into a shared library =/path/to/plugin.so=,
+the command to run the plug-in is
+#+BEGIN_EXAMPLE
+csurf -nogui -l /path/to/plugin /path/to/benchmark/myproj
+#+END_EXAMPLE
+
+Note 1) the =.so= suffix is omitted, and 2) =myproj= should be provided.
+
+* Useful aliasing
+#+BEGIN_EXAMPLE
+alias csurf-make="csurf hook-build myproj make"
+alias csurf-slicing="cusrf -nogui -l /path/to/slice/plugin "
+#+END_EXAMPLE

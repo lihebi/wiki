@@ -38,6 +38,8 @@ Maybe it is closely related to [[http://cppcon.org/][CppCon]].
 
 How can you miss [[http://www.aosabook.org/][these wonderful aosabook books]]?
 
+- http://polly.llvm.org/
+
 * sitemap
 Use indices here with  or use the [[file:sitemap.org][sitemap]].
 
@@ -73,6 +75,7 @@ Low level [[file:assembly.org][assembly]] code.
 As a computer scientist,
 the knowledge about compiler is a must.
 Check out the open source [[file:compiler.org][compiler]] framework [[file:llvm.org][LLVM]].
+Use [[file:gdb.org][GDB]] to debug.
 
 Write documents like a pro: [[file:latex.org][latex]].
 The famous [[file:markdown.org][markdown]] notation system is far less powerful than [[file:org.org][Org Mode]].
@@ -99,6 +102,7 @@ Some interesting [[file:oj.org][algorithm in practice]].
 
 [[file:search-alg.org][Search algorithm]] is well-studied area.
 Some unclassified [[file:name-alg.org][Name Algorithm]].
+[[file:machine-learning.org][Machine Learning]].
 
 Some [[file:data-structure.org][data]] structure knowledge I picked up in undergraduate study.
 

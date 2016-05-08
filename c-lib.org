@@ -431,6 +431,21 @@ double strtod(const char *str, char **endptr);
 int printf(const char *format, ...);
 #+end_src
 
+** realpath
+#+BEGIN_SRC C
+#include <limits.h>
+#include <stdlib.h>
+char *realpath(const char *path, char *resolved_path);
+#+END_SRC
+
+Resolve symbolic link, =.= =..=.
+If =resolved_path= is NULL, it will =malloc= and return the pointer.
+The caller is responsible to =free= it.
+
+On error, the return value is =NULL=, and =errno= is set.
+
+But, it does not check if the file actually exists or not!
+
 ** sys/time.h
 
 ~gettimeofday~
@@ -520,3 +535,23 @@ example
   argc -= optind;
   argv += optind;
 #+end_src
+
+** readlink
+Follow symbolic link of =path=, get result into =buf=.
+Will fail (return -1) if =path= is not a symbolic link.
+Do not use this function to get the absolute path.
+Use =realpath= instead.
+
+However, the shell utility works, =realpath -f ./some/path= will produce the absolute path.
+But =realpath= can also do this, so do NOT use this.
+
+#+BEGIN_SRC C
+ssize_t readlink(const char *restrict path, char *restrict buf, size_t bufsize);
+#+END_SRC
+
+Usage
+#+BEGIN_SRC C
+if ((len = readlink("/modules/pass1", buf, sizeof(buf)-1)) != -1) {
+  buf[len] = '\0';
+}
+#+END_SRC
