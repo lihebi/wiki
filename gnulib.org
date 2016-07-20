@@ -1,0 +1,97 @@
+#+TITLE: GNULib
+
+This is a source level library.
+* Workflow
+Set the =configure.ac=, =a.c=, =Makefile.am=.
+
+Add the following to =Makefile.am=:
+#+BEGIN_EXAMPLE makefile
+# old staff
+bin_PROGRAMS = foo
+foo_SOURCES = a.c
+
+# new staff
+SUBDIRS = lib
+ACLOCAL_AMFLAGS = -I m4
+
+AM_CPPFLAGS = -Ilib
+LDADD = lib/libgnu.a
+
+EXTRA_DIST = m4/gnulib-cache.m4
+#+END_EXAMPLE
+
+Add to =configure.ac= after =AC_PROG_CC=:
+#+BEGIN_EXAMPLE
+gl_EARLY
+gl_INIT
+
+# not sure if sharp is comment
+AC_CONFIG_FILES([Makefile lib/Makefile]) # this is to add lib/Makefile
+AC_CONFIG_HEADERS([config.h]) # this is to output config.h
+#+END_EXAMPLE
+
+Then
+#+BEGIN_EXAMPLE
+aclocal
+autoconf
+automake --add-missing
+./configure
+make
+#+END_EXAMPLE
+
+* Trouble shooting
+** workflow
+I did this
+#+BEGIN_EXAMPLE
+gnulib-tool --import exclude
+#+END_EXAMPLE
+
+And I got this message:
+#+BEGIN_QUOTE
+You may need to add #include directives for the following .h files.
+  #include "exclude.h"
+
+You may need to use the following Makefile variables when linking.
+Use them in <program>_LDADD when linking a program, or
+in <library>_a_LDFLAGS or <library>_la_LDFLAGS when linking a library.
+  $(LTLIBINTL) when linking with libtool, $(LIBINTL) otherwise
+  $(LTLIBTHREAD) when linking with libtool, $(LIBTHREAD) otherwise
+
+Don't forget to
+  - add "lib/Makefile" to AC_CONFIG_FILES in ./configure.ac,
+  - mention "lib" in SUBDIRS in Makefile.am,
+  - mention "-I m4" in ACLOCAL_AMFLAGS in Makefile.am,
+  - mention "m4/gnulib-cache.m4" in EXTRA_DIST in Makefile.am,
+  - invoke gl_EARLY in ./configure.ac, right after AC_PROG_CC,
+  - invoke gl_INIT in ./configure.ac.
+#+END_QUOTE
+
+** The gettextize and autopoint
+
+After =gettextize=:
+
+#+BEGIN_QUOTE
+Please use AM_GNU_GETTEXT([external]) in order to cause autoconfiguration
+to look for an external libintl.
+
+Please create po/Makevars from the template in po/Makevars.template.
+You can then remove po/Makevars.template.
+
+Please fill po/POTFILES.in as described in the documentation.
+
+Please run 'aclocal' to regenerate the aclocal.m4 file.
+You need aclocal from GNU automake 1.9 (or newer) to do this.
+Then run 'autoconf' to regenerate the configure file.
+
+You will also need config.guess and config.sub, which you can get from the CVS
+of the 'config' project at http://savannah.gnu.org/. The commands to fetch them
+are
+$ wget 'http://savannah.gnu.org/cgi-bin/viewcvs/*checkout*/config/config/config.guess'
+$ wget 'http://savannah.gnu.org/cgi-bin/viewcvs/*checkout*/config/config/config.sub'
+
+You might also want to copy the convenience header file gettext.h
+from the /usr/local/Cellar/gettext/0.19.8.1/share/gettext directory into your package.
+It is a wrapper around <libintl.h> that implements the configure --disable-nls
+option.
+#+END_QUOTE
+

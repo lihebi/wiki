@@ -16,6 +16,12 @@ because the specific one has a higher priority.
                                          (interactive)
                                          (join-line -1)))
 #+END_SRC
+
+Package installation is done by the built-in package management.
+Be sure to add it into the start script to be able to automatically install it for a new build of emacs.
+
+- =list-package=: open the package page. Use =U x= to update all available.
+
 * Window and Frame
 ** window manage
   * ~balance-window~
@@ -29,6 +35,7 @@ because the specific one has a higher priority.
 In ~*package*~ buffer, ~Ux~ to update all packages.
 * File Operation
 - =revert-buffer=: Replace current buffer text with the text of the visited file on disk. I.e. Reload file.
+- =read-only-mode=: disable it to edit read only files
 
 * Editing
 ** text transformation

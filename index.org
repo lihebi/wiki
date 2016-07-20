@@ -15,9 +15,11 @@ There's no way to organize those chapters, so if needed, I will just export them
 <script>
 var i = Math.round(Math.random()*100);
 var quotes = [
-"你一出场别人都显得不过如此。",
-"你必须非常努力，才能看起来毫不费力。",
-"我命由我不由天"
+"你一出场别人都显得不过如此",
+"你必须非常努力，才能看起来毫不费力",
+"我命由我不由天",
+"好运对爱笑的人情有独钟",
+"成功路上，非死即伤，但别妄想我举手投降"
 ];
 document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 </script>
@@ -45,7 +47,7 @@ Use indices here with  or use the [[file:sitemap.org][sitemap]].
 
 ** Programming
 Fundanmental of computing theory can be found in this [[file:csapp.org][CSAPP study note]].
-The [[file:./shell.org][shell]] is the fundamental knowledge to be linux master,
+The [[file:./shell.org][shell]] is the fundamental knowledge to be [[file:linux.org][linux]] master,
 some [[file:shell-utils.org][shell utilities]] are documented in a different file.
 Utilities like [[file:awk.org][awk]] and [[file:sed.org][sed]] should be handy for text editing in scripts.
 [[file:tmux.org][Tmux]] is the choice to work on remote.
@@ -59,6 +61,7 @@ C has a [[file:c-lib.org][standard library]].
 Traditional [[file:make.org][make]] system is prefered to build C projects.
 If you want to use some advanced functions or classes that are not provided by the core library of C++,
 you may refer to a much broader library, the [[file:boost.org][Boost]] Library.
+To be portable, the GNU project provides [[file:autoconf.org][autoconf]] tools.
 
 [[file:hungarian.org][Hungarian notation]] is one of the famous way to choose variable names.
 
@@ -118,6 +121,8 @@ Music can be produced by computer programs.
 [[file:overtone.org][Overtone]] offers a /clojure/ wrapper and emacs environment for the SuperCollider backend.
 
 [[file:poem.org][Poems]] I recite.
+
+[[file:golf.org][Golf]], [[file:guitar.org][Guitar]]
 
 * A Buffer
  * =MIPS=: million instructions per second.

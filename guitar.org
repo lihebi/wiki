@@ -1,0 +1,52 @@
+#+TITLE: Guitar
+
+* Majors
+Counting strings from down to up (thin to thick),
+
+** A major
+The sign is often a single "A".
+All figures on the second fret.
+
+| figure | fret | string |
+|--------+------+--------|
+|      2 |    2 |      3 |
+|      3 |    2 |      4 |
+|      4 |    2 |      2 |
+
+** E major
+| figure | fret | string |
+|--------+------+--------|
+|      2 |    1 |      3 |
+|      3 |    2 |      5 |
+|      4 |    2 |      4 |
+
+** D major
+| figure | fret | string |
+|--------+------+--------|
+|      2 |    2 |      3 |
+|      3 |    2 |      1 |
+|      4 |    3 |      2 |
+
+** G major
+| figure | fret | string |
+|--------+------+--------|
+|      2 |    2 |      5 |
+|      3 |    3 |      6 |
+|      4 |    3 |      1 |
+
+** C major
+Each figure on a separate fret.
+| figure | fret | string |
+|--------+------+--------|
+|      2 |    1 |      2 |
+|      3 |    2 |      4 |
+|      4 |    3 |      5 |
+
+** A minor
+The sign is "Am".
+This is pretty like the E major: every sting minus 1.
+| figure | fret | string |
+|--------+------+--------|
+|      2 |    1 |      2 |
+|      3 |    2 |      4 |
+|      4 |    2 |      3 |

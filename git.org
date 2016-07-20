@@ -14,3 +14,72 @@ show the diff together when inspecting log
 #+BEGIN_EXAMPLE
 git lg -p
 #+END_EXAMPLE
+
+* Individual tools
+
+** git-bisect
+This command uses a binary search algorithm to find which commit in your project's history introduced a bug.
+
+1. The initial input: the "good" and "bad" commit.
+2. bisect select a commit, check it out, and ASK YOU whether it is good or bad.
+3. iterate step 2
+
+*** start
+
+#+BEGIN_EXAMPLE
+  $ git bisect start
+  $ git bisect bad                 # Current version is bad
+  $ git bisect good v2.6.13-rc2    # v2.6.13-rc2 is known to be good
+#+END_EXAMPLE
+*** answer the question
+Each time testing a commit, answer the question by:
+#+BEGIN_EXAMPLE
+  $ git bisect good # or bad
+#+END_EXAMPLE
+*** multiple good
+If you know beforehand more than one good commit,
+you can narrow the bisect space down by specifying all of the good commits immediately after the bad commit when issuing the bisect start command
+
+- v2.6.20-rc6 is bad
+- v2.6.20-rc4 and v2.6.20-rc1 are good
+#+BEGIN_EXAMPLE
+  $ git bisect start v2.6.20-rc6 v2.6.20-rc4 v2.6.20-rc1 --
+#+END_EXAMPLE
+*** run script
+If you have a script that can tell if the current source code is good or bad, you can bisect by issuing the command:
+#+BEGIN_EXAMPLE
+  $ git bisect run my_script arguments
+#+END_EXAMPLE
+
+*** Some work flows
+Automatically bisect a broken build between v1.2 and HEAD:
+In this case, only find the one that cause compile failure.
+#+BEGIN_EXAMPLE
+  $ git bisect start HEAD v1.2 --      # HEAD is bad, v1.2 is good
+  $ git bisect run make                # "make" builds the app
+  $ git bisect reset                   # quit the bisect session
+#+END_EXAMPLE
+
+
+Automatically bisect a test failure between origin and HEAD:
+This time, use the =make test= work flow
+#+BEGIN_EXAMPLE
+  $ git bisect start HEAD origin --    # HEAD is bad, origin is good
+  $ git bisect run make test           # "make test" builds and tests
+  $ git bisect reset                   # quit the bisect session
+#+END_EXAMPLE
+
+Automatically bisect a broken test case:
+Use a custom script.
+#+BEGIN_EXAMPLE
+  $ cat ~/test.sh
+  #!/bin/sh
+  make || exit 125                     # this skips broken builds
+  ~/check_test_case.sh                 # does the test case pass?
+  $ git bisect start HEAD HEAD~10 --   # culprit is among the last 10
+  $ git bisect run ~/test.sh
+  $ git bisect reset                   # quit the bisect session
+#+END_EXAMPLE
+
+** git-blame
+Annotates each line in the given file with information from the revision which last modified the line.

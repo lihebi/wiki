@@ -210,3 +210,29 @@ use headers and footers
 | =\sqrt{n}=        | $\sqrt{n}$       |
 | =\overline{abc}=  | $\overline{abc}$ |
 | =\times=          | $\times$         |
+
+* Font size
+It can be used after table environment
+#+BEGIN_EXAMPLE latex
+\begin{table}
+\small
+% ..
+\end{table}
+#+END_EXAMPLE
+
+In org mode:
+#+BEGIN_EXAMPLE
+#+ATTR_LATEX: :font \small
+#+END_EXAMPLE
+
+The different size reference
+- tiny
+- scriptsize
+- footnotesize
+- small
+- normalsize
+- large
+- Large
+- LARGE
+- huge
+- Huge

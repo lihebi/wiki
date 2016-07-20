@@ -1,0 +1,119 @@
+#+TITLE: Autoconf
+
+TODOs:
+- learn M4
+- autoheader
+- config.guess
+- autoreconf
+
+* References
+** A tutorial
+https://www.sourceware.org/autobook/download.html
+This book is a tutorial. Those I didn't study carefully in this book:
+- Dynamic load library
+- portable bash script
+- m4
+- what makes a GNU project
+- cross compilation
+
+** automake
+https://www.gnu.org/software/automake/manual/
+** autoconf
+https://www.gnu.org/software/autoconf/manual/
+** gnulib
+https://www.gnu.org/software/gnulib/manual/
+** libtool
+https://www.gnu.org/software/libtool/manual/
+
+** Other reference discovered by this reading
+https://www.gnu.org/prep/standards/
+
+* Introduction
+This article talks about the GNU build system:
+- autoconf
+- automake
+- libtool: portably create and maintani dynamic linked library
+
+* Some random staff
+Autoconf is a tool for producing shell scripts that automatically configure software source code packages to adapt to many kinds of Posix-like systems.
+The configuration scripts produced by Autoconf are independent of Autoconf when they are run, so their users do not need to have Autoconf.
+
+* interaction
+There're two files provided by developer: =Makefile.am= and =configure.in=.
+1. =Makefile.am= is taken by automake to generate =Makefile.in=.
+2. =Makefile.in= + =configure.in= with help of autoconf, generate =configure=
+3. Then, use this configure script, generates:
+   - config.cache
+   - config.log
+   - config.status
+   - config.h
+   - Makefile
+
+** configuration name
+config.guess can determines the configuration name for the system it is run on, e.g. 
+- i586-pc-linux-gnu
+- i386-pc-cygwin
+- sparc-sun-solaris2.7
+
+All configuration names used to have three parts, and in some documentation they are still called configuration triplets. A three part configuration name is cpu-manufacturer-operating_system. 
+
+* A typical workflow
+Makefile.am
+
+#+BEGIN_SRC makefile
+## Makefile.am -- Process this file with automake to produce Makefile.in
+bin_PROGRAMS = foo
+foo_SOURCES = a.c
+#+END_SRC
+
+configure.ac
+#+BEGIN_SRC autoconf
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+
+AC_INIT([foo], [2.0], [gary@gnu.org])
+
+AM_INIT_AUTOMAKE([1.9 foreign])
+
+AC_PROG_CC
+AM_PROG_LEX
+AC_PROG_YACC
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
+#+END_SRC
+
+a.c
+#+BEGIN_SRC C
+#include <stdio.h>
+
+int main() {
+  printf("Hello Automake\n");
+}
+#+END_SRC
+
+Then run
+#+BEGIN_EXAMPLE
+aclocal # generate aclocal.m4
+autoconf # generate configure
+automake --add-missing # generate Makefile.in, and symbol link depcomp, compile, install-sh, missing
+./configure # generate config.status, config.log, Makefile
+make all # generate a.o, foo
+#+END_EXAMPLE
+
+** bootstrap
+From the empty project, how to reach a configure && make && make install ready status?
+
+Create a =bootstrap= shell script:
+#+BEGIN_SRC shell
+#! /bin/sh
+
+aclocal \
+&& automake --gnu --add-missing \
+&& autoconf
+#+END_SRC
+
+The autoreconf does the same thing. Try it.
+
+

@@ -1,5 +1,33 @@
 #+TITLE: sed
 
+* Introduction
+The sed version on Mac OS and GNU Linux are different.
+So, use gnu! On Mac, install
+#+BEGIN_EXAMPLE
+brew install gnu-sed
+#+END_EXAMPLE
+
+This will make a =gsed= command available.
+To write a cross platform script, use
+#+BEGIN_SRC shell
+echo "OSTYPE: " $OSTYPE
+SED=sed
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    SED=sed
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    SED=gsed
+fi
+$SED -E -e "460,$ s/REG[0-9]{1,2}//g" compress42.c.orig > compress42.bugsig.c
+#+END_SRC
+
+** About the regular expression version
+=-E= will enable extra features, such as:
+- a{1,2}
+
+See =re_format(7)= for details.
+
+There's no =\d=, so use =[0-9]= instead. The man page says =[:digit:]= can be used, but it seems not working.
+
 * usage
 in shell script
 

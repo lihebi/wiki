@@ -1,0 +1,137 @@
+#+TITLE: Golf
+
+* Vocabulary
+** The Course
+- Bunker :: sand trap; depression usually filled with sand
+- Casual water :: temporary accumulation of water; not considered a water hazard
+- Dogleg :: a hole in which the fairway bends to the right or left
+- Direct Water Hazard :: a water hazard running perpendicular to the fairway
+- Lateral Water Hazard :: a water hazard running parallel to the line of the hole
+- Loose impediment :: natural object not fixed or growing such as pebbles, leaves, twigs, branches, etc.
+- Hazard :: any sand trap or water hazard
+- Obstruction :: anything artificially erected, placed or lying on the course such as bridges, ball washers, benches, etc.
+- Rough :: long grass usually bordering the fairway, tee or green
+- Side :: the first nine holes is know as the "front side"; the last nine holes as the "back side"
+- "Through the green" :: the entire area of the hole being played except the teeing ground, the green and all hazards
+
+** Scoring
+- Birdie :: a score of one stroke less than par
+- Bogey :: a score of one stroke over par
+- Double bogey :: a score of two strokes over par
+- Eagle :: a score of two strokes under par
+- Par :: number of strokes it takes an expert to play a hole;
+  consists of number of strokes it takes to reach the green and two putts.
+
+** Rules
+- Provisional ball :: a ball played when the ball in play is thought to be lost and out-of-bounds
+- Summer rules :: ball is played as it lies
+- Winter rules :: local rule permitting a player to improve the lie of the ball on the fairway
+  (6 inches any direction no closer to the hole)
+
+** Swing and shots
+- Approach :: a medium or short iron shot aimed at the green
+- Chip shot :: an approach shot played to the green that travels in a low trajectory
+- Pitch shot :: an approach shot played to the green that travels in a high trajectory
+- Closed stance :: close to the target!
+  non-target foot (right foot) is dropped back from the line running parallel
+  to ball's intended line of flight; closes hips
+- Open stance :: open to the target!
+  target foot (left foot) is dropped back from the line running parallel
+  to the ball's intended line of flight; opens hips
+- Square stance :: feet are parallel to intended line of flight of the ball
+- Hook :: a shot that curves off to the left of the target
+- Slice :: a shot that curves off to the right of the target
+- Push :: a shot that travels straight but to the right of target
+- Pull :: a shot that travels straight but to the left of target
+
+* Course Log
+1. Introduction, The terminology, rules in a gold club.
+2. Overlapping grape and interlocking grape (and never use baseball grape)
+3. Different type of clubs: 5, 7, 9. The bigger the number, the more bend of the end of the club, thus the higher the ball will go.
+4. Basic position of playing gold: bend your knees slightly, as if seating on an easy chair.
+   Place the gold on the ground in a comfortable position, neither too far nor too close.
+   Place feed in parallel, and not in closing position or open position.
+5. How to consistently hit straight: place two golf clubs in parallel, make them towards the flag aimed at.
+   Swing the club to hit the ball, not to touch each of the clubs.
+6. Rhythm of the swing: count 1 to 6 when swinging the club, 1 to 3 for going up, 4 to 6 for going the other direction to hit the ball.
+   For a right hand player, when going up, keep the left arm straight, and after hitting the ball, keep the right arm straight.
+7. heel: when swinging up, keep left heel up 1 inch the ground. After hit the ball, raise right heel up 5 inches, and bend the right knee towards the direction of the hit.
+   Keep your head down and looks at the ball during the hit. After hit, keep a little more time, then look at where the ball goes.
+8. The gold club card: learn how to read all the numbers and graphs on the card, learn the local club rules.
+   Learn the 9 holes and 18 holes. Learn the tee, green and hazards on the club course.
+9. Chip: when the ball is around the green, use a partial swing instead of a full swing.
+   Both arms should be straight. For a right hand player, the right foot should be closer to the ball than the left foot.
+   The left foot should turn towards the hole.
+10. putting: on the green, use a special club (I forgot the name). Lean forward, let the ball directly under your head. Use a half swing.
+11. one wood club (not sure the name): the club is very long and very big. Need to use a tee.
+   Get the tee and the ball in hand, plug the tee into the soil, and let the ball seat on the tee.
+   The swing is the same. The ball will go higher and further compared to the other clubs.
+12. routine: the pros first place the tee and ball, then step back and look through the target.
+   Then go to the spot and take one practicing full swing without hit the ball (3 inches ahead of the ball).
+   Then step forward and take exactly the same swing.
+   Remember to try to keep the right arm straight when backward swing and left arm straight when forward follow up.
+   Keep the position a little bit after the swing.
+13. Sand witch: sand trap is located near the green. The goal is to hit the ball out of the sand trap, onto the green.
+   So hit high, but not far. The club to hit in the sand is called sand witch.
+   It is a rule not to put the club on the sand, otherwise a one hit penalty.
+   Hit lower into the sand, and use more strength. It is the sand that push the ball out.
+   In the case the ball fall down high and embedded into the sand deep enough, it is called a "flying egg".
+   In this case, use even more strength to hit it out!
+   After using the sand trip, use the tool provided along with the sand trip to remove the foot prints.
+   Return the tool to wherever it was, at the edge of the sand trip or outside it.
+14. The short course. In the short course, there're 5 holes. Go through them.
+15. spin and hook: The ball goes in a curve: if the ball goes to the right, it is called spin. If the ball goes to left, it is the hook.
+16. The 3 wood and 3 iron. The 3 wood is a little smaller then the 1 wood, and it will hit higher but shorter.
+   The 3 wood is shorter than the 1 wood in length. Recall that the 1 wood is the longest club in your bag.
+   3 wood does not need to put a tee behind the ball.
+   Similarly, the 3 iron is the longest iron club. It is very flat and has little slop.
+   It will hit further than the 5 iron, but lower to the ground.
+   So when to use these different clubs?
+   At the tee (your first hit towards a hole), people often use the 1 wood because it can hit further than any club else.
+   The second hit is often still too far from the green.
+   So if the ball is in a good spot for hit, people often use the 3 wood.
+   If the spot is not good for a 3 wood, use the 3 iron because it can also hit really far away.
+
+
+* Etiquette
+** On the teeing
+1. observe the tee markers.
+   Always tee the ball behind them.
+   These are frequently moved to give the grass a chance to grow again.
+2. The player with the "honor" drives first
+3. Never talk or move around when another player is driving
+4. Never swing a club where you can be seen or heard by the player driving
+5. The best place to stand is diagonally in front and to the right of the player.
+6. Wait until the players ahead have played their second shots and are out of your driving range before teeing off
+
+** On the fairway
+1. The player who is "away" plays first
+2. Never stand in the line of a player's shot
+3. Be still while a player is taking a shot
+4. If a ball is lost, signal the players behind to go through.
+   Then wait until they are out of range before playing again.
+5. Wait until the preceding players are off the green before making an approach shot.
+6. Replace, and press down with your foot, all divots
+7. Call "fore" if your ball goes near any other player
+
+** In a sand trap
+1. leave your bag at the edge of the trap
+2. enter and leave the trap at the point nearest your ball
+3. Smooth over foot marks and club marks with your club when you leave the trap.
+
+** On the green
+1. leave your bag at the edge of the green nearest to the next tee
+2. place the flag at the edge of the green when it has been removed from the cup
+3. The player "away" putts first.
+4. Keep your body and your shadow out of the line of any player's putt.
+5. Do not move or talk while players are putting.
+6. Avoid stepping on the turf at the edge of the cup
+7. Replace the flag in the cup immediately after holing out.
+8. Leave the green immediately after holing out.
+   Record the scores after you have left the green.
+
+** In general
+1. only flat-heeled shoes should be worn on a course.
+   These make possible a better stance. High heels damage the course.
+2. If for any reason you are playing slowly, motion the players behind you to go through.
+   Wait until they are out of your range before taking another shot.

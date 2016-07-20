@@ -19,3 +19,29 @@ usermod -aG wheel myname
 =fg= to bring it to foreground.
 =jobs= to list all background jobs,
 and =kill %1= to kill the first.
+
+* Debian
+
+Change default desktop environment:
+- GNome: gdm
+- KDE: kdm
+- lxfe: lightdm
+
+Change:
+1. edit =/etc/X11/default-display-manager=
+2. sudo dpkg-reconfigure gdm
+3. update-alternatives --config x-window-manage
+
+** Install fonts
+- OTF: OpenType
+- TTF: TrueType
+- EOT: Embedded Open Type
+- WOFF: Web Open Font Format
+
+To install:
+
+#+BEGIN_EXAMPLE
+cp *.otf ~/.fonts
+sudo fc-cache
+fc-list
+#+END_EXAMPLE

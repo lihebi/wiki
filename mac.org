@@ -29,3 +29,7 @@ https://github.com/zenorocha/alfred-workflows
   - with space
   - argument required
   - URL: https://scholar.google.com/scholar?hl=en&q={query}
+
+
+* Disable mouse acceleration
+defaults write .GlobalPreferences com.apple.mouse.scaling -1
