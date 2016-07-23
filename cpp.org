@@ -1468,8 +1468,6 @@ For detail, refer to [[https://msdn.microsoft.com/en-us/library/dd293668.aspx][R
  ~abbr evthng n sght, usng vry shrt idntfr nms~
 
 
-#+BIBLIOGRAPHY: cite plain
-
 * C++ Standards
 ** C++11
 *** Default and Delete

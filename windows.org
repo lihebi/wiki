@@ -1,0 +1,11 @@
+#+TITLE: Windows
+
+- Check CPU and GPU status and temperature: http://cpuid.com
+- Monitoring system status: MSI Afterburner
+
+
+The alfred for windows, open source!
+- wox
+
+They have plugins, for example the google translate plugin.
+But it is awkward to use: =tr en zh hello=
