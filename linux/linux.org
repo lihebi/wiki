@@ -1,38 +1,19 @@
 #+TITLE: Linux
 
-* Centos Boost Up
-On installing a new instance of CentOS, issue the following commands:
+* Distributions
+- [[file:debian.org][Debian]]
+- [[file:centos.org][CentOS]]
 
-#+BEGIN_SRC shell
-# check the sshd status
-# should use opensshd
-service status sshd
-# add user, -m means create home folder
-useradd -m myname
-# oh, wait, I forget to add myself to wheel
-# -a means append, if no -a, the -G will accept a comma separated list, overwrite the previous setting
-usermod -aG wheel myname
-#+END_SRC
+* Knowledge
+- [[file:x11.org][X11]]
 
 * Job control
-=C-z= to suspend.
-=fg= to bring it to foreground.
-=jobs= to list all background jobs,
-and =kill %1= to kill the first.
+- =C-z= to suspend.
+- =fg= to bring it to foreground.
+- =jobs= to list all background jobs,
+  and =kill %1= to kill the first.
 
-* Debian
-
-Change default desktop environment:
-- GNome: gdm
-- KDE: kdm
-- lxfe: lightdm
-
-Change:
-1. edit =/etc/X11/default-display-manager=
-2. sudo dpkg-reconfigure gdm
-3. update-alternatives --config x-window-manage
-
-** Install fonts
+* Install fonts
 - OTF: OpenType
 - TTF: TrueType
 - EOT: Embedded Open Type
@@ -45,3 +26,4 @@ cp *.otf ~/.fonts
 sudo fc-cache
 fc-list
 #+END_EXAMPLE
+

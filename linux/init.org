@@ -1,0 +1,20 @@
+#+TITLE: Init
+
+* Debian
+
+The default run level is 2, corresponding to =/etc/rc2.d/XXX= scripts.
+By default there's no difference between level 2 to 5.
+
+** Run level description
+- 0: halt
+- S: single user mode on boot
+- 1: single user mode, switched from multi-user mode
+- 2: multi-user mode
+- 3,4,5
+- 6: reboot
+
+- =telinit(8)= can change the run level dynamically.
+- =runlevel(8)= check current run level
+
+Those scripts starts with "S" or "K" meaning =start= or =stop= sent to =systemd= utility.
+Those scripts are symbol linked to =../init.d/xxx=.

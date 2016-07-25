@@ -1,5 +1,9 @@
 #+TITLE: Sitemap for project wiki-org
 
+   + linux
+     + [[file:linux/debian.org][Debian]]
+     + [[file:linux/linux.org][Linux]]
+     + [[file:linux/common.org][Linux Common]]
    + math
      + 511
        + [[file:math/511/lp.org][Linear Programming]]
@@ -39,7 +43,6 @@
    + [[file:js.org][Javascript]]
    + [[file:llvm.org][LLVM]]
    + [[file:latex.org][Latex]]
-   + [[file:linux.org][Linux]]
    + [[file:lisp.org][Lisp]]
    + [[file:mac.org][Mac OS]]
    + [[file:machine-learning.org][Machine Learning]]
@@ -60,6 +63,7 @@
    + [[file:supercollider.org][SuperCollider]]
    + [[file:tmux.org][Tmux]]
    + [[file:code-surfer.org][Usage of Code Surfer]]
+   + [[file:windows.org][Windows]]
    + [[file:xpath.org][XPath]]
    + [[file:awk.org][awk]]
    + [[file:google-test.org][google test]]

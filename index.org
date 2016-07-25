@@ -49,7 +49,7 @@ Use indices here with  or use the [[file:sitemap.org][sitemap]].
 Fundanmental of computing theory can be found in this [[file:csapp.org][CSAPP study note]].
 The [[file:./shell.org][shell]] and some [[file:shell-utils.org][shell utilities]] are documented in a different file.
 [[file:linux/linux.org][Linux]] is no doubt the basic OS to use.
-[[file:linux/common.org][Linux common knowledge]] and [[file:linux/debian.org][Debian]].
+
 Utilities like [[file:awk.org][awk]] and [[file:sed.org][sed]] should be handy for text editing in scripts.
 [[file:tmux.org][Tmux]] is the choice to work on remote.
 [[file:regex.org][Regular Expression]] is considered the knowledge to make you productive.

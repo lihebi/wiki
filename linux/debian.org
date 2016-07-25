@@ -1,6 +1,7 @@
 #+TITLE: Debian
 
-* Install VirtualBox Guest addition
+* Installation
+** VirtualBox Guest addition
 
 It seems need the =xinit= to be installed.
 
@@ -12,124 +13,30 @@ cd /media/cdrom
 sudo ./VBoxLinuxAdditions.run
 #+END_EXAMPLE
 
-* Graphic Environment: Emacs
+* Startup
 
-http://www.howardism.org/Technical/Emacs/new-window-manager.html
+Change default desktop environment:
+- GNome: gdm
+- KDE: kdm
+- lxfe: lightdm
 
-#+BEGIN_EXAMPLE
-sudo aptitude install xinit
-sudo aptitude install emacs
-#+END_EXAMPLE
+Change (three approaches):
+1. edit =/etc/X11/default-display-manager=: I think we'd better use update-alternative
+2. =sudo dpkg-reconfigure gdm=
+3. =update-alternatives --config x-window-manage=
 
+* Configuration
+- =dpkg-reconfigure= reconfigure a installed package
+- =defconf-show= show the current configuration of a package
 
-In =.initrc=:
-#+BEGIN_EXAMPLE
-exec emacs
-#+END_EXAMPLE
+** update-alternatives
+Options:
+- =--config=: show options and select configuration interactively
+- =--display=: show the options
 
-In emacs configure:
-#+BEGIN_EXAMPLE
-(set-frame-parameter nil 'fullscreen 'fullboth)
-#+END_EXAMPLE
+Some examples:
+- =update-alternatives --config desktop-background=
 
-When you need to run something, just =M-x != and call =xterm=.
-
-** Browsers
-
-Emacs can use two browsers for light weight documentation browsing:
-- =w3m=: last update 2005, so do not use!
-- =eww=: Emacs Web Wowser
-** A time sink
-#+BEGIN_SRC lisp
-  (defun setup-windows ()
-    "Organize a series of windows for ultimate distraction."
-    (interactive)
-    (delete-other-windows)
-
-    ;; Start with the Stack Overflow interface
-    (sx-tab-frontpage t nil)
-
-    ;; Put IRC on the other side
-    (split-window-horizontally)
-    (other-window 1)
-    (circe-connect-all)
-
-    ;; My RSS Feed goes on top:
-    (split-window-vertically)
-    (elfeed)
-
-    ;; And start up the Twitter interface above that:
-    (other-window 2)
-    (split-window-vertically)
-    (twit)
-
-    (window-configuration-to-register ?w))
-#+END_SRC
-
-* Window Manager
-Candidates:
-- ratpoison
-- dwm
-- stumpwm: written in common lisp
-- exwm: emacs X window manager
-
-Noop:
-- i3: flavor VI, Noop!
-
-
-** ratpoison
-
-This is actually a wonderful WM.
-To start:
-
-#+BEGIN_EXAMPLE
-aptitude install ratpoison
-#+END_EXAMPLE
-
-In =.xinitrc=:
-
-#+BEGIN_EXAMPLE
-exec ratpoison
-#+END_EXAMPLE
-
-- =C-t ?= to show the help
-
-actually =C-t= is the prefix of every command, =C-g= to abort.
-- =C-t :=: type command
-- =C-t !=: run shell command
-- =C-t .=: open menu
-- =C-t c=: open terminal
-
-
-HOWEVER, this is pretty old, and it cause the screen to go brighter and darker back and force.
-Fortunately the stumpwm is very like this one, but
-1. actively maintained on github.
-2. written in common lisp
-
-** stumpwm
-Same as ratpoison:
-- =C-t ?=: show help
-- =C-t !=: run shell command
-- =C-t s=: hsplit
-- =C-t S=: vsplit
-- =C-t Q=: kill other frames, only retains this one
-- =C-t r=: resize, can use =C-n=, =C-p= interactively
-
-
-Different from ratpoison:
-- =C-t e=: open emacs!
-- =C-t ;=: type a command
-- =C-t :=: eval
-
-OK, it is good, except the default cursor. How can I change it?
-
-Install xcursor-themes:
-#+BEGIN_EXAMPLE
-aptitude install xcursor-themes
-aptitude show xcursor-themes # here it will output the themes name
-#+END_EXAMPLE
-
-In =.Xresources=:
-#+BEGIN_EXAMPLE
-Xcursor.theme: redglass
-#+END_EXAMPLE
+** systemd
+- =systemctl disable lightdm=
+  This will replace the =/etc/rc2.d/S03lightdm= with =/etc/rc2.d/K01lightdm=.
