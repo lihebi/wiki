@@ -57,6 +57,10 @@ To insert a control sequence, use ~C-q xxx~.
 
 ** spell checking
 Use =ispell=, and =flycheck= to check on-the-fly. Check emacs manual for detail.
+
+* Programming
+- =checkdoc=: check the warnings in doc string. It can also fix it: =C-h f=.
+
 * Navigating
   * ~forward-sexp~: forward semantic block
   * ~backward-sexp~

@@ -6,6 +6,8 @@
 
 * Knowledge
 - [[file:x11.org][X11]]
+- [[file:init.org][Init]]
+- [[file:grub.org][Grub]]
 
 * Job control
 - =C-z= to suspend.

@@ -1,6 +1,20 @@
 #+TITLE: Debian
 
 * Installation
+A new debian installation: choose not to use any desktop environment!
+Essential packages:
+- git
+- emacs
+- xinit
+- build-essential
+- linux-headers-$(uname -r)
+- stumpwm
+
+Install google-chrome.
+
+Get the =.hebi= and =.emacs.d= set up.
+
+
 ** VirtualBox Guest addition
 
 It seems need the =xinit= to be installed.
@@ -12,6 +26,9 @@ sudo mount /dev/src0 /media/cdrom
 cd /media/cdrom
 sudo ./VBoxLinuxAdditions.run
 #+END_EXAMPLE
+
+Guest addition is needed for clipboard sharing.
+To enable it, you need: =VBoxClient --clipboard=.
 
 * Startup
 
@@ -40,3 +57,56 @@ Some examples:
 ** systemd
 - =systemctl disable lightdm=
   This will replace the =/etc/rc2.d/S03lightdm= with =/etc/rc2.d/K01lightdm=.
+
+* Package Management
+- =/etc/apt/sources.list=
+
+Once installed google-chrome deb file downloaded from google,
+it will add one file: =/etc/apt/sources.list.d/google-chrome=.
+
+The original sources.list after a minimal installation:
+#+BEGIN_EXAMPLE
+# deb cdrom:[Debian GNU/Linux 8.5.0 _Jessie_ - Official amd64 NETINST Binary-1 20160604-15:31]/ jessie main
+#deb cdrom:[Debian GNU/Linux 8.5.0 _Jessie_ - Official amd64 NETINST Binary-1 20160604-15:31]/ jessie main
+
+deb http://ftp.us.debian.org/debian/ jessie main
+deb-src http://ftp.us.debian.org/debian/ jessie main
+
+deb http://security.debian.org/ jessie/updates main
+deb-src http://security.debian.org/ jessie/updates main
+
+# jessie-updates, previously known as 'volatile'
+deb http://ftp.us.debian.org/debian/ jessie-updates main
+deb-src http://ftp.us.debian.org/debian/ jessie-updates main
+#+END_EXAMPLE
+
+** binary or source
+- =deb=: binary
+- =deb-src=: source
+** code name
+=jessie= is the current name code for the stable release version of Debian.
+The next release and the next next release code name are also available.
+
+- =jessie= is equal to =stable=
+- =stretch= is equal to =testing=
+- =sid= is equal to =unstable=
+
+Sometimes you want to use stable, but with new versions of packages from =testing= release.
+This is called, for =jessie=, the =jessie-backports= release.
+
+https://backports.debian.org/Instructions/
+
+** source
+
+Another part is the =main=.
+If you want some 3rd party contributor packages, add =contrib= after =main=.
+If you further want some non-free packages, add also =non-free=.
+
+** Upgrade the system: from stable to testing
+Follow the following process EXACTLY.
+- First, change the code name =stable= in sources.list to =testing=.
+- Then, =apt-get update=
+- =apt-get upgrade=
+- =apt-get dist-upgrade=
+
+Do not use =aptitude=, it will stuck resolving dependence.
