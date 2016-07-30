@@ -1,5 +1,35 @@
 #+TITLE: Compiler
 
+* AddressSanitizer
+- wiki: https://github.com/google/sanitizers/wiki
+- flags: https://github.com/google/sanitizers/wiki/AddressSanitizerFlags
+
+To use it:
+#+BEGIN_EXAMPLE
+cc -fsanitize=address a.c
+#+END_EXAMPLE
+
+#+BEGIN_SRC C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int main() {
+  char buf[10];
+  // strcpy(buf, "hhhhhiiiiiooooo");
+  char *hbuf = (char*)malloc(10*sizeof(char));
+  strcpy(hbuf, "hhhhhddddd");
+}
+#+END_SRC
+
+Note the heap buffer overflow, it will not crash by normal compilation.
+However, it will crash and print out report after using address sanitizer.
+
+On mac, the default behavior is just hang, does not finish.
+To make it terminates the program:
+#+BEGIN_EXAMPLE
+ASAN_OPTIONS=halt_on_error=1 ./a.out
+#+END_EXAMPLE
+
 * C Preprocessor (CPP)
 
 The CPP Manual : https://gcc.gnu.org/onlinedocs/cpp/
