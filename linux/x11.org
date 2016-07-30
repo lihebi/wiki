@@ -115,3 +115,21 @@ When you need to run something, just =M-x != and call =xterm=.
 
     (window-configuration-to-register ?w))
 #+END_SRC
+
+
+* Trouble shooting
+
+On Debian, when I =dist-upgrade= Debian 8 Jessie to 9 Stretch,
+the =startx= stop working.
+I try install a Debian 9 from its own image, and still the same result.
+The error message says:
+#+BEGIN_QUOTE
+vesa cannot read int vect
+screen found but none leave a usable configuration
+xf86enableioports failed to set iopl for i/o
+#+END_QUOTE
+
+The trick is you need:
+#+BEGIN_EXAMPLE
+chomd u+s /usr/bin/xinit
+#+END_EXAMPLE

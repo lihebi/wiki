@@ -110,3 +110,13 @@ Follow the following process EXACTLY.
 - =apt-get dist-upgrade=
 
 Do not use =aptitude=, it will stuck resolving dependence.
+
+* Debian boost up scripts
+
+This is based on the following snippets:
+#+BEGIN_EXAMPLE
+list="git xinit xorg"
+apt-get update
+apt-get install -y $list
+cat example.list | xargs sudo apt-get -y install
+#+END_EXAMPLE
