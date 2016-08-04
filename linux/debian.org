@@ -1,6 +1,9 @@
 #+TITLE: Debian
 
 * Installation
+
+[[file:debian-setup.org][Debian setup]].
+
 A new debian installation: choose not to use any desktop environment!
 Essential packages:
 - git

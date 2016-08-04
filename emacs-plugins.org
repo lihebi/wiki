@@ -5,3 +5,7 @@ The default (at least the one I'm using) for C/C++ is =c/c++-clang=.
 
 - =flycheck-describe-checker=
 - =flycheck-list-errors=
+
+
+* AUCTex
+- =C-c C-c=: tex-compile

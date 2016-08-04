@@ -1,0 +1,71 @@
+#+TITLE: Debian Setup
+
+* Vanilla
+
+* Basic System
+Install these packages:
+#+BEGIN_EXAMPLE
+emacs xorg xinit build-essential tmux
+stumpwm exuberant-ctags global cmake libsqlite3-dev autoconf
+silversearcher-ag xcursor-themes
+sudo chromium
+llvm clang cifs-utils
+#+END_EXAMPLE
+
+Add to sudo
+#+BEGIN_QUOTE
+usermod -aG sudo hebi
+#+END_QUOTE
+
+- Config:
+  - dothebi
+    - tmux
+    - bash
+    - linux
+  - emacs.d
+- Source code pro
+
+#+BEGIN_EXAMPLE
+update-alternative --config x-terminal-emulator
+#+END_EXAMPLE
+
+git setup
+#+BEGIN_EXAMPLE
+git config --global user.name "Hebi Li"
+git config --global user.email "lihebi.com@gmail.com"
+git config --global credential.helper cache
+git config --global push.default simple
+#+END_EXAMPLE
+
+* Helium Ready
+** Packages
+#+BEGIN_EXAMPLE
+gnulib libboost-all-dev libgtest-dev
+#+END_EXAMPLE
+
+** Manual
+*** gtest
+#+BEGIN_EXAMPLE
+cd /tmp
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=RELEASE /usr/src/gtest
+make
+sudo mv libg* /usr/lib/
+#+END_EXAMPLE
+
+*** pugixml
+*** ctags
+*** helium-lib
+
+** Donwload
+*** srcml
+
+* 3rd party lib
+#+BEGIN_QUOTE
+zlib1g-dev
+#+END_QUOTE
+
+
+* other apps
+- zeal
