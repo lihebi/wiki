@@ -9,3 +9,15 @@ The default (at least the one I'm using) for C/C++ is =c/c++-clang=.
 
 * AUCTex
 - =C-c C-c=: tex-compile
+
+* DocView
+Can view pdf in emacs. It is convenient to use the same keybinding for =tex-compile=:
+when you press =C-c C-c= the second time after compilation, it will default to =\doc-view=.
+
+** navigation
+- =C-p= =C-n= =C-b= =C-f= still works
+- =+= and =-= to adjust scale
+- =n= and =p= for page navigation
+- =space= and =delete= to page up and down across pages
+- =M-<= and =M->= still works
+- =M-g M-g= works as jump to page
