@@ -58,6 +58,7 @@ Have difficulty choosing your first language?
 Well, you should not. Why you would have choices other than [[file:c.org][C]]?
 C has a [[file:c-lib.org][standard library]].
 [[file:cpp.org][C++]] is generally more productive than C.
+[[file:c-debug.org][C debugging techniques]] can speed up debugging.
 [[file:stl.org][Standard Template Library(STL)]] is the NO.1 important library in C++.
 Traditional [[file:make.org][make]] system is prefered to build C projects.
 If you want to use some advanced functions or classes that are not provided by the core library of C++,
