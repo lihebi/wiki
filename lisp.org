@@ -1,5 +1,8 @@
 #+TITLE: Lisp
 
+- https://common-lisp.net/project/asdf/
+- http://people.ace.ed.ac.uk/staff/medward2/class/moz/cm/doc/contrib/lispstyle.html
+
 
 * Introduction
 Although lisp is closely related to Emacs,

@@ -39,23 +39,8 @@ Fortunately the stumpwm is very like this one, but
 1. actively maintained on github.
 2. written in common lisp
 
-** stumpwm
-Same as ratpoison:
-- =C-t ?=: show help
-- =C-t !=: run shell command
-- =C-t s=: hsplit
-- =C-t S=: vsplit
-- =C-t Q=: kill other frames, only retains this one
-- =C-t r=: resize, can use =C-n=, =C-p= interactively
-
-
-Different from ratpoison:
-- =C-t e=: open emacs!
-- =C-t ;=: type a command
-- =C-t :=: eval
-
-OK, it is good, except the default cursor. How can I change it?
-
+* Theme
+** cursor
 Install xcursor-themes:
 #+BEGIN_EXAMPLE
 aptitude install xcursor-themes
@@ -66,6 +51,9 @@ In =.Xresources=:
 #+BEGIN_EXAMPLE
 Xcursor.theme: redglass
 #+END_EXAMPLE
+
+** color
+X11 color names: =/etc/X11/rgb.txt=
 
 
 * Emacs As Window Manager

@@ -3,6 +3,7 @@
    + linux
      + [[file:linux/centos.org][CentOS]]
      + [[file:linux/debian.org][Debian]]
+     + [[file:linux/debian-setup.org][Debian Setup]]
      + [[file:linux/grub.org][Grub]]
      + [[file:linux/init.org][Init]]
      + [[file:linux/linux.org][Linux]]
@@ -26,6 +27,7 @@
    + [[file:autoconf.org][Autoconf]]
    + [[file:boost.org][Boost]]
    + [[file:c.org][C]]
+   + [[file:c-debug.org][C Debugging Techniques]]
    + [[file:c-lib.org][C Library]]
    + [[file:cpp.org][C++]]
    + [[file:csapp.org][CSAPP Study Notes]]

@@ -1,0 +1,71 @@
+#+TITLE: StumpWM
+
+This is an excellent Window Manager! It has an info document ready in Emacs.
+
+* TODO
+- mode-line add group information
+- like ~C-e~ for opening a browser
+- rule based window
+
+
+* General
+
+Same as ratpoison:
+- ~C-t C-h~: show help
+- ~C-t !~: run shell command
+- ~C-t c~ terminal
+- ~C-t e~: open emacs!
+- ~C-t ;~: type a command
+- ~C-t :~: eval
+- ~C-t C-g~: abort
+- ~C-t a~: display time
+- ~C-t t~: send C-t
+- ~C-t m~: display last message
+
+** Get Help
+- ~C-t h k~: from key binding to command: =describe-key=
+- ~C-t h w~: from command to key binding: =where-is=
+- ~C-t h c~: describe command
+- ~C-t h f~: describe function
+- ~C-t h v~: describe variable
+
+- =mode-line=: start mode-line
+
+* Window
+- ~C-t n~
+- ~C-t p~
+- ~C-t <double-quote>~
+- ~C-t w~ list all windows
+- ~C-t k~ kill current frame (K to force quit)
+- ~C-t #~ toggle mark of current window
+
+
+* Frame
+- ~C-t s~: hsplit
+- ~C-t S~: vsplit
+- ~C-t Q~: kill other frames, only retains this one
+- ~C-t r~: resize, can use =C-n=, =C-p= interactively
+- ~C-t +~: balance frame
+- ~C-t o~: next frame
+- ~C-t -~: show desktop
+
+* Groups
+Shortcuts:
+- ~C-t g c~: create: =gnew=. Also available for float: =gnew-float=
+- ~C-t g n~: next
+- ~C-t g o~: =gother=
+- ~C-t g p~: previous
+- ~C-t g <double-quote>~: interactively select groups: =grouplist=
+- ~C-t g k~: kill current group, move windows to next group: =gkill=
+- ~C-t g r~: rename current group: =grename=
+- ~C-t G~: display all groups and their windows
+- ~C-t g g~: show list of group
+- ~C-t g m~: move current window to group X
+- ~C-t g <d>~: go to group <d>
+
+
+* Configuration
+
+#+BEGIN_EXAMPLE
+(stumpwm:define-key stumpwm:*root-map* (stumpwm:kbd "C-z") "echo Zzzzz...")
+#+END_EXAMPLE
