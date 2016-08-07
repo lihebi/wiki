@@ -7,6 +7,7 @@
      + [[file:linux/grub.org][Grub]]
      + [[file:linux/init.org][Init]]
      + [[file:linux/linux.org][Linux]]
+     + [[file:linux/stumpwm.org][StumpWM]]
      + [[file:linux/x11.org][X11]]
    + math
      + 511
@@ -55,6 +56,7 @@
    + [[file:markdown.org][Markdown]]
    + [[file:name-alg.org][Name Algorithm]]
    + [[file:oj.org][Online Judge Excerpts]]
+   + [[file:open-source.org][Open Source Projects I should consider contribute]]
    + [[file:org.org][Org Mode]]
    + [[file:overtone.org][Overtone]]
    + [[file:pugixml.org][Pugixml]]

@@ -12,6 +12,11 @@ sudo chromium
 llvm clang cifs-utils
 #+END_EXAMPLE
 
+More packages:
+#+BEGIN_EXAMPLE
+sqlite3
+#+END_EXAMPLE
+
 Add to sudo
 #+BEGIN_QUOTE
 usermod -aG sudo hebi
