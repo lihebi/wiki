@@ -9,6 +9,11 @@
 - [[file:init.org][Init]]
 - [[file:grub.org][Grub]]
 
+* App
+- File explorer: konquerer
+- Image viewer: feh
+
+
 * Job control
 - =C-z= to suspend.
 - =fg= to bring it to foreground.
