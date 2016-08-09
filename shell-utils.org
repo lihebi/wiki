@@ -72,6 +72,7 @@ so it may be necessary to sort the files first.
   - ~-<n>~ 显示后n行
   - ~+<n>~ 显示第n行到结尾
   - ~-F~ 跟踪显示不断增长的文件结尾
+- column -s , -t xxx.csv
 
 * System Management
 ** man
