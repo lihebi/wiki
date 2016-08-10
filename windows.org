@@ -9,3 +9,43 @@ The alfred for windows, open source!
 
 They have plugins, for example the google translate plugin.
 But it is awkward to use: =tr en zh hello=
+
+* AutoHotKeys
+
+Right click and create new "AutoHotKey script".
+
+Edit that script:
+
+Rotate.ahk:
+#+BEGIN_EXAMPLE
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+; #Warn  ; Enable warnings to assist with detecting common errors.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+; this is a comment
+; #n::Run Notepad
+
+; normal rotation
+#n::Run D:\tools\display.exe /rotate:0
+; portrait rotation
+#m::Run D:\tools\display.exe /rotate:90
+#+END_EXAMPLE
+
+[[http://noeld.com/programs.asp#Display][=display.exe=]] is a command line tool to change orientation.
+
+Double click to enable it. Change the content and run it again to replace old configure.
+
+* Wake Timer
+
+My computer wake up 10 secs after I asked it to sleep, and I want to know why.
+Use this command:
+
+#+BEGIN_EXAMPLE
+powercfg -lastwake
+#+END_EXAMPLE
+
+The output shows the type of wakeup is /Wake Timer/ and source is =VBoxSVC.exe=.
+
+Solution:
+power setting -> advanced setting -> more advanced setting -> sleep -> allow wake timers -> disable
