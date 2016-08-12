@@ -8,6 +8,7 @@
 - [[file:x11.org][X11]]
 - [[file:init.org][Init]]
 - [[file:grub.org][Grub]]
+- [[file:stumpwm.org][StumpWM]]
 
 * App
 - File explorer: konquerer

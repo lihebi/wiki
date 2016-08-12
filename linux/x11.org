@@ -1,4 +1,11 @@
 #+TITLE: X11
+
+* Misc
+check the screen resolution:
+#+BEGIN_EXAMPLE
+xdpyinfo | grep -B 2 resolution
+#+END_EXAMPLE
+
 * Window Manager
 Candidates:
 - ratpoison
