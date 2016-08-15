@@ -10,6 +10,7 @@ stumpwm exuberant-ctags global cmake libsqlite3-dev autoconf
 silversearcher-ag xcursor-themes
 sudo chromium
 llvm clang cifs-utils
+ratpoison conky dzen2 feh
 #+END_EXAMPLE
 
 More packages:
@@ -40,6 +41,12 @@ git config --global user.name "Hebi Li"
 git config --global user.email "lihebi.com@gmail.com"
 git config --global credential.helper cache
 git config --global push.default simple
+#+END_EXAMPLE
+
+
+** X setup
+#+BEGIN_EXAMPLE
+feh --bg-fill /path/to/wallpaper.suffix
 #+END_EXAMPLE
 
 * Helium Ready
