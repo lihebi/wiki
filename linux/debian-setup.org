@@ -3,7 +3,16 @@
 * Vanilla
 
 * Basic System
-Install these packages:
+** The sources.list file, add:
+#+BEGIN_EXAMPLE
+# backports
+deb http://ftp.debian.org/debian jessie-backports main
+# conkeror (the current version startup error)
+deb     http://noone.org/conkeror-nightly-debs jessie main
+deb-src http://noone.org/conkeror-nightly-debs jessie main
+#+END_EXAMPLE
+
+** Install these packages:
 #+BEGIN_EXAMPLE
 emacs xorg xinit build-essential tmux
 stumpwm exuberant-ctags global cmake libsqlite3-dev autoconf
@@ -11,14 +20,11 @@ silversearcher-ag xcursor-themes
 sudo chromium
 llvm clang cifs-utils
 ratpoison conky dzen2 feh
-#+END_EXAMPLE
-
-More packages:
-#+BEGIN_EXAMPLE
+conkeror
 sqlite3
 #+END_EXAMPLE
 
-Add to sudo
+** Add to sudo
 #+BEGIN_QUOTE
 usermod -aG sudo hebi
 #+END_QUOTE
@@ -31,11 +37,13 @@ usermod -aG sudo hebi
   - emacs.d
 - Source code pro
 
+** default setting
 #+BEGIN_EXAMPLE
 update-alternative --config x-terminal-emulator
+update-alternative --config x-www-browser
 #+END_EXAMPLE
 
-git setup
+** git setup
 #+BEGIN_EXAMPLE
 git config --global user.name "Hebi Li"
 git config --global user.email "lihebi.com@gmail.com"
@@ -44,7 +52,7 @@ git config --global push.default simple
 #+END_EXAMPLE
 
 
-** X setup
+** wallpaper setup
 #+BEGIN_EXAMPLE
 feh --bg-fill /path/to/wallpaper.suffix
 #+END_EXAMPLE

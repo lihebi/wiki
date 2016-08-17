@@ -1,0 +1,40 @@
+#+TITLE: Conkeror
+
+* Basic Navigation
+| key     | action                         |
+|---------+--------------------------------|
+| g       | goto url                       |
+| G       | edit url                       |
+| C-x C-f | goto url in new buffer         |
+| C-x C-b | select buffer                  |
+| B       | back                           |
+| F       | forward                        |
+| f       | hint (can use number and TEXT) |
+| r       | reload                         |
+| C-u f   | open link in new buffer        |
+| c       | copy link url by selection     |
+| c 0     | copy current link url          |
+| i c     | copy image url                 |
+| * * c   | copy selected dom              |
+| s       | save link                      |
+| i s     | save image                     |
+| ]]      | "next" page                    |
+| [[      | "previous" page                |
+| \       | view source                    |
+| C-c C-c | submit form                    |
+| q       | close current buffer           |
+| C-x k   | close buffer                   |
+
+
+* Getting help
+| key   | action                    |
+|-------+---------------------------|
+| C-h t | tutorial                  |
+| C-h i | help                      |
+| C-h b | list current key-bindings |
+| C-h k | describe key              |
+| C-h f | describe command          |
+| C-h v | describe variable         |
+
+* Commands
+Commands can be called directly by =M-x=.
