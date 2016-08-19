@@ -2,7 +2,9 @@
 
    + linux
      + [[file:linux/centos.org][CentOS]]
+     + [[file:linux/conkeror.org][Conkeror]]
      + [[file:linux/debian.org][Debian]]
+     + [[file:linux/debian-install.org][Debian Installation]]
      + [[file:linux/debian-setup.org][Debian Setup]]
      + [[file:linux/grub.org][Grub]]
      + [[file:linux/init.org][Init]]

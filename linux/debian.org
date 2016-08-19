@@ -2,7 +2,8 @@
 
 * Installation
 
-[[file:debian-setup.org][Debian setup]].
+- [[file:debian-setup.org][Debian setup]]
+- [[file:debian-install.org][Debian Installation on Mac]]
 
 A new debian installation: choose not to use any desktop environment!
 Essential packages:
