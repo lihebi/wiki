@@ -114,6 +114,9 @@ du -sm * | sort -nr
 
 
 
+
+
+
 ** Other
 - ~time <command>~: # the total user and system time consumed by the shell and its children
 - ~column~: formats its input into multiple columns. ~mount | column -t~

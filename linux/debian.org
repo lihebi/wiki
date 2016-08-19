@@ -123,3 +123,27 @@ apt-get update
 apt-get install -y $list
 cat example.list | xargs sudo apt-get -y install
 #+END_EXAMPLE
+
+
+
+* MIME
+check the MIME of a file.
+#+BEGIN_EXAMPLE
+file --mime /path/to/file
+#+END_EXAMPLE
+
+On debian, the mapping from suffix to MIME type is =/etc/mime.types=.
+
+Create default application for =xdg-open=
+#+BEGIN_EXAMPLE
+mkdir ~/.local/share/applications
+xdg-mime default firefox.desktop application/pdf
+#+END_EXAMPLE
+
+~/.local/share/applications/mimeapps.list
+#+BEGIN_EXAMPLE
+[Default Applications]
+application/pdf=firefox-esr.desktop
+#+END_EXAMPLE
+
+=/usr/share/applications/*.desktop= are files define for each application.
