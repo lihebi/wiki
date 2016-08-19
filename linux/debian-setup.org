@@ -17,11 +17,21 @@ deb-src http://noone.org/conkeror-nightly-debs jessie main
 emacs xorg xinit build-essential tmux
 stumpwm exuberant-ctags global cmake libsqlite3-dev autoconf
 silversearcher-ag xcursor-themes
-sudo chromium
-llvm clang cifs-utils
+sudo git
+cifs-utils
 ratpoison conky dzen2 feh
 conkeror
 sqlite3
+rxvt-unicode-256color
+ttf-anonymous-pro
+xsel
+xpdf
+autocutsel
+#+END_EXAMPLE
+
+Extra packages:
+#+BEGIN_EXAMPLE
+chromium llvm clang
 #+END_EXAMPLE
 
 ** Add to sudo

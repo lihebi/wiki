@@ -1,0 +1,75 @@
+#+TITLE: Debian Installation
+
+1. Use DVD because it has =dkms= package, used for Broadcam wireless chipset.
+2. Clean install Mac OS
+3. Reboot, Cmd-R to boot into recover, partition two more partitions for debian and swap.
+4. Use unetbootin to create Debian USB stick
+5. Install Debian normally, but use the pre-defined partition! Use ext-4 and mount at =/=
+
+** wireless driver for mac
+- https://wiki.debian.org/MacBook/Wireless
+- https://wiki.debian.org/wl
+#+BEGIN_EXAMPLE
+iwconfig
+#+END_EXAMPLE
+
+if the wlan card shows up, it is good, otherwise:
+
+#+BEGIN_EXAMPLE
+update-pciids # if necessary; run as root, to update PCI database
+lspci | grep -E "Atheros|Broadcom" # Finds card
+#+END_EXAMPLE
+
+Note: for 4360, there're actually two chipsets: =14E4:4360= and =14E4:43A0=, the first one does not have a driver, the second one can use =wl= (broadcom-sta-dkms).
+To see which one (http://unix.stackexchange.com/questions/175810/how-to-install-broadcom-bcm4360-on-debian-on-macbook-pro):
+#+BEGIN_EXAMPLE
+lspci -vnn | grep -i net
+#+END_EXAMPLE
+
+
+My macbook shows BCM4360, I installed from outside:
+#+BEGIN_EXAMPLE
+b43-fwcutter
+dkms
+broadcom-sta-dkms
+#+END_EXAMPLE
+
+Install from USB stick needs:
+1. mount
+2. =apt-cdrom -d /path/to/mount add=
+   make sure the mount actually mounted, and the entries in =/etc/apt/sources.list= correct.
+
+After making the wireless working, put in the sources.list:
+#+BEGIN_EXAMPLE
+deb http://ftp.us.debian.org/debian jessie main
+deb-src http://ftp.us.debian.org/debian jessie main
+#+END_EXAMPLE
+
+Then run
+#+BEGIN_EXAMPLE
+modprobe -r b44 b43 b43legacy ssb brcmsmac bcma
+modprobe wl
+#+END_EXAMPLE
+
+Then, config wifi:
+make sure the =iwconfig= shows the card information (something with wlan0 xxx)
+
+#+BEGIN_EXAMPLE
+ip a
+iwconfig
+ip link set wlan0 up
+# scan wifi
+iwlist scan
+#+END_EXAMPLE
+
+Add to =/etc/network/interfaces=: (see also =man interfaces=, =man wireless=)
+#+BEGIN_EXAMPLE
+# my wifi device
+auto wlan0
+iface wlan0 inet dhcp
+        wireless-essid [ESSID]
+        wireless-mode [MODE] 
+#+END_EXAMPLE
+
+finally, =ifup= and =ifdown= toggle the wifi.
+The =auto wlan0= in the config file will start it after boot.
