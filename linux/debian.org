@@ -1,5 +1,14 @@
 #+TITLE: Debian
 
+* Tmp
+change laptop screen brightness:
+#+BEGIN_EXAMPLE
+cat /sys/class/backlight/intel_backlight/max_brightness
+cat /sys/class/backlight/intel_backlight/brightness
+
+echo 400 > /sys/class/backlight/intel_backlight/brightness
+#+END_EXAMPLE
+
 * Installation
 
 - [[file:debian-setup.org][Debian setup]]
