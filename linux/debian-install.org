@@ -36,8 +36,9 @@ broadcom-sta-dkms
 
 Install from USB stick needs:
 1. mount
-2. =apt-cdrom -d /path/to/mount add=
+2. =apt-cdrom -m -d /path/to/mount add=
    make sure the mount actually mounted, and the entries in =/etc/apt/sources.list= correct.
+   When installing, it is still needed to mount to =/media/cdrom=.
 
 After making the wireless working, put in the sources.list:
 #+BEGIN_EXAMPLE
@@ -52,7 +53,18 @@ modprobe wl
 #+END_EXAMPLE
 
 Then, config wifi:
-make sure the =iwconfig= shows the card information (something with wlan0 xxx)
+make sure the =iwconfig= shows the card information (something with wlan0 xxx).
+
+At this point, just use =wicd= (available on DVD-2) and you will be fine.
+The following "manual interface" way is OK for IASTATE wifi because it does not require password, but for a WPA encrypted one, it does not work.
+In this case, =wpa_supplicant= is needed, but I didn't make it work.
+In a word, just use =wicd=.
+=wicd= is a daemon, install and start, make sure you only have =lo= loopback entry in =/etc/network/interfaces=.
+
+#+BEGIN_EXAMPLE
+apt-get install wicd
+systemctl restart wicd
+#+END_EXAMPLE
 
 #+BEGIN_EXAMPLE
 ip a
