@@ -44,6 +44,7 @@ How can you miss [[http://www.aosabook.org/][these wonderful aosabook books]]?
 
 ** Some interesting links I need to try when I got some time
 - https://ardour.org/
+- https://www.kickstarter.com
 
 * sitemap
 Use indices here with  or use the [[file:sitemap.org][sitemap]].

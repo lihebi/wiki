@@ -154,6 +154,12 @@ use headers and footers
   %% \cfoot{xxx}
 #+end_src
 
+** qtree
+#+BEGIN_SRC latex
+\usepackage{qtree}
+\Tree [ .S [ .S [ .S a ] [ .S a ] + ] [ .S a ] * ]
+#+END_SRC
+
 * Symbols
 
 | code              | symbol           |
