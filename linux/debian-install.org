@@ -79,8 +79,8 @@ Add to =/etc/network/interfaces=: (see also =man interfaces=, =man wireless=)
 # my wifi device
 auto wlan0
 iface wlan0 inet dhcp
-        wireless-essid [ESSID]
-        wireless-mode [MODE] 
+        wireless-essid [ESSID] (IASTATE)
+        wireless-mode [MODE] (Master)
 #+END_EXAMPLE
 
 finally, =ifup= and =ifdown= toggle the wifi.
