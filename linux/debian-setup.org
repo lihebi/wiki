@@ -28,6 +28,9 @@ xsel
 xpdf
 autocutsel
 graphviz
+dict
+curl
+ttf-wqy-microhei
 #+END_EXAMPLE
 
 Extra packages:

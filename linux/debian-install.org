@@ -85,3 +85,7 @@ iface wlan0 inet dhcp
 
 finally, =ifup= and =ifdown= toggle the wifi.
 The =auto wlan0= in the config file will start it after boot.
+
+
+
+Optionally, =NetworkManager= service can also be used. The package is =network-manager=, the front end is =network-manager-gnome=, but I didn't find a way to invoke it.

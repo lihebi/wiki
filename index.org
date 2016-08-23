@@ -39,6 +39,7 @@ Websites
 - [[https://ardour.org/][Ardour]]
 - [[https://www.coursera.org/][Coursera]]
 - [[https://leetcode.com/][Leetcode]]
+- [[https://www.ted.com/][Ted]]
 
 Blogs
 - [[http://coolshell.cn/][CoolShell]]
@@ -52,7 +53,8 @@ Packages
 - [[http://www.texample.net/tikz/][Tikz]]
 
 Github Repos
-- https://github.com/ivoarch/.dot-org-files
+- [[https://github.com/papers-we-love/papers-we-love][papers-we-love/papers-we-love]]
+- [[https://github.com/ivoarch/.dot-org-files][ivoarch/.dot-org-files]]
 
 Open Source Projects
 
