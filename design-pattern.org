@@ -11,7 +11,7 @@ This article uses [[file:uml.org][UML]] extensively.
 - ConcreteFactory is often singleton
 
 
-#+BEGIN_SRC plantuml :file plantuml.png :exports results
+#+BEGIN_SRC plantuml :file wikitmp_plantuml.png :exports results
 abstract class AbstractFactory {
   + CreateA()
   + CreateB()

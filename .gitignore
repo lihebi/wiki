@@ -13,3 +13,7 @@ _wiki
 *.out
 *.log
 *.toc
+
+
+
+wikitmp_*
