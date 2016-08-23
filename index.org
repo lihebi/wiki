@@ -26,12 +26,6 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 </blockquote>
 #+END_HTML
 
-
-#+BEGIN_SRC plantuml
-Bob -> Alice : hello
-#+END_SRC
-
-
 * Links
 
 Keep an eye on the most recent conference papers!
