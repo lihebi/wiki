@@ -1,0 +1,69 @@
+#+TITLE: Design Pattern
+
+This article uses [[file:uml.org][UML]] extensively.
+
+* Creation Pattern
+
+** Abstract Factory
+
+- Implemented by Factory Method.
+- Focus on a family of products.
+- ConcreteFactory is often singleton
+
+
+#+BEGIN_SRC plantuml :file plantuml.png :results value file :exports results
+abstract class AbstractFactory {
+  + CreateA()
+  + CreateB()
+}
+
+class ConcreteFactory1 {
+  + CreateA();
+  + CreateB();
+}
+
+class ConcreteFactory2 {
+  + CreateA();
+  + CreateB();
+}
+
+abstract class AbstractA
+abstract class AbstractB
+
+class A1
+class A2
+class B1
+class B2
+
+AbstractFactory<..ConcreteFactory1
+AbstractFactory<..ConcreteFactory2
+AbstractA<..A1
+AbstractA<..A2
+AbstractB<..B1
+AbstractB<..B2
+
+ConcreteFactory1*--A1
+ConcreteFactory1*--B1
+ConcreteFactory2*--A2
+ConcreteFactory2*--B2
+#+END_SRC
+
+The implementation:
+#+BEGIN_SRC C++
+class AbstractFactory {
+  virtual CreateA() {}
+  virtual CreateB() {}
+};
+class ConcreteFactory1 {
+  virtual CreateA() {new A1;}
+  virtual CreateB() {new B2;}
+};
+class ConcreteFactory2 {
+  virtual CreateA() {new A2;}
+  virtual CreateB() {new B1;}
+};
+// client code
+ConcreteFactory1 factory;
+AbstractA *a = factory.CreateA();
+AbstractB *b = factory.CreateB();
+#+END_SRC

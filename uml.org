@@ -1,0 +1,116 @@
+#+TITLE: UML
+
+* Plantuml
+
+** Installation
+Put plantuml.jar in =~/bin=.
+The path setting is in emacs, use babel to evaluate.
+
+- Extension: =<|--=
+- Composition: =*--=
+- Aggregation: =o--=
+
+Use =..= instead of =--= to have dotted line.
+
+It is possible to add labels at three positions: the two ends of the relation, and the middle.
+Use extension as example:
+
+** Reference
+relation
+#+BEGIN_EXAMPLE
+ClassA "a side" <|-- "b side" ClassB : label in middle
+#+END_EXAMPLE
+
+declare method and fields, () is what to check
+#+BEGIN_EXAMPLE
+ClassA : foo()
+ClassA : field1
+
+class Flight {
+   flightNumber : Integer
+   departureTime : Date
+}
+#+END_EXAMPLE
+
+visibility
+
+#+BEGIN_EXAMPLE
+skinparam classAttributeIconSize 0
+class Dummy {
+ -field1
+ #field2
+ +method2()
+}
+#+END_EXAMPLE
+
+| character | visibility |
+|-----------+------------|
+| -         | private    |
+| \#        | protected  |
+| +         | public     |
+
+
+Abstract
+#+BEGIN_EXAMPLE
+class Dummy {
+  {static} String id
+  {abstract} void methods()
+}
+#+END_EXAMPLE
+
+different class, enumerator, interface, have different character on the graph:
+#+BEGIN_EXAMPLE
+abstract class A
+abstract CollectionA
+interface Inter
+
+enum TimeKind {
+}
+#+END_EXAMPLE
+
+Groups: =..=, ~==~, =__=, =--=, and you can add text in between.
+
+#+BEGIN_EXAMPLE
+@startuml
+class Foo1 {
+  You can use
+  several lines
+  ..
+  as you want
+  and group
+  ==
+  things together.
+  __
+  You can have as many groups
+  as you want
+  --
+  End of class
+}
+
+class User {
+  .. Simple Getter ..
+  + getName()
+  + getAddress()
+  .. Some setter ..
+  + setName()
+  __ private data __
+  int age
+  -- encrypted --
+  String password
+}
+#+END_EXAMPLE
+
+note: =left=, =right=, =top=, =bottom=
+
+#+BEGIN_EXAMPLE
+note top of ClassA : Note! \n second line
+
+note "This is a floating note" as N1
+ClassA .. N1
+#+END_EXAMPLE
+
+Namespace
+#+BEGIN_EXAMPLE
+namespace net.foo {
+}
+#+END_EXAMPLE

@@ -27,10 +27,12 @@ ttf-anonymous-pro
 xsel
 xpdf
 autocutsel
+graphviz
 #+END_EXAMPLE
 
 Extra packages:
 #+BEGIN_EXAMPLE
+openjdk-7-jdk
 chromium llvm clang
 #+END_EXAMPLE
 
@@ -65,6 +67,14 @@ git config --global push.default simple
 ** wallpaper setup
 #+BEGIN_EXAMPLE
 feh --bg-fill /path/to/wallpaper.suffix
+#+END_EXAMPLE
+
+
+* Optional
+=~/bin=
+
+#+BEGIN_EXAMPLE
+plantuml.jar
 #+END_EXAMPLE
 
 * Helium Ready

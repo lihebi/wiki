@@ -26,10 +26,46 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 </blockquote>
 #+END_HTML
 
+
+#+BEGIN_SRC plantuml
+Bob -> Alice : hello
+#+END_SRC
+
+
 * Links
 
 Keep an eye on the most recent conference papers!
 - [[https://issta2016.cispa.saarland/program/][ISSTA16]]
+
+Websites
+- [[https://www.reddit.com/r/programming/][Reddit Programming]]
+- [[http://www.zhihu.com/][Zhihu]]
+- [[https://news.ycombinator.com/][Hacker News]]
+- [[https://www.kickstarter.com][Kick Starter]]
+- [[https://ardour.org/][Ardour]]
+- [[https://www.coursera.org/][Coursera]]
+- [[https://leetcode.com/][Leetcode]]
+
+Blogs
+- [[http://coolshell.cn/][CoolShell]]
+
+Techniques
+- [[http://www.scala-lang.org/][Scala]]
+- [[https://common-lisp.net/][Common Lisp]]: http://www.gigamonkeys.com/book/
+
+
+Packages
+- [[http://www.texample.net/tikz/][Tikz]]
+
+Github Repos
+- https://github.com/ivoarch/.dot-org-files
+
+Open Source Projects
+
+Other Links:
+- http://en.bookfi.net/
+
+** with Description
 
 I found it is super important to notice who are the pioneers and what they are doing.
 [[http://www.stroustrup.com/][Bjarne Stroustrup]] invented C++!
@@ -39,12 +75,6 @@ Read about the [[https://github.com/isocpp/CppCoreGuidelines][CppCoreGuidelines]
 Maybe it is closely related to [[http://cppcon.org/][CppCon]].
 
 How can you miss [[http://www.aosabook.org/][these wonderful aosabook books]]?
-
-- http://polly.llvm.org/
-
-** Some interesting links I need to try when I got some time
-- https://ardour.org/
-- https://www.kickstarter.com
 
 * sitemap
 Use indices here with  or use the [[file:sitemap.org][sitemap]].
@@ -68,6 +98,8 @@ Traditional [[file:make.org][make]] system is prefered to build C projects.
 If you want to use some advanced functions or classes that are not provided by the core library of C++,
 you may refer to a much broader library, the [[file:boost.org][Boost]] Library.
 To be portable, the GNU project provides [[file:autoconf.org][autoconf]] tools.
+
+[[file:design-pattern.org][Design Pattern]]!
 
 [[file:hungarian.org][Hungarian notation]] is one of the famous way to choose variable names.
 
