@@ -53,6 +53,8 @@ apt-get --download-only dist-upgrade
 apt-get dist-upgrade
 #+END_SRC
 
+=netselect-apt= to select the fastest source!
+
 * Startup
 
 Change default desktop environment:
