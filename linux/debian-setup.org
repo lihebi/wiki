@@ -39,6 +39,11 @@ openjdk-7-jdk
 chromium llvm clang
 #+END_EXAMPLE
 
+pending packages:
+#+BEGIN_EXAMPLE
+cl-quicklisp
+#+END_EXAMPLE
+
 ** Add to sudo
 #+BEGIN_QUOTE
 usermod -aG sudo hebi

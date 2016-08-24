@@ -4,6 +4,51 @@
 - http://people.ace.ed.ac.uk/staff/medward2/class/moz/cm/doc/contrib/lispstyle.html
 
 
+* Some useful packages (though I don't know what are they)
+- cl-quicklisp
+
+
+
+
+* Slime
+** Installation
+- slime (emacs IDE)
+- sbcl ("lisp" executer)
+- cl-quicklisp (package manager)
+
+In emacs: start slime
+#+BEGIN_EXAMPLE
+CL-USER> (load "/path/to/quicklisp.lisp")
+CL-USER> ;; follow screen command to install
+CL-USER> (load "~/quicklisp/setup.lisp") ;; load it
+
+CL-USER> (ql:add-to-init-file) ;; add to sbcl's init file
+
+CL-USER> (ql:quickload "clx-truetype") ;; download this package. Packages will be put into "~/quicklisp/xxx/dist"
+
+CL-USER> (ql:update-all-dists) ;; update
+CL-USER> (ql:update-client) ;; update quicklisp itself
+#+END_EXAMPLE
+
+The staff added into =.sbclrc=:
+#+BEGIN_EXAMPLE
+;;; The following lines added by ql:add-to-init-file:                                                                                                                                                              
+#-quicklisp                                                                                                                                                                                                        
+(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"                                                                                                                                                      
+                                       (user-homedir-pathname))))                                                                                                                                                  
+  (when (probe-file quicklisp-init)                                                                                                                                                                                
+    (load quicklisp-init)))
+#+END_EXAMPLE
+
+** Commands
+
+| command   | description             |
+|-----------+-------------------------|
+| C-c C-d d | slime-describe-symbol   |
+| C-c C-d f | slime-describe-function |
+| M-TAB     | slime-complete-symbol   |
+|           |                         |
+
 * Introduction
 Although lisp is closely related to Emacs,
 it makes sense to write a single page for it,

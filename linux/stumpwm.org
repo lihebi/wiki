@@ -8,6 +8,12 @@ This is an excellent Window Manager! It has an info document ready in Emacs.
 - rule based window
 
 
+* Installation
+In order to use =ttf-fonts= module, the lisp =clx-truetype= package needs to be installed.
+Install the slime IDE for emacs, install quicklisp, then install it using quicklisp.
+Follow the description in lisp wiki page.
+
+
 * General
 
 Same as ratpoison:

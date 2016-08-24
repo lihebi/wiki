@@ -47,6 +47,8 @@ Blogs
 Techniques
 - [[http://www.scala-lang.org/][Scala]]
 - [[https://common-lisp.net/][Common Lisp]]: http://www.gigamonkeys.com/book/
+- https://common-lisp.net/project/asdf/
+- https://common-lisp.net/project/slime/
 
 
 Packages
@@ -57,6 +59,9 @@ Github Repos
 - [[https://github.com/ivoarch/.dot-org-files][ivoarch/.dot-org-files]]
 
 Open Source Projects
+
+Communities
+- http://orgmode.org/worg/
 
 Other Links:
 - http://en.bookfi.net/
