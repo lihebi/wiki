@@ -12,7 +12,7 @@ TEST(TestCaseName, TestName) {
 }
 #+end_src
 
-compile use -lgtest
+compile use =-pthread -lgtest=
 
 should supply a main function in ONE file:
 

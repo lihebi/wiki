@@ -37,6 +37,7 @@ Extra packages:
 #+BEGIN_EXAMPLE
 openjdk-7-jdk
 chromium llvm clang
+texlive-full
 #+END_EXAMPLE
 
 pending packages:
@@ -51,11 +52,7 @@ usermod -aG sudo hebi
 
 - Config:
   - dothebi
-    - tmux
-    - bash
-    - linux
   - emacs.d
-- Source code pro
 
 ** default setting
 #+BEGIN_EXAMPLE
@@ -88,11 +85,13 @@ plantuml.jar
 * Helium Ready
 ** Packages
 #+BEGIN_EXAMPLE
-gnulib libboost-all-dev libgtest-dev
+gnulib libboost-all-dev libgtest-dev libpugixml-dev
 #+END_EXAMPLE
 
 ** Manual
 *** gtest
+
+
 #+BEGIN_EXAMPLE
 cd /tmp
 mkdir build
@@ -101,6 +100,16 @@ cmake -DCMAKE_BUILD_TYPE=RELEASE /usr/src/gtest
 make
 sudo mv libg* /usr/lib/
 #+END_EXAMPLE
+
+Note: if gtest is compiled with g++, clang++ cannot link it!
+See: http://stackoverflow.com/questions/37321069/googletest-clang-error-compiling-assert-falsefalse
+To use clang for compilation:
+#+BEGIN_EXAMPLE
+export CC=/usr/bin/clang
+$ export CXX=/usr/bin/clang++
+$ cmake ..
+#+END_EXAMPLE
+
 
 *** pugixml
 *** ctags

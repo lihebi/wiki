@@ -169,3 +169,35 @@ application/pdf=firefox-esr.desktop
 #+END_EXAMPLE
 
 =/usr/share/applications/*.desktop= are files define for each application.
+
+* Trouble shooting
+When shutting down, systemd is hindered by a message for a long time: "a stop job is running ..."
+
+THIS IS STILL OPEN! NO SOLUTION.
+The symptoms:
+If I power of immediately after boot up (before network interface is up), no problem.
+If I wait for some time and the interface is up, even if I ifdown it, the problem still exists.
+
+https://www.reddit.com/r/archlinux/comments/4bawf7/a_stop_job_is_running_for_session_c2_of_user/
+
+You can add your own rules to a service file like this:
+
+#+BEGIN_EXAMPLE
+sudo systemctl edit systemd-timesyncd.service
+#+END_EXAMPLE
+
+and then pasting this here into the editor that comes up:
+
+#+BEGIN_EXAMPLE
+[Service]
+TimeoutStopSec=1s
+#+END_EXAMPLE
+
+It saves a "systemd-timesyncd.service.d/override.conf" file in /etc, does not touch the original files.
+
+After editing, you can check on what systemd sees by doing:
+
+#+BEGIN_EXAMPLE
+systemctl cat systemd-timesyncd.service
+systemctl show systemd-timesyncd.service
+#+END_EXAMPLE

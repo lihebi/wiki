@@ -901,6 +901,28 @@ For detail, refer to [[https://msdn.microsoft.com/en-us/library/dd293668.aspx][R
  }
  #+end_src
 
+More flexible version:
+#+BEGIN_SRC C++
+/**
+ * Delim by ANY characters in delim string
+ */
+std::vector<std::string>
+utils::split(std::string s, std::string delim) {
+  std::size_t prev = 0, pos;
+  std::vector<std::string> ret;
+  while ((pos = s.find_first_of(delim, prev)) != std::string::npos)
+    {
+      if (pos > prev)
+        ret.push_back(s.substr(prev, pos-prev));
+      prev = pos+1;
+    }
+  if (prev < s.length()) {
+    ret.push_back(s.substr(prev, std::string::npos));
+  }
+  return ret;
+}
+#+END_SRC
+
 **** better split string
  #+begin_src C++
  // to std::cout

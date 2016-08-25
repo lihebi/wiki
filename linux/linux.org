@@ -35,3 +35,17 @@ sudo fc-cache
 fc-list
 #+END_EXAMPLE
 
+
+
+* Power management
+No extra software needed! =systmed= can handle it, by =acpid=.
+The configure file is =/etc/systemd/logind.conf=.
+=man logind.conf= for details.
+
+#+BEGIN_EXAMPLE
+HandlePowerKey=hibernate
+HandleLidSwitch=suspend
+#+END_EXAMPLE
+
+hibernate will save to disk, while suspend save to ram.
+Both of them will resume to the current status.

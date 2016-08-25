@@ -66,6 +66,13 @@ Communities
 Other Links:
 - http://en.bookfi.net/
 
+Routine
+- String split and trim algorithm
+- sort algorithms
+
+Code to write:
+- compiler
+
 ** with Description
 
 I found it is super important to notice who are the pioneers and what they are doing.
