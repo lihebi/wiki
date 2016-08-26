@@ -531,6 +531,21 @@ class enclose::nested2 { }; // definition of nested class
 
 * Concept
 ** reference vs. value
+
+A good writeup: http://thbecker.net/articles/rvalue_references/section_01.html
+
+The original definition for C:
+#+BEGIN_QUOTE
+An lvalue is an expression e that may appear on the left or on the right hand side of an assignment,
+whereas an rvalue is an expression that can only appear on the right hand side of an assignment.
+#+END_QUOTE
+
+The changed definition for C++:
+#+BEGIN_QUOTE
+An lvalue is an expression that refers to a memory location and allows us to take the address of that memory location via the & operator.
+An rvalue is an expression that is not an lvalue.
+#+END_QUOTE
+
 *** Pass-by Problems
  Pass-by-value has two problems.
  Apart from copy problem, there's also a slicing problem,
@@ -595,8 +610,31 @@ class enclose::nested2 { }; // definition of nested class
  it is safe.
  And since the pointer is NULL, no space will be freed upon deconstructing the temporay vector.
 
-Rvalue Reference is important because it supports the implementation of /move constructor/ and /perfect forwarding/.
+Rvalue Reference is important because it supports the implementation of /move constructor/ (enable move semantic) and /perfect forwarding/.
 We discuss perfect forwarding here.
+
+*** The move semantic and swap
+#+BEGIN_SRC C++
+template <class T>
+typename remove_reference<T>::type&& move (T&& arg) noexcept;
+
+template <class T> void swap (T& a, T& b)
+{
+  T c(std::move(a)); a=std::move(b); b=std::move(c);
+}
+template <class T, size_t N> void swap (T &a[N], T &b[N])
+{
+  for (size_t i = 0; i<N; ++i) swap (a[i],b[i]);
+}
+#+END_SRC
+
+Example
+#+BEGIN_SRC C++
+// move takes an object, invalidate it, and return the rvalue.
+std::string bar = "bar-string";
+myvector.push_back (std::move(bar));
+// Now bar is valid but has no valid content, while the vector contains the string.
+#+END_SRC
 
 *** Perfect Forwarding
 Perfect forwarding reduces the need for overloaded functions and helps avoid the forwarding problem.

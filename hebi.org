@@ -1,0 +1,146 @@
+#+TITLE: Hebi
+
+
+* A list
+- 0 day
+- CVE
+
+* Links
+
+Keep an eye on the most recent conference papers!
+- [[https://issta2016.cispa.saarland/program/][ISSTA16]]
+
+** Websites
+*** Learning Websites
+- [[https://www.coursera.org/][Coursera]]
+- [[https://leetcode.com/][Leetcode]]
+
+*** Reading Websites:
+- Wanqu RiBao: https://wanqu.co/
+- Reddit Programming: https://www.reddit.com/r/programming/
+- Hacker News: https://news.ycombinator.com/
+- Zhihu: http://www.zhihu.com/
+- TED: https://www.ted.com/
+- Twitter: https://twitter.com/
+
+*** Creative Websites:
+- [[https://www.kickstarter.com][Kick Starter]]
+- [[https://ardour.org/][Ardour]]
+- 99design, buy a logo: https://99designs.com/
+
+*** Vulnerabilities
+- Lookout:
+  - https://www.lookout.com/
+  - https://blog.lookout.com/
+
+*** Blogs
+- CoolShell: http://coolshell.cn/
+
+*** Techniques
+- Common Lisp: https://common-lisp.net/
+- Common Lisp Book: http://www.gigamonkeys.com/book/
+- Common Lisp asdf: https://common-lisp.net/project/asdf/
+- Slime: https://common-lisp.net/project/slime/
+- programming chrestomathy: http://rosettacode.org/wiki/Rosetta_Code
+- Midipix: http://midipix.org/ create programs for Windows using the standard C and POSIX APIs
+- ACCU: be a better programmer: https://accu.org/index.php
+
+*** Documentation
+- [[http://www.texample.net/tikz/][Tikz]]
+
+*** Github Repos
+- [[https://github.com/papers-we-love/papers-we-love][papers-we-love/papers-we-love]]
+- [[https://github.com/ivoarch/.dot-org-files][ivoarch/.dot-org-files]]
+
+*** Open Source Projects
+- FreeNAS: Open Storage OS: http://www.freenas.org/
+
+*** Communities
+- http://orgmode.org/worg/
+
+
+*** Hacking
+- Samurai Web Testing Framework: http://samurai.inguardians.com/
+- Reddit post How to Hack: https://www.reddit.com/r/HowToHack/
+- https://www.reddit.com/r/explainlikeimfive/comments/3xefbq/eli5how_do_people_learn_to_hack_seriouslevel/
+- https://www.reddit.com/r/hacking/
+- https://www.reddit.com/r/hacking/comments/3r4on5/hackers_of_reddit_how_why_and_at_what_age_did_you/
+- https://www.reddit.com/r/HowToHack/comments/2x2drl/best_books_to_learn_hacking/
+
+*** Hacking tools:
+- Fierce: http://tools.kali.org/information-gathering/fierce
+
+*** Other Links:
+- http://en.bookfi.net/
+
+
+
+* Note Book
+
+** TODO List
+- https://jackmott.github.io/programming/2016/08/20/when-bigo-foolsya.html
+- github stars:>1
+
+** Long Term TODO
+- mail client
+- color theme!
+- Emacs PDF
+
+** concepts to understand
+- move semantic
+- perfect forwarding
+- forward iterator
+- template
+- unordered_set bucket
+
+
+** Routine
+- String split and trim algorithm
+- sort algorithms
+
+** Code to write:
+- compiler
+
+
+** Languages to learn:
+- perl?
+- lua
+- Scala: http://www.scala-lang.org/
+- OpenGL
+- CUDA
+
+
+* Advice
+** About interruption
+From https://jaxenter.com/aaaand-gone-true-cost-interruptions-128741.html
+#+BEGIN_QUOTE
+When you’re operating on the maker’s schedule, meetings are a disaster.
+A single meeting can blow a whole afternoon, by breaking it into two pieces each too small to do anything hard in.
+Plus you have to remember to go to the meeting. That’s no problem for someone on the manager’s schedule.
+There’s always something coming on the next hour; the only question is what.
+But when someone on the maker’s schedule has a meeting, they have to think about it.
+
+I find one meeting can sometimes affect a whole day.
+A meeting commonly blows at least half a day, by breaking up a morning or afternoon.
+But in addition there’s sometimes a cascading effect.
+If I know the afternoon is going to be broken up, I’m slightly less likely to start something ambitious in the morning.
+I know this may sound oversensitive, but if you’re a maker, think of your own case.
+Don’t your spirits rise at the thought of having an entire day free to work, with no appointments at all? Well, that means your spirits are correspondingly depressed when you don’t.
+And ambitious projects are by definition close to the limits of your capacity. A small decrease in morale is enough to kill them off.
+
+Working late at night might sound like a good idea because there are no (or at least less) interruptions but even programmers need to sleep if they want to avoid burnout.
+#+END_QUOTE
+
+
+From https://www.reddit.com/r/programming/comments/4zp5dt/the_true_cost_of_interruptions_game_developer/:
+
+#+BEGIN_QUOTE
+Developers don't try to do hard things when an interruption is impending.
+
+Honestly it's one reason I like instant messaging, whether individual or in a group conversation (IRC, Slack, etc.).
+I can see a notification out of the corner of my eye, but it doesn't have the same urgency to respond as, say, a phone call.
+At a minimum it lets me complete the thought (e.g. finish writing a paragraph) before I look at the message.
+
+It's also a reason to appreciate working remotely. Nobody "just happens to stop by my desk."
+#+END_QUOTE
+

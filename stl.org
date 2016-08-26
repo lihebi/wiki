@@ -62,6 +62,10 @@ but proxy object, as the design to save space.
 Set has the important property that inserting a new element into a set does not invalidate iterators that point to existing elements.
 Erasing an element from a set also does not invalidate any iterators, except, of course, for iterators that actually point to the element that is being erased.
 
+*** unordered_set
+- Use hash, Constant complexity.
+- no specific order guarantee
+
 ** map
 The map is usually used as the following example:
 #+begin_src C++
@@ -114,6 +118,10 @@ for (auto it=mm.begin();it!=mm.end();++it) {
   it->second; // 8
 }
 #+end_src
+
+*** unordered_map
+- Use hash, constant complexity
+- no specific order guarantee
 
 ** deque
 =deque= refers to /Double Ended Queue/.
