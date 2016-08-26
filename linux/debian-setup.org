@@ -43,7 +43,21 @@ texlive-full
 pending packages:
 #+BEGIN_EXAMPLE
 cl-quicklisp
+pidgin
 #+END_EXAMPLE
+
+Non-package software:
+- https://www.soimort.org/translate-shell/
+
+*** note for cl-quicklisp
+1. use apt to install
+2. locate the file quicklisp.lisp
+3. sbcl --load /path/to/quicklisp.lisp
+4. (ql:installxxx)
+5. (ql:init-xxx)
+5. open emacs, install slime
+6. (ql:quickload "clx-truetype")
+6. run (xft:cache-fonts) once
 
 ** Add to sudo
 #+BEGIN_QUOTE

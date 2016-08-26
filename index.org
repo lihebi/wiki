@@ -26,52 +26,8 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 </blockquote>
 #+END_HTML
 
-* Links
-
-Keep an eye on the most recent conference papers!
-- [[https://issta2016.cispa.saarland/program/][ISSTA16]]
-
-Websites
-- [[https://www.reddit.com/r/programming/][Reddit Programming]]
-- [[http://www.zhihu.com/][Zhihu]]
-- [[https://news.ycombinator.com/][Hacker News]]
-- [[https://www.kickstarter.com][Kick Starter]]
-- [[https://ardour.org/][Ardour]]
-- [[https://www.coursera.org/][Coursera]]
-- [[https://leetcode.com/][Leetcode]]
-- [[https://www.ted.com/][Ted]]
-
-Blogs
-- [[http://coolshell.cn/][CoolShell]]
-
-Techniques
-- [[http://www.scala-lang.org/][Scala]]
-- [[https://common-lisp.net/][Common Lisp]]: http://www.gigamonkeys.com/book/
-- https://common-lisp.net/project/asdf/
-- https://common-lisp.net/project/slime/
 
 
-Packages
-- [[http://www.texample.net/tikz/][Tikz]]
-
-Github Repos
-- [[https://github.com/papers-we-love/papers-we-love][papers-we-love/papers-we-love]]
-- [[https://github.com/ivoarch/.dot-org-files][ivoarch/.dot-org-files]]
-
-Open Source Projects
-
-Communities
-- http://orgmode.org/worg/
-
-Other Links:
-- http://en.bookfi.net/
-
-Routine
-- String split and trim algorithm
-- sort algorithms
-
-Code to write:
-- compiler
 
 ** with Description
 
@@ -177,6 +133,107 @@ Music can be produced by computer programs.
  * =K-ary tree=: rooted tree in which each node has no more than k children.
  * =Shared nothing architecture=: a distributed architecture in which each node is independent and self-sufficient. In particular, none of the nodes share memory of disk.
  * =Endianness=: Big-endian store MSB of a word in the *smallest* address. The memory grows up down, so small address is up.
+
+
+
+
+* A list
+- 0 day
+- CVE
+
+* Links
+
+Keep an eye on the most recent conference papers!
+- [[https://issta2016.cispa.saarland/program/][ISSTA16]]
+
+** Websites
+*** Learning Websites
+- [[https://www.coursera.org/][Coursera]]
+- [[https://leetcode.com/][Leetcode]]
+
+*** Reading Websites:
+- https://wanqu.co/
+- [[https://www.reddit.com/r/programming/][Reddit Programming]]
+- [[https://news.ycombinator.com/][Hacker News]]
+- [[http://www.zhihu.com/][Zhihu]]
+- [[https://www.ted.com/][Ted]]
+
+*** Creative Websites:
+- [[https://www.kickstarter.com][Kick Starter]]
+- [[https://ardour.org/][Ardour]]
+- 99design, buy a logo: https://99designs.com/
+
+*** Vulnerabilities
+- Lookout:
+  - https://www.lookout.com/
+  - https://blog.lookout.com/
+
+*** Blogs
+- [[http://coolshell.cn/][CoolShell]]
+
+*** Techniques
+- Common Lisp: https://common-lisp.net/
+- Common Lisp Book: http://www.gigamonkeys.com/book/
+- Common Lisp asdf: https://common-lisp.net/project/asdf/
+- Slime: https://common-lisp.net/project/slime/
+- programming chrestomathy: http://rosettacode.org/wiki/Rosetta_Code
+- Midipix: http://midipix.org/ create programs for Windows using the standard C and POSIX APIs
+
+*** Documentation
+- [[http://www.texample.net/tikz/][Tikz]]
+
+*** Github Repos
+- [[https://github.com/papers-we-love/papers-we-love][papers-we-love/papers-we-love]]
+- [[https://github.com/ivoarch/.dot-org-files][ivoarch/.dot-org-files]]
+
+*** Open Source Projects
+- FreeNAS: Open Storage OS: http://www.freenas.org/
+
+*** Communities
+- http://orgmode.org/worg/
+
+
+*** Hacking
+- Samurai Web Testing Framework: http://samurai.inguardians.com/
+- Reddit post How to Hack: https://www.reddit.com/r/HowToHack/
+- https://www.reddit.com/r/explainlikeimfive/comments/3xefbq/eli5how_do_people_learn_to_hack_seriouslevel/
+- https://www.reddit.com/r/hacking/
+- https://www.reddit.com/r/hacking/comments/3r4on5/hackers_of_reddit_how_why_and_at_what_age_did_you/
+- https://www.reddit.com/r/HowToHack/comments/2x2drl/best_books_to_learn_hacking/
+
+*** Hacking tools:
+- Fierce: http://tools.kali.org/information-gathering/fierce
+
+*** Other Links:
+- http://en.bookfi.net/
+
+
+* Note Book
+
+** TODO List
+- https://jackmott.github.io/programming/2016/08/20/when-bigo-foolsya.html
+- github stars:>1
+
+** Long Term TODO
+- mail client
+- color theme!
+
+
+** Routine
+- String split and trim algorithm
+- sort algorithms
+
+** Code to write:
+- compiler
+
+
+** Languages to learn:
+- perl?
+- lua
+- Scala: http://www.scala-lang.org/
+- OpenGL
+- CUDA
+
 
 
 * FAQ
