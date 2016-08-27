@@ -1,0 +1,63 @@
+#+TITLE: Leetcode
+
+* General Tips
+#+BEGIN_SRC C
+#include <climits>
+int res = INT_MIN;
+if (tmp > res) res = tmp;
+#+END_SRC
+
+
+
+
+
+* Problems
+
+** 363. Max Sum of Rectangle No Larger Than K
+- If we want to switch row and column of a matrix if col is larger than row, simply
+  1. use a boolean flag
+  2. swap the row and column size variable.
+  3. when accessing data, swap the row and column, e.g. =data[col][row]= instead of =data[row][col]=
+- =std::swap=, =std::max=
+- In this problem, the reused computation is not whole, but partial: only column (or row) part computation is reused.
+  Thus the problem matters for each one is larger.
+- A very interesting point is, the =temp[]= vector keep tracking the sum of current row, while =sum= keeps the sum of rows.
+- =sums= keep the sums of the rows, and use lower_bound feature of std::set for =sums.lower_bound(sum - k)=
+
+
+#+BEGIN_SRC C++
+  int maxSumSubmatrix(vector<vector<int> >& matrix, int k) {
+    if (matrix.size() == 0) return 0;
+    int row = matrix.size();
+    int col = matrix[0].size();
+    bool row_large = true;
+    if (row > col) {
+      row_large = true;
+    } else {
+      row_large = false;
+      std::swap(row, col);
+    }
+    int ret = INT_MIN;
+
+    for (int c=0;c<col;c++) {
+      vector<int> temp(row, 0);
+      // sums.insert(0);
+      for (int i=c;i>=0;i--) {
+        int sum = 0;
+        set<int> sums;
+        sums.insert(0);
+        for (int r=0;r<row;r++) {
+          temp[r] += row_large ? matrix[r][i] : matrix[i][r];
+          sum += temp[r];
+          auto it = sums.lower_bound(sum - k);
+          if (it != sums.end()) {
+            int res = sum - *it;
+            ret = std::max(ret, res);
+          }
+          sums.insert(sum);
+        }
+      }
+    }
+    return ret;
+  }
+#+END_SRC
