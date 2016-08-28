@@ -7,9 +7,81 @@ int res = INT_MIN;
 if (tmp > res) res = tmp;
 #+END_SRC
 
+* Famous Problems and Algorithms
+
+** Maximum subarray problem and Kadane's algorithm
+
+Problem: finding the contiguous subarray within a one-dimensional array of numbers which has the largest sum
+
+Kadane's algorithm:
+#+BEGIN_SRC python
+def max_subarray(A):
+    max_ending_here = max_so_far = 0
+    for x in A:
+        max_ending_here = max(0, max_ending_here + x)
+        max_so_far = max(max_so_far, max_ending_here)
+    return max_so_far
+#+END_SRC
+
+or if 0 is not a predefined return value:
+#+BEGIN_SRC python
+def max_subarray(A):
+    max_ending_here = max_so_far = A[0]
+    for x in A[1:]:
+        max_ending_here = max(x, max_ending_here + x)
+        max_so_far = max(max_so_far, max_ending_here)
+    return max_so_far
+#+END_SRC
+
+** longest increasing sub-sequence(LIS)
+Find the longest increasing sub-sequence.
+** Dynamic Programming
+Solving a complex problem by breaking it down into a collection of simpler subproblems,
+solving each of those subproblems just once, and storing their solutions
+- ideally, using a memory-based data structure.
+
+There're generally just two ways for DP:
+- bottom up: solve sub problem, and represent bigger problem
+- top down: represent bigger problem by sub problems
+
+*** Apply to LIS
+The length of the LIS ending in the current element is the length of the LIS ending in the smaller one + 1.
 
 
+** Patience sorting
+*** The sort algorithm
+The algorithm derives from  patience card game.
 
+This game begins with a shuffled deck of cards. These cards are dealt one by one into a sequence of piles on the table, according to the following rules.
+- Initially, there are no piles. The first card dealt forms a new pile consisting of the single card.
+- Each subsequent card is placed on the leftmost existing pile whose top card has a value greater than or equal the new card's value, or to the right of all of the existing piles, thus forming a new pile.
+- When there are no more cards remaining to deal, the game ends.
+
+clearly the complexity is =O(nlogn)=.
+
+*** Apply to LIS problem
+First, execute the sorting algorithm as described above.
+The number of piles is the length of a longest subsequence.
+Whenever a card is placed on top of a pile,
+put a back-pointer to the top card in the previous pile (that, by assumption, has a lower value than the new card has).
+In the end, follow the back-pointers from the top card in the last pile to recover a decreasing subsequence of the longest length;
+its reverse is an answer to the longest increasing subsequence algorithm.
+
+*** LIS problem another understanding
+Keep a set of active lists for the longest.
+Actually use the reversed pile of Patience sorting.
+Whenever add a number to a pile, remove all other piles with the same length.
+This should save a lot of computing!
+
+e.g. 58364129
+#+BEGIN_EXAMPLE
+58 ---
+36 ---
+4 ---
+129
+#+END_EXAMPLE
+
+*end element of smaller list is smaller than end elements of larger lists.*
 
 * Problems
 
