@@ -1,5 +1,7 @@
 #+TITLE: Hebi
 
+- https://news.ycombinator.com/item?id=1786930
+
 
 * A list
 - 0 day
@@ -37,13 +39,21 @@ Keep an eye on the most recent conference papers!
 - CoolShell: http://coolshell.cn/
 
 *** Techniques
+**** Lisp
 - Common Lisp: https://common-lisp.net/
 - Common Lisp Book: http://www.gigamonkeys.com/book/
 - Common Lisp asdf: https://common-lisp.net/project/asdf/
 - Slime: https://common-lisp.net/project/slime/
+
+**** Linux
+- Debian Wiki: https://wiki.debian.org/
+- FreeBSD: https://www.freebsd.org/
+
+**** Other
 - programming chrestomathy: http://rosettacode.org/wiki/Rosetta_Code
 - Midipix: http://midipix.org/ create programs for Windows using the standard C and POSIX APIs
 - ACCU: be a better programmer: https://accu.org/index.php
+
 
 *** Documentation
 - [[http://www.texample.net/tikz/][Tikz]]
@@ -115,6 +125,10 @@ Keep an eye on the most recent conference papers!
 - Scala: http://www.scala-lang.org/
 - OpenGL
 - CUDA
+- haskell
+
+** Things to try
+- Xmonad
 
 
 * Advice
