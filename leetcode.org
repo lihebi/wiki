@@ -7,6 +7,34 @@ int res = INT_MIN;
 if (tmp > res) res = tmp;
 #+END_SRC
 
+
+- lower_bound: larger or greater than
+- upper_bound: strictly larger than
+
+To get a smaller iterator, use =upper_bound= and decrease it (after check if it is begin)
+
+#+BEGIN_SRC C++
+  auto pre_it = m_data.upper_bound(val);
+  auto next_it = pre_it;
+  int pre_low, pre_high;
+  int next_low, next_high;
+  if (pre_it == m_data.end()) {
+    next_low = INT_MAX;
+    next_high = INT_MAX;
+   } else {
+    next_low = next_it->first;
+    next_high = next_it->second;
+   }
+  if (pre_it == m_data.begin()) {
+    pre_low = INT_MIN;
+    pre_high = INT_MIN;
+   } else {
+    pre_it--;
+    pre_low = pre_it->first;
+    pre_high = pre_it->second;
+   }
+#+END_SRC
+
 * Famous Problems and Algorithms
 
 ** Maximum subarray problem and Kadane's algorithm
