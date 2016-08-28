@@ -1,7 +1,51 @@
 #+TITLE: Hebi
 
-- https://news.ycombinator.com/item?id=1786930
+* stack
 
+
+* Note Book
+
+** TODO List
+- https://jackmott.github.io/programming/2016/08/20/when-bigo-foolsya.html
+- github stars:>1
+- dynamic programming writeup
+
+** Long Term TODO
+- mail client
+- color theme!
+- Emacs PDF
+
+** concepts to understand
+- move semantic
+- perfect forwarding
+- forward iterator
+- template
+- unordered_set bucket
+
+** Every day
+- SE papers
+- AI papers
+- Leetcode
+- Helium
+
+** Routine
+- String split and trim algorithm
+- sort algorithms
+
+** Code to write:
+- compiler
+
+
+** Languages to learn:
+- perl?
+- lua
+- Scala: http://www.scala-lang.org/
+- OpenGL
+- CUDA
+- haskell
+
+** Things to try
+- Xmonad
 
 * A list
 - 0 day
@@ -85,50 +129,6 @@ Keep an eye on the most recent conference papers!
 
 
 
-* Note Book
-
-** stack
-** TODO List
-- https://jackmott.github.io/programming/2016/08/20/when-bigo-foolsya.html
-- github stars:>1
-- dynamic programming writeup
-
-** Long Term TODO
-- mail client
-- color theme!
-- Emacs PDF
-
-** concepts to understand
-- move semantic
-- perfect forwarding
-- forward iterator
-- template
-- unordered_set bucket
-
-** Every day
-- SE papers
-- AI papers
-- Leetcode
-- Helium
-
-** Routine
-- String split and trim algorithm
-- sort algorithms
-
-** Code to write:
-- compiler
-
-
-** Languages to learn:
-- perl?
-- lua
-- Scala: http://www.scala-lang.org/
-- OpenGL
-- CUDA
-- haskell
-
-** Things to try
-- Xmonad
 
 
 * Advice

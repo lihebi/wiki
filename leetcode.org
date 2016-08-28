@@ -35,6 +35,46 @@ def max_subarray(A):
 
 ** longest increasing sub-sequence(LIS)
 Find the longest increasing sub-sequence.
+=O(n^2)=
+#+BEGIN_SRC C++
+  int sol_nn(vector<int> &nums) {
+    if (nums.size() == 0) return 0;
+    if (nums.size() == 1) return 1;
+    vector<int> dp(nums.size(), 1);
+    int size = nums.size();
+    for (int i=1;i<size;i++) {
+      for (int j=0;j<i;j++) {
+        if (nums[i] > nums[j]) {
+          dp[i] = std::max(dp[i], dp[j] + 1);
+        }
+      }
+    }
+    int ret = 1;
+    for (int i=0;i<size;i++) {
+      ret = std::max(ret, dp[i]);
+    }
+    return ret;
+  }
+#+END_SRC
+
+=O(nlog(n))=
+#+BEGIN_SRC C++
+  int sol_nlogn(vector<int> &nums) {
+    if (nums.empty()) return 0;
+    vector<int> list;
+    for (int num : nums) {
+      auto it = lower_bound(list.begin(), list.end(), num);
+      if (it == list.end()) {
+        list.push_back(num);
+      } else {
+        *it = num;
+      }
+    }
+    return list.size();
+  }
+#+END_SRC
+
+
 ** Dynamic Programming
 Solving a complex problem by breaking it down into a collection of simpler subproblems,
 solving each of those subproblems just once, and storing their solutions

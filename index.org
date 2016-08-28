@@ -92,6 +92,7 @@ Graph visualization can be done by [[file:dot.org][Graphviz/Dot]].
 
 [[file:sql.org][SQL]] is relational database query language.
 Use [[file:git.org][Git]] to do version control.
+[[file:leetcode.org][Leetcode]] problems help a lot.
 
 ** Algorithm
 Math is the basis of everything.
