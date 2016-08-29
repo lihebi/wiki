@@ -1,5 +1,19 @@
 #+TITLE: STL
 
+
+* Functional
+
+** hash
+=unordered_set= require to hash the items, but std::pair does not have a hash to apply.
+#+BEGIN_SRC C++
+  struct my_hash {
+    inline std::size_t operator() (const std::pair<int, int> &p) const {
+      std::hash<int> hasher;
+      return hasher(p.first) ^ hasher(p.second);
+    }
+  };
+  std::unordered_set<std::pair<int, int>, my_hash> s;
+#+END_SRC
 * Containers
 ** Comparison
 | container | time complexity                                     | iterator validity                               |
