@@ -1,15 +1,18 @@
 #+TITLE: COMS342 Recitation 1
-
-
-* Information
-Hebi Li
-(hebi@iastate.edu)
-
-# sudo xrandr --output HDMI-2 --same-as eDP-1
-# sudo xrandr --output HDMI-2 --off
+#+STARTUP: beamer
+#+AUTHOR: Hebi Li
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [presentation]
+#+BEAMER_THEME: Madrid
+#+OPTIONS: H:2 toc:t num:t author:t
+#+LATEX_HEADER: \lstset{numbers=none,frame=shadowbox, basicstyle=\scriptsize, breaklines=true, basewidth={0.45em,0.3em}, stringstyle=\ttfamily}
 
 * program paradigm
-A programming paradigm is a style or “way” of programming.
+
+#+TOC: headlines [currentsection]
+
+** Program Paradigm Overview
+A programming paradigm is a style or “way” of programming. [fn:wiki-paradigm] [fn:ray-paradigm]
 
 - Some languages make it easy to write in some paradigms but not others.
 - A language can fall into multiple paradigms.
@@ -24,17 +27,19 @@ A programming paradigm is a style or “way” of programming.
 # languages that fit the declarative paradigm do not state the order in which to execute operations.
 # Instead, they supply a number of operations that are available in the system, along with the conditions under which each is allowed to execute.
 
-| Program Paradigm   | Description                            | Examples                             |
-|--------------------+----------------------------------------+--------------------------------------|
-| /                  | <                                      | <                                    |
-| Imperative         | First do this then do that (How to do) | Fortran, Algol, Pascal, Basic,C      |
-| Declarative        | Describes what you want to do          | yacc, SQL, makefile                  |
-|--------------------+----------------------------------------+--------------------------------------|
-| Functional         | Side-Effect Free                       | Lisp, Scheme, Haskell, Erlang, OCaml |
-| Object-Oriented    | simulate real-world objects            | C++, Java, Ruby                      |
-|--------------------+----------------------------------------+--------------------------------------|
-| Event-Driven       | OnDoingSometing()                      | Android                              |
-| Logic (Rule-based) | Rules and queries                      | Prolog                               |
+#+Caption: Paradigm
+#+ATTR_LATEX: :font \scriptsize
+| Program Paradigm   | Description                   | Examples                             |
+|--------------------+-------------------------------+--------------------------------------|
+| /                  | <                             | <                                    |
+| Imperative         | First do this then do that    | Fortran, Algol, Pascal, Basic,C      |
+| Declarative        | Describes what you want to do | yacc, SQL, makefile                  |
+|--------------------+-------------------------------+--------------------------------------|
+| Functional         | Side-Effect Free              | Lisp, Scheme, Haskell, Erlang, OCaml |
+| Object-Oriented    | simulate real-world objects   | C++, Java, Ruby                      |
+|--------------------+-------------------------------+--------------------------------------|
+| Event-Driven       | OnDoingSometing()             | Android                              |
+| Logic (Rule-based) | Rules and queries             | Prolog                               |
 
 ** imperative
 Control flow is explicit. E.g. the following C code:
@@ -73,21 +78,13 @@ E.g. C++ code:
 #+BEGIN_SRC C++
   class Rect {
   public:
-    void SetHeight(int height) {
-      m_height = height;
-    }
-    void SetWidth(int width) {
-      m_width = width;
-    }
-    int GetArea() {
-      return m_height * m_width;
-    }
+    void SetHeight(int height) {m_height = height;}
+    void SetWidth(int width) {m_width = width;}
+    int GetArea() {return m_height * m_width;}
   private:
     int m_height = 0;
     int m_width = 0;
   };
-
-
   int main() {
     Rect rect;
     rect.SetHeight(5);
@@ -120,6 +117,9 @@ A simple lisp example:
 
 ** event-driven
 Android:
+
+#+Caption: Android
+#+ATTR_LATEX: :font \scriptsize
 #+BEGIN_SRC java
   public class MainActivity extends Activity {
       public void onCreate(Bundle savedInstanceState) {
@@ -142,29 +142,51 @@ Android:
       }
   }
 #+END_SRC
+
+
 ** logic
 
 Provide rules, and asking whether or not something is true.
 
 Prolog is the typical logic language. Take the family tree below as example:
-#+BEGIN_EXAMPLE
+# #+BEGIN_EXAMPLE
 
-                              James I
-                                 |
-                                 |
-                +----------------+-----------------+
-                |                                  |
-             Charles I                          Elizabeth
-                |                                  |
-                |                                  |
-     +----------+------------+                     |
-     |          |            |                     |
- Catherine   Charles II   James II               Sophia
-                                                   |
-                                                   |
-                                                   |
-                                                George I
-#+END_EXAMPLE
+#                            James I
+#                               |
+#                               |
+#                 +-------------+-----------------+
+#                 |                               |
+#              Charles I                       Elizabeth
+#                 |                               |
+#                 |                               |
+#      +----------+------------+                  |
+#      |          |            |                  |
+#  Catherine   Charles II   James II            Sophia
+#                                                 |
+#                                                 |
+#                                                 |
+#                                              George I
+# #+END_EXAMPLE
+
+# #+BEGIN_SRC dot :file wikitmp_family.png :exports results
+
+#+BEGIN_SRC dot :file wikitmp_family.png :exports none
+digraph {
+James_I->Carles_I
+James_I-> Elizabeth
+Elizabeth -> Sophia
+Sophia -> George
+Carles_I -> Catherine
+Carles_I -> Charles_II
+Carles_I -> James_II
+}
+#+END_SRC
+
+
+#+ATTR_LATEX: :height .5\paperheight
+[[file:wikitmp_family.png]]
+
+** logic
 
 #+BEGIN_SRC prolog
   male(james1).
@@ -190,11 +212,10 @@ Prolog is the typical logic language. Take the family tree below as example:
   parent(X,charles1) /* Who were the children of Charles I? */
 #+END_SRC
 
-Reference:
-- https://en.wikipedia.org/wiki/Programming_paradigm
-- http://cs.lmu.edu/~ray/notes/paradigms/
-
 * Language
+#+TOC: headlines [currentsection]
+
+** Overview
 # terminals, non-terminals, production rules
 
 # pumping lemma (https://en.wikipedia.org/wiki/Pumping_lemma)
@@ -205,15 +226,16 @@ Reference:
 
 For example, the alphabet ={0,1,2,3,4,5,6,7,8,9}=, the words could be =1, 2, 12, 543, 1000, 002=
 
-| Language                   | example                                                                          |
-|----------------------------+----------------------------------------------------------------------------------|
-| /                          | <                                                                                |
-| regular language           | {42}, {prime number in range less than 100}, {string starting with double zeros} |
-| Context free language      | $L = \{a^nb^n : n \ge 0\}$                                                       |
-| Context Sensitive Language | $L = \{ a^nb^nc^n : n \ge 0 \}$                                                  |
+| Language                   | example                                     |
+|----------------------------+---------------------------------------------|
+| /                          | <                                           |
+| regular language           | {42}, {prime number in range less than 100} |
+|                            | {string starting with double zeros}         |
+| Context free language      | $L = \{a^nb^n : n \ge 0\}$                  |
+| Context Sensitive Language | $L = \{ a^nb^nc^n : n \ge 0 \}$             |
 
-** regular language
-*** Informal Definition
+** regular language - Informal Definition
+
 We call a language regular if:
 - it can be decided if a word is in the language with a machine,
 - with *constant (finite) memory*,
@@ -227,35 +249,37 @@ The equivalence of regular expressions and finite automata is known as Kleene's 
 
 
 
-
+** regular language - Example
 
 Example:
 
 - ={42}=: check first, check second
 - ={00..}= (all the numbers start from double zeros): check whether the first two are 0
 
-#+BEGIN_SRC dot :file wikitmp_dot.png :exports results
-  digraph {
-    0->1[label="0"]
-    0->reject[label="other"]
-    1->accept[label="0"]
-    1->reject[label="other"]
-  }
-#+END_SRC
+# #+ATTR_LATEX: :width .5\linewidth
+# #+BEGIN_SRC dot :file wikitmp_dot.png :exports results
+#   digraph {
+#     0->1[label="0"]
+#     0->reject[label="other"]
+#     1->accept[label="0"]
+#     1->reject[label="other"]
+#   }
+# #+END_SRC
+
+#+ATTR_LATEX: :height .5\paperheight
+[[file:wikitmp_dot.png]]
 
 The regular expression: =00[0-9]*=
 
-*** Formal Definition
-The collection of regular languages over an alphabet Σ is defined recursively as follows:
+** Regular Language: Formal Definition
+The collection of regular languages over an alphabet $\Sigma$ is defined recursively as follows:
 
-- The empty language Ø, and the empty string language {ε} are regular languages.
-- For each a ∈ Σ (a belongs to Σ), the singleton language {a} is a regular language.
-- If A and B are regular languages, then A ∪ B (union), A • B (concatenation), and A* (Kleene star) are regular languages.
-- No other languages over Σ are regular.
+- The empty language $\emptyset$, and the empty string language {$\Sigma$} are regular languages.
+- For each $a \in \Sigma$ (a belongs to $\Sigma$), the singleton language {a} is a regular language.
+- If A and B are regular languages, then $A \cup B$ (union), $AB$ (concatenation), and A* (Kleene star) are regular languages.
+- No other languages over $\Sigma$ are regular.
 
-*** Pumping lemma for regular languages [fn:pump-regular]
-
-
+** Pumping lemma for regular languages [fn:pump-regular]
 
 Let L be a regular language.
 Then there exists an integer $p \ge 1$ depending only on L such that every string w in L of length at least p (p is called the "pumping length")
@@ -265,46 +289,49 @@ can be written as w = xyz (i.e., w can be divided into three substrings), satisf
 2. $|xy| \le p$
 3. for all $i \ge 0$, $xy^iz \in L$
 
-*** Example
-the language $L = \{a^nb^n : n ≥ 0\}$ over the alphabet Σ = {a, b} is *non-regular*.
+*Convert is not true*: a language that satisfies these conditions may still be non-regular.
+
+** Example
+the language $L = \{a^nb^n : n \ge 0\}$ over the alphabet $\Sigma = {a, b}$ is *non-regular*.
 
 - For L there exists an integer p satisfying above lemma.
 - For the word $w = a^pb^p$, it can be wrtten as $w = xyz$.
 - Since $|xy| \le p$, y only consists of $a$.
 - If we "pump" $y$, i.e. $xy^iz$, we keep adding "a" to the string, resulting in the number of $a$ is larger than the number of $b$, which is not in the language.
 
-*Convert is not true*: a language that satisfies these conditions may still be non-regular.
-
-Reference: 
-
 ** context-free/sensitive language
 - a context-free language (CFL) is a language generated by some context-free grammar (CFG) [fn:wiki-context-free]
 - a context-sensitive language is a formal language that can be defined by a context-sensitive grammar [fn:wiki-context-sensitive]
 
-*** Pumping Lemma for context-free language [fn:pump-context]
+** Pumping Lemma for context-free language [fn:pump-context]
 
-If a language L is context-free, then there exists some integer p ≥ 1 (called a "pumping length")
-such that every string s in L that has a length of p or more symbols (i.e. with |s| ≥ p) can be written as
+If a language L is context-free, then there exists some integer $p \ge 1$ (called a "pumping length")
+such that every string s in L that has a length of p or more symbols (i.e. with $|s| \ge p$) can be written as
 
 - s = uvwxy
 
 with substrings u, v, w, x and y, such that
 
-1. $|vwx| ≤ p$
-2. $|vx| ≥ 1$, and
-3. $uv^nwx^ny$ is in L for all n ≥ 0. 
+1. $|vwx| \le p$
+2. $|vx| \ge 1$, and
+3. $uv^nwx^ny$ is in L for all $n \ge 0$. 
 
-*** Example
+** Example
 show language $L = \{ a^nb^nc^n | n > 0 \}$ is not context-free language.
 
 - For L there exists an integer p satisfying above lemma.
 - For the word $w = a^pb^pc^p$, it can be wrtten as $w = uvwxy$.
 - Since $|vwx| \le p$, it can only consists of up to two distinct alphabets in $a,b,c$.
-- If we "pump" $v$ and $x$, i.e. $uv^iwx^iy$$, we keep adding two of them to the string, resulting in the lack of the third.
+- If we "pump" $v$ and $x$, i.e. $uv^iwx^iy$, we keep adding two of them to the string, resulting in the lack of the third.
 
+
+** Question
+Questions?
 
 [fn:kleene]: http://www.cs.may.ie/staff/jpower/Courses/Previous/parsing/node6.html
 [fn:pump-context] https://en.wikipedia.org/wiki/Pumping_lemma_for_context-free_languages
 [fn:wiki-context-free] https://en.wikipedia.org/wiki/Context-free_language
 [fn:wiki-context-sensitive] https://en.wikipedia.org/wiki/Context-sensitive_language
 [fn:pump-regular] https://en.wikipedia.org/wiki/Pumping_lemma_for_regular_languages
+[fn:wiki-paradigm] https://en.wikipedia.org/wiki/Programming_paradigm
+[fn:ray-paradigm] http://cs.lmu.edu/~ray/notes/paradigms/
