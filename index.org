@@ -10,21 +10,24 @@ There's no way to organize those chapters, so if needed, I will just export them
 # 你必须非常努力，才能看起来毫不费力。
 # #+END_QUOTE
 
-#+BEGIN_HTML html
-<blockquote id="quote">
-<script>
-var i = Math.round(Math.random()*100);
-var quotes = [
-"你一出场别人都显得不过如此",
-"你必须非常努力，才能看起来毫不费力",
-"我命由我不由天",
-"好运对爱笑的人情有独钟",
-"成功路上，非死即伤，但别妄想我举手投降"
-];
-document.getElementById("quote").innerHTML = quotes[i % quotes.length];
-</script>
-</blockquote>
-#+END_HTML
+# #+BEGIN_HTML html
+# <blockquote id="quote">
+# <script>
+# var i = Math.round(Math.random()*100);
+# var quotes = [
+# "你一出场别人都显得不过如此",
+# "你必须非常努力，才能看起来毫不费力",
+# "我命由我不由天",
+# "好运对爱笑的人情有独钟",
+# "成功路上，非死即伤，但别妄想我举手投降"
+# ];
+# document.getElementById("quote").innerHTML = quotes[i % quotes.length];
+# </script>
+# </blockquote>
+# #+END_HTML
+
+
+[[file:recitation/recite1.org][Recitation 1]]
 
 
 
