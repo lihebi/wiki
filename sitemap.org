@@ -23,6 +23,8 @@
        + [[file:math/531/tm.org][Turing Machine]]
      + [[file:math/index.org][Math Index]]
      + [[file:math/search-alg.org][Search Algorithm]]
+   + recitation
+     + [[file:recitation/recite1.org][COMS342 Recitation 1]]
    + subdir
      + [[file:subdir/test.org][test]]
    + [[file:assembly.org][Assembly]]
@@ -78,7 +80,7 @@
    + [[file:windows.org][Windows]]
    + [[file:xpath.org][XPath]]
    + [[file:awk.org][awk]]
-   + [[file:dot.org][dot]]
+   + [[file:dot.org][Graphviz/Dot]]
    + [[file:google-test.org][google test]]
    + [[file:sed.org][sed]]
    + [[file:poem.org][诗词曲]]

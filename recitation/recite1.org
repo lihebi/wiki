@@ -1,0 +1,287 @@
+#+TITLE: COMS342 Recitation 1
+
+
+* Information
+Hebi Li
+(hebi@iastate.edu)
+
+# sudo xrandr --output HDMI-2 --same-as eDP-1
+# sudo xrandr --output HDMI-2 --off
+
+* program paradigm
+A programming paradigm is a style or “way” of programming.
+
+- Some languages make it easy to write in some paradigms but not others.
+- A language can fall into multiple paradigms.
+  e.g. Most object oriented languages are also imperative languages.
+
+# How the paradigm is determined
+# - the execution model of the language
+# - the way that code is organized
+# - style of syntax and grammar
+
+
+# languages that fit the declarative paradigm do not state the order in which to execute operations.
+# Instead, they supply a number of operations that are available in the system, along with the conditions under which each is allowed to execute.
+
+| Program Paradigm   | Description                            | Examples                             |
+|--------------------+----------------------------------------+--------------------------------------|
+| /                  | <                                      | <                                    |
+| Imperative         | First do this then do that (How to do) | Fortran, Algol, Pascal, Basic,C      |
+| Declarative        | Describes what you want to do          | yacc, SQL, makefile                  |
+|--------------------+----------------------------------------+--------------------------------------|
+| Functional         | Side-Effect Free                       | Lisp, Scheme, Haskell, Erlang, OCaml |
+| Object-Oriented    | simulate real-world objects            | C++, Java, Ruby                      |
+|--------------------+----------------------------------------+--------------------------------------|
+| Event-Driven       | OnDoingSometing()                      | Android                              |
+| Logic (Rule-based) | Rules and queries                      | Prolog                               |
+
+** imperative
+Control flow is explicit. E.g. the following C code:
+
+#+BEGIN_SRC C
+int array[10];
+for (int i=0;i<10;i++) {
+  if (i % 2 == 0) {
+    array[i] = foo(i);
+  } else {
+    array[i] = bar(i-1);
+  }
+}
+int foo(int a) {}
+int bar(int a) {}
+#+END_SRC
+
+** Declarative
+# The programmer states only what the result should look like, not how to obtain it.
+# Express the logic of a computation without describing its control flow.
+- Describes what you want to do, and not how you want to do it.
+- Control flow is implicit.
+
+This is a SQL query:
+#+BEGIN_SRC sql
+select upper(name)
+from people
+where length(name) > 5
+order by name
+#+END_SRC
+
+** object orient
+Send messages between objects, simulate real world interaction.
+
+E.g. C++ code:
+#+BEGIN_SRC C++
+  class Rect {
+  public:
+    void SetHeight(int height) {
+      m_height = height;
+    }
+    void SetWidth(int width) {
+      m_width = width;
+    }
+    int GetArea() {
+      return m_height * m_width;
+    }
+  private:
+    int m_height = 0;
+    int m_width = 0;
+  };
+
+
+  int main() {
+    Rect rect;
+    rect.SetHeight(5);
+    rect.SetWidth(6);
+    rect.GetArea(); // => 30
+  }
+#+END_SRC
+
+** functional
+- All computations are done by applying (calling) functions.
+- All functions are without side effects, and state changes are only represented as functions that transform the state.
+
+The output value of a function depends only on the arguments that are input to the function, so calling a function f twice with the same value will always produce the same result.
+
+# Function is "first class" object.
+
+A simple lisp example:
+#+BEGIN_SRC lisp
+  (defun do-the-math (x y z)
+    (+ x (* z (+ x y))))
+#+END_SRC
+
+** event-driven
+Android:
+#+BEGIN_SRC java
+  public class MainActivity extends Activity {
+      public void onCreate(Bundle savedInstanceState) {
+          super.onCreate(savedInstanceState);
+      }
+      protected void onStart() {
+          super.onStart();
+      }
+      protected void onResume() {
+          super.onResume();
+      }
+      protected void onPause() {
+          super.onPause();
+      }
+      protected void onStop() {
+          super.onStop();
+      }
+      public void onDestroy() {
+          super.onDestroy();
+      }
+  }
+#+END_SRC
+** logic
+
+Provide rules, and asking whether or not something is true.
+
+Prolog is the typical logic language. Take the family tree below as example:
+#+BEGIN_EXAMPLE
+
+                              James I
+                                 |
+                                 |
+                +----------------+-----------------+
+                |                                  |
+             Charles I                          Elizabeth
+                |                                  |
+                |                                  |
+     +----------+------------+                     |
+     |          |            |                     |
+ Catherine   Charles II   James II               Sophia
+                                                   |
+                                                   |
+                                                   |
+                                                George I
+#+END_EXAMPLE
+
+#+BEGIN_SRC prolog
+  male(james1).
+  male(charles1).
+  male(charles2).
+  male(james2).
+  male(george1).
+
+  female(catherine).
+  female(elizabeth).
+  female(sophia).
+
+  parent(charles1, james1).
+  parent(elizabeth, james1).
+  parent(charles2, charles1).
+  parent(catherine, charles1).
+  parent(james2, charles1).
+  parent(sophia, elizabeth).
+  parent(george1, sophia).
+
+  parent(charles1, george1) /* Was George I the parent of Charles I? */
+  parent(charles1,X) /* Who was Charles I's parent? */
+  parent(X,charles1) /* Who were the children of Charles I? */
+#+END_SRC
+
+Reference:
+- https://en.wikipedia.org/wiki/Programming_paradigm
+- http://cs.lmu.edu/~ray/notes/paradigms/
+
+* Language
+# terminals, non-terminals, production rules
+
+# pumping lemma (https://en.wikipedia.org/wiki/Pumping_lemma)
+
+- *A word* is the concatenation of symbols.
+- The used symbols are called the *alphabet*.
+- *A language* is a subset of all possible words.
+
+For example, the alphabet ={0,1,2,3,4,5,6,7,8,9}=, the words could be =1, 2, 12, 543, 1000, 002=
+
+| Language                   | example                                                                          |
+|----------------------------+----------------------------------------------------------------------------------|
+| /                          | <                                                                                |
+| regular language           | {42}, {prime number in range less than 100}, {string starting with double zeros} |
+| Context free language      | $L = \{a^nb^n : n ≥ 0\}$                                                         |
+| Context Sensitive Language | $L = \{ a^nb^nc^n : n > 0 \}$                                                    |
+
+** regular language
+*** Informal Definition
+We call a language regular if it can be decided if a word is in the language with a machine with *constant (finite) memory* by examining all symbols in the word one after another.
+
+**** Two alternative informal definition:
+- A regular language is a formal language that *can be expressed using a regular expression*
+- a language recognized by a *finite automaton*.
+
+The equivalence of regular expressions and finite automata is known as Kleene's theorem.
+
+**** Example:
+- ={42}=: check first, check second
+- ={00..}= (all the words start from double zeros): check whether the first two are 0
+
+#+BEGIN_SRC dot :file wikitmp_dot.png :exports results
+  digraph {
+    0->1[label="0"]
+    0->reject[label="other"]
+    1->accept[label="0"]
+    1->reject[label="other"]
+  }
+#+END_SRC
+
+The regular expression: =00[0-9]*=
+
+*** Formal Definition
+The collection of regular languages over an alphabet Σ is defined recursively as follows:
+
+- The empty language Ø, and the empty string language {ε} are regular languages.
+- For each a ∈ Σ (a belongs to Σ), the singleton language {a} is a regular language.
+- If A and B are regular languages, then A ∪ B (union), A • B (concatenation), and A* (Kleene star) are regular languages.
+- No other languages over Σ are regular.
+
+*** Prove non-regular
+**** Pumping lemma for regular languages
+
+Let L be a regular language.
+Then there exists an integer $p \ge 1$ depending only on L such that every string w in L of length at least p (p is called the "pumping length")
+can be written as w = xyz (i.e., w can be divided into three substrings), satisfying the following conditions:
+
+1. $|y| \ge 1$
+2. $|xy| \le p$
+3. for all $i \ge 0$, $xy^iz \in L$
+
+**** Example
+the language $L = \{a^nb^n : n ≥ 0\}$ over the alphabet Σ = {a, b} is *non-regular*.
+
+- For L there exists an integer p satisfying above lemma.
+- For the word $w = a^pb^p$, it can be wrtten as $w = xyz$.
+- Since $|xy| \le p$, y only consists of $a$.
+- If we "pump" $y$, i.e. $xy^iz$, we keep adding "a" to the string, resulting in the number of $a$ is larger than the number of $b$, which is not in the language.
+
+*Convert is not true*: a language that satisfies these conditions may still be non-regular.
+
+Reference: https://en.wikipedia.org/wiki/Pumping_lemma_for_regular_languages
+
+** context-free language
+
+*** Prove non-context-free
+**** Lemma
+If a language L is context-free, then there exists some integer p ≥ 1 (called a "pumping length") such that every string s in L that has a length of p or more symbols (i.e. with |s| ≥ p) can be written as
+
+- s = uvwxy
+
+with substrings u, v, w, x and y, such that
+
+1. $|vwx| ≤ p$
+2. $|vx| ≥ 1$, and
+3. $uv^nwx^ny$ is in L for all n ≥ 0. 
+
+**** Example
+show language $L = \{ a^nb^nc^n | n > 0 \}$ is not context-free language.
+
+- For L there exists an integer p satisfying above lemma.
+- For the word $w = a^pb^pc^p$, it can be wrtten as $w = uvwxy$.
+- Since $|vwx| \le p$, it can only consists of up to two distinct alphabets in $a,b,c$.
+- If we "pump" $v$ and $x$, i.e. $uv^iwx^iy$$, we keep adding two of them to the string, resulting in the lack of the third.
+
+
+** context-sensitive language
+
