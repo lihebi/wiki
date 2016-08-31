@@ -2,6 +2,11 @@
 * Installation
 /Library/TeX/texbin/
 
+#+BEGIN_EXAMPLE
+kpsewhich -var-value=TEXMFHOME
+#+END_EXAMPLE
+
+
 * General Structures
 ** enumerate
 

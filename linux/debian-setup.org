@@ -31,6 +31,12 @@ graphviz
 dict
 curl
 ttf-wqy-microhei
+xdm
+#+END_EXAMPLE
+
+documentation packages
+#+BEGIN_EXAMPLE
+bash-doc
 #+END_EXAMPLE
 
 Extra packages:
