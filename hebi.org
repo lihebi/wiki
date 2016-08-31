@@ -8,9 +8,8 @@
 * Note Book
 
 ** TODO List
-- https://jackmott.github.io/programming/2016/08/20/when-bigo-foolsya.html
 - github stars:>1
-- dynamic programming writeup
+- open link in chromium, within conkeror
 
 ** Long Term TODO
 - mail client
@@ -65,11 +64,14 @@ Keep an eye on the most recent conference papers!
 
 *** Reading Websites:
 - Wanqu RiBao: https://wanqu.co/
-- Reddit Programming: https://www.reddit.com/r/programming/
 - Hacker News: https://news.ycombinator.com/
 - Zhihu: http://www.zhihu.com/
 - TED: https://www.ted.com/
 - Twitter: https://twitter.com/
+
+**** Reddit
+- Reddit Programming: https://www.reddit.com/r/programming/
+- Reddit Emacs; https://www.reddit.com/r/emacs/
 
 *** Creative Websites:
 - [[https://www.kickstarter.com][Kick Starter]]

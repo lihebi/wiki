@@ -6,6 +6,7 @@ check the screen resolution:
 xdpyinfo | grep -B 2 resolution
 #+END_EXAMPLE
 
+* Xrandr
 Multiple Display:
 
 #+BEGIN_EXAMPLE
@@ -14,11 +15,17 @@ sudo xrandr --output HDMI-2 --same-as eDP-1
 sudo xrandr --output HDMI-2 --off
 #+END_EXAMPLE
 
+Rotate
+#+BEGIN_EXAMPLE
+xrandr --output HDMI-1 --rotate left
+#+END_EXAMPLE
+
 * Display Manager
 Install xdm. It will use the file =$HOME/.xsession=, so
 #+BEGIN_EXAMPLE
 ln -s $HOME/.xinitrc $HOME/.xsession
 #+END_EXAMPLE
+
 
 * Window Manager
 Candidates:
