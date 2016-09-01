@@ -33,6 +33,7 @@ curl
 ttf-wqy-microhei
 xdm
 pkg-config
+pavucontrol # this is GUI to config pulseaudio! Very useful
 #+END_EXAMPLE
 
 documentation packages
