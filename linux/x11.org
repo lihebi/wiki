@@ -149,3 +149,20 @@ The trick is you need:
 #+BEGIN_EXAMPLE
 chomd u+s /usr/bin/xinit
 #+END_EXAMPLE
+
+* Nvidia Driver
+
+I'm installing the driver for my GTX 1060.
+It is a brand new card, the nouveau driver simply does not work.
+
+Install the kernel header:
+#+BEGIN_EXAMPLE
+linux-headers-`uname -r`
+#+END_EXAMPLE
+
+Make sure the =/tmp= has enough space.
+
+After installation, use =nvidia-xconfig= will write =/etc/X11/xorg.conf=.
+The original one will be backed up (actually original one is empty).
+
+But, I haven't been able to boot to login page using nvidia card...
