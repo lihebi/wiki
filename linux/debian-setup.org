@@ -34,6 +34,7 @@ ttf-wqy-microhei
 xdm
 pkg-config
 pavucontrol # this is GUI to config pulseaudio! Very useful
+maildir-utils mu4e offlineimap # mu
 #+END_EXAMPLE
 
 documentation packages
