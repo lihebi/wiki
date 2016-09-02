@@ -7,6 +7,7 @@
      + [[file:linux/debian-setup.org][Debian Setup]]
      + [[file:linux/grub.org][Grub]]
      + [[file:linux/init.org][Init]]
+     + [[file:linux/lvm.org][LVM]]
      + [[file:linux/linux.org][Linux]]
      + [[file:linux/stumpwm.org][StumpWM]]
      + [[file:linux/x11.org][X11]]

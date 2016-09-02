@@ -131,6 +131,8 @@ See also: http://tex.stackexchange.com/questions/1137/where-do-i-place-my-own-st
 
 
 * Packages
+** titlesec
+http://ctan.org/pkg/titlesec
 ** geometry
 The the default for LaTeX is to have no indent after sectional headings.
 Thus the first paragraph will have no indent.
