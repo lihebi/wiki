@@ -35,6 +35,17 @@ To get a smaller iterator, use =upper_bound= and decrease it (after check if it 
    }
 #+END_SRC
 
+** GCD
+- swap
+- make sure x,y are POSITIVE
+#+BEGIN_SRC C++
+  int GCD(int x, int y) {
+    if (x > y) std::swap(x,y);
+    if (x == 0) return y;
+    return GCD(y%x, x);
+  }
+#+END_SRC
+
 * Famous Problems and Algorithms
 
 ** Maximum subarray problem and Kadane's algorithm
