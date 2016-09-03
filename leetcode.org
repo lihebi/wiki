@@ -201,3 +201,16 @@ e.g. 58364129
     return ret;
   }
 #+END_SRC
+
+
+
+** 65. valid number
+#+BEGIN_EXAMPLE
+  EXPECT_TRUE(s.isNumber("+.8"));
+  EXPECT_TRUE(s.isNumber(".1"));
+  EXPECT_TRUE(s.isNumber("-5.3"));
+
+  EXPECT_FALSE(s.isNumber(". 1"));
+  EXPECT_FALSE(s.isNumber("4e+"));
+  EXPECT_FALSE(s.isNumber("6e6.5"));
+#+END_EXAMPLE
