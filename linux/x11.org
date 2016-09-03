@@ -6,6 +6,16 @@ check the screen resolution:
 xdpyinfo | grep -B 2 resolution
 #+END_EXAMPLE
 
+* font
+How I made the WenQuanYi Micro Hei ttf font (clx-truetype only recognizes ttf, not ttc):
+
+- input: ttc file
+- Tool: fontforge
+
+Open ttc file, select one, generate font, choose truetype
+The validation failed, but doesn't matter
+
+
 * Xrandr
 Multiple Display:
 
