@@ -38,6 +38,7 @@ To get a smaller iterator, use =upper_bound= and decrease it (after check if it 
 ** GCD
 - swap
 - make sure x,y are POSITIVE
+- When divide it, make sure it is not 0!
 #+BEGIN_SRC C++
   int GCD(int x, int y) {
     if (x > y) std::swap(x,y);
