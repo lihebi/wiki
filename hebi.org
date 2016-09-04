@@ -71,6 +71,9 @@ Keep an eye on the most recent conference papers!
 - TED: https://www.ted.com/
 - Twitter: https://twitter.com/
 
+**** System
+- http://lwn.net/
+
 **** Reddit
 - Reddit Programming: https://www.reddit.com/r/programming/
 - Reddit Emacs; https://www.reddit.com/r/emacs/
