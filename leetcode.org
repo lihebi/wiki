@@ -1,5 +1,9 @@
 #+TITLE: Leetcode
 
+* Some links
+- [[file:dp.org][DP]]
+- http://stanford.edu/class/cs97si/
+
 * General Tips
 #+BEGIN_SRC C
 #include <climits>
@@ -45,7 +49,22 @@ To get a smaller iterator, use =upper_bound= and decrease it (after check if it 
     if (x == 0) return y;
     return GCD(y%x, x);
   }
+
+  int gcd(int a, int b) {
+    while (b) {
+      int r = a%b;
+      a = b;
+      b = r;
+    }
+    return a;
+  }
 #+END_SRC
+
+Be careful, =a%b= follows the sign of a:
+- 5 % 3 == 2
+- -5 % 3 == -2
+- 5 % -3: ERROR!
+
 
 * Famous Problems and Algorithms
 
@@ -307,5 +326,34 @@ If want a log complexity, set up =(min, max)= and keep update them.
     else num2 = std::min(nums1[i], nums2[j]);
     
     return (num1 + num2) / 2.0;
+  }
+#+END_SRC
+
+** last remaining (contest 2)
+- Move head, record step
+- according to left and remaining, decide how to update
+
+#+BEGIN_SRC C++
+  int lastRemaining(int n) {
+    int head = 1;
+    int step = 1;
+    bool left = true;
+    int remaining = n;
+    while (remaining > 1) {
+      if (left) {
+        left = false;
+        head = head + step;
+        step <<=1;
+        remaining >>= 1;
+      } else {
+        left = true;
+        if (remaining % 2 == 1) {
+          head += step;
+        }
+        step <<= 1;
+        remaining >>= 1;
+      }
+    }
+    return head;
   }
 #+END_SRC

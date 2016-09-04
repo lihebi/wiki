@@ -40,6 +40,7 @@
    + [[file:compiler.org][Compiler]]
    + [[file:data-structure.org][Data Structure]]
    + [[file:design-pattern.org][Design Pattern]]
+   + [[file:dp.org][Dynamic Programming]]
    + [[file:emacs.org][Emacs]]
    + [[file:emacs-plugins.org][Emacs Plugins]]
    + [[file:math-fund.org][Fundamental of Math]]
