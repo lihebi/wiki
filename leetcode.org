@@ -226,3 +226,55 @@ e.g. 58364129
   EXPECT_FALSE(s.isNumber("4e+"));
   EXPECT_FALSE(s.isNumber("6e6.5"));
 #+END_EXAMPLE
+
+
+** 44. Wildcard Matching (NEEDS REVISIT!!!)
+The recursive one is too cost:
+#+BEGIN_SRC C++
+  bool isMatch(string s, string p) {
+    std::string pattern = p;
+    std::string str = s;
+    if (p.empty()) {
+      if (s.empty()) return true;
+      else return false;
+    } else {
+      char c = *p.begin();
+      p = p.substr(1);
+      if (c == '?') {
+        if (s.empty()) return false;
+        s = s.substr(1);
+        return isMatch(s, p);
+      } else if (c == '*') {
+        for (int i=0;i<=(int)s.size();i++) {
+          if (isMatch(s.substr(i), p)) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        if (s.empty()) return false;
+        if (s[0] != c) {
+          return false;
+        }
+        s = s.substr(1);
+        return isMatch(s, p);
+      }
+    }
+  }
+#+END_SRC
+
+This one does not have that problem, and is linear.
+#+BEGIN_SRC C
+  bool isMatch(const char *s, const char *p) {
+    const char* star=NULL;
+    const char* ss=s; 
+    while (*s){
+      if ((*p=='?')||(*p==*s)){s++;p++;continue;}
+      if (*p=='*'){star=p++; ss=s;continue;}
+      if (star){ p = star+1; s=++ss;continue;}
+      return false;
+    }
+    while (*p=='*'){p++;}
+    return !*p;
+  }
+#+END_SRC
