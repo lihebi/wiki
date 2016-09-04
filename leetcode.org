@@ -1,5 +1,12 @@
 #+TITLE: Leetcode
 
+* Common Strategy & Algorithms
+- Divide and conquer
+- DP
+- binary search
+- recursive
+- finding rules using examples
+
 * Some links
 - [[file:dp.org][DP]]
 - http://stanford.edu/class/cs97si/
