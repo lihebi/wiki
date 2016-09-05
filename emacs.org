@@ -62,6 +62,8 @@ Use =ispell=, and =flycheck= to check on-the-fly. Check emacs manual for detail.
 
 * Programming
 - =checkdoc=: check the warnings in doc string. It can also fix it: =C-h f=.
+- =C-x C-e=: evaluate
+- =C-u C-x C-e=: evaluate and insert result
 
 * Navigating
   * ~forward-sexp~: forward semantic block

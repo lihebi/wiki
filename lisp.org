@@ -8,6 +8,10 @@
 - cl-quicklisp
 
 
+* Common Functions
+- =(reverse '(1 2 3 4))=
+- string to int: =(values (parse-integer "32"))=
+- =(expt 2 8)= 2^8
 
 
 * Slime
