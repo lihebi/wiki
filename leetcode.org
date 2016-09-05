@@ -364,3 +364,60 @@ If want a log complexity, set up =(min, max)= and keep update them.
     return head;
   }
 #+END_SRC
+
+** longest subsequence with at least k repeat / without any repeat
+Given a string s, find the longest subsequence that
+1. have at least k repeat for each characters
+2. have no repeat for each word
+
+These are two problems.
+For the first one, count and split the ones that don't have k repeatition.
+Note:
+1. use recur(s,k,min,max) format instead of creating substring! Otherwise time limit execeed.
+
+#+BEGIN_SRC C++
+  class Solution {
+  public:
+    int longestSubstring(string s, int k) {
+      // calculate the frequency of each character
+      // if all > k, good
+      // otherwise, split the string by all that is less than k
+      return recur(s, k, 0, s.size());
+    }
+
+    int recur(string &s, int k, int min, int max) {
+      int ret = 0;
+      map<char, int> m;
+      for (int i=min;i<max;i++) {
+        m[s[i]]++;
+      }
+      string split;
+      for (auto mi : m) {
+        if (mi.second < k) {
+          split += mi.first;
+        }
+      }
+      if (split.empty()) return max - min;
+      // do split
+      size_t idx = min;
+      size_t last_idx = min;
+      idx = s.find_first_of(split, last_idx);
+      while (idx != string::npos && idx < max) {
+        int tmp = recur(s, k, last_idx, idx);
+        ret = std::max(ret, tmp);
+        last_idx = idx+1;
+        idx = s.find_first_of(split, last_idx);
+      }
+      string sub = s.substr(last_idx);
+      int tmp = recur(s, k, last_idx, max);
+      ret = std::max(ret, tmp);
+      return ret;
+    }
+  };
+#+END_SRC
+
+The second problem is an DP problem.
+The trick is, every time, record the visited list, using a /map/:
+map to the index of that visit.
+Do not need to update everything before.
+If we found a character visited before that index, simply update that only.
