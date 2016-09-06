@@ -53,6 +53,7 @@ pending packages:
 #+BEGIN_EXAMPLE
 cl-quicklisp
 pidgin
+acpitool
 #+END_EXAMPLE
 
 Non-package software:

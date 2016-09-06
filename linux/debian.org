@@ -1,5 +1,39 @@
 #+TITLE: Debian
 
+* Power management
+- sudo journalctl | less
+- /etc/systemd/logind.conf
+- dmesg | grep -i 'acpi'
+- /proc/acpi/wakeup
+
+Finally I figure it out!
+
+Install =acpitool= package.
+Use =acpitool -w= to list the wake up events.
+Use =acpitool -W x= where x is the number of the output of above command.
+Try to disable them one by one, and use =systemctl suspend= to test if the system wake up.
+In my case, I succeed after disable number 5 (there's really nothing to tell from the list!).
+
+Not sure if it can persist after reboot.
+It remains to be set how to automatically resume the wifi.
+
+#+BEGIN_EXAMPLE
+   Device       S-state   Status   Sysfs node
+  ---------------------------------------
+  1. P0P2         S3    *disabled
+  2. EC   S4    *disabled  platform:PNP0C09:00
+  3. HDEF         S3    *disabled  pci:0000:00:1b.0
+  4. RP01         S3    *disabled  pci:0000:00:1c.0
+  5. RP02         S3    *disabled  pci:0000:00:1c.1
+  6. RP03         S3    *disabled  pci:0000:00:1c.2
+  7. ARPT         S4    *enabled   pci:0000:03:00.0
+  8. RP05         S3    *disabled  pci:0000:00:1c.4
+  9. RP06         S3    *enabled   pci:0000:00:1c.5
+  10. XHC1        S3    *enabled   pci:0000:00:14.0
+  11. ADP1        S4    *enabled   platform:ACPI0003:00
+  12. LID0        S4    *disabled  platform:PNP0C0D:00
+#+END_EXAMPLE
+
 * Tmp
 change laptop screen brightness:
 #+BEGIN_EXAMPLE
