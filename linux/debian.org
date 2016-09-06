@@ -385,3 +385,30 @@ WantedBy=suspend.target
 WantedBy=hibernate.target
 WantedBy=hybrid-sleep.target
 #+END_EXAMPLE
+
+
+* Networking using NetworkManager
+Install network-manager package, and:
+
+Start the service
+#+BEGIN_EXAMPLE
+systemctl enable NetworkManager
+#+END_EXAMPLE
+change =/etc/NetworkManager$/NetworkManager.conf= to:
+
+#+BEGIN_EXAMPLE
+[ifupdown]
+managed=true
+#+END_EXAMPLE
+
+restart
+#+BEGIN_EXAMPLE
+systemctl restart NetworkManager
+#+END_EXAMPLE
+
+
+** add a wifi connection
+#+BEGIN_EXAMPLE
+nmcli device wifi list
+nmcli device wifi connect IASTATE
+#+END_EXAMPLE
