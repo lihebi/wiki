@@ -51,8 +51,17 @@ Use indices here with  or use the [[file:sitemap.org][sitemap]].
 ** Programming
 Fundanmental of computing theory can be found in this [[file:csapp.org][CSAPP study note]].
 The [[file:./shell.org][shell]] and some [[file:shell-utils.org][shell utilities]] are documented in a different file.
-[[file:linux/linux.org][Linux]] is no doubt the basic OS to use.
-[[file:linux/debian-setup.org][Setup]] [[file:linux/debian.org][debian]].
+
+
+[[file:linux.org][Linux]] is no doubt the basic OS to use.
+Distributions include [[file:debian.org][Debian]], [[file:centos.org][CentOS]].
+See the common [[file:debian-setup.org][setup]] describing what is my environment restore on a newly installed system.
+
+Linux has many interesting software.
+Tired of chrome and firefox? Give [[file:conkeror.org][conkeror]] a try, this is emacs-based browser.
+Use [[file:stumpwm.org][StumpWM]] to support the emacs operating system.
+[[file:x11.org][X11]] is perhaps the hardest part to configure.
+Use [[file:lvm.org][LVM]] for a flexible disk management.
 
 Utilities like [[file:awk.org][awk]] and [[file:sed.org][sed]] should be handy for text editing in scripts.
 [[file:tmux.org][Tmux]] is the choice to work on remote.
