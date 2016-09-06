@@ -236,6 +236,15 @@ systemctl cat systemd-timesyncd.service
 systemctl show systemd-timesyncd.service
 #+END_EXAMPLE
 
+** a stop job is running for make remote cups printers available locally
+
+#+BEGIN_EXAMPLE
+systemctl status cups-browsed.service
+systemctl disable cups-browsed.service
+#+END_EXAMPLE
+
+
+
 * Man pages
 systemd:
 - =systemd-system.conf=
