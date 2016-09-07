@@ -428,11 +428,3 @@ map to the index of that visit.
 Do not need to update everything before.
 If we found a character visited before that index, simply update that only.
 
-** 79. Word Search I & 212. Word Search II
-
-Given a 2D board and a word, find if the word exists in the grid.
-The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring.
-The same letter cell may not be used more than once.
-
-No magic here, try to start from each cell.
-Recur the four directions, so that the back-tracing is automatic by recurrence.

@@ -2,7 +2,6 @@
 
 * stack
 - https://www.toptal.com/java/the-trie-a-neglected-data-structure
-- https://leetcode.com/problems/implement-trie-prefix-tree/
 - https://leetcode.com/problems/word-search-ii/
 
 - Z3 multiple model! contribute!
