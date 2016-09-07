@@ -7,13 +7,9 @@
 * Note Book
 
 ** TODO List
-- github stars:>1
-- open link in chromium, within conkeror
 
 ** Long Term TODO
-- mail client
 - color theme!
-- Emacs PDF
 
 ** concepts to understand
 - move semantic
@@ -26,9 +22,7 @@
 - SE papers
 - AI papers
 - Leetcode
-- hackerrank
 - Helium
-
 
 ** Routine
 - String split and trim algorithm
@@ -39,19 +33,11 @@
 
 
 ** Languages to learn:
-- perl?
 - lua
 - Scala: http://www.scala-lang.org/
 - OpenGL
 - CUDA
 - haskell
-
-** Things to try
-- Xmonad
-
-* A list
-- 0 day
-- CVE
 
 * Links
 
@@ -119,18 +105,6 @@ Keep an eye on the most recent conference papers!
 
 *** Communities
 - http://orgmode.org/worg/
-
-
-*** Hacking
-- Samurai Web Testing Framework: http://samurai.inguardians.com/
-- Reddit post How to Hack: https://www.reddit.com/r/HowToHack/
-- https://www.reddit.com/r/explainlikeimfive/comments/3xefbq/eli5how_do_people_learn_to_hack_seriouslevel/
-- https://www.reddit.com/r/hacking/
-- https://www.reddit.com/r/hacking/comments/3r4on5/hackers_of_reddit_how_why_and_at_what_age_did_you/
-- https://www.reddit.com/r/HowToHack/comments/2x2drl/best_books_to_learn_hacking/
-
-*** Hacking tools:
-- Fierce: http://tools.kali.org/information-gathering/fierce
 
 *** Other Links:
 - http://en.bookfi.net/
