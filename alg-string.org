@@ -1,0 +1,248 @@
+#+TITLE: String Algorithm
+
+
+* Knuth–Morris–Pratt(KMP)
+
+Match a pattern string P inside given long string T.
+
+Different from brute-force, we prebuild a look-up table, and when a failure matching happen, we shift not just 1, but multiple position.
+
+The look up table only relates to P. Basically it tells: if a matching failed at a index $p_i$ in P, how many position should be shifted.
+
+An example:
+
+#+BEGIN_EXAMPLE
+ABCDABD
+0000012
+
+PARTICIPATEINPARACHUTE
+-100000012000012300000
+#+END_EXAMPLE
+
+Table building (O(k)) where k is length of P:
+Scan only once, update is straight-forward.
+
+#+BEGIN_EXAMPLE
+while pos < length(W) do
+        (first case: the substring continues)
+        if W[pos-1] = W[cnd] then
+            let T[pos] ← cnd + 1, cnd ← cnd + 1, pos ← pos + 1
+
+        (second case: it doesn't, but we can fall back)
+        else if cnd > 0 then
+            let cnd ← T[cnd]
+
+        (third case: we have run out of candidates.  Note cnd = 0)
+        else
+            let T[pos] ← 0, pos ← pos + 1
+#+END_EXAMPLE
+
+** 214. Shortest Palindrome
+#+BEGIN_QUOTE
+Given a string S, you are allowed to convert it to a palindrome by adding characters in front of it. Find and return the shortest palindrome you can find by performing this transformation.
+#+END_QUOTE
+
+*** KMP
+
+It is easy to convert the problem to find the longest Palindrome at the beginning of s.
+To apply KMP, we write the string as =s + '#' + reverse(s)=.
+Then we build the KMP table for this string.
+What we need is to find the largest number inside KMP table.
+
+*** brute force
+I have a brute-force that "just" pass the tests.
+
+#+BEGIN_SRC C++
+class Solution {
+public:
+  string shortestPalindrome(string s) {
+    if (s.size() == 0) return s;
+    if (s.size() == 1) return s;
+    for (int i=(s.size()-1)/2;i>0;i--) {
+      if (check(s, i, false)) {
+        // std::cout << "success on " << i << " false"  << "\n";
+        string sub = s.substr(i*2+2);
+        std::reverse(sub.begin(), sub.end());
+        return sub + s;
+      } else if (check(s, i, true)) {
+        // std::cout << "success on " << i << " true"  << "\n";
+        // THREE
+        // 1 2 3 4 5 6
+        // - - -|- - -
+        // 6/2=3
+        // 1 2 3 4 5
+        // - - | - -
+        // i*2+1 - end
+        string sub = s.substr(i*2+1);
+        std::reverse(sub.begin(), sub.end());
+        return sub + s;
+      }
+    }
+    string sub;
+    if (check(s, 0, false)) {
+      sub = s.substr(2);
+    } else {
+      sub = s.substr(1);
+    }
+    std::reverse(sub.begin(), sub.end());
+    return sub + s;
+  }
+  /**
+   * on: pivot on idx or not
+   */
+  bool check(string &s, int idx, bool on) {
+    // std::cout << idx  << "\n";
+    if (idx <0 || idx >= (int)s.size()) return false;
+    int i=0,j=0;
+    if (on) {
+      i=idx-1;
+      j=idx+1;
+    } else {
+      i = idx;
+      j = idx+1;
+    }
+    int size = s.size();
+    while (i >= 0) {
+      if (j >= size) return false;
+      if (s[i] != s[j]) return false;
+      i--;
+      j++;
+    }
+    return true;
+  }
+};
+#+END_SRC
+
+* Boyer Moore
+
+It is a string match algorithm.
+
+The rule lookup is in a hash table,
+which can be formed during proprocessing of pattern.
+
+In the following examples, the lower case denote the matched or unmatched part for illustration purpose only.
+They are upper case when considering matching.
+** Bad Character Rule
+Match from last. In the below example, the suffix =MAN= matches, but =N= does not match. Shift the pattern so that the first N (counted from last) go to the =N= place.
+
+#+begin_src text
+- - - - X - - K - - -
+A N P A n M A N A M -
+- N n A A M A N - - -
+- - - N n A A M A N -
+#+end_src
+
+from right end to left.
+when a mismatch happens at `n`,
+find to left a `n`, then shift it to the position.
+
+** Good Suffix Rule
+Similar to the bad rule, find the matched, in this case =NAM=.
+Then, if an failure happens, move the same part to the left of that match (in this case another =NAM= at the left) to that position.
+#+begin_src text
+- - - - X - - K - - - - -
+M A N P A n a m A N A P -
+A n a m P n a m - - - - -
+- - - - A n a m P N A M -
+#+end_src
+
+when a mismatch happens,
+=nam= is the longest good suffix.
+Find =nam= to the left,
+and shift it to the position.
+
+** Galil Rule
+
+As opposed to shifting, the Galil rule deals with speeding up the actual comparisons done at each alignment by skipping sections that are known to match.
+Suppose that at an alignment k1,
+P is compared with T down to character c of T.
+Then if P is shifted to k2 such that its left end is between c and k1,
+in the next comparison phase a prefix of P must match the substring T[(k2 - n)..k1].
+Thus if the comparisons get down to position k1 of T,
+an occurrence of P can be recorded without explicitly comparing past k1.
+In addition to increasing the efficiency of Boyer-Moore,
+the Galil rule is required for proving linear-time execution in the worst case.
+
+* Rabin-Karp Algorithm
+
+It is a string searching algorithm.
+
+The Naive Solution for string search:
+
+#+begin_src C
+int func(char s[], int n, char pattern[], int m) {
+  char *ps,*pp; //*
+  ps=s;
+  pp=pattern;
+  for (i=0;i<n-m+1;) {
+    if (*pp=='\0') return i; //*
+    if (*ps == *pp) { //*
+      ps++;pp++;
+    } else {
+      i++;
+      ps=s+i;
+      pp=pattern;
+    }
+  }
+}
+#+end_src
+
+The running time is $O(mn)$.
+
+The Rabin-Karp algorithm use hash for pattern match.
+First calculate ~hash(pattern)~.
+Then for every s[i,i+m-1], calculate the hash.
+Then compare them.
+
+The key of the algorithm is the hash function.
+If the hash function need time m to compute, then it is still $O(mn)$.
+If the collision happens often, then even if hash matches, we still need to verify.
+
+Key point is to select a hast function, such that =hash(i,i+m-1)= can be computed
+by ~hash(i-1,i+m-2)~.
+
+If add all characters' ASCII together, collision is often.
+
+The used hash function is:
+select a large prime as base, 101 for example.
+Hash value is:
+
+\begin{equation}
+hash("abc") = ASCII('a')*101^2 + ASCII('b')*101^1 + ASCII('c')*101^0
+\end{equation}
+
+Rabin-Karp is not so good for single string match because the worst case is $O(mn)$,
+but it is the algorithm of choice for multiple pattern search.
+
+K patterns, in a large string s, find any one of the K patterns.
+
+** Rolling Hash
+
+*** Rabin-Karp rolling hash
+
+*** Cyclic Polynomial (Buzhash)
+
+=s(a)= means shift a left.
+
+\begin{equation}
+H=s^{k-1}(h(c_1)) \oplus s^{k-2}(h(c_2)) \oplus \ldots \oplus s(h(c_{k-1})) \oplus h(c_k)
+\end{equation}
+
+=h= is a tabulation hashing.
+
+To remove $c_1$ and add $c_{k+1}$:
+
+\begin{equation}
+H = s(H) \oplus s^k(h(c_1)) \oplus h(c_{k+1})
+\end{equation}
+
+** Tabulation hashing
+
+input key is =p= bits, output is =q= bits.
+choose a =r= less then =p=, and $t=\lceil p/r \rceil$.
+
+view a key as t r-bit numbers. Use a lookup table filled with random values
+to compute hash value for each of t numbers. Xor them together.
+
+The choice of r should be made in such a way that this table is not too large,
+so that it fits into the computer's cache memory.

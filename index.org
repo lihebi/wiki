@@ -108,6 +108,11 @@ Use [[file:git.org][Git]] to do version control.
 [[file:leetcode.org][Leetcode]] problems help a lot.
 
 ** Algorithm
+[[file:alg-string.org][Sting algorithms]]
+
+Some [[file:data-structure.org][data structure]] also [[file:data-structure-old.org][old data structure page]] knowledge.
+
+
 Math is the basis of everything.
 [[file:math-fund.org][Fundamental of math]] talks about the basic knowledges.
 
@@ -125,7 +130,6 @@ Some interesting [[file:oj.org][algorithm in practice]].
 Some unclassified [[file:name-alg.org][Name Algorithm]].
 [[file:machine-learning.org][Machine Learning]].
 
-Some [[file:data-structure.org][data]] structure knowledge I picked up in undergraduate study.
 
 ** Web
 Web technique like [[file:js.org][js]] is interesting.

@@ -40,6 +40,7 @@ maildir-utils mu4e offlineimap # mu
 documentation packages
 #+BEGIN_EXAMPLE
 bash-doc
+libstdc++-6-doc
 #+END_EXAMPLE
 
 Extra packages:
