@@ -50,6 +50,7 @@
    + [[file:llvm.org][LLVM]]
    + [[file:lvm.org][LVM]]
    + [[file:latex.org][Latex]]
+   + [[file:leetcode-datastructure.org][LeetCode Used Data Structure]]
    + [[file:leetcode.org][Leetcode]]
    + [[file:linux.org][Linux]]
    + [[file:lisp.org][Lisp]]
