@@ -21,3 +21,40 @@ when you press =C-c C-c= the second time after compilation, it will default to =
 - =space= and =delete= to page up and down across pages
 - =M-<= and =M->= still works
 - =M-g M-g= works as jump to page
+
+* pdf-tools
+The doc view produce very blur text. The pdf-view-mode provided by pdf-tools solved this.
+Also, this package is said to open pdf on demand. It seems to solve my concern for pdf greatly.
+
+Extra bonus:
+- search in text
+- view and edit annotations!
+
+
+http://emacs.stackexchange.com/questions/19686/how-to-use-pdf-tools-pdf-view-mode-in-emacs
+
+
+** Installation
+
+#+BEGIN_EXAMPLE
+sudo aptitude install libpng-dev libz-dev 
+sudo aptitude install libpoppler-glib-dev 
+sudo aptitude install libpoppler-private-dev
+sudo aptitude install imagemagick
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+cd /path/to/pdf-tools
+make install-server-deps # optional
+make -s
+make install-package
+# or M-x package-install-file RET pdf-tools-${VERSION}.tar RET
+#+END_EXAMPLE
+
+activate in emacs by =(pdf-tools-install)=
+
+
+** key binding
+- =o=: open outline
+- =Q=: kill buffer
+- =q=: kill window

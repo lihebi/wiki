@@ -4,17 +4,20 @@
 - Z3 multiple model! contribute!
 - log all the open source projects I contributed to!
 
-- 572 homework 2
-- Helium many tasks
+- 342 homework 2 run program
+- recitation 2
 
 ** Helium
 - failure condition
 - look for new type of bugs
 - buffer overflow benchmarks
-
 - risks and alternatives
 - testing design
 - Application
+
+
+* Task Log
+- 572 homework 2
 
 ** Life
 - nvidia refund
