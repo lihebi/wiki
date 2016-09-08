@@ -6,7 +6,19 @@
 
 - 572 homework 2
 - Helium many tasks
-- Nvidia Refund
+
+** Helium
+- failure condition
+- look for new type of bugs
+- buffer overflow benchmarks
+
+- risks and alternatives
+- testing design
+- Application
+
+** Life
+- nvidia refund
+
 
 * Note Book
 

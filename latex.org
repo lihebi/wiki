@@ -167,6 +167,12 @@ use headers and footers
 \Tree [ .S [ .S [ .S a ] [ .S a ] + ] [ .S a ] * ]
 #+END_SRC
 
+** listings
+
+#+BEGIN_EXAMPLE
+\lstset{language=C,numbers=none,frame=shadowbox, basicstyle=\small, breaklines=true, basewidth={0.45em,0.3em}, stringstyle=\ttfamily}
+#+END_EXAMPLE
+
 * Symbols
 
 | code              | symbol           |
