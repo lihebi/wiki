@@ -63,6 +63,7 @@
    + [[file:open-source.org][Open Source Projects I should consider contribute]]
    + [[file:org.org][Org Mode]]
    + [[file:overtone.org][Overtone]]
+   + [[file:palindrome.org][Palindrome]]
    + [[file:pugixml.org][Pugixml]]
    + [[file:r.org][R]]
    + [[file:random.org][Random]]

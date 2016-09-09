@@ -1,0 +1,138 @@
+#+TITLE: Palindrome
+** 132. Palindrome Partitioning II
+First, construct a Palindrome table.
+The algorithm is O(n^2), but I have to use arrays instead of set to make it constant order of faster to pass the test cases.
+#+BEGIN_SRC C++
+class Solution {
+public:
+  int minCut(string s) {
+    if (s.empty()) return 0;
+    if (s.size() == 1) return 0;
+    // calculate P[i,j] = true | false
+    // more specifically, m[j][i] = true | false, meaning for all palindrome ends at j
+    // m[j] => set(0-j)
+    // std::unordered_map<int, std::unordered_set<int> > Pal;
+    int size = s.size();
+
+    vector<std::unordered_set<int> > Pal(size);
+
+    int middle = 0;
+    // how to calculate: middle from 0 - end
+    // middle on number
+    for (middle=0;middle<size;middle++) {
+      int i = middle;
+      int j = middle;
+      while (i >= 0 && j < size) {
+        if (s[i] == s[j]) {
+          Pal[j].insert(i);
+          i--;j++;
+        } else {
+          break;
+        }
+      }
+    }
+    for (middle=0;middle<size;middle++) {
+      int i = middle;
+      int j = middle+1;
+      while (i >= 0 && j < size) {
+        if (s[i] == s[j]) {
+          Pal[j].insert(i);
+          i--;j++;
+        } else {
+          break;
+        }
+      }
+    }
+
+    // start from (0,1), the the res[i], for each m[j]
+    vector<int> res(size);
+    for (int i=0;i<size;i++) {
+      res[i] = i;
+    }
+    for (int j=0;j<size;j++) {
+      for (int i : Pal[j]) {
+        assert(i <= j);
+        if (i == 0) {
+          res[j] = std::min(0, res[j]);
+        } else {
+          res[j] = std::min(res[i-1] + 1, res[j]);
+        }
+        
+      }
+    }
+    return res[size-1];
+  }
+};
+#+END_SRC
+
+
+This is a modification of another computing of Pal table. It is still slow due to use of set.
+#+BEGIN_SRC C++
+    vector<std::unordered_set<int> > inv_pal(size);
+
+    for (int i=size-1;i>=0;i--) {
+      for (int j=i;j<size;j++) {
+        if (s[i] == s[j] && (j-i<2 || inv_pal[i+1].count(j-1) == 1)) {
+          inv_pal[i].insert(j);
+        }
+      }
+    }
+#+END_SRC
+
+Finally this one using the original algorithm but using arrays is fast.
+#+BEGIN_SRC C++
+class Solution3 {
+public:
+  int minCut(string s) {
+    if (s.empty()) return 0;
+    if (s.size() == 1) return 0;
+    int size = s.size();
+    int middle = 0;
+
+
+    vector<vector<bool> > vpal(size, vector<bool>(size, false));
+    for (middle=0;middle<size;middle++) {
+      int i = middle;
+      int j = middle;
+      while (i >= 0 && j < size) {
+        if (s[i] == s[j]) {
+          vpal[j][i] = true;
+          // Pal[j].insert(i);
+          i--;j++;
+        } else {
+          break;
+        }
+      }
+    }
+    for (middle=0;middle<size;middle++) {
+      int i = middle;
+      int j = middle+1;
+      while (i >= 0 && j < size) {
+        if (s[i] == s[j]) {
+          vpal[j][i] = true;
+          // Pal[j].insert(i);
+          i--;j++;
+        } else {
+          break;
+        }
+      }
+    }
+    vector<int> res(size);
+    for (int i=0;i<size;i++) {
+      res[i] = i;
+    }
+    for (int j=0;j<size;j++) {
+      for (int i=0;i<size;i++) {
+        if (vpal[j][i]) {
+          if (i == 0) {
+            res[j] = std::min(0, res[j]);
+          } else {
+            res[j] = std::min(res[i-1] + 1, res[j]);
+          }
+        }
+      }
+    }
+    return res[size-1];
+  }
+};
+#+END_SRC

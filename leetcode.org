@@ -7,6 +7,22 @@
 - recursive
 - finding rules using examples
 
+* Some snippet
+
+#+BEGIN_SRC C++
+/**
+ * rotate clockwise
+ * (x,y) -> (y, -x)
+ */
+void rotate(std::vector<pair<int, int> > &v) {
+  for (pair<int, int> &vi : v) {
+    int tmp = vi.first;
+    vi.first = vi.second;
+    vi.second = 0 - tmp;
+  }
+}
+#+END_SRC
+
 * Some links
 - [[file:dp.org][DP]]
 - http://stanford.edu/class/cs97si/
