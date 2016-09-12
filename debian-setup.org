@@ -56,6 +56,10 @@ cl-quicklisp # need manual installation
 pidgin # chat app
 acpitool # control power manager?
 libpng-dev libz-dev libpoppler-glib-dev libpoppler-private-dev imagemagick # for emacs pdf-tools package # need installation
+
+# java developping
+antlr4
+eclipse
 #+END_EXAMPLE
 
 Non-package software:

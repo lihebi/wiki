@@ -15,6 +15,11 @@ Use =..= instead of =--= to have dotted line.
 It is possible to add labels at three positions: the two ends of the relation, and the middle.
 Use extension as example:
 
+Use in emacs:
+#+BEGIN_EXAMPLE
+   \#+BEGIN_SRC plantuml :file wikitmp_plantuml.png :exports results
+#+END_EXAMPLE
+
 ** Reference
 relation
 #+BEGIN_EXAMPLE

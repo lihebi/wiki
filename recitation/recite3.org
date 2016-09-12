@@ -1,0 +1,108 @@
+#+TITLE: COMS342 Recitation 3
+#+STARTUP: beamer
+#+AUTHOR: Hebi Li
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [presentation]
+#+BEAMER_THEME: Madrid
+#+OPTIONS: H:2 toc:nil num:t author:t
+#+LATEX_HEADER: \lstset{numbers=none,frame=shadowbox, basicstyle=\scriptsize, breaklines=true, basewidth={0.45em,0.3em}, stringstyle=\ttfamily}
+
+
+* Visitor
+
+** Visitor pattern
+
+#+BEGIN_QUOTE
+Represent an operation to be performed on the elements of an object structure.
+Visitor lets you define a new operation without changing theclasses of the elements on which it operates.
+#+END_QUOTE
+
+** The problem and the naive solution
+- We have a list of classes in a class hierarchy, e.g. AST nodes.
+- We want to define many operations, each operates different on different nodes.
+
+# #+BEGIN_SRC plantuml :file wikitmp_visitor-1.png :exports results
+# abstract class Node {
+#   {abstract} TypeCheck();
+#   {abstract} GenerateCode();
+#   {abstract} PrettyPrint();
+# }
+
+# class NumNode {
+#   TypeCheck();
+#   GenerateCode();
+#   PrettyPrint();
+# }
+
+# class ExpNode
+
+# class AddExpNode {
+#   TypeCheck();
+#   GenerateCode();
+#   PrettyPrint();
+# }
+
+# Node <-- NumNode
+# Node <-- ExpNode
+# ExpNode <-- AddExpNode
+# #+END_SRC
+
+#+ATTR_LATEX: :height .5\paperheight :float t
+[[file:wikitmp_visitor-1.png]]
+
+This is not good. Application code is mixed with the AST node implementation.
+
+** The pattern
+- We define a hierarchy of visitors
+- double-dispatch:
+
+#+ATTR_LATEX: :height .45\paperheight :float t :center t
+[[file:wikitmp_visitor-2.png]]
+
+** Example
+#+BEGIN_SRC java
+  public interface AST {
+      public static abstract class ASTNode {
+          public abstract Object accept(Visitor visitor);
+      }
+      public static abstract class Exp extends ASTNode {
+
+      }
+      public static class NumExp extends Exp {
+          double _val;
+          public Object accept(Visitor visitor) {
+              return visitor.visit(this);
+          }
+      }
+      public static class AddExp extends CompoundArithExp {
+          public AddExp(List<Exp> args) {
+              super(args);
+          }
+          public Object accept(Visitor visitor) {
+              return visitor.visit(this);
+          }
+      }
+  }
+#+END_SRC
+
+** Example - follow
+#+BEGIN_SRC java
+  public class Evaluator implements Visitor<Value> {
+      public Value visit(NumExp e) {
+          return new NumVal(e.v());
+      }
+      public Value visit(AddExp e) {
+          List<Exp> operands = e.all();
+          double result = 0;
+          for (Exp exp : operands) {
+              NumVal intermediate = (NumVal) exp.accept(this); // Dynamic
+              // type-checking
+              result += intermediate.v(); // Semantics of AddExp in terms of the
+              // target language.
+          }
+          return new NumVal(result);
+      }
+  }
+#+END_SRC
+
+

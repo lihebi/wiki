@@ -1,11 +1,16 @@
 #+TITLE: Hebi
 
 * stack
-- Z3 multiple model! contribute!
-- log all the open source projects I contributed to!
+- recitation: visitor
+- design patterns
+- leetcode algorithm writeup, in detail!
+- C++ template in depth
+- move semantic
+- perfect forwarding
+- forward iterator
+- template
+- unordered_set bucket
 
-- 342 homework 2 run program
-- recitation 2
 
 ** Helium
 - failure condition
@@ -38,11 +43,6 @@
 - color theme!
 
 ** concepts to understand
-- move semantic
-- perfect forwarding
-- forward iterator
-- template
-- unordered_set bucket
 
 ** Every day
 - SE papers
