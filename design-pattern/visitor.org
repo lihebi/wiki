@@ -1,86 +1,13 @@
-#+TITLE: Design Pattern
+#+TITLE: Visitor
 
-This article uses [[file:uml.org][UML]] extensively.
-
-* Creation Pattern
-
-** Abstract Factory
-
-- Implemented by Factory Method.
-- Focus on a family of products.
-- ConcreteFactory is often singleton
-
-
-#+BEGIN_SRC plantuml :file wikitmp_plantuml.png :exports results
-abstract class AbstractFactory {
-  + CreateA()
-  + CreateB()
-}
-
-class ConcreteFactory1 {
-  + CreateA();
-  + CreateB();
-}
-
-class ConcreteFactory2 {
-  + CreateA();
-  + CreateB();
-}
-
-abstract class AbstractA
-abstract class AbstractB
-
-class A1
-class A2
-class B1
-class B2
-
-AbstractFactory<..ConcreteFactory1
-AbstractFactory<..ConcreteFactory2
-AbstractA<..A1
-AbstractA<..A2
-AbstractB<..B1
-AbstractB<..B2
-
-ConcreteFactory1*--A1
-ConcreteFactory1*--B1
-ConcreteFactory2*--A2
-ConcreteFactory2*--B2
-#+END_SRC
-
-The implementation:
-#+BEGIN_SRC C++
-class AbstractFactory {
-  virtual CreateA() {}
-  virtual CreateB() {}
-};
-class ConcreteFactory1 {
-  virtual CreateA() {new A1;}
-  virtual CreateB() {new B2;}
-};
-class ConcreteFactory2 {
-  virtual CreateA() {new A2;}
-  virtual CreateB() {new B1;}
-};
-// client code
-ConcreteFactory1 factory;
-AbstractA *a = factory.CreateA();
-AbstractB *b = factory.CreateB();
-#+END_SRC
-
-
-
-* Behavior Pattern
-
-
-** Visitor pattern
+* Visitor pattern
 
 #+BEGIN_QUOTE
 Represent an operation to be performed on the elements of an object structure.
 Visitor lets you define a new operation without changing theclasses of the elements on which it operates.
 #+END_QUOTE
 
-*** The problem and the naive solution
+** The problem and the naive solution
 We have a list of classes in a class hierarchy, e.g. AST nodes.
 We want to define many operations, each operates different on different nodes.
 
@@ -112,7 +39,7 @@ ExpNode <-- AddExpNode
 
 This is not good. Application code is mixed with the AST node implementation.
 
-*** The pattern
+** The pattern
 We define a hierarchy of visitors, and defines different behavior inside the visitors for different nodes they operate on.
 This is called double-dispatch:
 The virtual functions lookup is decided not only by the object the function is defined on, but also the arguments it accepts.
@@ -164,7 +91,7 @@ Visitor <-- GenerateCodeVisitor
 Visitor <-- PrettyPrintVisitor
 #+END_SRC
 
-*** Example
+** Example
 #+BEGIN_SRC java
   public interface AST {
       public static abstract class ASTNode {

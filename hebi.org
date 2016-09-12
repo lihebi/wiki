@@ -1,5 +1,27 @@
 #+TITLE: Hebi
 
+#+BEGIN_QUOTE
+你必须非常努力，才能看起来毫不费力。
+#+END_QUOTE
+
+#+BEGIN_HTML html
+<blockquote id="quote">
+<script>
+var i = Math.round(Math.random()*100);
+var quotes = [
+"你一出场别人都显得不过如此",
+"你必须非常努力，才能看起来毫不费力",
+"我命由我不由天",
+"好运对爱笑的人情有独钟",
+"成功路上，非死即伤，但别妄想我举手投降"
+];
+document.getElementById("quote").innerHTML = quotes[i % quotes.length];
+</script>
+</blockquote>
+#+END_HTML
+
+
+
 * stack
 - music repo!
 - design patterns
@@ -19,6 +41,24 @@
 - risks and alternatives
 - testing design
 - Application
+
+
+* Old Wiki Migration
+There're some pages not migrated from old wiki:
+=leetcode=, =leetcode/=, =633/=, =crypto/=, =compiler/=,
+=design-pattern/=.
+=java/=
+=coffee/=
+=ruby=
+=python/=
+=operating-system/=
+=math/=
+=scholar/=
+=database/=
+=docker/=
+=platform/=
+=software/=
+=web/=
 
 
 * IRC

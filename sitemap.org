@@ -1,5 +1,8 @@
 #+TITLE: Sitemap for project wiki-org
 
+   + design-pattern
+     + [[file:design-pattern/abstract-factory.org][Abstract Factory]]
+     + [[file:design-pattern/visitor.org][Visitor]]
    + math
      + 511
        + [[file:math/511/lp.org][Linear Programming]]
@@ -15,6 +18,7 @@
      + [[file:math/search-alg.org][Search Algorithm]]
    + recitation
      + [[file:recitation/recite1.org][COMS342 Recitation 1]]
+     + [[file:recitation/recite3.org][COMS342 Recitation 3]]
    + subdir
      + [[file:subdir/test.org][test]]
    + [[file:assembly.org][Assembly]]
@@ -32,7 +36,6 @@
    + [[file:data-structure-old.org][Data Structure]]
    + [[file:debian.org][Debian]]
    + [[file:debian-setup.org][Debian Setup]]
-   + [[file:design-pattern.org][Design Pattern]]
    + [[file:dp.org][Dynamic Programming]]
    + [[file:emacs.org][Emacs]]
    + [[file:emacs-plugins.org][Emacs Plugins]]

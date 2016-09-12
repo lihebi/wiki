@@ -1,192 +1,116 @@
 #+TITLE: Hebi's Personal Wiki
-* Introduction
 
-This is the wiki.
-It is not intended to export to a whole pdf file.
-This index file will just do as its name states, giving the index.
-There's no way to organize those chapters, so if needed, I will just export them individually.
+* OS
+- [[file:csapp.org][CSAPP study note]]
+System
+- [[file:linux.org][Linux]]
+- [[file:debian.org][Debian]]
+- [[file:centos.org][CentOS]]
+- [[file:debian-setup.org][setup]]
 
-# #+BEGIN_QUOTE
-# 你必须非常努力，才能看起来毫不费力。
-# #+END_QUOTE
+Apps
+- [[file:conkeror.org][conkeror]]
+- [[file:stumpwm.org][StumpWM]]
+- [[file:x11.org][X11]]
+- [[file:lvm.org][LVM]]
+- [[file:tmux.org][Tmux]]
+- [[file:make.org][make]]
+- [[file:autoconf.org][autoconf]]
 
-# #+BEGIN_HTML html
-# <blockquote id="quote">
-# <script>
-# var i = Math.round(Math.random()*100);
-# var quotes = [
-# "你一出场别人都显得不过如此",
-# "你必须非常努力，才能看起来毫不费力",
-# "我命由我不由天",
-# "好运对爱笑的人情有独钟",
-# "成功路上，非死即伤，但别妄想我举手投降"
-# ];
-# document.getElementById("quote").innerHTML = quotes[i % quotes.length];
-# </script>
-# </blockquote>
-# #+END_HTML
+* Coding
+** Design pattern
+Creation Pattern
+- [[file:design-pattern/abstract-factory.org][Abstract Factory]]
 
+Behavior Pattern
+- [[file:design-pattern/visitor.org][Visitor]]
 
-[[file:recitation/recite1.org][Recitation 1]]
+** Compiler
+- [[file:compiler.org][compiler]]
+- [[file:llvm.org][LLVM]]
+- [[file:gdb.org][GDB]]
 
+** Scripting
+- [[file:awk.org][awk]]
+- [[file:sed.org][sed]]
+- [[file:R.org][R]]
+- [[file:./shell.org][shell]]
+- [[file:shell-utils.org][shell utilities]]
+- [[file:js.org][js]]
+** Markup
+- [[file:regex.org][Regular Expression]]
+- [[file:latex.org][latex]]
+- [[file:markdown.org][markdown]]
+- [[file:org.org][Org Mode]]
+- [[file:xpath.org][XPath]]
+- [[file:dot.org][Graphviz/Dot]]
+- [[file:uml.org][UML]]
 
+** C Language family
+- [[file:c.org][C]]
+- [[file:cpp.org][C++]]
 
-[[file:hebi.org][HEBI]]
+- [[file:stl.org][Standard Template Library(STL)]]
+- [[file:c-lib.org][C standard library]]
 
+- [[file:boost.org][Boost]]
+- [[file:pugixml.org][Pugixml]]
+- [[file:google-test.org][Google Test]]
 
-** with Description
+- [[file:c-debug.org][C debugging techniques]]
 
-I found it is super important to notice who are the pioneers and what they are doing.
-[[http://www.stroustrup.com/][Bjarne Stroustrup]] invented C++!
-His close friend [[http://www.stepanovpapers.com/][Alexander A. Stepanov]], the author of STL.
+** Other
+- [[file:hungarian.org][Hungarian notation]]
+- [[file:assembly.org][assembly]]
 
-Read about the [[https://github.com/isocpp/CppCoreGuidelines][CppCoreGuidelines]] project. It has nearly 10,000 stars on github.
-Maybe it is closely related to [[http://cppcon.org/][CppCon]].
+- [[file:emacs.org][Emacs]]
+- [[file:lisp.org][Lisp]]
+- [[file:sql.org][SQL]]
+- [[file:git.org][Git]]
 
-How can you miss [[http://www.aosabook.org/][these wonderful aosabook books]]?
+* Algorithm
+OJ:
+- [[file:leetcode.org][Leetcode]]
+- [[file:alg-string.org][Sting algorithms]]
+- [[file:palindrome.org][Palindrome]]
+- [[file:data-structure.org][data structure]]
+- [[file:data-structure-old.org][old data structure page]]
 
-* sitemap
-Use indices here with  or use the [[file:sitemap.org][sitemap]].
+- [[file:oj.org][algorithm in practice]].
 
-** Programming
-Fundanmental of computing theory can be found in this [[file:csapp.org][CSAPP study note]].
-The [[file:./shell.org][shell]] and some [[file:shell-utils.org][shell utilities]] are documented in a different file.
-
-
-[[file:linux.org][Linux]] is no doubt the basic OS to use.
-Distributions include [[file:debian.org][Debian]], [[file:centos.org][CentOS]].
-See the common [[file:debian-setup.org][setup]] describing what is my environment restore on a newly installed system.
-
-Linux has many interesting software.
-Tired of chrome and firefox? Give [[file:conkeror.org][conkeror]] a try, this is emacs-based browser.
-Use [[file:stumpwm.org][StumpWM]] to support the emacs operating system.
-[[file:x11.org][X11]] is perhaps the hardest part to configure.
-Use [[file:lvm.org][LVM]] for a flexible disk management.
-
-Utilities like [[file:awk.org][awk]] and [[file:sed.org][sed]] should be handy for text editing in scripts.
-[[file:tmux.org][Tmux]] is the choice to work on remote.
-[[file:regex.org][Regular Expression]] is considered the knowledge to make you productive.
-
-Have difficulty choosing your first language?
-Well, you should not. Why you would have choices other than [[file:c.org][C]]?
-C has a [[file:c-lib.org][standard library]].
-[[file:cpp.org][C++]] is generally more productive than C.
-[[file:c-debug.org][C debugging techniques]] can speed up debugging.
-[[file:stl.org][Standard Template Library(STL)]] is the NO.1 important library in C++.
-Traditional [[file:make.org][make]] system is prefered to build C projects.
-If you want to use some advanced functions or classes that are not provided by the core library of C++,
-you may refer to a much broader library, the [[file:boost.org][Boost]] Library.
-To be portable, the GNU project provides [[file:autoconf.org][autoconf]] tools.
-
-[[file:design-pattern.org][Design Pattern]]!
-
-[[file:hungarian.org][Hungarian notation]] is one of the famous way to choose variable names.
-
-There're a couple of C libraries to ease our lives.
-[[file:pugixml.org][Pugixml]] handles xml parsing.
-
-Write simple tests using [[file:google-test.org][Google Test]]
-can make your application much more robust and maintainable.
-
-[[file:R.org][R]] is so powerful at statistics.
-
-Low level [[file:assembly.org][assembly]] code.
-
-As a computer scientist,
-the knowledge about compiler is a must.
-Check out the open source [[file:compiler.org][compiler]] framework [[file:llvm.org][LLVM]].
-Use [[file:gdb.org][GDB]] to debug.
-
-Write documents like a pro: [[file:latex.org][latex]].
-The famous [[file:markdown.org][markdown]] notation system is far less powerful than [[file:org.org][Org Mode]].
-It is like Vim vs. [[file:emacs.org][Emacs]]. [[file:lisp.org][Lisp]] is described in a separate file.
-XML is ok with the query language [[file:xpath.org][XPath]].
-Graph visualization can be done by [[file:dot.org][Graphviz/Dot]].
-
-[[file:sql.org][SQL]] is relational database query language.
-Use [[file:git.org][Git]] to do version control.
-[[file:leetcode.org][Leetcode]] problems help a lot.
-
-** Algorithm
-[[file:alg-string.org][Sting algorithms]].
-[[file:palindrome.org][Palindrome]] is very common in problems.
-
-Some [[file:data-structure.org][data structure]] also [[file:data-structure-old.org][old data structure page]] knowledge.
+531
+- [[file:511/np.org][NP]]
+- [[file:511/np-problems.org][NP problems]]
+- [[file:531/NPC.org][NPC]]
+- [[file:511/approximation.org][Approximation]]
+- [[file:511/lp.org][Linear Programming]]
+- [[file:531/tm.org][Turing Machine]]
+- [[file:531/decidability.org][Decidability]]
 
 
-Math is the basis of everything.
-[[file:math-fund.org][Fundamental of math]] talks about the basic knowledges.
+AI
+- [[file:search-alg.org][Search algorithm]]
+- [[file:name-alg.org][Name Algorithm]]
+- [[file:machine-learning.org][Machine Learning]]
 
-Some [[file:511/np.org][NP]] concepts are documented,
-together with the analysis of a couple of well-known [[file:511/np-problems.org][NP problems]].
-For those NP problems, [[file:511/approximation.org][Approximation]] may be the only way for quick solving.
-[[file:511/lp.org][Linear Programming]] constitutes the basic optimization problems.
-
-[[file:531/tm.org][Turing Machine]] form the basis of computer.
-[[file:531/decidability.org][Decidability]] and [[file:531/NPC.org][NPC]] are the corresponding topics in computation theory as those in algorithms.
-
-Some interesting [[file:oj.org][algorithm in practice]].
-
-[[file:search-alg.org][Search algorithm]] is well-studied area.
-Some unclassified [[file:name-alg.org][Name Algorithm]].
-[[file:machine-learning.org][Machine Learning]].
+Other
+- [[file:math-fund.org][Fundamental of math]]
 
 
-** Web
-Web technique like [[file:js.org][js]] is interesting.
+* Random Staff
 
-** Misc
-Some wonderful [[file:chrome.org][chrome extension]].
-Here's something I need to know when I clean reinstall my [[file:mac.org][Mac]].
+- [[http://www.stroustrup.com/][Bjarne Stroustrup]] invented C++!
+- His close friend [[http://www.stepanovpapers.com/][Alexander A. Stepanov]], the author of STL.
+- [[https://github.com/isocpp/CppCoreGuidelines][CppCoreGuidelines]]
+- [[http://cppcon.org/][CppCon]].
+- [[http://www.aosabook.org/][these wonderful aosabook books]]?
+* Misc
 
-Music can be produced by computer programs.
-[[file:supercollider.org][SuperCollider]] is a server and a language for music synthesizing.
-[[file:overtone.org][Overtone]] offers a /clojure/ wrapper and emacs environment for the SuperCollider backend.
+- [[file:chrome.org][chrome extension]].
+- [[file:mac.org][Mac]].
 
-[[file:poem.org][Poems]] I recite.
-
-[[file:golf.org][Golf]], [[file:guitar.org][Guitar]]
-
-* A Buffer
- * =MIPS=: million instructions per second.
- * =MIPS-year=: the number of instructions executed during one year of computing at 1M instructions/sec.
- * =Fan-out=: the maximum number of digital inputs that the output of a single logic gate can feed.
- * =K-ary tree=: rooted tree in which each node has no more than k children.
- * =Shared nothing architecture=: a distributed architecture in which each node is independent and self-sufficient. In particular, none of the nodes share memory of disk.
- * =Endianness=: Big-endian store MSB of a word in the *smallest* address. The memory grows up down, so small address is up.
-
-
-
-
-
-
-
-* FAQ
-** Why change to a new one instead of the [[http://wiki-old.lihebi.com][old wiki]]?
-The old one is awesome in terms of that it uses pure Jekyll,
-and it is configured in the sense that it recognizes the new markdown files and organize them by their directory structures.
-
-1. The main downside is it is not systematic. It is so distributed that I can not easily find where to add new items.
-2. Second, it lacks of some approach to generate a systematic pdf book for printing.
-3. What's more, I added some web packages like Katex for formulas. It works fine, except I need to have an ugly =`$formula$`= markup for parsing, and the parsing code needs to be maintained too.
-4. Fourth, markdown is not powerful enough.
-5. Org mode has a strong cross reference system, and has powerful Babel evaluating. Most of all, org mode is so tightly integrated with Emacs.
-6. Last but not least, I don't want to use another layer of software, jekyll. I just need to document something, in a reasonable easy to browse format.
-
-So here we go, with org mode, exproting .org into everything, including papers and books.
-
-There're some pages not migrated from old wiki:
-=leetcode=, =leetcode/=, =633/=, =crypto/=, =compiler/=,
-=design-pattern/=.
-=java/=
-=coffee/=
-=ruby=
-=python/=
-=operating-system/=
-=math/=
-=scholar/=
-=database/=
-=docker/=
-=platform/=
-=software/=
-=web/=
+- [[file:supercollider.org][SuperCollider]] is a server and a language for music synthesizing.
+- [[file:overtone.org][Overtone]] offers a /clojure/ wrapper and emacs environment for the SuperCollider backend.
+- [[file:poem.org][Poems]] I recite.
+- [[file:golf.org][Golf]]
+- [[file:guitar.org][Guitar]]
