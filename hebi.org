@@ -16,11 +16,18 @@
 - Application
 
 
+* IRC
+** Using under emacs
+- erc
+- /join emacs
+** channels
+- emacs
+- haskell
+
 * Task Log
 - 572 homework 2
 
 ** Life
-- nvidia refund
 
 
 * Note Book
