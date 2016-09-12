@@ -13,48 +13,73 @@ deb-src http://noone.org/conkeror-nightly-debs jessie main
 #+END_EXAMPLE
 
 ** Install these packages:
+
+*** X11
 #+BEGIN_EXAMPLE
-emacs xorg xinit build-essential tmux
-stumpwm exuberant-ctags global cmake libsqlite3-dev autoconf
-silversearcher-ag xcursor-themes
-sudo git
-cifs-utils
-ratpoison conky dzen2 feh
-conkeror
-sqlite3
+xorg xinit tmux stumpwm xcursor-themes
+ratpoison conky dzen2
 rxvt-unicode-256color
-ttf-anonymous-pro
 xsel
-xpdf
 autocutsel
-graphviz
-dict
-curl
-ttf-wqy-microhei
 xdm
-pkg-config
 pavucontrol # this is GUI to config pulseaudio! Very useful
-maildir-utils mu4e offlineimap # mu
 #+END_EXAMPLE
 
-documentation packages
+*** Essential
+#+BEGIN_EXAMPLE
+global build-essential sudo git cifs-utils curl pkg-config cmake
+#+END_EXAMPLE
+
+*** APP
+#+BEGIN_EXAMPLE
+xpdf feh emacs silversearcher-ag conkeror sqlite3 tree
+#+END_EXAMPLE
+
+*** Helium
+#+BEGIN_EXAMPLE
+exuberant-ctags libsqlite3-dev autoconf graphviz
+gnulib libboost-all-dev libgtest-dev libpugixml-dev
+llvm clang
+feh cmake
+#+END_EXAMPLE
+
+**** Note
+#+BEGIN_EXAMPLE
+cd /tmp
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=RELEASE /usr/src/gtest
+make
+sudo mv libg* /usr/lib/
+#+END_EXAMPLE
+
+Note: if gtest is compiled with g++, clang++ cannot link it!
+See: http://stackoverflow.com/questions/37321069/googletest-clang-error-compiling-assert-falsefalse
+To use clang for compilation:
+#+BEGIN_EXAMPLE
+export CC=/usr/bin/clang
+$ export CXX=/usr/bin/clang++
+$ cmake ..
+#+END_EXAMPLE
+
+
+*** documentation packages
 #+BEGIN_EXAMPLE
 bash-doc
 libstdc++-6-doc
 #+END_EXAMPLE
 
-Extra packages:
+*** Extra packages
 #+BEGIN_EXAMPLE
 openjdk-7-jdk
 chromium llvm clang
 texlive-full
+zlib1g-dev
 #+END_EXAMPLE
 
-pending packages:
+*** pending packages:
 #+BEGIN_EXAMPLE
 cl-quicklisp # need manual installation
-pidgin # chat app
-acpitool # control power manager?
 libpng-dev libz-dev libpoppler-glib-dev libpoppler-private-dev imagemagick # for emacs pdf-tools package # need installation
 
 # java developping
@@ -64,8 +89,7 @@ eclipse
 
 Non-package software:
 - https://www.soimort.org/translate-shell/
-
-*** note for cl-quicklisp
+**** note for cl-quicklisp
 1. use apt to install
 2. locate the file quicklisp.lisp
 3. sbcl --load /path/to/quicklisp.lisp
@@ -105,54 +129,9 @@ feh --bg-fill /path/to/wallpaper.suffix
 #+END_EXAMPLE
 
 
-* Optional
+* Manual Download
 =~/bin=
 
 #+BEGIN_EXAMPLE
 plantuml.jar
 #+END_EXAMPLE
-
-* Helium Ready
-** Packages
-#+BEGIN_EXAMPLE
-gnulib libboost-all-dev libgtest-dev libpugixml-dev
-#+END_EXAMPLE
-
-** Manual
-*** gtest
-
-
-#+BEGIN_EXAMPLE
-cd /tmp
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=RELEASE /usr/src/gtest
-make
-sudo mv libg* /usr/lib/
-#+END_EXAMPLE
-
-Note: if gtest is compiled with g++, clang++ cannot link it!
-See: http://stackoverflow.com/questions/37321069/googletest-clang-error-compiling-assert-falsefalse
-To use clang for compilation:
-#+BEGIN_EXAMPLE
-export CC=/usr/bin/clang
-$ export CXX=/usr/bin/clang++
-$ cmake ..
-#+END_EXAMPLE
-
-
-*** pugixml
-*** ctags
-*** helium-lib
-
-** Donwload
-*** srcml
-
-* 3rd party lib
-#+BEGIN_QUOTE
-zlib1g-dev
-#+END_QUOTE
-
-
-* other apps
-- zeal

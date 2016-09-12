@@ -1,7 +1,7 @@
 #+TITLE: Hebi
 
 * stack
-- recitation: visitor
+- music repo!
 - design patterns
 - leetcode algorithm writeup, in detail!
 - C++ template in depth

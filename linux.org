@@ -85,3 +85,19 @@ By default there's no difference between level 2 to 5.
 
 Those scripts starts with "S" or "K" meaning =start= or =stop= sent to =systemd= utility.
 Those scripts are symbol linked to =../init.d/xxx=.
+
+
+* LD_LIBRARY_PATH
+On =CentOS=, the default =LD_LIBRARY_PATH= does not contains the =/usr/local/lib=.
+The consequence is the =-lpugi= and =-lctags= are not recognized because they are put in that directory.
+Set it, or edit =/etc/ld.conf.d/local.conf= and add the path.
+After that, run =ldconf -v= as root to update the database.
+
+Also, the error:
+#+BEGIN_QUOTE
+Linux error while loading shared libraries: cannot open shared object file: No such file or directory
+#+END_QUOTE
+
+is also because the cache is not updated.
+So the solution is =sudo ldconfig=
+
