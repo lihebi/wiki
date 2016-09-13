@@ -21,6 +21,7 @@ Apps
 ** Design pattern
 Creation Pattern
 - [[file:design-pattern/abstract-factory.org][Abstract Factory]]
+- [[file:design-pattern/singleton.org][Singleton]]
 
 Behavior Pattern
 - [[file:design-pattern/visitor.org][Visitor]]

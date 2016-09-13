@@ -1,0 +1,19 @@
+#+TITLE: Singleton
+
+#+BEGIN_SRC C++
+  class Singleton {
+  public:
+    static Singleton* Instance() {
+      if (m_instance == 0) {
+        m_instance = new Singleton;
+      }
+      return m_instance;
+    }
+  protected:
+    Singleton();
+  private:
+    static Singleton* m_instance;
+  };
+
+  Singleton *Singleton::m_instance = 0;
+#+END_SRC

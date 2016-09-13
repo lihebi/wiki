@@ -34,6 +34,10 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 - unordered_set bucket
 
 
+- stumpwm dict show how to prononce
+- docview reset page after perspective
+
+
 ** Helium
 - failure condition
 - look for new type of bugs

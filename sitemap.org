@@ -2,6 +2,7 @@
 
    + design-pattern
      + [[file:design-pattern/abstract-factory.org][Abstract Factory]]
+     + [[file:design-pattern/singleton.org][Singleton]]
      + [[file:design-pattern/visitor.org][Visitor]]
    + math
      + 511

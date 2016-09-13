@@ -1,4 +1,29 @@
 #+TITLE: C++
+
+
+
+* extern
+#+BEGIN_SRC C++
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+char *strcpy(char *, const char*);
+// ...
+
+#ifdef __cplusplus
+}
+#endif
+#+END_SRC
+
+~extern "C"~ is used to use a C header file in a C++ project.
+It is called linkage convention.
+C++ supports overload, but C does not.
+C++ typically add more to a function name.
+If this is the case, C++ will not find the correct C library because it looks for a different name.
+By using this, during the linkage, the compiler will look for the original name, i.e. using C linkage method.
+
+
 * Class
 ** Constructor
 
@@ -371,6 +396,30 @@ not the position in initialization list.
    cout << "Printing character: " << c << endl;
  }
  #+end_src
+
+Operator Overload
+
+#+BEGIN_SRC C++
+inline bool operator==(Date a, Data b) {
+  return a.day() == b.day() && a.month() == b.month() && a.year() == b.year();
+}
+
+bool operator!=(Date, Date);
+bool operator<(Date, Date)
+bool operator>(Date, Date)
+
+Date& operator++(Date &d);
+Date& operator--(Date &d);
+Date& operator+=(Date &d, int n);
+Date& operator-=(Date &d, int n);
+
+Date operator+(Date d, int n);
+Date operator-(Date d, int n);
+
+ostream& operator<<(ostream&, Date d);
+istream& operator>>(istream&, Date &d);
+#+END_SRC
+
 
 ** Polymorphism
  It is the ability to redefine methods for derived classes.
