@@ -1,8 +1,8 @@
 #+TITLE: Hebi
 
-#+BEGIN_QUOTE
-你必须非常努力，才能看起来毫不费力。
-#+END_QUOTE
+# #+BEGIN_QUOTE
+# 你必须非常努力，才能看起来毫不费力。
+# #+END_QUOTE
 
 #+BEGIN_HTML html
 <blockquote id="quote">
@@ -14,6 +14,8 @@ var quotes = [
 "我命由我不由天",
 "好运对爱笑的人情有独钟",
 "成功路上，非死即伤，但别妄想我举手投降"
+"我的影子想要去飞翔,我的人还在地上"
+"我的脚步想要去流浪,我的心却想靠航"
 ];
 document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 </script>
@@ -39,6 +41,23 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 
 
 ** Helium
+
+- UML
+  - new workflow
+  - resolver
+
+- Input Output Data format unify
+- Invariant Generation
+- Oracle for buffer overflow really working
+
+- Invariant selection & validation with successfully runs
+- bug studies
+- More concrete details for the risks
+
+- AST generate code: not only selected
+
+
+
 - failure condition
 - look for new type of bugs
 - buffer overflow benchmarks

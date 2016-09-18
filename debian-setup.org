@@ -85,6 +85,7 @@ libpng-dev libz-dev libpoppler-glib-dev libpoppler-private-dev imagemagick # for
 # java developping
 antlr4
 eclipse
+r-base
 #+END_EXAMPLE
 
 Non-package software:
