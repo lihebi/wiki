@@ -10,6 +10,8 @@
 - =jobs= to list all background jobs,
   and =kill %1= to kill the first.
 
+- =top=, then you can see the CPU usage and all process IDs. Simply press =k= and enter the PID can kill the process.
+
 * Install fonts
 - OTF: OpenType
 - TTF: TrueType
