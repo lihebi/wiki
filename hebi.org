@@ -48,6 +48,8 @@ invariants format:
 
 
 * stack
+- 572 homework lab
+
 - Helium
 - What is dynamic symbolic execution?
 - CCured

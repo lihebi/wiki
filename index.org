@@ -1,5 +1,7 @@
 #+TITLE: Hebi's Personal Wiki
 
+There's always a [[file:tmp.org][tmp]] page.
+
 * OS
 - [[file:csapp.org][CSAPP study note]]
 System
