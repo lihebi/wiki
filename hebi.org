@@ -1,53 +1,8 @@
 #+TITLE: Hebi
 
-# #+BEGIN_QUOTE
-# 你必须非常努力，才能看起来毫不费力。
-# #+END_QUOTE
-
-#+BEGIN_HTML html
-<blockquote id="quote">
-</blockquote>
-
-<script>
-var i = Math.round(Math.random()*100);
-var quotes = [
-"你一出场别人都显得不过如此",
-"你必须非常努力，才能看起来毫不费力",
-"我命由我不由天",
-"好运对爱笑的人情有独钟",
-"成功路上，非死即伤，但别妄想我举手投降",
-"我的影子想要去飞翔,我的人还在地上",
-"我的脚步想要去流浪,我的心却想靠航"
-];
-document.getElementById("quote").innerHTML = quotes[i % quotes.length];
-</script>
-#+END_HTML
-
-* Open Source Ideas
-** pdf-tools
-- two column view
-- show citation on-the-fly
-
-* Knowledge Place
-Testing systems are typically evaluated using three metrics cite:2014-ESE-Avgerinos
-1. number of real bugs found
-2. node coverage (stmt coverage, finite)
-3. path coverage (infinite, need approximate)
-
-
-* Helium
-invariants format:
-- var in range [0..3432]
-- relation: <, <=, >, >=, =, !=
-- derived: invariants for x+y, possible operators: +, -
-- address relation
-
-
-- library: max, abs
-
-
-
 * stack
+- EXPECT_EQ snippet
+
 - time control within emacs (TODO, deadline management)
 - 572 homework lab
 
@@ -102,6 +57,55 @@ For array, also calculate the element range
 - risks and alternatives
 - testing design
 - Application
+
+
+# #+BEGIN_QUOTE
+# 你必须非常努力，才能看起来毫不费力。
+# #+END_QUOTE
+
+#+BEGIN_HTML html
+<blockquote id="quote">
+</blockquote>
+
+<script>
+var i = Math.round(Math.random()*100);
+var quotes = [
+"你一出场别人都显得不过如此",
+"你必须非常努力，才能看起来毫不费力",
+"我命由我不由天",
+"好运对爱笑的人情有独钟",
+"成功路上，非死即伤，但别妄想我举手投降",
+"我的影子想要去飞翔,我的人还在地上",
+"我的脚步想要去流浪,我的心却想靠航"
+];
+document.getElementById("quote").innerHTML = quotes[i % quotes.length];
+</script>
+#+END_HTML
+
+* Open Source Ideas
+** pdf-tools
+- two column view
+- show citation on-the-fly
+
+* Knowledge Place
+Testing systems are typically evaluated using three metrics cite:2014-ESE-Avgerinos
+1. number of real bugs found
+2. node coverage (stmt coverage, finite)
+3. path coverage (infinite, need approximate)
+
+
+* Helium
+invariants format:
+- var in range [0..3432]
+- relation: <, <=, >, >=, =, !=
+- derived: invariants for x+y, possible operators: +, -
+- address relation
+
+
+- library: max, abs
+
+
+
 
 
 * Old Wiki Migration

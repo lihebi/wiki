@@ -1,5 +1,179 @@
 #+TITLE: LeetCode Used Data Structure
 
+* Heap
+
+
+A heap is a structure that the value in the parent node is always /greater or equal/ to its children.
+Well, it can also be defined as the parent is /less or equal/ to its children.
+In C++ standard library, the =priority_queue= is organized as the top is the greatest, so lets just use this definition.
+
+The heap must be of the shape of a complete binary tree. Meaning only the last layer can miss some leafs at the end.
+
+** priority queue
+We can /use/ a heap data structure to implement a /priority queue/.
+Instead of FIFO, the order that come out of priority queue is by its priority, a.k.a. value.
+
+*** Usage
+**** 295. Find Median from Data Stream
+#+BEGIN_QUOTE
+Median is the middle value in an ordered integer list.
+If the size of the list is even, there is no middle value.
+So the median is the mean of the two middle value.
+
+Design a data structure that supports the following two operations:
+- void addNum(int num) - Add a integer number from the data stream to the data structure.
+- double findMedian() - Return the median of all elements so far.
+#+END_QUOTE
+
+Here's a solution that use linked list. So slow.
+#+BEGIN_SRC C++
+class MedianFinder {
+public:
+  // Adds a number into the data structure.
+  void addNum(int num) {
+    if (m_data.empty()) {
+      m_data.push_back(num);
+      m_it = m_data.begin();
+    } else {
+      std::list<int>::iterator it = m_it;
+      if (*it < num) {
+        while (it != m_data.end() && *it < num) {
+          it++;
+        }
+        m_data.insert(it, num);
+        if (m_data.size() % 2 == 1) {
+          m_it++;
+        }
+      } else if (*it == num) {
+        m_data.insert(it, num);
+        if (m_data.size() % 2 == 0) {
+          m_it--;
+        }
+      } else {
+        while (it != m_data.begin() && *it > num) {
+          it--;
+        }
+        if (it == m_data.begin() && *it > num) {
+          m_data.insert(it, num);
+        } else {
+          it++;
+          m_data.insert(it, num);
+        }
+        if (m_data.size() % 2 == 0) {
+          m_it--;
+        }
+      }
+    }
+  }
+
+  // Returns the median of current data stream
+  double findMedian() {
+    double ret = 0;
+    std::list<int>::iterator it = m_it;
+    if (m_data.size() % 2 == 0) {
+      ret = *it;
+      ret += *(++it);
+      ret /= 2;
+      return ret;
+    } else {
+      return *it;
+    }
+  }
+private:
+  std::list<int> m_data;
+  std::list<int>::iterator m_it;
+};
+#+END_SRC
+
+Instead, using priority queue, we can use two heap for the smaller half and larger half.
+Some points needs to be careful:
+- Since C++ priority_queue is greatest top, so the larger half can simply use the negative
+- But whenever use negative, you need to consider the range of int, so use a long
+- when calculate a int divided by a int, /cast to double/!
+- cannot get the top of an empty container!
+
+#+BEGIN_SRC C++
+class MedianFinder {
+public:
+  void addNum(int num) {
+    if (smaller.empty()) {
+      smaller.push(num);
+      return;
+    }
+    long n = num;
+    if (smaller.size() == larger.size()) {
+      if (larger.top() > -n) {
+        larger.push(-n);
+        smaller.push(-larger.top());
+        larger.pop();
+      } else {
+        smaller.push(n);
+      }
+    } else {
+      // smaller have one more
+      if (smaller.top() > n) {
+        smaller.push(n);
+        larger.push(-smaller.top());
+        smaller.pop();
+      } else {
+        larger.push(-n);
+      }
+    }
+  }
+  double findMedian() {
+    assert(!smaller.empty());
+    if (smaller.size() == larger.size()) {
+      return (double)(smaller.top() - larger.top()) / 2;
+    } else {
+      return smaller.top();
+    }
+  }
+private:
+  std::priority_queue<long> smaller;
+  std::priority_queue<long> larger;
+};
+#+END_SRC
+
+This is not very clean code, a more elegant one (Note this will have more push and pop to the heap, so more time overhead):
+#+BEGIN_SRC C++
+class MedianFinder3 {
+public:
+  void addNum(int num) {
+    smaller.push((long)num);
+    larger.push(-smaller.top());
+    smaller.pop();
+    if (larger.size() > smaller.size()) {
+      smaller.push(-larger.top());
+      larger.pop();
+    }
+  }
+  double findMedian() {
+    assert(!smaller.empty());
+    return smaller.size() == larger.size() ?
+      (double)(smaller.top() - larger.top()) / 2 : smaller.top();
+  }
+private:
+  std::priority_queue<long> smaller;
+  std::priority_queue<long> larger;
+};
+#+END_SRC
+
+
+
+
+** Implement
+Insert:
+- First, insert the value at the end of the array, so that we maintain the shape.
+- Then, pop the value up by comparing with parent, swap if possible and continue.
+
+Remove:
+- first, remove the root, and move the end of the array to the root.
+- sink the root down, by comparing with its two children. Swap with the larger child if there is one.
+
+* TODO Binary Search Tree
+
+* Other
+
 
 ** Trie
 
@@ -242,3 +416,5 @@ At each step, the current node is extended by finding its child,
 and if that doesn't exist, finding its suffix's child,
 and if that doesn't work, finding its suffix's suffix's child,
 and so on, finally ending in the root node if nothing's seen before.
+
+
