@@ -3,6 +3,12 @@
 - https://common-lisp.net/project/asdf/
 - http://people.ace.ed.ac.uk/staff/medward2/class/moz/cm/doc/contrib/lispstyle.html
 
+- Common Lisp: https://common-lisp.net/
+- Common Lisp Book: http://www.gigamonkeys.com/book/
+- Common Lisp asdf: https://common-lisp.net/project/asdf/
+- Slime: https://common-lisp.net/project/slime/
+
+
 
 * Some useful packages (though I don't know what are they)
 - cl-quicklisp

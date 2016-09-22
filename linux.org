@@ -1,5 +1,9 @@
 #+TITLE: Linux
 
+- Debian Wiki: https://wiki.debian.org/
+- FreeBSD: https://www.freebsd.org/
+
+
 * App
 - File explorer: konquerer
 - Image viewer: feh

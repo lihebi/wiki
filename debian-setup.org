@@ -88,6 +88,7 @@ eclipse
 r-base
 
 doxygen
+plantuml
 #+END_EXAMPLE
 
 Non-package software:
@@ -129,12 +130,4 @@ git config --global push.default simple
 ** wallpaper setup
 #+BEGIN_EXAMPLE
 feh --bg-fill /path/to/wallpaper.suffix
-#+END_EXAMPLE
-
-
-* Manual Download
-=~/bin=
-
-#+BEGIN_EXAMPLE
-plantuml.jar
 #+END_EXAMPLE
