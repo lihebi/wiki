@@ -51,6 +51,7 @@
    + [[file:hebi.org][Hebi]]
    + [[file:index.org][Hebi's Personal Wiki]]
    + [[file:hungarian.org][Hungarian notation]]
+   + [[file:java.org][Java]]
    + [[file:js.org][Javascript]]
    + [[file:llvm.org][LLVM]]
    + [[file:lvm.org][LVM]]

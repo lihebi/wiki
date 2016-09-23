@@ -70,6 +70,7 @@ Behavior Pattern
 - [[file:lisp.org][Lisp]]
 - [[file:sql.org][SQL]]
 - [[file:git.org][Git]]
+- [[file:java.org][Java]]
 
 * Algorithm
 OJ:

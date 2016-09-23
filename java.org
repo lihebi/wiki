@@ -1,0 +1,25 @@
+#+TITLE: Java
+
+
+
+* Ant
+Typically you still need to set the class path.
+#+BEGIN_EXAMPLE
+export CLASSPATH=".:/usr/local/lib/antlr-4.5-complete.jar:$CLASSPATH"
+#+END_EXAMPLE
+
+
+* Eclipse
+You can set the key binding to emacs style by: =preference=, =general=, =key=
+
+You can export ant =build.xml= file by: project, export, general, ant build file. Un-check the "eclipse" mark, because we want an independent script.
+
+* List & ArrayList
+
+#+BEGIN_SRC java
+List<int> a;
+a.get(i); // no a[i]
+
+ArrayList<int> a;
+a[i];
+#+END_SRC
