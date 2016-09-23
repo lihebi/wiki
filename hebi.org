@@ -1,31 +1,24 @@
 #+TITLE: Hebi
 
-# #+BEGIN_QUOTE
-# 你必须非常努力，才能看起来毫不费力。
-# #+END_QUOTE
-
-#+BEGIN_HTML html
-<blockquote id="quote">
-<script>
-var i = Math.round(Math.random()*100);
-var quotes = [
-"你一出场别人都显得不过如此",
-"你必须非常努力，才能看起来毫不费力",
-"我命由我不由天",
-"好运对爱笑的人情有独钟",
-"成功路上，非死即伤，但别妄想我举手投降"
-"我的影子想要去飞翔,我的人还在地上"
-"我的脚步想要去流浪,我的心却想靠航"
-];
-document.getElementById("quote").innerHTML = quotes[i % quotes.length];
-</script>
-</blockquote>
-#+END_HTML
-
-
-
 * stack
 - Harry Xu
+- EXPECT_EQ snippet
+
+- time control within emacs (TODO, deadline management)
+- 572 homework lab
+
+- Helium
+- What is dynamic symbolic execution?
+- CCured
+- DART
+- CUTE
+- dynamic symbolic execution for invariant inference, ICSE 08
+
+For array, also calculate the element range
+
+
+- remove all Chinese in wiki
+
 - C++ template in depth
 - move semantic
 - perfect forwarding
@@ -63,24 +56,72 @@ There're some pages not migrated from old wiki:
 =software/=
 =web/=
 
+#+BEGIN_HTML html
+<blockquote id="quote">
+</blockquote>
 
-* IRC
-** Using under emacs
-- erc
-- /join emacs
-** channels
-- emacs
-- haskell
+<script>
+var i = Math.round(Math.random()*100);
+var quotes = [
+"你一出场别人都显得不过如此",
+"你必须非常努力，才能看起来毫不费力",
+"我命由我不由天",
+"好运对爱笑的人情有独钟",
+"成功路上，非死即伤，但别妄想我举手投降",
+"我的影子想要去飞翔,我的人还在地上",
+"我的脚步想要去流浪,我的心却想靠航"
+];
+document.getElementById("quote").innerHTML = quotes[i % quotes.length];
+</script>
+#+END_HTML
 
-* Task Log
-- 572 homework 2
+* Open Source Ideas
+** pdf-tools
+- two column view
+- show citation on-the-fly
 
-** Life
+* Knowledge Place
+Testing systems are typically evaluated using three metrics cite:2014-ESE-Avgerinos
+1. number of real bugs found
+2. node coverage (stmt coverage, finite)
+3. path coverage (infinite, need approximate)
+
+
+* Helium
+invariants format:
+- var in range [0..3432]
+- relation: <, <=, >, >=, =, !=
+- derived: invariants for x+y, possible operators: +, -
+- address relation
+
+
+- library: max, abs
+
+
+
+
+
+* Old Wiki Migration
+There're some pages not migrated from old wiki:
+- =leetcode/=
+- =633/=
+- =crypto/=
+- =compiler/=
+- =java/=
+- =coffee/=
+- =ruby=
+- =python/=
+- =operating-system/=
+- =math/=
+- =scholar/=
+- =database/=
+- =docker/=
+- =platform/=
+- =software/=
+- =web/=
 
 
 * Note Book
-
-** TODO List
 
 ** Long Term TODO
 - color theme!
@@ -119,68 +160,16 @@ Keep an eye on the most recent conference papers!
 - [[https://leetcode.com/][Leetcode]]
 
 *** Reading Websites:
-- Wanqu RiBao: https://wanqu.co/
 - Hacker News: https://news.ycombinator.com/
-- Zhihu: http://www.zhihu.com/
-- TED: https://www.ted.com/
-- Twitter: https://twitter.com/
-
-**** System
-- http://lwn.net/
-
-**** Reddit
 - Reddit Programming: https://www.reddit.com/r/programming/
 - Reddit Emacs; https://www.reddit.com/r/emacs/
-
-*** Creative Websites:
-- [[https://www.kickstarter.com][Kick Starter]]
-- [[https://ardour.org/][Ardour]]
-- 99design, buy a logo: https://99designs.com/
-
-*** Vulnerabilities
-- Lookout:
-  - https://www.lookout.com/
-  - https://blog.lookout.com/
-
-*** Blogs
-- CoolShell: http://coolshell.cn/
-
-*** Techniques
-**** Lisp
-- Common Lisp: https://common-lisp.net/
-- Common Lisp Book: http://www.gigamonkeys.com/book/
-- Common Lisp asdf: https://common-lisp.net/project/asdf/
-- Slime: https://common-lisp.net/project/slime/
-
-**** Linux
-- Debian Wiki: https://wiki.debian.org/
-- FreeBSD: https://www.freebsd.org/
-
-**** Other
-- programming chrestomathy: http://rosettacode.org/wiki/Rosetta_Code
-- Midipix: http://midipix.org/ create programs for Windows using the standard C and POSIX APIs
-- ACCU: be a better programmer: https://accu.org/index.php
-
-
-*** Documentation
-- [[http://www.texample.net/tikz/][Tikz]]
 
 *** Github Repos
 - [[https://github.com/papers-we-love/papers-we-love][papers-we-love/papers-we-love]]
 - [[https://github.com/ivoarch/.dot-org-files][ivoarch/.dot-org-files]]
 
-*** Open Source Projects
-- FreeNAS: Open Storage OS: http://www.freenas.org/
-
-*** Communities
-- http://orgmode.org/worg/
-
 *** Other Links:
 - http://en.bookfi.net/
-
-
-
-
 
 * Advice
 ** About interruption
@@ -216,3 +205,7 @@ At a minimum it lets me complete the thought (e.g. finish writing a paragraph) b
 It's also a reason to appreciate working remotely. Nobody "just happens to stop by my desk."
 #+END_QUOTE
 
+bibliography:/home/hebi/github/bibliography/hebi.bib
+
+* Task Log
+- 572 homework 2

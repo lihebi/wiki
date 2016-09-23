@@ -1,5 +1,7 @@
 #+TITLE: Hebi's Personal Wiki
 
+There's always a [[file:tmp.org][tmp]] page.
+
 * OS
 - [[file:csapp.org][CSAPP study note]]
 System
@@ -68,6 +70,7 @@ Behavior Pattern
 - [[file:lisp.org][Lisp]]
 - [[file:sql.org][SQL]]
 - [[file:git.org][Git]]
+- [[file:java.org][Java]]
 
 * Algorithm
 OJ:

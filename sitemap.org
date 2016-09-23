@@ -22,6 +22,7 @@
      + [[file:recitation/recite3.org][COMS342 Recitation 3]]
    + subdir
      + [[file:subdir/test.org][test]]
+   + [[file:tmp.org][A tmp]]
    + [[file:assembly.org][Assembly]]
    + [[file:autoconf.org][Autoconf]]
    + [[file:boost.org][Boost]]
@@ -50,6 +51,7 @@
    + [[file:hebi.org][Hebi]]
    + [[file:index.org][Hebi's Personal Wiki]]
    + [[file:hungarian.org][Hungarian notation]]
+   + [[file:java.org][Java]]
    + [[file:js.org][Javascript]]
    + [[file:llvm.org][LLVM]]
    + [[file:lvm.org][LVM]]
