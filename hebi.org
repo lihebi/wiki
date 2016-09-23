@@ -25,9 +25,7 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 
 
 * stack
-- music repo!
-- design patterns
-- leetcode algorithm writeup, in detail!
+- Harry Xu
 - C++ template in depth
 - move semantic
 - perfect forwarding
@@ -35,19 +33,9 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 - template
 - unordered_set bucket
 
-
-- stumpwm dict show how to prononce
-- docview reset page after perspective
-
-
 ** Helium
 
-- UML
-  - new workflow
-  - resolver
-
 - Input Output Data format unify
-- Invariant Generation
 - Oracle for buffer overflow really working
 
 - Invariant selection & validation with successfully runs
@@ -56,14 +44,6 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 
 - AST generate code: not only selected
 
-
-
-- failure condition
-- look for new type of bugs
-- buffer overflow benchmarks
-- risks and alternatives
-- testing design
-- Application
 
 
 * Old Wiki Migration
