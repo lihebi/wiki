@@ -107,3 +107,30 @@ Linux error while loading shared libraries: cannot open shared object file: No s
 is also because the cache is not updated.
 So the solution is =sudo ldconfig=
 
+
+* Networking using NetworkManager
+Install network-manager package, and:
+
+Start the service
+#+BEGIN_EXAMPLE
+systemctl enable NetworkManager
+#+END_EXAMPLE
+change =/etc/NetworkManager$/NetworkManager.conf= to:
+
+#+BEGIN_EXAMPLE
+[ifupdown]
+managed=true
+#+END_EXAMPLE
+
+restart
+#+BEGIN_EXAMPLE
+systemctl restart NetworkManager
+#+END_EXAMPLE
+
+
+** add a wifi connection
+#+BEGIN_EXAMPLE
+nmcli device wifi list
+nmcli device wifi connect IASTATE
+nmcli device wifi connect ID password pwd
+#+END_EXAMPLE

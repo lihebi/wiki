@@ -444,3 +444,100 @@ map to the index of that visit.
 Do not need to update everything before.
 If we found a character visited before that index, simply update that only.
 
+* 400. Nth Digit
+
+#+BEGIN_SRC C++
+  /**
+   ,*
+   1 - 9 : 9
+   10 - 99 : 2 * 90
+   100 - 999 : 3 * 900
+   1000 - 9999: 4 * 90000
+  ,*/
+  class Solution {
+  public:
+    int findNthDigit(int nn) {
+      long n = nn;
+      std::pair<long, long> p = get_lvl(n);
+      long lvl = p.first;
+      long remaining = p.second;
+      long base = get_base(lvl);
+
+      long num = remaining / lvl + base - 1;
+      long offset = remaining % lvl;
+      if (offset != 0) {
+        num++;
+      }
+      if (offset != 0) {
+        offset = lvl + 1 - offset;
+      }
+      return get_digit(num, offset);
+    }
+
+    long get_digit(long num, long offset) {
+      while (--offset>0) {
+        num /= 10;
+      }
+      return num % 10;
+    }
+
+    /**
+     ,* Get base number (100..)
+     ,*/
+    long get_base(long cat) {
+      long ret=1;
+      while (--cat>0) {
+        ret *= 10;
+      }
+      return ret;
+    }
+
+    /**
+     ,* find the lvl it belongs, start from 1
+     ,* @return (lvl, remaining)
+     ,*/
+    std::pair<long, long> get_lvl(long n) {
+      std::pair<long, long> p = {1,0};
+      while (n > 0) {
+        n -= get_total(p.first);
+        p.first++;
+      }
+      p.first--;
+      p.second = n + get_total(p.first);
+      return p;
+    }
+
+    /**
+     ,* get the total num of lvl level
+     ,*/
+    long get_total(long level) {
+      long ret=level * 9;
+      while (--level>0) {
+        ret *= 10;
+      }
+      return ret;
+    }
+  };
+#+END_SRC
+
+neat solution:
+
+#+BEGIN_SRC java
+  public int findNthDigit(int n) {
+      int len = 1;
+      long count = 9;
+      int start = 1;
+
+      while (n > len * count) {
+          n -= len * count;
+          len += 1;
+          count *= 10;
+          start *= 10;
+      }
+
+      start += (n - 1) / len;
+      String s = Integer.toString(start);
+      return Character.getNumericValue(s.charAt((n - 1) % len));
+  }
+
+#+END_SRC

@@ -16,6 +16,7 @@
 
 For array, also calculate the element range
 
+- BeOS Haiku
 
 - remove all Chinese in wiki
 
