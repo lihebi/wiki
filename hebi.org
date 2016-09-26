@@ -1,6 +1,9 @@
 #+TITLE: Hebi
 
 * stack
+- gdb C debugging
+- lisp!
+
 - Harry Xu
 - EXPECT_EQ snippet
 
