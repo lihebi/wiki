@@ -98,6 +98,8 @@ bool is_string(const boost::any & operand) {
 namespace po = boost::program_options;
 #+END_SRC
 
+compile use =-lboost_program_options= flag.
+
 ** construct arguments
 Create some options.
 - It can have a long name and a short name
@@ -191,3 +193,149 @@ vm[key].as<std::string>();
 vm[key].value();
 #+END_SRC
 
+
+* filesystem
+** Usage
+#+BEGIN_SRC C++
+#include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
+namespace fs = boost::filesystem;
+#+END_SRC
+
+Compile use =-lboost_system -lboost_filesystem= flag.
+
+** Path
+These are the methods of class =path=.
+Basic construct and retrieve string:
+#+BEGIN_SRC C++
+fs::path p("/path");
+p.string();
+p.clear();
+#+END_SRC
+
+*** modification
+append will concatenate paths by separator, but will not add if duplicate.
+concatenation simply concatenate.
+#+BEGIN_SRC C++
+  path& operator/=(const path& p);
+  path& operator+=(const path& x);
+#+END_SRC
+
+- =path& replace_extension(const path& new_extension = path());=
+  1. will remove existing =extension()=
+  2. iff new extension is not empty and does not start with dot, add it
+
+*** Decomposite
+All of these returns a =path=.
+- =parent_path();= :: remove until last slash
+  - =/foo/bar= -> =/foo=
+  - =/foo/bar/= -> =/foo/bar=
+- =filename();= ::
+  - =/foo/bar.txt= -> =bar.txt=
+  - =/foo/bar/= -> =.=
+- =stem();= :: iff the filename contains dot, and is not '.' or '..', remove until the last dot.
+  - =/foo/bar.txt= -> =bar=
+  - =/foo.bar.txt= -> =foo.bar=
+- =extension();= :: WITH DOT: from last dot to the end.
+  - =foo.bar.txt= -> =.txt=
+     
+*** Query 
+- =empty=
+- =is_absolute=
+- =is_relative=
+
+** path utilities
+- =absolute= :: if relative, return current path / p
+- =canonical= :: it is absolute, but check to make sure the file exists, otherwise throw exception.
+  no symbol link, no dots, no extra slashes.
+- =current_path= :: current path, back to root
+- =exists= :: returns whether it exists
+- =equivalent= :: return true if file_status for both path equals, and resolve to same file system entity.
+
+*** File operations
+copy
+- =copy(path &from, path &to)= :: should be used, will call the other 3 based on the type
+- =copy_directory(path &from, path &to)= :: only apply for directory
+- =copy_file(path &from, path &to)= :: only apply for file
+create & remove
+- =create_directory(path p)= :: mkdir
+- =create_directories(path p)= :: mkdir -p
+- =remove(path p)= :: rm
+- =remove_all(path p)= :: rm -r
+modify
+- =rename(path &old, path &new)= ::
+- =resize_file(path &p, uintmax_t new_size)= ::
+- =uintmax_t file_size(path &p)= :: return size in byte
+
+*** predicates
+- =is_directory(path &p)= :: 
+- =is_regular_file(path &p)= ::
+- =is_symlink(path &p)= ::
+- =is_other(path &p)= :: the file exists, but is not the above three kind
+- =is_empty(path &p)= :: whether the directory is empty, or the file is of size 0
+
+**** Linux is file or dir
+#+BEGIN_SRC C++
+bool utils::is_file(const std::string &file) {
+  struct stat sb;
+  if (stat(file.c_str(), &sb) == 0 && S_ISREG(sb.st_mode)) return true;
+  else return false;
+}
+bool utils::is_dir(const std::string &file) {
+  struct stat sb;
+  if (stat(file.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)) return true;
+  else return false;
+}
+#+END_SRC
+
+
+** Temp Directory
+- ~temp_directory_path()~ :: return a temp directory name suited for creation.
+  Will throw exception if the one being returned exists, so feel free to use.
+- ~unique_path(path p="%%%%-%%%%-%%%%-%%%%")~ :: this will receive a string contains %, and replace it with a hex number. Default is 64 bit randomness.
+
+#+BEGIN_SRC C++
+/**
+ * create tmp dir, return it.
+ * @input s /tmp/helium-XXXXXX (must have 6 X at the end.)
+ */
+std::string utils::create_tmp_dir(std::string s) {
+  // char tmp_dir[] = "/tmp/helium-test-temp.XXXXXX";
+  std::string sub = s.substr(s.find_last_not_of('X'));
+  if (sub.size() !=7) return "";
+  sub = sub.substr(1);
+  assert(sub.size() == 6 && "tmp dir url format error!");
+  if (sub.find_first_not_of('X') != std::string::npos) return "";
+  char tmp_dir[s.size()+1];
+  strcpy(tmp_dir, s.c_str());
+
+  char *result = mkdtemp(tmp_dir);
+
+  if (result == NULL) return "";
+  std::string dir = tmp_dir;
+  return dir;
+}
+#+END_SRC
+
+
+** Iterators
+- class directory_iterator
+
+#+BEGIN_SRC C++
+if (fs::is_directory(p)) {
+  for (fs::directory_entry &e : fs::directory_iterator(p)) {
+    e.path();
+  }
+}
+#+END_SRC
+
+- class recursive_directory_iterator
+#+BEGIN_SRC C++
+  fs::path project_folder(folder);
+  fs::recursive_directory_iterator it(folder), eod;
+  BOOST_FOREACH (fs::path const & p, std::make_pair(it, eod)) {
+    if (is_regular_file(p)) {
+      vs.push_back(p.string());
+    }
+  }
+#+END_SRC
