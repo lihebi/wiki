@@ -14,3 +14,180 @@ fs::path abs_path = fs::absolute(path);
 fs::path con_path = fs::canonical(path);
 fs::exists(path); // if path exists or not
 #+END_SRC
+
+* boost.any
+
+This is a class for conversion.
+It can
+- hold /any/ type.
+- predicate to check the type
+- template support
+
+** Usage
+#+BEGIN_SRC C++
+  #include <list>
+  #include <boost/any.hpp>
+#+END_SRC
+
+** Convert into boost::any
+Converting any type to boost::any is as simple as assignment:
+#+BEGIN_SRC C++
+  std::list<boost::any> values;
+  int i;
+  boost::any to_append = i;
+  values.push_back(to_append);
+  std::string s;
+  values.push_back(s);
+  char *cp;
+  values.push_back(cp);
+  // append nothing
+  values.push_back(boost::any());
+#+END_SRC
+
+** Checking of type
+
+*** =boost::any::type()=
+first, the =boost::any= class has a method called =type()=:
+#+BEGIN_SRC C++
+const std::type_info & type() const;
+#+END_SRC
+
+If the instance is empty, it returns =typeid(void)=.
+#+BEGIN_SRC C++
+any.type() == typeid(int);
+#+END_SRC
+
+*** =boost::any_cast()=
+=any_cast= can be used to check if the value is of some type.
+When accepting a value or reference, it will throw exception on failure.
+When accepting a pointer, it will not throw exception, but return a pointer of NULL.
+- =any_cast<T>(any);=
+- =any_cast<T>(&any);=
+
+#+BEGIN_SRC C++
+template<typename T> T any_cast(any & operand);
+template<typename ValueType> ValueType * any_cast(any * operand);
+#+END_SRC
+
+An example:
+
+#+BEGIN_SRC C++
+bool is_char_ptr(const boost::any & operand) {
+  try {
+    any_cast<const char *>(operand);
+    return true;
+  } catch(const boost::bad_any_cast &) {
+    return false;
+  }
+}
+
+bool is_string(const boost::any & operand) {
+  return any_cast<std::string>(&operand);
+}
+#+END_SRC
+
+* program options
+
+** Usage
+#+BEGIN_SRC C++
+#include <boost/program_options.hpp>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <boost/program_options/parsers.hpp>
+
+namespace po = boost::program_options;
+#+END_SRC
+
+** construct arguments
+Create some options.
+- It can have a long name and a short name
+- If no =po::value= specified, it does not accept arguments
+- can specify the type of value it want
+- can specify a default value
+
+Using =implicit_value()=, you tell po that, it can accept 0 or 1 token.
+But if you use =default_value()=, po will throw exception if you provide no token.
+
+#+BEGIN_SRC C++
+    po::options_description options("Arguments");
+    options.add_options()
+      ("help,h", "produce help message") // --help, -h
+      ("config,f", po::value<std::string>(), "config file")
+      ("optimization", value<int>()->default_value(10), "optimization level")
+      ("print,p", po::value<std::string>()->implicit_value(""), "what to be print")
+    ;
+#+END_SRC
+
+The options can spread into multiple descriptions.
+This is helpful for create options that you don't want to show in help message.
+#+BEGIN_SRC C++
+    po::options_description another_options("Utils");
+    another_options.add_options()
+      ("create-tagfile", "create tag file")
+    ;
+    po::options_description hidden("Hidden options");
+    hidden.add_options()
+      ("folder", "project folder")
+      ;
+#+END_SRC
+
+positional argument is those that don't require dash.
+#+BEGIN_SRC C++
+    po::positional_options_description positional;
+    positional.add("folder", 1);
+#+END_SRC
+
+** help message
+Organize and print out help message:
+#+BEGIN_SRC C++
+    po::options_description help_options;
+    help_options
+      .add(options)
+      .add(another_options)
+    ;
+    std::cout<< m_help_options << std::endl;
+#+END_SRC
+
+** Do the parsing
+Put all descriptions together and do the parsing:
+
+#+BEGIN_SRC C++
+  po::options_description cmdline_options;
+  cmdline_options
+    .add(options)
+    .add(another_options)
+    .add(hidden)
+  ;
+  po::variables_map vm;
+  po::store(po::command_line_parser(argc, argv)
+            .options(m_cmdline_options) // add cmdline options
+            .positional(positional)     // add positional options
+            .run(),                     // run the parser
+            vm
+            );
+  po::notify(vm);
+
+  // also from a config file.
+  // the value stored first is prefered, so the command line options automatically overwrite config file.
+  std::ifstream ifs(config_file.c_str());
+  if (ifs) {
+    po::store(po::parse_config_file(ifs, config_file_options), vm);
+    notify(vm);
+  }
+#+END_SRC
+
+** Retrieve from vm
+Now the =vm= is ready to get data. It is extended from =std::map=. The value of the map is =variable_value=
+
+#+BEGIN_SRC C++
+template<typename T> T & as();
+boost::any & value();
+#+END_SRC
+
+example:
+#+BEGIN_SRC C++
+vm.count(key);
+vm[key].as<std::string>();
+vm[key].value();
+#+END_SRC
+
