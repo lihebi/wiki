@@ -1,6 +1,10 @@
 #+TITLE: Hebi
 
 * stack
+- 572 homework
+- 342 midterm
+- c++ stream & iterator
+- boost spirit
 - gdb C debugging
 - lisp!
 
