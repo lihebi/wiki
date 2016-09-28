@@ -45,23 +45,6 @@ echo 400 > /sys/class/backlight/intel_backlight/brightness
 
 * Installation
 
-- [[file:debian-setup.org][Debian setup]]
-- [[file:debian-install.org][Debian Installation on Mac]]
-
-A new debian installation: choose not to use any desktop environment!
-Essential packages:
-- git
-- emacs
-- xinit
-- build-essential
-- linux-headers-$(uname -r)
-- stumpwm
-
-Install google-chrome.
-
-Get the =.hebi= and =.emacs.d= set up.
-
-
 ** VirtualBox Guest addition
 
 It seems need the =xinit= to be installed.

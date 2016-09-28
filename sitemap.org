@@ -90,6 +90,7 @@
    + [[file:x11.org][X11]]
    + [[file:xpath.org][XPath]]
    + [[file:awk.org][awk]]
+   + [[file:gcov.org][gcov]]
    + [[file:google-test.org][google test]]
    + [[file:sed.org][sed]]
    + [[file:poem.org][诗词曲]]

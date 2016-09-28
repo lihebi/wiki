@@ -1,0 +1,41 @@
+#+TITLE: gcov
+
+* How to run
+
+Compile your program with two flags
+#+BEGIN_EXAMPLE
+gcc -fprofile-arcs -ftest-coverage a.c
+#+END_EXAMPLE
+
+This will produce =a.gcda= (arcs) and =a.gcno= (coverage).
+
+Then run the program by
+#+BEGIN_EXAMPLE
+./a.out
+#+END_EXAMPLE
+
+run =gcov= in the same directory:
+
+#+BEGIN_EXAMPLE
+gcov a.c
+#+END_EXAMPLE
+
+This will produce the coverage, and create a =a.c.gcov= file.
+
+* Different options
+When invoking gcov, you can control the output format:
+- =gcov -b a.c=: output branching information
+
+* .gcov file format
+#+BEGIN_EXAMPLE
+ExeCount : linum : line
+#+END_EXAMPLE
+
+=#= in the ExeCount means no execution.
+
+
+* Some experience
+
+- The coverage information will accumulate: run a second time, it will possibly increase.
+- branches executed is the for the head of branch.
+- branches taken at least once is for the ordinary branch coverage

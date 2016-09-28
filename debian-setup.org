@@ -111,9 +111,10 @@ Non-package software:
 usermod -aG sudo hebi
 #+END_QUOTE
 
-- Config:
-  - dothebi
-  - emacs.d
+pull from git repository:
+- dothebi
+- emacs.d
+- info
 
 ** default setting
 #+BEGIN_EXAMPLE

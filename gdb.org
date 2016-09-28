@@ -1,5 +1,19 @@
 #+TITLE: GDB
 
+* Using with emacs
+- =M-x gdb=
+- =M-x gdb-many-windows=
+- =M-x gdb-restore-windows=
+
+In the breakpoints buffer, =D= to remove one.
+
+* Commands
+
+- next :: next instruction
+- step :: into a procedure
+- finish :: finish current procedure
+- until :: until a line is reached. Can be used to jump out of a loop
+
 * Core Dump
 The "core" may not be there.
 On ubuntu, this is possibly because you have a core file size ulimit of 0.

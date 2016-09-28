@@ -32,6 +32,7 @@ Behavior Pattern
 - [[file:compiler.org][compiler]]
 - [[file:llvm.org][LLVM]]
 - [[file:gdb.org][GDB]]
+- [[file:gcov.org][gcov]]
 
 ** Scripting
 - [[file:awk.org][awk]]
