@@ -1,6 +1,13 @@
 #+TITLE: Hebi
 
 * stack
+
+- research into equivalent partition
+- 342 homework 5
+- 572 lab 2
+- write up the risks!
+
+
 - 572 homework
 - 342 midterm
 - c++ stream & iterator
