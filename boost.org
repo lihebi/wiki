@@ -339,3 +339,25 @@ if (fs::is_directory(p)) {
     }
   }
 #+END_SRC
+
+* Timer
+
+#+BEGIN_SRC C++
+  #include <boost/timer/timer.hpp>
+  using boost::timer::cpu_timer;
+  using boost::timer::cpu_times;
+  using boost::timer::nanosecond_type;
+
+  nanosecond_type const twenty_seconds(20 * 1000000000LL);
+  nanosecond_type last(0);
+  cpu_timer timer;
+  while (more_transactions) {
+    process_a_transaction();
+    cpu_times const elapsed_times(timer.elapsed());
+    nanosecond_type const elapsed(elapsed_times.system
+                                  + elapsed_times.user);
+    if (elapsed >= twenty_seconds) {
+      last = elapsed;
+    }
+  }
+#+END_SRC
