@@ -2,14 +2,10 @@
 
 * stack
 
-- research into equivalent partition
-- 342 homework 5
+- 342 midterm solution
 - 572 lab 2
 - write up the risks!
 
-
-- 572 homework
-- 342 midterm
 - c++ stream & iterator
 - boost spirit
 - gdb C debugging

@@ -72,6 +72,7 @@
    + [[file:overtone.org][Overtone]]
    + [[file:palindrome.org][Palindrome]]
    + [[file:pugixml.org][Pugixml]]
+   + [[file:python.org][Python]]
    + [[file:r.org][R]]
    + [[file:random.org][Random]]
    + [[file:regex.org][Regular Expression]]

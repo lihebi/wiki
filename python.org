@@ -1,0 +1,404 @@
+#+TITLE: Python
+
+
+* Concept
+
+** Scoping
+There're four levels:
+- current scope
+- parent scope
+- module scope (global)
+- built-in scope
+
+=nonlocal= keyword specify this variable should be referenced to the parent scope.
+But, this will not reach global.
+Instead, the =global= keyword declares the listed variables to be in the module level scope.
+
+#+BEGIN_QUOTE
+The nonlocal statement causes the listed identifiers to refer to previously bound variables in the nearest enclosing scope excluding globals.
+#+END_QUOTE
+
+As an example:
+#+BEGIN_SRC python
+var = 0 # global
+
+def outer():
+  var = 1 # parent
+  def inner():
+    nonlocal var
+    var = 2 # local
+    global var
+    var =3
+  inner()
+  # var = 2
+
+outer()
+# global var = 3
+#+END_SRC
+
+** Collection
+
+*** String
+
+**** Concatenation
+- concatenate two strings directly by =+=.
+- need to convert integer to string before concatenate: =s + str(35)=
+
+**** split
+- ~str.split(sep=None)~ :: default by white space
+- ~str.strip()~ :: strip out white space at both begin and end
+- ~str.replace(old, new)~ :: replace /all/.
+- ~str.startswith(s)~ ::
+- ~str.endswith(s)~ ::
+
+
+
+*** TODO tuple
+*** List
+**** Slicing
+The slicing syntax is =l[start:end:step]=.
+The slicing will return a /new/ list. Change to that list will not change the original one.
+#+BEGIN_SRC python
+l[4]
+l[4:]
+l[::2]
+l[:-1]
+#+END_SRC
+
+However, assign to the slicing itself /will change/ the original one:
+#+BEGIN_SRC python
+l[1:2] = [4,5,6]
+#+END_SRC
+
+Also, assign to a new variable only assign the reference:
+#+BEGIN_SRC python
+a = [1,2,3]
+b = a # only a reference
+#+END_SRC
+
+**** create a list
+- ~range(stop)~
+- ~range(start, stop[, step])~
+
+*** Dictionary
+Create:
+#+BEGIN_SRC python
+x = {'a': 1, 'b': 2}
+#+END_SRC
+Dictionary is not sorted. Use =collections.OrderedDict= if you want this feature.
+Basically it remember the order when the elements are inserted.
+
+#+BEGIN_SRC python
+import collections
+od = collections.OrderedDict(sorted(d.items()))
+#+END_SRC
+
+Merge two dictionary (=x= and =y=):
+#+BEGIN_SRC python
+z = x.copy()
+z.update(y)
+#+END_SRC
+
+*** Set
+#+BEGIN_SRC python
+s = set()
+s.add(x)
+if x in s:
+  pass
+#+END_SRC
+
+** Algorithm
+*** TODO sort
+sort a dictionary by value:
+#+BEGIN_SRC python
+sorted(dict1, key=dict1.get) # => list
+sorted(dict1, key=dict1.get, reverse=True)
+#+END_SRC
+
+
+** Function
+*** variadic parameter
+use =*args= syntax, and =args= will be a /tuple/:
+#+BEGIN_SRC python
+  def foo(*args):
+    for a in args:
+      print a
+#+END_SRC
+
+use =**args= to capture all /keyword arguments/.
+
+#+BEGIN_SRC python
+def bar(**kwargs):
+  for a in kwargs:
+    print a, kwargs[a]
+#+END_SRC
+
+Combine them together:
+#+BEGIN_SRC python
+def foobar(kind, *args, **kwargs):
+  pass
+#+END_SRC
+
+Also, there's a concept for the reverse thing: unpack argument list from a list, with =*list=:
+#+BEGIN_SRC python
+def foo(a,b):
+  pass
+
+l = [1,2]
+foo(*l)
+#+END_SRC
+
+on python3, this syntax can appear on left side
+#+BEGIN_SRC python
+first, *rest = [1,2,3,4]
+first,*l,last = [1,2,3,4]
+#+END_SRC
+
+** Exception
+To give a quick feel:
+#+BEGIN_SRC python
+try:
+  pass
+except TypeError as e: # capture the exception into a variable
+  pass
+except AnotherError: # does not capture
+  pass
+except: # all exception
+  pass
+else: # if doesn't raise an exception
+  pass
+finally:
+  pass
+#+END_SRC
+
+** Lambda
+#+BEGIN_SRC python
+lambda x : x+2
+lambda x: x%2==0
+#+END_SRC
+
+The usage of lambda is often in /map/ and /filter/.
+- ~map(lambda_exp, mylist)~ will execute the lambda expression on each element of the list, and return a list containing the results.
+
+** Packaging
+Exposing API: the following only expose =foo= but not =bar=.
+#+BEGIN_SRC python
+__all__ = ['foo']
+def foo():
+  pass
+def bar():
+  pass
+#+END_SRC
+
+*** importing
+The local structure directory must contain the =__init__.py= file to be able to import.
+#+BEGIN_EXAMPLE
+|-- main.py
+|-- mypackage
+    |-- __init__.py
+    |-- a.py
+    |-- b.py
+    |-- subdir
+        |-- __init__.py
+        |-- c.py
+#+END_EXAMPLE
+
+The import statements should be:
+#+BEGIN_SRC python
+from mypackage import a
+from mypackage.b import foo as myfoo
+from mypackage.subdir import c
+#+END_SRC
+
+
+** Thread
+#+BEGIN_SRC python
+from threading import Thread
+
+class MyThread(Thread):
+  def __init__(self, arg):
+    Thread.__init__(self)
+    self.arg = arg
+  def run(self):
+    pass
+
+t = MyThread(arg)
+t.start()
+#+END_SRC
+
+* Type
+** Boolean
+- =not True=
+
+** Integer
+- ~i += 1~
+
+** conversion
+- string to integer: ~int('45')~
+- integer to string: ~str(45)~
+- ASCII to char: ~chr(100)~ returns 'd'
+- char to ASCII: ~ord('d')~ returns 100
+
+* Black Tech
+If else or:
+#+BEGIN_SRC python
+var = d.get('key') or 0
+# is equal to:
+var = d.get('key') if d.get('key') else 0
+#+END_SRC
+
+list comprehension
+
+#+BEGIN_SRC python
+even_squares = [x**2 for x in l if x%2 == 0]
+#+END_SRC
+
+* Pep8
+Indent:
+- *function and class* should be separated by *2 lines*
+- *In a class*, function should be separated by *1 line*
+- 1 space before and after variable assignment
+
+Naming
+- function, variable, attribute: =func_var_attr=
+- protected instance attributes: =_protected_field=
+- private instance attributes: =__private_field=
+- class and exception: =ClassExceptionName=
+- module level constants: =CONSTANT=
+- instance method of class should use =self= as first parameter, refer to the object
+- class method should use =cls= as first parameter, refer to the class
+
+Expression
+
+| use           | DONT use              |
+|---------------+-----------------------|
+| =a is not b=  | +=not a is b=+        |
+| =if not list= | +~if len(list) == 0~+ |
+
+Import
+- always use absolute path
+- if must use relative, use =from . import foo= instead of +=import foo=+
+
+** document
+One can use one line or multi-line document.
+The doc string can be retrieved by =func.__doc__=.
+#+BEGIN_SRC python
+def func():
+  """one line doc"""
+
+def func():
+  """The outline
+
+  The above empty line is required.
+  Here's the detailed documentation.
+  """
+#+END_SRC
+
+* IO
+#+BEGIN_SRC python
+print('xxx', end='')
+#+END_SRC
+
+#+BEGIN_SRC python
+  f = open('text.txt')
+  f.read() # return all content
+
+  f = open('text.txt')
+  for line in f:
+      print(line)
+
+  with open('a.txt') as f:
+      for line in f:
+          print(line)
+#+END_SRC
+
+read from stdin:
+#+BEGIN_SRC python
+for line in sys.stdin:
+  print(line)
+#+END_SRC
+
+get command line argument: =sys.argv=
+
+
+* Operating System
+
+** Work filesystem:
+#+BEGIN_SRC python
+import os
+for root,dirs,files in os.walk('.'):
+  for f in files:
+    print f
+#+END_SRC
+
+- =os.path.abspath('relative/path/to/file')=
+- =os.path.exists("/path/to/file")=
+- =os.rename('old', 'new')=
+
+** Shell command
+- =os.system= :: simply run command
+#+BEGIN_SRC python
+os.system("some command")
+#+END_SRC
+
+- =os.popen= :: access to input output
+#+BEGIN_SRC python
+stream = os.popen("some command")
+stream.read()
+#+END_SRC
+
+- =subprocess.Popen=
+#+BEGIN_SRC python
+p = subprocess.Popen("echo Hello World", shell=True, stdout=subprocess.PIPE)
+p.stdout.read()
+s = subprocess.check_output('wc -l', stdin=p.stdout)
+#+END_SRC
+
+- =subprocess.call= :: this is the same as =subprocess.Popen= except that it waits and gives return code.
+#+BEGIN_SRC python
+return_code = subprocess.call("echo Hello World", shell=True, stdout=subprocess.DEVNULL)
+#+END_SRC
+
+* Third party libraries
+
+** argparse
+#+BEGIN_SRC python
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('-q', '--query', help='query github api', require=True)
+parser.add_argument('-d', '--download', help='do download', action='store_true')
+args = parser.parse_args()
+#+END_SRC
+
+** urllib
+#+BEGIN_SRC python
+from urllib import request
+import json
+
+url = 'https://api.github.com'
+api = '/search/repositories'
+query = 'language:C&stars:>10&per_page='+size
+response = request.urlopen(url+api+"?q="+query)
+
+s = response.read().decode('utf8')
+j = json.loads(s)
+# j will be a mix of list and dict
+#+END_SRC
+
+** XML
+
+#+BEGIN_SRC python
+import xml.etree.ElementTree as ET
+root = ET.fromstring(s)
+# XPath
+nodes = root.findall('{http://www.sdml.info/srcML/src}function')
+for node in nodes:
+  # do with node
+  pass
+#+END_SRC
+
+APIs
+- =node.find(XPath)=
+- =node.findall(XPath)=
+- =node.get(Attribute)=
+- =node.text=
