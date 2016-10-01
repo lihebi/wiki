@@ -164,7 +164,11 @@ There're some pages not migrated from old wiki:
 - CUDA
 - haskell
 
+
+
 * Links
+Some git repos
+- https://github.com/mxgmn/WaveFunctionCollapse
 
 Keep an eye on the most recent conference papers!
 - [[https://issta2016.cispa.saarland/program/][ISSTA16]]
