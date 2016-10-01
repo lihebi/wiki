@@ -2,6 +2,7 @@
 
 * stack
 
+
 - 342 midterm solution
 - 572 lab 2
 - write up the risks!
@@ -86,6 +87,20 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 </script>
 #+END_HTML
 
+
+* People!
+** Peter Norvig
+http://www.norvig.com/
+
+- hear about he uses lisp
+- second author of AI modern approach book
+
+** Magnar Sveen
+https://github.com/magnars
+- library: [[https://github.com/magnars/dash.el][dash.el]], [[https://github.com/magnars/s.el][s.el]]
+- package: [[https://github.com/magnars/multiple-cursors.el][multiple-cursors.el]], [[https://github.com/magnars/expand-region.el][expand-region.el]], [[https://github.com/magnars/stasis][stasis]]
+- website: [[https://github.com/magnars/emacsrocks.com][emacsrocks.com]]
+
 * Open Source Ideas
 ** pdf-tools
 - two column view
@@ -165,6 +180,7 @@ There're some pages not migrated from old wiki:
 * Links
 Some git repos
 - https://github.com/mxgmn/WaveFunctionCollapse
+- https://github.com/google/lisp-koans
 
 Keep an eye on the most recent conference papers!
 - [[https://issta2016.cispa.saarland/program/][ISSTA16]]

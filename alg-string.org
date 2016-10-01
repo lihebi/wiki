@@ -2,25 +2,46 @@
 
 
 * Knuth–Morris–Pratt(KMP)
-
+#+BEGIN_QUOTE
 Match a pattern string P inside given long string T.
+#+END_QUOTE
 
-Different from brute-force, we prebuild a look-up table, and when a failure matching happen, we shift not just 1, but multiple position.
+The idea is, when failure happens, we shift multiple position instead of just 1.
+We are able to do that because when the failure happens, we know what have been examined, so we have everything available to make the best choice.
+Specifically, we build a look-up table, *for the pattern string*.
+The table has an entry for each index of the string, describing the shift position.
+E.g., =ABCABDA=, the lookup table will be: =0000120=.
+Actually the table refers to what's the substring matched the prefix of the pattern string.
 
-The look up table only relates to P. Basically it tells: if a matching failed at a index $p_i$ in P, how many position should be shifted.
+The algorithm to build the table:
+** TODO use lisp to build the lookup table
 
-An example:
 
-#+BEGIN_EXAMPLE
-ABCDABD
-0000012
+#+BEGIN_SRC C++
+  std::vector<int> build_table(std::string pattern) {
+    std::vector<int> ret(pattern.size());
+    int size = pattern.size();
+    int idx=0;
+    ret[0] = 0;
+    for (int i=1;i<size;) {
+      if (pattern[i] == pattern[idx]) {
+        i++;
+        idx++;
+        ret[i] = idx;
+      } else if (idx > 0) {
+        idx = ret[idx];
+      } else {
+        ret[i] = 0;
+      }
+    }
+    return ret;
+  }
 
-PARTICIPATEINPARACHUTE
--100000012000012300000
-#+END_EXAMPLE
-
-Table building (O(k)) where k is length of P:
-Scan only once, update is straight-forward.
+  TEST(TestSuite, TestCase) {
+    EXPECT_TRUE(true);
+    EXPECT_EQ(build_table("AABAAAC"), std::vector<int>({0,1,1,0,1,2,2,0}));
+  }
+#+END_SRC
 
 #+BEGIN_EXAMPLE
 while pos < length(W) do

@@ -70,6 +70,9 @@ Behavior Pattern
 
 - [[file:emacs.org][Emacs]]
 - [[file:lisp.org][Lisp]]
+- [[file:elisp.org][Emacs Lisp]]
+- [[file:common-lisp.org][Common Lisp]]
+- [[file:clojure.org][Clojure]]
 - [[file:sql.org][SQL]]
 - [[file:git.org][Git]]
 - [[file:java.org][Java]]

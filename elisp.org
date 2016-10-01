@@ -1,0 +1,248 @@
+#+TITLE: Emacs Lisp
+
+* Type
+** conversion
+- string to int: =(values (parse-integer "32"))=
+** list
+- =(reverse '(1 2 3 4))=
+
+=car= is the first cell, and =cdr= is the second, meaning the address.
+#+BEGIN_SRC lisp
+(cdr l)
+(cdrr l) ;; == (cdr (cdr l))
+#+END_SRC
+
+- =(assoc KEY LIST)=: the first element of LIST whose car equals KEY, otherwise =nil=
+- =(assq KEY LIST)=: the first element of LIST whose car is KEY.
+
+The difference of the above two functions is: =assoc= makes comparison using =equal=, but =assq= uses =eq=.
+
+- =(eq OBJ1 OBJ2)=: Return t if the two args are the same Lisp object. It is faster than =equal=.
+- =(equal O1 O2)=: Return t if two Lisp objects have similar structure and contents. So it does /comparison only/.
+
+
+- =(assoc-string KEY LIST &optional CASE-FOLD)=: =assoc= for string. if =CASE-FOLD= is =non-nil=, case is ignored.
+
+- =(list &rest OBJECTS)=: create a list
+- =(append &rest SEQUENCES)=:
+  Concatenate all the arguments and make the result a list.
+  Each argument may be a list, vector or string.
+  The last argument is not copied, just used as the tail of the new list.
+  Thus the common usage is =fields = (append fields (list "a" "b"))=, FIXME should I put fields at the end?
+
+
+- =(apply FUNCTION &rest ARGUMENTS)=: Call FUNCTION with our remaining args, using our /last arg/ as list of args.
+  =(apply '+ 1 2 '(3 4))=
+
+** String
+- ~(string= S1 S2)~: Return t if two strings have identical contents.
+* Built-in functions
+** Math
+- =(expt 2 8)= :: 2^8
+
+** logic
+- =(or CONDITIONS...)= :: Eval args until one of them yields non-nil, then /return that value/.
+
+* Function
+** Map
+- =(mapc FUNCTION SEQUENCE)=: Apply FUNCTION to each element of SEQUENCE.
+
+
+* Emacs Related
+** Buffer related
+- =with-temp-buffer=
+  =(with-temp-buffer &rest BODY)= Create a temporary buffer, and evaluate BODY there like =progn=.
+
+- =(insert-file-contents FILENAME &optional VISIT BEG END REPLACE)=: Insert contents of file FILENAME after point.
+- =(secure-hash ALGORITHM OBJECT &optional START END BINARY)=: the object can be a buffer.
+  This can be used to compare if a file has changed.
+- =(current-buffer)=: Return the current buffer as a Lisp object.
+- =(message FORMAT-STRING &rest ARGS)=: Display a message at the bottom of the screen.
+
+
+** File System Related
+*** Traversing
+#+BEGIN_SRC elisp
+(directory-files DIRECTORY &optional FULL MATCH NOSORT)
+#+END_SRC
+
+Return a list of names of files in DIRECTORY.
+
+Usage example:
+#+BEGIN_SRC elisp
+(bib-files (directory-files bib-dir t ".*\.bib$"))
+#+END_SRC
+
+*** Predicates
+=directory-files= will throw error if the directory does not exist.
+So a safe way is to check if the directory exists first.
+This predicate does this:
+#+BEGIN_SRC elisp
+(file-exists-p FILENAME)
+#+END_SRC
+Directory is also a file.
+
+Other predicates includes:
+#+BEGIN_EXAMPLE
+file-readable-p
+file-executable-p
+file-writable-p
+file-accessible-directory-p
+#+END_EXAMPLE
+
+** Other
+- =(defalias SYMBOL DEFINITION &optional DOCSTRING)=: Set SYMBOL's function definition to DEFINITION.
+  E.g. =(defalias 'helm-bibtex-get-value 'bibtex-completion-get-value)=,
+  serves as a temporary patch for =helm-bibtex= update its API to =bibtex-completion=
+
+*** make-obsolete-variable
+=(make-obsolete-variable OBSOLETE-NAME CURRENT-NAME WHEN &optional ACCESS-TYPE)=
+
+Make the byte-compiler warn that OBSOLETE-NAME is obsolete.
+
+=helm-bibte= used it when it refactored the "helm" part off into a module,
+to support different backend other than =helm=.
+As a result, most =helm-bibtex-= prefixes are changed to =bibtex-completion-= ones.
+But they want the end user's configuration will not break,
+and at the same time warn them to update to the new name.
+Here's the code, and the last line is what actually uses the function.
+The actual effect is the user's configuration will be marked as warning,
+the mini-buffer will describe the obsolete detail.
+
+#+BEGIN_SRC elisp
+  (cl-loop
+   for var in '("bibliography" "library-path" "pdf-open-function"
+                "pdf-symbol" "format-citation-functions" "notes-path"
+                "notes-template-multiple-files"
+                "notes-template-one-file" "notes-key-pattern"
+                "notes-extension" "notes-symbol" "fallback-options"
+                "browser-function" "additional-search-fields"
+                "no-export-fields" "cite-commands"
+                "cite-default-command"
+                "cite-prompt-for-optional-arguments"
+                "cite-default-as-initial-input" "pdf-field")
+   for oldvar = (intern (concat "helm-bibtex-" var))
+   for newvar = (intern (concat "bibtex-completion-" var))
+   do
+   (defvaralias newvar oldvar)
+   (make-obsolete-variable oldvar newvar "2016-03-20"))
+#+END_SRC
+
+
+* Control Structure
+
+** Loop
+*** Overview
+ The =cl-loop= refers to the common lisp, see the detailed manual in info, =cl=.
+ #+BEGIN_SRC elisp
+   (cl-loop for buf in (buffer-list)
+            collect (buffer-file-name buf)) ; in the end the collected list will be returned
+   (cl-loop repeat 20 do (insert "Yowsa\n")) ; repeat <num>
+   (cl-loop until (eobp) do (munch-line) (forward-line 1)) ; eobp: end of buffer predicate
+   (cl-loop do (munch-line) until (eobp) do (forward-line 1)) ;; do (much-line) at least once
+ #+END_SRC
+ Last, the if you want to nest the loop, you need multiple =cl-loop=.
+ One cl-loop with multiple =for= and =until= will only result in one loop, e.g. the following code.
+
+ #+BEGIN_SRC lisp
+   (cl-loop for x from 1 to 100 ; x from 1 to 100
+            for y = (* x x) ; this is evaluated for every iteration
+            until (>= y 729) ; the end condition
+            finally return (list x (= y 729))) ; finally defines what to do when the loop finish
+ #+END_SRC
+
+ Some other clauses are not recorded in this page, but there /are/ some. E.g.
+ - =with VAR = VALUE=: bind the initial value,
+   like the =EXPR1= in =for= clause,
+   but different in terms of only evaluate once for the initial iteration.
+   The effect is like =let=.
+ - =if CONDITION CLAUSE=: execute the /following/ code only if the condition matches.
+   =else= can be added, and =end= can also be presented. This means, this grammar is ambiguous.
+*** For
+**** for VAR from EXPR1 to EXPR2 by EXPR3
+ #+BEGIN_SRC elisp
+   (cl-loop for x to 10 collect x)
+   ;; ⇒ (0 1 2 3 4 5 6 7 8 9 10)
+   (cl-loop for x below 10 collect x)
+   ;; ⇒ (0 1 2 3 4 5 6 7 8 9)
+ #+END_SRC
+
+**** for VAR in LIST by FUNCTION
+ If the function is provided, the iterating function will be changed from the default =cdr=
+ #+BEGIN_SRC elisp
+   (cl-loop for x in '(1 2 3 4 5 6) collect (* x x))
+   ;; ⇒ (1 4 9 16 25 36)
+   (cl-loop for x in '(1 2 3 4 5 6) by 'cddr collect (* x x))
+   ;; ⇒ (1 9 25)
+ #+END_SRC
+**** for VAR = EXPR1 then EXPR2
+ If =EXPR2= is omitted, =EXPR1= will be set in each iteration.
+ If =EXPR2= presents, =EXPR1= will only set the initial value, and =EXPR2= will execute and set the variable.
+ =EXPR2= can refer to the previous value of =VAR=.
+ #+BEGIN_SRC elisp
+   ;; these two loops are equivalent
+   (cl-loop for x on my-list by 'cddr do …)
+   (cl-loop for x = my-list then (cddr x) while x do …)
+ #+END_SRC
+
+*** The condition
+ - =repeat INTEGER=
+ - =while CONDITION=
+ - =until CONDITION=
+ - =always CONDITION=: the condition should evaluate to t for it to continue
+ - =never CONDITION=
+ - =thereis CONDITION=
+*** accumulation clause
+ - =collect FORM=
+ - =concat FORM=
+ - =count FORM=
+ - =sum FORM=
+ - =maximize FORM=
+ - =minimize FORM=
+
+* Packages
+** Dash.el
+ https://github.com/magnars/dash.el
+
+ This is a collection of list libraries.
+
+- =-map= takes a function to map over the list,
+ the anaphoric form with double dashes executed with =it= exposed as the list item. 
+ #+BEGIN_SRC elisp
+ ;; normal version
+ (-map (lambda (n) (* n n)) '(1 2 3 4))
+ ;; also works for defun, of course
+ (defun square (n) (* n n))
+ (-map 'square '(1 2 3 4))
+ ;; anaphoric version
+ (--map (* it it) '(1 2 3 4))
+ #+END_SRC
+
+- =-update-at=: =(-update-at N FUNC LIST)= Return a list with element at Nth position in LIST replaced with `(func (nth n list))`.
+- =-flatten=: =(-flatten L)=: Take a nested list L and return its contents as a single, flat list.
+
+** s.el
+ https://github.com/magnars/s.el
+
+ The string manipulation library
+
+* Some random code snippets
+
+
+#+begin_src elisp
+(cl-prettyprint (font-family-list)) ;; see all font family available on this system
+#+end_src
+
+*** Url retrieval
+#+BEGIN_SRC elisp
+  (with-current-buffer (url-retrieve-synchronously "http://scholar.google.com/scholar?q=segmented symbolic analysis")
+    (goto-char (point-min))
+    (kill-ring-save (point-min) (point-max))
+    )
+  (let ((framed-url (match-string 1)))
+    (with-current-buffer (url-retrieve-synchronously framed-url)
+      (goto-char (point-min))
+      (when (re-search-forward "<frame src=\"\\(http[[:ascii:]]*?\\)\"")
+        (match-string 1))))
+#+END_SRC
+
