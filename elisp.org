@@ -57,7 +57,17 @@ Without this feature, you have to write some hard to understand code:
   ;; -> (1 2 3 4 2 3)
 #+END_SRC
 
+
+* Basic
+
+- =(eq OBJ1 OBJ2)= :: Return t if the two args are the same Lisp object. It is faster than =equal=.
+- =(equal O1 O2)= :: Return t if two Lisp objects have similar structure and contents. So it does /comparison only/.
+- ~(=)~ :: true if all arguments are equal. Only works for numbers
+- ~(string=)~ :: compare two strings
+
 * Type
+** number
+- =(expt 2 8)= :: 2^8
 ** conversion
 - string to int: =(values (parse-integer "32"))=
 ** cons cell
@@ -70,27 +80,102 @@ It is more general because the cdr can also hold anything.
 As an example, =(1 2 3)= is the same as =(1 . (2 . (3 . nil)))=.
 
 ** list
+If the CDR of a list’s last cons cell is some value other than ‘nil’,
+we call the structure a "dotted list",
+since its printed representation would use dotted pair notation.
+
 *** construct
+- =cons obj1 obj2= :: if obj2 is a list, this is called "cons obj1 onto the list"
 - =(list &rest OBJECTS)= :: create a list
-- =(append &rest SEQUENCES)= :: concatenate some lists into one list
-  The last argument is not copied, just used as the tail of the new list.
+- =make-list length obj= :: make a list of length, in which each cell holds the /same/ object (=eq=)
+- =(append &rest SEQUENCES)= :: concatenate some lists into one list.
+  The last one is usually a list, all arguments except the last one are copied.
+  If want to force copy everything, add a =nil= as the last of append.
+- =(reverse '(1 2 3 4))= ::
+- =number-sequence from to= :: the list of =[from,to]=, inclusive
+
 *** access
 - =car= ::
 - =cdr= ::
-- =cdrr= :: =(cdr (cdr l))=
-- =(assoc KEY LIST)= :: the first element of LIST whose car =equal= KEY.
-- =(assq KEY LIST)= :: the first element of LIST whose car =eq= KEY.
-- =(assoc-string KEY LIST &optional CASE-FOLD)= :: =assoc= for string. if =CASE-FOLD= is =non-nil=, case is ignored.
+- =car-safe= ::
+- =cdr-safe= ::
+- =pop= :: return the cdr of the list, and also remove it from the list
+- =nth n list= :: get the nth element, starting from 0
+- =nthcdr n list= ::
+- =last list= ::
+- =length= ::
 
-*** utilities
-- =(reverse '(1 2 3 4))= ::
+- =caar= :: car car 11
+- =card= :: car cdr 12
+- =cdar= :: cdr car 21
+- =cddr= :: cdr cdr 22
 
+*** modify
+/destructive/ means the cdr of the cons cells are modified.
+
+- =push element listname= :: like cons it onto the list, but save it as listname, i.e. modify the variable
+- =add-to-list symbol element= :: cons element onto the list if it is not there.
+  So the following is equivalent: =(add-to-list 'var value)= and =(or (member value var) (setq var (cons value var)))=
+- =setcar cons obj= ::
+- =setcdr cons obj= ::
+- =sort list predicate= :: this rearrange the cdrs of the list, so, /destructive/!
+  Examples:
+#+BEGIN_SRC elisp
+(setq nums '(1 3 2 6 5 4 0))
+(sort nums '<) ; accending
+#+END_SRC
+
+** set
+We use list as set, by ignoring the order ...
+=append= to combine two set, then =delete-dups= to remove duplication ...
+
+- =memq obj list= :: whether obj is a member of list, using =eq=
+- =delq obj list= :: destructively remove all elements =eq= to obj.
+- =rmq obj list= :: return a copy of list with all obj removed
+- =member= :: =equal= counter-part
+- =member-ignore-case= :: for string
+- =delete= :: =equal= counter-part
+- =remove= :: =equal= counter-part
+- =delete-dups= :: use =equal=
 ** association list
 This is a special list, each element is a key-value pair.
 #+BEGIN_SRC elisp
 (setq alist-of-colors
   '((rose . red) (lily . white) (buttercup . yellow)))
 #+END_SRC
+
+- =assoc KEY aLIST= :: the first element of LIST whose car =equal= KEY.
+- =rassoc value alist= :: compare the cdrs instead of cars
+- =assq KEY aLIST= :: the first element of LIST whose car =eq= KEY.
+- =rassq= :: =eq= counter-part
+
+- =copy-alist alist= :: two-level deep copy
+- =assq-delete-all key alist= :: delete all elements whose car =eq= key
+- =rassq-delete-all value alist= :: cdr counter-part
+- =(assoc-string KEY LIST &optional CASE-FOLD)= :: =assoc= for string. if =CASE-FOLD= is =non-nil=, case is ignored.
+
+** property list
+It is a flat list. The odd elements are property name, and the even elements are values.
+#+BEGIN_SRC elisp
+(pine cones numbers (1 2 3) color "blue")
+#+END_SRC
+
+It can be structured as
+
+| property | value   |
+|----------+---------|
+| pine     | cones   |
+| numbers  | (1 2 3) |
+| color    | "blue"  |
+
+The property names /must/ be unique.
+The order of the "pairs" does not matter.
+
+- =plist-get plist property= ::
+- =plist-put plist property value= ::
+- =lax-plist-get= :: =equal= counterpart
+- =lax-plist-put= :: =equal= counterpart
+- =plist-member plist property= :: this is useful because it can distinguish the missing property and the property with value "nil"
 
 ** array
 It is fixed length sequence.
@@ -100,21 +185,68 @@ It contains:
 - char table
 - bool vector
 
+** sequence
+#+BEGIN_EXAMPLE
+               _____________________________________________
+              |                                             |
+              |          Sequence                           |
+              |  ______   ________________________________  |
+              | |      | |                                | |
+              | | List | |             Array              | |
+              | |      | |    ________       ________     | |
+              | |______| |   |        |     |        |    | |
+              |          |   | Vector |     | String |    | |
+              |          |   |________|     |________|    | |
+              |          |  ____________   _____________  | |
+              |          | |            | |             | | |
+              |          | | Char-table | | Bool-vector | | |
+              |          | |____________| |_____________| | |
+              |          |________________________________| |
+              |_____________________________________________|
 
-* Built-in functions
-** printing
-- =print= :: print the object in quotes, with a newline before and after it
-- =prin1= :: print the object in quotes without newlines
-- =princ= :: print the object without quotes, without newlines
-** Math
-- =(expt 2 8)= :: 2^8
-** logic
-- =(or CONDITIONS...)= :: Eval args until one of them yields non-nil, then /return that value/.
-** Predicates
-- =(eq OBJ1 OBJ2)= :: Return t if the two args are the same Lisp object. It is faster than =equal=.
-- =(equal O1 O2)= :: Return t if two Lisp objects have similar structure and contents. So it does /comparison only/.
-- ~(=)~ :: true if all arguments are equal. Only works for numbers
-- ~(string=)~ :: compare two strings
+#+END_EXAMPLE
+
+- =copy-sequence seq= :: the sequence is new, but the elements are not.
+
+** hash table
+construct
+- =(make-hash-table)= ::
+
+access
+- =gethash key table= ::
+- =puthash key value table= ::
+- =remhash key table= :: remove
+- =clrhash table= :: remove all
+- =maphash function table= :: call function once for each of the element in table. The function should accept two arguments: key and value
+other
+- =hash-table-count table= :: return number of entries
+
+
+* Symbol
+- defvar
+- defun
+- defmacro
+
+A symbol can /not/ be both a function and macro, but it can be a variable and a function at the same time.
+
+** property list
+A symbol can have a property list ...
+- =get symbol property= ::
+- =put symbol property value= ::
+- =symbol-plist symbol= :: return the p-list
+- =setplist symbol plist= ::
+** Variable
+Dynamic binding: in the defun, we can refer to free variable. When calling the defun in different environment, it will get the variable from them.
+This is used by default.
+
+#+BEGIN_SRC elisp
+  (defvar x -99)
+  (defun getx () x)
+  (let ((x 1)) (getx)) ; -> 1
+  (getx) ; -> -99
+#+END_SRC
+
+Lexical is also introduced as optional feature.
 
 * Function
 ** Mapping family
@@ -123,7 +255,108 @@ It contains:
   =(apply '+ 1 2 '(3 4))=
 
 
+
+* Control Structure
+
+** Sequential
+- =progn forms...= :: return the result of final form
+- =prog1 form1 forms...= :: return the result of form1
+- =prog2 form1 form2 forms...= :: return the result of form2
+** Conditional
+- =if condition then-form else-forms...=
+- =when condition then-forms...=
+- =unless condition forms...=
+- =cond clause...= :: the clause must be a list: =(condition body-forms...)=.
+  It is not exactly the "case" statement, because the condition is evaluted to true or false.
+  Any remaining forms are /ignored/.
+- =pcase EXP BRANCH1 BRANCH2 BRANCH3...= :: this is more like the "case" statement. The EXP is first evaluted and compare with the car of each branches.
+  The branch must be of the form =(UPATTERN BODY-FORMS...)=.
+
+*** logical computation
+- =not=
+- =and=
+- =or=
+
+** Loop
+- =while condition forms...=
+- =dolist (var list [result]) body...= :: execute body for each element of list, with the bound of var to the current element and result for return.
+- =dotimes (var count [result]) body...= :: execute body for each index of =[0,count)=, with var bound to the index, and result bound for return.
+
+*** Overview
+ The =cl-loop= refers to the common lisp, see the detailed manual in info, =cl=.
+ #+BEGIN_SRC elisp
+   (cl-loop for buf in (buffer-list)
+            collect (buffer-file-name buf)) ; in the end the collected list will be returned
+   (cl-loop repeat 20 do (insert "Yowsa\n")) ; repeat <num>
+   (cl-loop until (eobp) do (munch-line) (forward-line 1)) ; eobp: end of buffer predicate
+   (cl-loop do (munch-line) until (eobp) do (forward-line 1)) ;; do (much-line) at least once
+ #+END_SRC
+ Last, the if you want to nest the loop, you need multiple =cl-loop=.
+ One cl-loop with multiple =for= and =until= will only result in one loop, e.g. the following code.
+
+ #+BEGIN_SRC lisp
+   (cl-loop for x from 1 to 100 ; x from 1 to 100
+            for y = (* x x) ; this is evaluated for every iteration
+            until (>= y 729) ; the end condition
+            finally return (list x (= y 729))) ; finally defines what to do when the loop finish
+ #+END_SRC
+
+ Some other clauses are not recorded in this page, but there /are/ some. E.g.
+ - =with VAR = VALUE=: bind the initial value,
+   like the =EXPR1= in =for= clause,
+   but different in terms of only evaluate once for the initial iteration.
+   The effect is like =let=.
+ - =if CONDITION CLAUSE=: execute the /following/ code only if the condition matches.
+   =else= can be added, and =end= can also be presented. This means, this grammar is ambiguous.
+*** For
+**** for VAR from EXPR1 to EXPR2 by EXPR3
+ #+BEGIN_SRC elisp
+   (cl-loop for x to 10 collect x)
+   ;; ⇒ (0 1 2 3 4 5 6 7 8 9 10)
+   (cl-loop for x below 10 collect x)
+   ;; ⇒ (0 1 2 3 4 5 6 7 8 9)
+ #+END_SRC
+
+**** for VAR in LIST by FUNCTION
+ If the function is provided, the iterating function will be changed from the default =cdr=
+ #+BEGIN_SRC elisp
+   (cl-loop for x in '(1 2 3 4 5 6) collect (* x x))
+   ;; ⇒ (1 4 9 16 25 36)
+   (cl-loop for x in '(1 2 3 4 5 6) by 'cddr collect (* x x))
+   ;; ⇒ (1 9 25)
+ #+END_SRC
+**** for VAR = EXPR1 then EXPR2
+ If =EXPR2= is omitted, =EXPR1= will be set in each iteration.
+ If =EXPR2= presents, =EXPR1= will only set the initial value, and =EXPR2= will execute and set the variable.
+ =EXPR2= can refer to the previous value of =VAR=.
+ #+BEGIN_SRC elisp
+   ;; these two loops are equivalent
+   (cl-loop for x on my-list by 'cddr do …)
+   (cl-loop for x = my-list then (cddr x) while x do …)
+ #+END_SRC
+
+*** The condition
+ - =repeat INTEGER=
+ - =while CONDITION=
+ - =until CONDITION=
+ - =always CONDITION=: the condition should evaluate to t for it to continue
+ - =never CONDITION=
+ - =thereis CONDITION=
+*** accumulation clause
+ - =collect FORM=
+ - =concat FORM=
+ - =count FORM=
+ - =sum FORM=
+ - =maximize FORM=
+ - =minimize FORM=
+
+
+
 * Emacs Related
+- =print= :: print the object in quotes, with a newline before and after it
+- =prin1= :: print the object in quotes without newlines
+- =princ= :: print the object without quotes, without newlines
+- =message=
 ** Buffer related
 - =with-temp-buffer=
   =(with-temp-buffer &rest BODY)= Create a temporary buffer, and evaluate BODY there like =progn=.
@@ -203,77 +436,6 @@ the mini-buffer will describe the obsolete detail.
    (make-obsolete-variable oldvar newvar "2016-03-20"))
 #+END_SRC
 
-
-* Control Structure
-
-** Loop
-*** Overview
- The =cl-loop= refers to the common lisp, see the detailed manual in info, =cl=.
- #+BEGIN_SRC elisp
-   (cl-loop for buf in (buffer-list)
-            collect (buffer-file-name buf)) ; in the end the collected list will be returned
-   (cl-loop repeat 20 do (insert "Yowsa\n")) ; repeat <num>
-   (cl-loop until (eobp) do (munch-line) (forward-line 1)) ; eobp: end of buffer predicate
-   (cl-loop do (munch-line) until (eobp) do (forward-line 1)) ;; do (much-line) at least once
- #+END_SRC
- Last, the if you want to nest the loop, you need multiple =cl-loop=.
- One cl-loop with multiple =for= and =until= will only result in one loop, e.g. the following code.
-
- #+BEGIN_SRC lisp
-   (cl-loop for x from 1 to 100 ; x from 1 to 100
-            for y = (* x x) ; this is evaluated for every iteration
-            until (>= y 729) ; the end condition
-            finally return (list x (= y 729))) ; finally defines what to do when the loop finish
- #+END_SRC
-
- Some other clauses are not recorded in this page, but there /are/ some. E.g.
- - =with VAR = VALUE=: bind the initial value,
-   like the =EXPR1= in =for= clause,
-   but different in terms of only evaluate once for the initial iteration.
-   The effect is like =let=.
- - =if CONDITION CLAUSE=: execute the /following/ code only if the condition matches.
-   =else= can be added, and =end= can also be presented. This means, this grammar is ambiguous.
-*** For
-**** for VAR from EXPR1 to EXPR2 by EXPR3
- #+BEGIN_SRC elisp
-   (cl-loop for x to 10 collect x)
-   ;; ⇒ (0 1 2 3 4 5 6 7 8 9 10)
-   (cl-loop for x below 10 collect x)
-   ;; ⇒ (0 1 2 3 4 5 6 7 8 9)
- #+END_SRC
-
-**** for VAR in LIST by FUNCTION
- If the function is provided, the iterating function will be changed from the default =cdr=
- #+BEGIN_SRC elisp
-   (cl-loop for x in '(1 2 3 4 5 6) collect (* x x))
-   ;; ⇒ (1 4 9 16 25 36)
-   (cl-loop for x in '(1 2 3 4 5 6) by 'cddr collect (* x x))
-   ;; ⇒ (1 9 25)
- #+END_SRC
-**** for VAR = EXPR1 then EXPR2
- If =EXPR2= is omitted, =EXPR1= will be set in each iteration.
- If =EXPR2= presents, =EXPR1= will only set the initial value, and =EXPR2= will execute and set the variable.
- =EXPR2= can refer to the previous value of =VAR=.
- #+BEGIN_SRC elisp
-   ;; these two loops are equivalent
-   (cl-loop for x on my-list by 'cddr do …)
-   (cl-loop for x = my-list then (cddr x) while x do …)
- #+END_SRC
-
-*** The condition
- - =repeat INTEGER=
- - =while CONDITION=
- - =until CONDITION=
- - =always CONDITION=: the condition should evaluate to t for it to continue
- - =never CONDITION=
- - =thereis CONDITION=
-*** accumulation clause
- - =collect FORM=
- - =concat FORM=
- - =count FORM=
- - =sum FORM=
- - =maximize FORM=
- - =minimize FORM=
 
 * Packages
 ** Dash.el

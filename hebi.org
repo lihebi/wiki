@@ -1,6 +1,8 @@
 #+TITLE: Hebi
 
 * stack
+** TODO lisp resume from function
+- leetcode write-up, possibly write using lisp!
 
 
 - 342 midterm solution
@@ -10,7 +12,6 @@
 - c++ stream & iterator
 - boost spirit
 - gdb C debugging
-- lisp!
 
 - Harry Xu
 - EXPECT_EQ snippet
