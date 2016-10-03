@@ -1,0 +1,82 @@
+#+TITLE: Emacs Part of Elisp
+
+
+* Buffer related
+- =with-temp-buffer=
+  =(with-temp-buffer &rest BODY)= Create a temporary buffer, and evaluate BODY there like =progn=.
+
+- =(insert-file-contents FILENAME &optional VISIT BEG END REPLACE)=: Insert contents of file FILENAME after point.
+- =(secure-hash ALGORITHM OBJECT &optional START END BINARY)=: the object can be a buffer.
+  This can be used to compare if a file has changed.
+- =(current-buffer)=: Return the current buffer as a Lisp object.
+- =(message FORMAT-STRING &rest ARGS)=: Display a message at the bottom of the screen.
+
+
+* File System Related
+** Traversing
+#+BEGIN_SRC elisp
+(directory-files DIRECTORY &optional FULL MATCH NOSORT)
+#+END_SRC
+
+Return a list of names of files in DIRECTORY.
+
+Usage example:
+#+BEGIN_SRC elisp
+(bib-files (directory-files bib-dir t ".*\.bib$"))
+#+END_SRC
+
+** Predicates
+=directory-files= will throw error if the directory does not exist.
+So a safe way is to check if the directory exists first.
+This predicate does this:
+#+BEGIN_SRC elisp
+(file-exists-p FILENAME)
+#+END_SRC
+Directory is also a file.
+
+Other predicates includes:
+#+BEGIN_EXAMPLE
+file-readable-p
+file-executable-p
+file-writable-p
+file-accessible-directory-p
+#+END_EXAMPLE
+
+* Other
+- =(defalias SYMBOL DEFINITION &optional DOCSTRING)=: Set SYMBOL's function definition to DEFINITION.
+  E.g. =(defalias 'helm-bibtex-get-value 'bibtex-completion-get-value)=,
+  serves as a temporary patch for =helm-bibtex= update its API to =bibtex-completion=
+
+** make-obsolete-variable
+=(make-obsolete-variable OBSOLETE-NAME CURRENT-NAME WHEN &optional ACCESS-TYPE)=
+
+Make the byte-compiler warn that OBSOLETE-NAME is obsolete.
+
+=helm-bibte= used it when it refactored the "helm" part off into a module,
+to support different backend other than =helm=.
+As a result, most =helm-bibtex-= prefixes are changed to =bibtex-completion-= ones.
+But they want the end user's configuration will not break,
+and at the same time warn them to update to the new name.
+Here's the code, and the last line is what actually uses the function.
+The actual effect is the user's configuration will be marked as warning,
+the mini-buffer will describe the obsolete detail.
+
+#+BEGIN_SRC elisp
+  (cl-loop
+   for var in '("bibliography" "library-path" "pdf-open-function"
+                "pdf-symbol" "format-citation-functions" "notes-path"
+                "notes-template-multiple-files"
+                "notes-template-one-file" "notes-key-pattern"
+                "notes-extension" "notes-symbol" "fallback-options"
+                "browser-function" "additional-search-fields"
+                "no-export-fields" "cite-commands"
+                "cite-default-command"
+                "cite-prompt-for-optional-arguments"
+                "cite-default-as-initial-input" "pdf-field")
+   for oldvar = (intern (concat "helm-bibtex-" var))
+   for newvar = (intern (concat "bibtex-completion-" var))
+   do
+   (defvaralias newvar oldvar)
+   (make-obsolete-variable oldvar newvar "2016-03-20"))
+#+END_SRC
+

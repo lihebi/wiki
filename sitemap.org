@@ -44,6 +44,7 @@
    + [[file:dp.org][Dynamic Programming]]
    + [[file:emacs.org][Emacs]]
    + [[file:elisp.org][Emacs Lisp]]
+   + [[file:elisp-emacs.org][Emacs Part of Elisp]]
    + [[file:emacs-plugins.org][Emacs Plugins]]
    + [[file:math-fund.org][Fundamental of Math]]
    + [[file:gdb.org][GDB]]

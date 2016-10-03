@@ -1,13 +1,24 @@
 #+TITLE: Hebi
 
 * stack
-** TODO lisp resume from function
-- leetcode write-up, possibly write using lisp!
 
+- las vegas trip
+- qi's macbook
+- write up the risks!
+
+- org mode TODO management and priority
+
+- emacs cl library
+- emacs ert testing
+
+- clojure
+- common lisp
+- elisp regular expression
+
+- leetcode write-up, possibly write using lisp!
 
 - 342 midterm solution
 - 572 lab 2
-- write up the risks!
 
 - c++ stream & iterator
 - boost spirit
