@@ -1,4 +1,169 @@
 #+TITLE: Org Mode
+#+TAGS: @work @home(h)
+
+* Structure
+** concepts
+*** drawer
+Under a headline, use =:DRAWERNAME:= and =:END:= to denote the beginning and end. The drawer means it is hidden by default.
+- =C-c C-x d= :: create drawer. If region is active, move the region to a drawer.
+
+*** footnote
+It can be of these format:
+- =[fn:1] some text=
+- =[fn:name]=
+- =[fn:: anonymous inline footnote!]=
+- =[fn:name: named inline footnote that can be referenced from elsewhere]=
+
+it ends at:
+- next footnote
+- headlines
+- two consecutive empty lines
+
+Some command to operate the footnote:
+- =C-c C-x f= :: insert a footnote (at the end of page)
+- =C-c C-c= :: jump to definition or back to reference
+- =C-c '= :: edit the footnote in a seperate buffer
+
+** motion among headings
+- =C-c C-n= :: next heading
+- =C-c C-p= :: previous heading
+- =C-c C-f= :: next heading same level
+- =C-c C-b= :: previous heading same level
+- =C-c C-u= :: parent heading
+- =C-c C-j= :: jump to some node. Direct type to navigate, and tab to expand.
+
+** editing
+
+inserting
+- =M-<RET>= :: insert heading /here/
+- =C-<RET>= :: insert heading /after current body/
+
+moving
+- =M-<left|right>= :: promote & demote
+- =M-<up>= :: move subtree up
+- =M-<down>= :: move subtree down
+
+marking
+- =M-h= :: mark current tree
+
+narrow
+- =C-x n s= :: narrow subtree
+- =C-x n w= :: widen
+
+** sparse tree
+only display content that matters.
+- =C-c / r= :: prompt a regular expression. Will show only the heading matching it. 
+- =M-g M-n= :: next match
+- =M-g M-p= :: previous match
+
+* =TODO= Lists
+** create
+- =M-S-<RET>= :: insert todo heading /here/
+- =C-S-<RET>= :: insert todo heading after body
+
+** operations
+- =C-c t= :: rotate TODO state
+- =C-c ,= :: set priority
+- =C-c C-c= :: toggle a checkbox
+
+** Viewing
+- =C-c / t= :: sparse tree for TODO lists
+- =C-c a t= :: show the global TODO list =org-todo-list=
+
+** date/time
+- =C-c .= :: insert or modify time stamp. In the interactive calendar, use =M-<ARROW>= to move
+- =S-<left|right>= :: adjust day
+
+*** inserting deadline
+- =C-c C-d= :: insert deadline
+- =C-c C-s= :: insert schedule
+- =C-c / d= :: check deadlines
+- =C-c / b= :: check before a given date
+- =C-c / a= :: check after a given date
+
+*** clocking a task
+- =C-c C-x C-i= :: start clocking
+- =C-c C-x C-o= :: end clocking
+
+** Agenda
+=org-agenda-files= variable will record a list of agenda files.
+You can add or remove the list by (will modify =init.el=):
+- =C-c [= :: add current file to agenda file list
+- =C-c ]= :: remove current file from agenda file list
+
+*** Entering
+- =C-c a= :: prompt for activation of org-agenda
+  - =a= :: calendar
+  - =t= :: todo
+  - =m= :: matching tags
+  - =L= :: timeline
+
+*** commands
+Commands in the agenda buffer:
+
+- =n= :: next line
+- =p= :: previous
+- =<TAB>= :: display the org file in another window
+- =<RET>= :: open org file as single window
+- =g= :: refresh
+- =C-c C-x C-c= :: open column view
+- =t= :: change TODO status
+- =P= :: display priority of current item
+- =+= :: increase priority
+- =-= :: decrease priority
+- =z= :: add note to the entry
+- =C-c C-d= :: add deadline
+- =C-c C-s= :: insert schedule
+- =I= :: clock in
+- =O= :: clock out
+- =X= :: clock cancel
+
+* Tags
+Tags can be the variable name plus =@= is available.
+Every heading can have tags at the end of it. Use =:tag1:tag2:= syntax.
+Tags will be inherited by default for the subtrees.
+
+- =C-c C-c= :: at the heading, set the tags
+
+** predefined tags
+Put a /unique/ letter for the /fast tag selection/ by just a single keystroke.
+
+#+BEGIN_SRC elisp
+(setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("laptop" . ?l)))
+#+END_SRC
+
+You can also specify in a file basis:
+#+BEGIN_EXAMPLE
+#+TAGS: @work(w) @home(h)
+#+END_EXAMPLE
+
+Then =C-c C-c= on this line to "activate" it.
+
+** search
+- =C-c / m= :: construct sparse tree based on tag
+* Properties
+Similar to tags, we can also set the property, the key value pairs.
+It is inside the =PROPERTY= drawer. Each line is a property, where key is surrounded with =:=, and value after it.
+Property is not inherited by default.
+
+** Edit
+Editing properties is done in column view.
+First, you need to define the column format. Add and execute the following line:
+#+BEGIN_EXAMPLE
+#+COLUMNS: %25ITEM %TAGS %PRIORITY %TODO
+#+END_EXAMPLE
+
+- =C-c C-x C-c= :: toggle the column view
+- =g= :: refresh
+- =q= :: quit
+- =n= :: next allowed value
+- =p= :: previous allowed value
+- =e= :: edit this field
+- =v= :: show the value of the field
+
+** search
+Search uses the same =C-c / m=.
+
 
 * Exporting
 ** Latex Exporting
@@ -12,10 +177,7 @@
  #+INCLUDE: "appendix.org" :minlevel 1
  #+end_example
 
-
-
 *** appendix
-
  #+begin_example
  #+LaTeX: \appendix
 
@@ -24,32 +186,6 @@
  #+INCLUDE: "appendix-helium-guard.org" :minlevel 1
  #+INCLUDE: "appendix-valgrind-exp.org" :minlevel 1
  #+end_example
-
-*** table
-
- #+begin_example
- #+CAPTION: The caption
- #+NAME: tab:stack-vs
- #+ATTR_LATEX: :float multicolumn
- \[\[tab:stack-vs\]\]
- #+end_example
-
-*** code referencing
-
- #+begin_example
-   src = array[i]; (ref:1)
-   buf = p;        (ref:2)
-   sum += i;       (ref:3)
-
-   \[\[(ref:1)\]\]
-   \[\[(ref:1)\]\[name\]\]
- #+end_example
-
-*** =ATTR_LATEX=
- #+BEGIN_EXAMPLE
- #+ATTR_LATEX: :float sideways
- #+ATTR_LATEX: :height 0.7\textheight :float t
- #+END_EXAMPLE
 
 ** Beamer
 The header setup:
@@ -60,67 +196,28 @@ The header setup:
 #+LATEX_CLASS_OPTIONS: [presentation]
 #+BEAMER_THEME: Madrid
 #+OPTIONS: H:2 toc:t num:t
-
 #+END_EXAMPLE
+
 The above configuration define "H" to be 2, meaning the frame is the second level heading (=**=).
 The top level heading (=*=) can be used to organize the presentation.
 To show the current section, add this just /after/ every top level heading.
+
 #+BEGIN_EXAMPLE
 #+TOC: headlines [currentsection]
 #+END_EXAMPLE
 
-* Spreadsheet
+* Table
 #+begin_example org
 #+TBLFM: $4=$2/10
 #+TBLFM: $4=$2*100/$3
 #+TBLFM: $4=(round $4)
 #+end_example
 
-* Other Packages
-** org-ref
-Used to manage the cross reference in Org Mode.
-*** Configuration
-#+BEGIN_EXAMPLE elisp :exports none
-  (use-package org-ref
-    :config
-    (setq reftex-default-bibliography '("~/github/bibliography/references.bib"))
-    (setq org-ref-bibliography-notes "~/github/bibliography/notes.org"
-          org-ref-default-bibliography '("~/github/bibliography/references.bib")
-          org-ref-pdf-directory "~/github/bibliography/bibtex-pdfs/")
-    (setq helm-bibtex-bibliography "~/github/bibliography/references.bib")
-    (setq helm-bibtex-library-path "~/github/bibliography/bibtex-pdfs")
-    ;; open pdf with system pdf viewer (works on mac)
-    (setq helm-bibtex-pdf-open-function
-          (lambda (fpath)
-            (start-process "open" "*open*" "open" fpath)))
-    ;; alternative
-    ;; (setq helm-bibtex-pdf-open-function 'org-open-file)
-    (setq helm-bibtex-notes-path "~/github/bibliography/helm-bibtex-notes")
-
-    (require 'org-ref-pdf)
-    (require 'doi-utils)
-    (require 'org-ref-isbn)
-    (require 'org-ref-url-utils)
-    )
-#+END_EXAMPLE
-
-You will need to manually create =~/github/bibliography= and =$ORGREF/bibtex-pdfs= (=$ORGREF= just the alias of that path, I don't want to type it again)
+* org-ref
 *** Commands
 - =C-c ]=: insert citation, typically with helm: =org-ref-helm-insert-cite-link=
-- =crossref-add-bibtex-entry=
-- =org-ref-helm-insert-label-link=
-- =org-ref-insert-ref-link=
 
-- =doi-utils-get-bibtex-entry-pdf=
-- =doi-utils-google-scholar=
-- =doi-utils-add-bibtex-entry-from-doi=
-- =doi-utils-add-bibtex-entry-from-crossref-query=: the same as =crossref-add-bibtex-entry=
-- =org-ref-open-bibtex-pdf=
-
-- =org-ref-clean-bibtex-entry=: in side a bibtex entry in a bib file, reformat it.
-- =org-ref-extract-bibtex-entries= will create a bibtex file from the citations in the current buffer.
-
-**** Navigation
-- =org-ref-bibtex-next-entry= M-n
-- =org-ref-bibtex-previous-entry= M-p
+**** Navigation in the bib file
+- =M-n= :: next entry
+- =M-p= :: previous entry
 

@@ -1,69 +1,50 @@
 #+TITLE: Hebi
 
 * stack
+** TODO qi's macbook
+** TODO [#A] write up the risks!
+** TODO [#A] 342 midterm solution
+** TODO [#C] clojure
+** TODO [#C] common lisp
+** DONE elisp regular expression
+** TODO leetcode write-up, possibly write using lisp!
+** TODO [#A] 572 lab 2
+** TODO [#C] c++ stream & iterator
 
-- las vegas trip
-- qi's macbook
-- write up the risks!
+** TODO gdb C debugging
+** DONE EXPECT_EQ snippet
+** DONE time control within emacs (TODO, deadline management)
+** DONE 572 homework lab
+** TODO What is dynamic symbolic execution?
+** TODO CCured
+** TODO DART
+** TODO CUTE
+** TODO dynamic symbolic execution for invariant inference, ICSE 08
 
-- org mode TODO management and priority
-
-- emacs cl library
-- emacs ert testing
-
-- clojure
-- common lisp
-- elisp regular expression
-
-- leetcode write-up, possibly write using lisp!
-
-- 342 midterm solution
-- 572 lab 2
-
-- c++ stream & iterator
-- boost spirit
-- gdb C debugging
-
+* People
 - Harry Xu
-- EXPECT_EQ snippet
 
-- time control within emacs (TODO, deadline management)
-- 572 homework lab
+** TODO [#C] BeOS Haiku
+** TODO [#C] remove all Chinese in wiki
 
-- Helium
-- What is dynamic symbolic execution?
-- CCured
-- DART
-- CUTE
-- dynamic symbolic execution for invariant inference, ICSE 08
+** TODO C++ Staff
+*** TODO [#C] C++ template in depth
+*** TODO [#C] move semantic
+*** TODO [#C] perfect forwarding
+*** TODO [#C] forward iterator
+*** TODO [#C] template
+*** TODO [#C] unordered_set bucket
 
-For array, also calculate the element range
-
-- BeOS Haiku
-
-- remove all Chinese in wiki
-
-- C++ template in depth
-- move semantic
-- perfect forwarding
-- forward iterator
-- template
-- unordered_set bucket
-
-** Helium
-
-- Input Output Data format unify
-- Oracle for buffer overflow really working
-
-- Invariant selection & validation with successfully runs
-- bug studies
-- More concrete details for the risks
-
-- AST generate code: not only selected
+** TODO Helium
+*** TODO Input Output Data format unify
+*** TODO Oracle for buffer overflow really working
+*** TODO Invariant selection & validation with successfully runs
+*** TODO bug studies
+*** TODO More concrete details for the risks
+*** TODO AST generate code: not only selected
 
 
-
-* Old Wiki Migration
+* TODO Old Wiki Migration
 There're some pages not migrated from old wiki:
 =leetcode=, =leetcode/=, =633/=, =crypto/=, =compiler/=,
 =design-pattern/=.
