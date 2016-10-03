@@ -191,8 +191,24 @@ replacing
 - ~(string=)~ :: compare two strings
 ** number
 - =(expt 2 8)= :: 2^8
-** conversion
-- string to int: =(values (parse-integer "32"))= CAUTION this is the =cl= library
+
+** string
+- =make-string count character= :: make string by duplicating characters
+- =substring string start &optional end= :: substring
+- =concat &rest sequences= ::
+- =split-string string &optional separators= :: =split-string-default-separators= is ="[ \f\t\n\r\v]+"=
+
+conversion:
+- =number-to-string number= ::
+- =string-to-number string= ::
+- =char-to-string character= ::
+- =string-to-char string= :: returns the first character in string
+
+case:
+- =downcase string-or-char= ::
+- =upcase string-or-char= ::
+- =capitalize string-to-char= ::
+
 ** cons cell
 This is a pair of slots, each of them can hold anything.
 A list is a list of cons cells, in which each cdr is the "address" next list.
@@ -329,6 +345,8 @@ It contains:
 
 #+END_EXAMPLE
 
+- =length sequence= ::
+- =elt sequence index= :: returns the element of SEQUENCE at index
 - =copy-sequence seq= :: the sequence is new, but the elements are not.
 
 ** hash table
@@ -380,9 +398,9 @@ The expression is then evaluated for result.
 - =prog1 form1 forms...= :: return the result of form1
 - =prog2 form1 form2 forms...= :: return the result of form2
 ** Conditional
-- =if condition then-form else-forms...=
-- =when condition then-forms...=
-- =unless condition forms...=
+- =if condition then-form else-forms...= ::
+- =when condition then-forms...= ::
+- =unless condition forms...= ::
 - =cond clause...= :: the clause must be a list: =(condition body-forms...)=.
   It is not exactly the "case" statement, because the condition is evaluted to true or false.
   Any remaining forms are /ignored/.
@@ -427,74 +445,58 @@ The expression is then evaluated for result.
 
  The string manipulation library
 
-** cl
-*** Overview
- The =cl-loop= refers to the common lisp, see the detailed manual in info, =cl=.
- #+BEGIN_SRC elisp
-   (cl-loop for buf in (buffer-list)
-            collect (buffer-file-name buf)) ; in the end the collected list will be returned
-   (cl-loop repeat 20 do (insert "Yowsa\n")) ; repeat <num>
-   (cl-loop until (eobp) do (munch-line) (forward-line 1)) ; eobp: end of buffer predicate
-   (cl-loop do (munch-line) until (eobp) do (forward-line 1)) ;; do (much-line) at least once
- #+END_SRC
- Last, the if you want to nest the loop, you need multiple =cl-loop=.
- One cl-loop with multiple =for= and =until= will only result in one loop, e.g. the following code.
+** cl-lib.el
+This package ports many common lisp facilities into elisp,
+most importantly, the loop facility.
+So this section, at least for now, focus on =cl-loop=.
 
- #+BEGIN_SRC lisp
-   (cl-loop for x from 1 to 100 ; x from 1 to 100
-            for y = (* x x) ; this is evaluated for every iteration
-            until (>= y 729) ; the end condition
-            finally return (list x (= y 729))) ; finally defines what to do when the loop finish
- #+END_SRC
+*** general loop form
+#+BEGIN_SRC elisp
+(cl-loop clauses...)
+#+END_SRC
+The clauses can be:
+- for clauses
+- TODO
+*** for clauses
+- =for VAR from FROM to TO by STEP= ::
+  - =FROM= defaults to 0. =STEP= must be positive and default to 1.
+  - inclusive =[from,to]=
+  - =from= can be =upfrom= and =downfrom=. I think it is wired to use this.
+  - =to= can be =upto= and =downto=. This makes more sense.
+  - =above= and =below= can be used, but /exclusive/. e.g. =for var below 10=
+- =for VAR in LIST by FUNCTION= :: =FUNCTION= is used to traverse the list, defaults to =cdr=
+- =for VAR on LIST by FUNCTION= :: =VAR= is bound to the cons cell of the list instead of the element.
+- =for VAR across ARRAY= :: iterates all elements of array
+- =for VAR = EXPR1 then EXPR2= :: this is the most general form.
+  The =VAR= is bound to =EXPR1= initially, and will be set by evaluating =EXPR2= in successive iterations.
+  =EXPR2= can refer the old =VAR=
 
- Some other clauses are not recorded in this page, but there /are/ some. E.g.
- - =with VAR = VALUE=: bind the initial value,
-   like the =EXPR1= in =for= clause,
-   but different in terms of only evaluate once for the initial iteration.
-   The effect is like =let=.
- - =if CONDITION CLAUSE=: execute the /following/ code only if the condition matches.
-   =else= can be added, and =end= can also be presented. This means, this grammar is ambiguous.
-*** For
-**** for VAR from EXPR1 to EXPR2 by EXPR3
- #+BEGIN_SRC elisp
-   (cl-loop for x to 10 collect x)
-   ;; ⇒ (0 1 2 3 4 5 6 7 8 9 10)
-   (cl-loop for x below 10 collect x)
-   ;; ⇒ (0 1 2 3 4 5 6 7 8 9)
- #+END_SRC
+*** iteration clauses
+- =repeat integer= :: repeat the loop how many times
+- =while condition= :: stops the loop when the condition becomes nil
+- =until condition= ::
+- =always condition= :: like while except it returns =nil=, and =finally= clauses are not executed.
+- =never condition= :: counter part for =always=
 
-**** for VAR in LIST by FUNCTION
- If the function is provided, the iterating function will be changed from the default =cdr=
- #+BEGIN_SRC elisp
-   (cl-loop for x in '(1 2 3 4 5 6) collect (* x x))
-   ;; ⇒ (1 4 9 16 25 36)
-   (cl-loop for x in '(1 2 3 4 5 6) by 'cddr collect (* x x))
-   ;; ⇒ (1 9 25)
- #+END_SRC
-**** for VAR = EXPR1 then EXPR2
- If =EXPR2= is omitted, =EXPR1= will be set in each iteration.
- If =EXPR2= presents, =EXPR1= will only set the initial value, and =EXPR2= will execute and set the variable.
- =EXPR2= can refer to the previous value of =VAR=.
- #+BEGIN_SRC elisp
-   ;; these two loops are equivalent
-   (cl-loop for x on my-list by 'cddr do …)
-   (cl-loop for x = my-list then (cddr x) while x do …)
- #+END_SRC
+*** accumulation clauses
+- =collect form= :: collect into a list and return the list in the end
+- =append form= :: collect the lists into a list by appending, and return it in the end
+- =concat form= :: for string only
+- =count form= :: count how many times form evaluates to non-nil.
+- =sum form= :: sum all the values
+- =maximize form= :: get the max. If the form is never executed, result is /undefined/
+- =minimize form= ::
 
-*** The condition
- - =repeat INTEGER=
- - =while CONDITION=
- - =until CONDITION=
- - =always CONDITION=: the condition should evaluate to t for it to continue
- - =never CONDITION=
- - =thereis CONDITION=
-*** accumulation clause
- - =collect FORM=
- - =concat FORM=
- - =count FORM=
- - =sum FORM=
- - =maximize FORM=
- - =minimize FORM=
+*** Other clauses
+- =with var = value= :: set the value one-time at the beginning of the loop. Often used as return variable.
+- =if condition clause [else clause]= ::
+- =when condition clause= :: same as if
+- =unless condition clause= :: similar
+- =initially [do] forms...= :: execute before the loop begins, but after the =for= and =with= variable bindings. =do= is optional.
+- =finally [do] forms...= :: execute after the loop finishes
+- =finally return form= :: finally return it ...
+- =do forms...= :: execute as an implicit =progn= in the body
+- =return form= :: this is often used in =if= or =unless=, because put it in top level will cause the loop always execute only once.
 
 
 * Some random code snippets
