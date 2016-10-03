@@ -499,6 +499,50 @@ The clauses can be:
 - =return form= :: this is often used in =if= or =unless=, because put it in top level will cause the loop always execute only once.
 
 
+* Unit Testing
+Use =ert= for unit testing.
+
+** Write test
+#+BEGIN_SRC elisp
+(ert-deftest addition-test()
+  "Outline docstring."
+  (should (= (+ 1 2) 4)))
+#+END_SRC
+
+The family of functions:
+- =should=
+- =shoult-not=
+- =should-error=
+
+expected failure:
+#+BEGIN_SRC elisp
+(ert-deftest addition-test()
+  "Outline docstring."
+  :expected-result :failed
+  (should (= (+ 1 2) 4)))
+#+END_SRC
+
+skip test
+#+BEGIN_SRC elisp
+(ert-deftest addition-test()
+  "Outline docstring."
+  (slip-unless (featurep 'dbusbind'))
+  (should (= (+ 1 2) 4)))
+#+END_SRC
+
+** Run test
+=M-x ert= will run it. The selector of test accept some more fancy staff like regular expression matching.
+But in the case of scratch testing, I need to evaluate the deftest and then call =ert=.
+
+The nice thing is it supports interactive debugging.
+In the ert buffer, the following commands are available:
+- =r= :: re-run the test
+- =.= :: jump to the source code of this test 
+- =b= :: show back-trace
+- =m= :: show the message this test printed
+- =d= :: re-run the test with debugger enabled
+- instrumentation :: go to source code, type =C-u C-M-x=, and re-run the test. You are able to step!
+
 * Some random code snippets
 
 
