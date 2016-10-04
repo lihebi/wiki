@@ -316,14 +316,6 @@ The order of the "pairs" does not matter.
 - =lax-plist-put= :: =equal= counterpart
 - =plist-member plist property= :: this is useful because it can distinguish the missing property and the property with value "nil"
 
-** array
-It is fixed length sequence.
-It contains:
-- string
-- vector
-- char table
-- bool vector
-
 ** sequence
 #+BEGIN_EXAMPLE
                _____________________________________________
@@ -348,6 +340,15 @@ It contains:
 - =length sequence= ::
 - =elt sequence index= :: returns the element of SEQUENCE at index
 - =copy-sequence seq= :: the sequence is new, but the elements are not.
+
+** array
+It is fixed length sequence.
+*** constructing
+- =make-vector length object= :: create vector
+- =vector &rest objects= :: create vector
+*** accessing
+- =aref array index= :: getter
+- =aset array index object= :: setter
 
 ** hash table
 construct
@@ -445,7 +446,7 @@ The expression is then evaluated for result.
 
  The string manipulation library
 
-** cl-lib.el
+** cl-lib.el loop
 This package ports many common lisp facilities into elisp,
 most importantly, the loop facility.
 So this section, at least for now, focus on =cl-loop=.
@@ -488,7 +489,9 @@ The clauses can be:
 - =minimize form= ::
 
 *** Other clauses
-- =with var = value= :: set the value one-time at the beginning of the loop. Often used as return variable.
+- ~with var = value~ :: set the value one-time at the beginning of the loop.
+  Often used as return variable.
+  *The spaces around ~=~ is essential!*.
 - =if condition clause [else clause]= ::
 - =when condition clause= :: same as if
 - =unless condition clause= :: similar
@@ -497,6 +500,72 @@ The clauses can be:
 - =finally return form= :: finally return it ...
 - =do forms...= :: execute as an implicit =progn= in the body
 - =return form= :: this is often used in =if= or =unless=, because put it in top level will cause the loop always execute only once.
+
+** cl-lib other
+Of course, cl-lib provides much more than just loops ...
+- =incf PLACE= :: is ~i++~
+
+* Debugging
+** lisp debugger
+The simplest debugger is called =lisp debugger=.
+You can turn on the =debug-or-error= flag,
+but I found inserting the =(debug)= command useful.
+Simply insert =(debug)= where you want program to suspend, and run it.
+You will enter the debugger at that point.
+In the debugger buffer, the following commands are available:
+- =c= :: continue run program
+- =d= :: step
+- =e= :: evaluate an prompt expression
+- =R= :: like =e=, but also save the result in =*Debugger-record*=
+- =q= :: quit
+- =v= :: toggle display of local variables ???
+** Edebug
+For this to work, first you need to instrument the code.
+You can instrument the defun by =C-u C-M-x=.
+Actually this is adding a prefix before =eval-defun=,
+which instrument, and then evaluate the defun.
+
+After instrumentation, running the defun will cause the program to stop at the first /stop point/ of the function.
+The /stop points/ are
+- before and after each subexpression that is a list
+- after each variable reference
+
+*** breakpoints
+- =b= :: set a breakpoint
+- =u= :: unset a breakpoint
+- =x CONDITION= :: set a conditional breakpoint
+
+You can also set the /source breakpoints/, by adding =(edebug)=.
+
+*** Moving of point
+- =B= :: move point to the next breakpoint
+- =w= :: move point back to the current stop point
+
+*** executions
+- =<SPC>= :: run to next stop point
+- =g= :: execute until next breakpoint
+- =q= :: exit
+- =S= :: stop and wait for Edebug commands
+- =n= :: evaluate a sexp and stop at stop point
+- =t= :: /trace/, pause one second at each stop point ...
+- =T= :: rapid trace. Update the display at each stop point but don't actually pause ...
+- =c= :: pause one second at each breakpoint
+- =C= :: rapid continue.
+- =G= :: run and ignore breakpoints (but you can stop it by =S=)
+
+- =h= :: proceed to the stop point near the point ...
+- =f= :: run one expression
+- =o= :: step out the containing expression
+- =i= :: step in
+*** evaluation
+- =e EXP= :: evaluate a prompt expression
+- =C-x C-e= :: evaluate an expression at point
+
+*** other commands
+- =?= :: show help
+- =r= :: redisplay the most recent sexp result
+- =d= :: display the backtrace
+
 
 
 * Unit Testing
@@ -542,6 +611,11 @@ In the ert buffer, the following commands are available:
 - =m= :: show the message this test printed
 - =d= :: re-run the test with debugger enabled
 - instrumentation :: go to source code, type =C-u C-M-x=, and re-run the test. You are able to step!
+
+Also, select test by this:
+#+BEGIN_SRC elisp
+(ert-run-test (ert-get-test 'my-defined-test))
+#+END_SRC
 
 * Some random code snippets
 

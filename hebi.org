@@ -1,65 +1,86 @@
 #+TITLE: Hebi
 
 * stack
+** TODO s.el, dash.el
 ** TODO qi's macbook
 ** TODO [#A] write up the risks!
-** TODO [#A] 342 midterm solution
-** TODO [#C] clojure
-** TODO [#C] common lisp
-** DONE elisp regular expression
-** TODO leetcode write-up, possibly write using lisp!
+   DEADLINE: <2016-10-03 Mon>
 ** TODO [#A] 572 lab 2
-** TODO [#C] c++ stream & iterator
+** TODO wiki KMP search algorithm in lisp
 
-** TODO gdb C debugging
-** DONE EXPECT_EQ snippet
-** DONE time control within emacs (TODO, deadline management)
-** DONE 572 homework lab
+* TODO Open Source Ideas
+** TODO pdf-tools
+*** TODO two column view
+*** TODO show citation on-the-fly
+
+
+* Research
 ** TODO What is dynamic symbolic execution?
 ** TODO CCured
 ** TODO DART
 ** TODO CUTE
 ** TODO dynamic symbolic execution for invariant inference, ICSE 08
 
-* People
-- Harry Xu
-
-** TODO [#C] BeOS Haiku
+* wiki
 ** TODO [#C] remove all Chinese in wiki
+** TODO leetcode write-up, possibly write using lisp!
 
-** TODO C++ Staff
-*** TODO [#C] C++ template in depth
-*** TODO [#C] move semantic
-*** TODO [#C] perfect forwarding
-*** TODO [#C] forward iterator
-*** TODO [#C] template
-*** TODO [#C] unordered_set bucket
+* Other
+** TODO color theme
 
-** TODO Helium
-*** TODO Input Output Data format unify
-*** TODO Oracle for buffer overflow really working
-*** TODO Invariant selection & validation with successfully runs
-*** TODO bug studies
-*** TODO More concrete details for the risks
-*** TODO AST generate code: not only selected
+* Languages
+** TODO lua
+** TODO Scala
+** TODO OpenGL
+** TODO CUDA
+** TODO haskell
+
+
+* TODO Research into these
+** TODO [#C] BeOS Haiku
+
+* TODO C++ Staff
+** TODO gdb C debugging
+** TODO [#C] c++ stream & iterator
+** TODO [#C] C++ template in depth
+** TODO [#C] move semantic
+** TODO [#C] perfect forwarding
+** TODO [#C] forward iterator
+** TODO [#C] template
+** TODO [#C] unordered_set bucket
+
+* TODO lisp
+** TODO [#C] clojure
+** TODO [#C] common lisp
+
+
+* TODO Helium
+** TODO Input Output Data format unify
+** TODO Oracle for buffer overflow really working
+** TODO Invariant selection & validation with successfully runs
+** TODO bug studies
+** TODO More concrete details for the risks
+** TODO AST generate code: not only selected
 
 
 * TODO Old Wiki Migration
 There're some pages not migrated from old wiki:
-=leetcode=, =leetcode/=, =633/=, =crypto/=, =compiler/=,
-=design-pattern/=.
-=java/=
-=coffee/=
-=ruby=
-=python/=
-=operating-system/=
-=math/=
-=scholar/=
-=database/=
-=docker/=
-=platform/=
-=software/=
-=web/=
+- [ ] =leetcode=
+- [ ] =633/=
+- [ ] =crypto/=
+- [ ] =compiler/=
+- [ ] =java/=
+- [ ] =coffee/=
+- [ ] =ruby=
+- [ ] =python/=
+- [ ] =operating-system/=
+- [ ] =math/=
+- [ ] =scholar/=
+- [ ] =database/=
+- [ ] =docker/=
+- [ ] =platform/=
+- [ ] =software/=
+- [ ] =web/=
 
 #+BEGIN_HTML html
 <blockquote id="quote">
@@ -93,11 +114,7 @@ https://github.com/magnars
 - library: [[https://github.com/magnars/dash.el][dash.el]], [[https://github.com/magnars/s.el][s.el]]
 - package: [[https://github.com/magnars/multiple-cursors.el][multiple-cursors.el]], [[https://github.com/magnars/expand-region.el][expand-region.el]], [[https://github.com/magnars/stasis][stasis]]
 - website: [[https://github.com/magnars/emacsrocks.com][emacsrocks.com]]
-
-* Open Source Ideas
-** pdf-tools
-- two column view
-- show citation on-the-fly
+** Harry Xu
 
 * Knowledge Place
 Testing systems are typically evaluated using three metrics cite:2014-ESE-Avgerinos
@@ -105,95 +122,10 @@ Testing systems are typically evaluated using three metrics cite:2014-ESE-Avgeri
 2. node coverage (stmt coverage, finite)
 3. path coverage (infinite, need approximate)
 
-
-* Helium
-invariants format:
-- var in range [0..3432]
-- relation: <, <=, >, >=, =, !=
-- derived: invariants for x+y, possible operators: +, -
-- address relation
-
-
-- library: max, abs
-
-
-
-
-
-* Old Wiki Migration
-There're some pages not migrated from old wiki:
-- =leetcode/=
-- =633/=
-- =crypto/=
-- =compiler/=
-- =java/=
-- =coffee/=
-- =ruby=
-- =python/=
-- =operating-system/=
-- =math/=
-- =scholar/=
-- =database/=
-- =docker/=
-- =platform/=
-- =software/=
-- =web/=
-
-
-* Note Book
-
-** Long Term TODO
-- color theme!
-
-** concepts to understand
-
-** Every day
-- SE papers
-- AI papers
-- Leetcode
-- Helium
-
-** Routine
-- String split and trim algorithm
-- sort algorithms
-
-** Code to write:
-- compiler
-
-
-** Languages to learn:
-- lua
-- Scala: http://www.scala-lang.org/
-- OpenGL
-- CUDA
-- haskell
-
-
-
 * Links
 Some git repos
 - https://github.com/mxgmn/WaveFunctionCollapse
 - https://github.com/google/lisp-koans
-
-Keep an eye on the most recent conference papers!
-- [[https://issta2016.cispa.saarland/program/][ISSTA16]]
-
-** Websites
-*** Learning Websites
-- [[https://www.coursera.org/][Coursera]]
-- [[https://leetcode.com/][Leetcode]]
-
-*** Reading Websites:
-- Hacker News: https://news.ycombinator.com/
-- Reddit Programming: https://www.reddit.com/r/programming/
-- Reddit Emacs; https://www.reddit.com/r/emacs/
-
-*** Github Repos
-- [[https://github.com/papers-we-love/papers-we-love][papers-we-love/papers-we-love]]
-- [[https://github.com/ivoarch/.dot-org-files][ivoarch/.dot-org-files]]
-
-*** Other Links:
-- http://en.bookfi.net/
 
 * Advice
 ** About interruption
@@ -232,4 +164,9 @@ It's also a reason to appreciate working remotely. Nobody "just happens to stop 
 bibliography:/home/hebi/github/bibliography/hebi.bib
 
 * Task Log
-- 572 homework 2
+** DONE [#A] 342 midterm solution
+** DONE elisp regular expression
+** DONE EXPECT_EQ snippet
+** DONE time control within emacs (TODO, deadline management)
+** DONE 572 homework lab
+

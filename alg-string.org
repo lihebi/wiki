@@ -14,49 +14,36 @@ E.g., =ABCABDA=, the lookup table will be: =0000120=.
 Actually the table refers to what's the substring matched the prefix of the pattern string.
 
 The algorithm to build the table:
-** TODO use lisp to build the lookup table
 
+#+BEGIN_SRC lisp-interaction
+  (defun build-table (pattern)
+    (cl-loop with pos = 2
+             with match = 0
+             with size = (length pattern)
+             with ret = (make-vector size 0)
+             initially do
+             ;; here I assume size is at least 2
+             (assert (> size 1))
+             (aset ret 0 -1)
+             (aset ret 1 0)
+             while (< pos size) do
+             (if (equal (elt pattern (- pos 1)) (elt pattern match))
+                 (progn
+                   (aset ret pos (+ 1 match))
+                   (incf match)
+                   (incf pos))
+               (if (> match 0)
+                   (setq match (elt ret match))
+                 (aset ret pos 0)
+                 (incf pos)))
+             finally return ret))
 
-#+BEGIN_SRC C++
-  std::vector<int> build_table(std::string pattern) {
-    std::vector<int> ret(pattern.size());
-    int size = pattern.size();
-    int idx=0;
-    ret[0] = 0;
-    for (int i=1;i<size;) {
-      if (pattern[i] == pattern[idx]) {
-        i++;
-        idx++;
-        ret[i] = idx;
-      } else if (idx > 0) {
-        idx = ret[idx];
-      } else {
-        ret[i] = 0;
-      }
-    }
-    return ret;
-  }
+  (ert-deftest build-table-test()
+    (should (equal (build-table "AABAAAC") [-1 0 1 0 1 2 2]))
+    (should (equal (build-table "ABCABCD") [-1 0 0 0 1 2 3])))
 
-  TEST(TestSuite, TestCase) {
-    EXPECT_TRUE(true);
-    EXPECT_EQ(build_table("AABAAAC"), std::vector<int>({0,1,1,0,1,2,2,0}));
-  }
+  (ert-run-test (ert-get-test 'build-table-test))
 #+END_SRC
-
-#+BEGIN_EXAMPLE
-while pos < length(W) do
-        (first case: the substring continues)
-        if W[pos-1] = W[cnd] then
-            let T[pos] ← cnd + 1, cnd ← cnd + 1, pos ← pos + 1
-
-        (second case: it doesn't, but we can fall back)
-        else if cnd > 0 then
-            let cnd ← T[cnd]
-
-        (third case: we have run out of candidates.  Note cnd = 0)
-        else
-            let T[pos] ← 0, pos ← pos + 1
-#+END_EXAMPLE
 
 ** 214. Shortest Palindrome
 #+BEGIN_QUOTE
