@@ -1,7 +1,7 @@
 #+TITLE: Hebi
 
 * stack
-** TODO [#A] 572 lab 2
+** DONE [#A] 572 lab 2
 ** TODO s.el, dash.el
 ** TODO qi's macbook
 ** DONE [#A] write up the risks!
@@ -9,6 +9,8 @@
 ** TODO wiki KMP search algorithm in lisp
 ** TODO stronglift 5x5 for org mode to appear on wiki
 ** TODO reftex, org mode, default bibliography 1. don't need to set 2. easy to export to one file
+** TODO Wiki code listing style
+** TODO scheme
 * TODO Open Source Ideas
 ** TODO pdf-tools
 *** TODO two column view
