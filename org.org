@@ -166,6 +166,15 @@ Search uses the same =C-c / m=.
 
 
 * Exporting
+** bibliography
+Normally you only need:
+#+BEGIN_EXAMPLE
+bibliographystyle:plain
+bibliography:/home/hebi/github/bibliography/hebi/tools.bib
+#+END_EXAMPLE
+
+It remains to be seen how to put a set of default bib file instead of specifying this ugly file.
+
 ** Latex Exporting
 *** doc class & options
 

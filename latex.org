@@ -107,7 +107,8 @@ Comments can be added to the margins of the document using the `\todo{Here's a c
 
 `\todo[inline, color=green!40]{This is an inline comment.}`
 
-* How to install a sty and cls file globally?
+* global class and style file
+** location
 On Mac OS X, Put it in:
 
 #+begin_src text
@@ -115,20 +116,19 @@ On Mac OS X, Put it in:
 /Users/hebi/Library/texmf/tex/latex/local/fse/sig-alternate-05-2015.cls
 #+end_src
 
-Then you can just use `\documentclass{sig-alternate-05-2015}`.
+On linux, it should be =~/texmf/tex/latex/local/= and =/usr/local/share/texmf=.
+Or maybe =/usr/local/texlive/texmf-local/tex/latex/local/=.
 
-I actually didn't do any update of database, and it works.
-To see it works, use `kpsewhich sig-alternate-05-2015.cls`, and it output the path of the cls file.
-If you really need to update database, `texhash` will do the trick.
-Also note `mktexlsr` may also do this.
+Then you can just use =\documentclass{sig-alternate-05-2015}= globally.
 
-On linux, it should be `~/texmf/tex/latex/local/`
+** database
 
-The global way should be: `/usr/local/texlive/texmf-local/tex/latex/local/`
+Command to update the =ls-R= database
+- =texhash=
+- =mktexlsr=
 
-See also: http://tex.stackexchange.com/questions/1137/where-do-i-place-my-own-sty-or-cls-files-to-make-them-available-to-all-my-te
-
-
+check whether it works or not:
+- =kpsewhich sig-alternate-05-2015.cls=
 
 * Packages
 ** titlesec
@@ -162,6 +162,8 @@ use headers and footers
 #+end_src
 
 ** qtree
+The =[= and =]= should be surrounded by spaces!
+
 #+BEGIN_SRC latex
 \usepackage{qtree}
 \Tree [ .S [ .S [ .S a ] [ .S a ] + ] [ .S a ] * ]
