@@ -23,6 +23,7 @@
    + subdir
      + [[file:subdir/test.org][test]]
    + [[file:tmp.org][A tmp]]
+   + [[file:ai.org][Artificial Intelligence]]
    + [[file:assembly.org][Assembly]]
    + [[file:autoconf.org][Autoconf]]
    + [[file:boost.org][Boost]]
@@ -87,6 +88,7 @@
    + [[file:alg-string.org][String Algorithm]]
    + [[file:stumpwm.org][StumpWM]]
    + [[file:supercollider.org][SuperCollider]]
+   + [[file:todo.org][TODO List]]
    + [[file:tmux.org][Tmux]]
    + [[file:uml.org][UML]]
    + [[file:code-surfer.org][Usage of Code Surfer]]

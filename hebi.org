@@ -1,89 +1,5 @@
 #+TITLE: Hebi
 
-* stack
-** DONE [#A] 572 lab 2
-** TODO s.el, dash.el
-** TODO qi's macbook
-** DONE [#A] write up the risks!
-   DEADLINE: <2016-10-03 Mon>
-** TODO wiki KMP search algorithm in lisp
-** TODO stronglift 5x5 for org mode to appear on wiki
-** TODO reftex, org mode, default bibliography 1. don't need to set 2. easy to export to one file
-** TODO Wiki code listing style
-** TODO scheme
-* TODO Open Source Ideas
-** TODO pdf-tools
-*** TODO two column view
-*** TODO show citation on-the-fly
-
-
-* Research
-** TODO What is dynamic symbolic execution?
-** TODO CCured
-** TODO DART
-** TODO CUTE
-** TODO dynamic symbolic execution for invariant inference, ICSE 08
-
-* wiki
-** TODO [#C] remove all Chinese in wiki
-** TODO leetcode write-up, possibly write using lisp!
-
-* Other
-** TODO color theme
-
-* Languages
-** TODO lua
-** TODO Scala
-** TODO OpenGL
-** TODO CUDA
-** TODO haskell
-
-
-* TODO Research into these
-** TODO [#C] BeOS Haiku
-
-* TODO C++ Staff
-** TODO gdb C debugging
-** TODO [#C] c++ stream & iterator
-** TODO [#C] C++ template in depth
-** TODO [#C] move semantic
-** TODO [#C] perfect forwarding
-** TODO [#C] forward iterator
-** TODO [#C] template
-** TODO [#C] unordered_set bucket
-
-* TODO lisp
-** TODO [#C] clojure
-** TODO [#C] common lisp
-
-
-* TODO Helium
-** TODO Input Output Data format unify
-** TODO Oracle for buffer overflow really working
-** TODO Invariant selection & validation with successfully runs
-** TODO bug studies
-** TODO More concrete details for the risks
-** TODO AST generate code: not only selected
-
-
-* TODO Old Wiki Migration
-There're some pages not migrated from old wiki:
-- [ ] =leetcode=
-- [ ] =633/=
-- [ ] =crypto/=
-- [ ] =compiler/=
-- [ ] =java/=
-- [ ] =coffee/=
-- [ ] =ruby=
-- [ ] =python/=
-- [ ] =operating-system/=
-- [ ] =math/=
-- [ ] =scholar/=
-- [ ] =database/=
-- [ ] =docker/=
-- [ ] =platform/=
-- [ ] =software/=
-- [ ] =web/=
 
 #+BEGIN_HTML html
 <blockquote id="quote">
@@ -103,6 +19,54 @@ var quotes = [
 document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 </script>
 #+END_HTML
+
+
+
+# here is the stronglift everyday list
+
+* Strong Lift
+
+The bar is 45lb.
+
+| day              | squat | Bench | Row | OH Press | Dead lift |
+|------------------+-------+-------+-----+----------+-----------|
+| /                |     < |     < |   < |        < |         < | 
+| <2016-10-04 Tue> |   115 |       |     |       45 |      115 |
+|------------------+-------+-------+-----+----------+-----------|
+| <2016-09-18 Sun> |   145 |    95 |  65 |          |           |
+|------------------+-------+-------+-----+----------+-----------|
+| <2016-08-31 Wed> |   145 |       |     |       55 |       135 |
+| <2016-08-15 Mon> |   145 |    95 |  65 |          |           |
+|------------------+-------+-------+-----+----------+-----------|
+| <2016-07-25 Mon> |   170 |       |     |       55 |       135 |
+| <2016-07-21 Thu> |   165 |   110 |  75 |          |           |
+| <2016-07-19 Tue> |   160 |       |     |       50 |       115 |
+| <2016-07-18 Mon> |   155 |   105 |  70 |          |           |
+| <2016-07-14 Thu> |   150 |       |     |       45 |       105 |
+| <2016-07-13 Wed> |   145 |    95 |  65 |          |           |
+|------------------+-------+-------+-----+----------+-----------|
+| <2016-06-24 Fri> |   165 |       |     |       60 |       135 |
+| <2016-06-22 Thu> |   155 |    95 |  75 |          |           |
+| <2016-06-19 Sun> |   145 |       |     |       55 |       120 |
+| <2016-06-04 Sat> |   155 |   115 |  95 |          |           |
+|------------------+-------+-------+-----+----------+-----------|
+| <2016-05-24 Tue> |   175 |       |     |       70 |       155 |
+| <2016-05-20 Fri> |   175 |   125 | 100 |          |           |
+| <2016-05-16 Mon> |   170 |       |     |       70 |       145 |
+| <2016-05-12 Thu> |   165 |   125 |  95 |          |           |
+| <2016-05-11 Wed> |   180 |       |     |       65 |       135 |
+| <2016-05-10 Tue> |   175 |   120 |  85 |          |           |
+| <2016-05-07 Sat> |   170 |       |     |       65 |       125 |
+| <2016-05-05 Thu> |   165 |   115 |  80 |          |           |
+| <2016-05-03 Tue> |   160 |       |     |       65 |       115 |
+| <2016-05-01 Sun> |   160 |   110 |  75 |          |           |
+|------------------+-------+-------+-----+----------+-----------|
+| <2016-04-28 Thu> |   155 |       |     |       60 |       105 |
+| <2016-04-22 Fri> |   150 |   105 |  70 |          |           |
+| <2016-04-20 Wed> |   145 |       |     |       55 |        95 |
+| <2016-04-18 Mon> |   140 |    95 |  65 |          |           |
+|------------------+-------+-------+-----+----------+-----------|
+
 
 
 * People!
@@ -165,11 +129,4 @@ It's also a reason to appreciate working remotely. Nobody "just happens to stop 
 #+END_QUOTE
 
 bibliography:/home/hebi/github/bibliography/hebi.bib
-
-* Task Log
-** DONE [#A] 342 midterm solution
-** DONE elisp regular expression
-** DONE EXPECT_EQ snippet
-** DONE time control within emacs (TODO, deadline management)
-** DONE 572 homework lab
 

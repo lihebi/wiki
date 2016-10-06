@@ -1,0 +1,102 @@
+#+TITLE: TODO List
+* stack
+
+** TODO s.el, dash.el
+** TODO qi's macbook
+
+* TODO Open Source Ideas
+** TODO pdf-tools
+*** TODO two column view
+*** TODO show citation on-the-fly
+
+* Emacs
+** TODO reftex, org mode, default bibliography 1. don't need to set 2. easy to export to one file
+
+
+* Research
+** TODO What is dynamic symbolic execution?
+** TODO CCured
+** TODO DART
+** TODO CUTE
+** TODO dynamic symbolic execution for invariant inference, ICSE 08
+
+* Algorithm
+** TODO wiki KMP search algorithm in lisp
+
+* wiki
+** TODO wiki stronglift all data
+** TODO stronglist use calendar
+** TODO stronglift graph
+** TODO [#C] remove all Chinese in wiki
+** TODO leetcode write-up, possibly write using lisp!
+** TODO Wiki code listing style
+
+* Other
+** TODO color theme
+
+* Languages
+** TODO lua
+** TODO Scala
+** TODO OpenGL
+** TODO CUDA
+** TODO haskell
+** TODO ruby & rails
+** TODO scheme
+
+* TODO Research into these
+** TODO [#C] BeOS Haiku
+
+
+* TODO C++ Staff
+** TODO gdb C debugging
+** TODO [#C] c++ stream & iterator
+** TODO [#C] C++ template in depth
+** TODO [#C] move semantic
+** TODO [#C] perfect forwarding
+** TODO [#C] forward iterator
+** TODO [#C] template
+** TODO [#C] unordered_set bucket
+
+* TODO lisp
+** TODO [#C] clojure
+** TODO [#C] common lisp
+
+
+* TODO Helium
+** TODO Input Output Data format unify
+** TODO Oracle for buffer overflow really working
+** TODO Invariant selection & validation with successfully runs
+** TODO bug studies
+** TODO More concrete details for the risks
+** TODO AST generate code: not only selected
+
+
+* TODO Old Wiki Migration
+There're some pages not migrated from old wiki:
+- [ ] =leetcode=
+- [ ] =633/=
+- [ ] =crypto/=
+- [ ] =compiler/=
+- [ ] =java/=
+- [ ] =coffee/=
+- [ ] =ruby=
+- [ ] =python/=
+- [ ] =operating-system/=
+- [ ] =math/=
+- [ ] =scholar/=
+- [ ] =database/=
+- [ ] =docker/=
+- [ ] =platform/=
+- [ ] =software/=
+- [ ] =web/=
+
+* Task Log
+** DONE [#A] 342 midterm solution
+** DONE elisp regular expression
+** DONE EXPECT_EQ snippet
+** DONE time control within emacs (TODO, deadline management)
+** DONE 572 homework lab
+
+** DONE [#A] 572 lab 2
+** DONE [#A] write up the risks!
+** DONE stronglift 5x5 for org mode to appear on wiki
