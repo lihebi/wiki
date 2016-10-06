@@ -24,11 +24,8 @@
 ** TODO wiki KMP search algorithm in lisp
 
 * wiki
-** TODO wiki stronglift all data
-** TODO stronglist use calendar
-** TODO stronglift graph
 ** TODO [#C] remove all Chinese in wiki
-** TODO leetcode write-up, possibly write using lisp!
+** TODO leetcode write-up, write using lisp!
 ** TODO Wiki code listing style
 
 * Other
@@ -100,3 +97,6 @@ There're some pages not migrated from old wiki:
 ** DONE [#A] 572 lab 2
 ** DONE [#A] write up the risks!
 ** DONE stronglift 5x5 for org mode to appear on wiki
+** DONE wiki stronglift all data
+** stronglist use calendar
+** stronglift graph
