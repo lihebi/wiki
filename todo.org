@@ -1,8 +1,21 @@
 #+TITLE: TODO List
+* LEETCODE
+* READ PAPERS
+* WRITE HELIUM
+
+
 * stack
 
 ** TODO qi's macbook
 ** TODO Driver license renew
+** TODO R
+** TODO bison, yacc, lex
+** TODO gnus, cheatsheet etc
+** TODO 572 hw5
+** TODO compete the run-test ... features
+** TODO GNU Emacs Calculator (calc)
+
+
 
 * TODO Open Source Ideas
 ** TODO pdf-tools
