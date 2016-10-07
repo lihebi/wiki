@@ -1,17 +1,23 @@
 #+TITLE: TODO List
 * stack
 
-** TODO s.el, dash.el
 ** TODO qi's macbook
+** TODO Driver license renew
 
 * TODO Open Source Ideas
 ** TODO pdf-tools
-*** TODO two column view
+*** +TODO two column view+
 *** TODO show citation on-the-fly
+*** TODO adjust the position (center)
 
 * Emacs
 ** TODO reftex, org mode, default bibliography 1. don't need to set 2. easy to export to one file
-
+** TODO HEBI xxxx in emacs highlight the whole line!
+** TODO Ultra-mark
+- at a line, create a mark, using an optional text.
+- One can view it by command similar to helm-mark-ring.
+- You need to delete it (tab and select) to remove it, otherwise it will be there
+- The mark must be set manually, no automatic mark will set unexpectedly
 
 * Research
 ** TODO What is dynamic symbolic execution?
@@ -57,6 +63,7 @@
 * TODO lisp
 ** TODO [#C] clojure
 ** TODO [#C] common lisp
+** TODO s.el, dash.el
 
 
 * TODO Helium
@@ -68,24 +75,6 @@
 ** TODO AST generate code: not only selected
 
 
-* TODO Old Wiki Migration
-There're some pages not migrated from old wiki:
-- [ ] =leetcode=
-- [ ] =633/=
-- [ ] =crypto/=
-- [ ] =compiler/=
-- [ ] =java/=
-- [ ] =coffee/=
-- [ ] =ruby=
-- [ ] =python/=
-- [ ] =operating-system/=
-- [ ] =math/=
-- [ ] =scholar/=
-- [ ] =database/=
-- [ ] =docker/=
-- [ ] =platform/=
-- [ ] =software/=
-- [ ] =web/=
 
 * Task Log
 ** DONE [#A] 342 midterm solution
@@ -100,3 +89,25 @@ There're some pages not migrated from old wiki:
 ** DONE wiki stronglift all data
 ** stronglist use calendar
 ** stronglift graph
+* DONE benchmarks
+- [X] github 100
+- [X] bug benchmarks
+* DONE Old Wiki Migration
+There're some pages not migrated from old wiki:
+- [X] =leetcode=
+- [X] =633/=
+- [X] =crypto/=
+- [X] =compiler/=
+- [X] =java/=
+- [X] =coffee/=
+- [X] =ruby=
+- [X] =python/=
+- [X] =operating-system/=
+- [X] =math/=
+- [X] =scholar/=
+- [X] =database/=
+- [X] =docker/=
+- [X] =platform/=
+- [X] =software/=
+- [X] =web/=
+** DONE 572 hw 4

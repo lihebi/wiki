@@ -1,9 +1,10 @@
 #+TITLE: Hebi's Personal Wiki
 
-There's always a [[file:tmp.org][tmp]] page.
+There's always a [[file:tmp.org][tmp]] buffer and an [[file:other.org][other]] page.
 
 * OS
-- [[file:csapp.org][CSAPP study note]]
+- [[file:liveusb.org][Live USB]]
+
 System
 - [[file:linux.org][Linux]]
 - [[file:debian.org][Debian]]
@@ -20,13 +21,8 @@ Apps
 - [[file:autoconf.org][autoconf]]
 
 * Coding
-** Design pattern
-Creation Pattern
-- [[file:design-pattern/abstract-factory.org][Abstract Factory]]
-- [[file:design-pattern/singleton.org][Singleton]]
 
-Behavior Pattern
-- [[file:design-pattern/visitor.org][Visitor]]
+- [[file:design-pattern.org][Design Pattern]]
 
 ** Compiler
 - [[file:compiler.org][compiler]]

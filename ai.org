@@ -53,3 +53,21 @@ Max-Value(state, alpha, beta) {
   return v;
 }
 #+END_EXAMPLE
+
+* Constraint Satisfaction Problems
+It seems to formulate the search problems in a uniformed representation:
+- X :: a set of variables
+- D :: each has a domain of values
+- C :: a set of constraints for each of the variable
+
+The goal is to find the assignment of values to the variables, that satisfies the constraints.
+
+** Advantage
+- it uses /general purpose heuristic/ rather than /problem-specific/ ones.
+
+** Variations
+- continuous or discrete domain
+- finite or infinite domain
+- linear or non-linear constraint
+- unary or binary or high order constraint
+

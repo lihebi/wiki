@@ -1,0 +1,30 @@
+#+TITLE: Create Live USB
+
+* Software
+- unetbootin
+
+* Create Linux USB
+** Using dd
+#+BEGIN_EXAMPLE
+dd bs=4M if=/path/to/archlinux.iso of=/dev/sdx && sync
+# restore
+dd count=1 bs=512 if=/dev/zero of=/dev/sdx && sync
+#+END_EXAMPLE
+
+** From Mac
+#+BEGIN_EXAMPLE
+hdiutil convert -format UDRW -o ~/path/to/target.img ~/path/to/ubuntu.iso
+diskutil list, insert usb, diskutil list => /dev/disk1
+diskutil unmountDisk /dev/diskN
+sudo dd if=/path/to/downloaded.img of=/dev/rdiskN bs=1m
+diskutil eject /dev/diskN
+#+END_EXAMPLE
+
+
+* Create Mac USB
+#+BEGIN_EXAMPLE
+sudo /Applications/Install\ OS\ X\ Mavericks.app/Contents/Resources/createinstallmedia \
+--volume /Volumes/Untitled \
+--applicationpath /Applications/InstallXXX.app \
+--nointeraction
+#+END_EXAMPLE

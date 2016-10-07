@@ -1,0 +1,286 @@
+#+TITLE: Design Pattern
+
+
+* Creation
+
+** Abstract Factory
+
+- Implemented by Factory Method.
+- Focus on a family of products.
+- ConcreteFactory is often singleton
+
+
+#+BEGIN_SRC plantuml :file wikitmp_abstract_factory.png :exports results
+abstract class AbstractFactory {
+  + CreateA()
+  + CreateB()
+}
+
+class ConcreteFactory1 {
+  + CreateA();
+  + CreateB();
+}
+
+class ConcreteFactory2 {
+  + CreateA();
+  + CreateB();
+}
+
+abstract class AbstractA
+abstract class AbstractB
+
+class A1
+class A2
+class B1
+class B2
+
+AbstractFactory<..ConcreteFactory1
+AbstractFactory<..ConcreteFactory2
+AbstractA<..A1
+AbstractA<..A2
+AbstractB<..B1
+AbstractB<..B2
+
+ConcreteFactory1*--A1
+ConcreteFactory1*--B1
+ConcreteFactory2*--A2
+ConcreteFactory2*--B2
+#+END_SRC
+
+The implementation:
+#+BEGIN_SRC C++
+class AbstractFactory {
+  virtual CreateA() {}
+  virtual CreateB() {}
+};
+class ConcreteFactory1 {
+  virtual CreateA() {new A1;}
+  virtual CreateB() {new B2;}
+};
+class ConcreteFactory2 {
+  virtual CreateA() {new A2;}
+  virtual CreateB() {new B1;}
+};
+// client code
+ConcreteFactory1 factory;
+AbstractA *a = factory.CreateA();
+AbstractB *b = factory.CreateB();
+#+END_SRC
+
+
+
+** Builder
+*** Class Diagram
+#+BEGIN_SRC plantuml :file wikitmp_builder.png :exports results
+class Director {
+}
+
+Director <|-- Builder
+note right of Director: for all objects in structure { builder->BuildPart();}
+abstract class Builder {
+  BuildPart();
+}
+class ConcreteBuilder {
+  BuildPart();
+  GetResult();
+}
+
+Builder <-- ConcreteBuilder
+Product <.. ConcreteBuilder
+#+END_SRC
+
+*** Sequence diagram
+
+#+BEGIN_SRC plantuml :file wikitmp_builder_sequence.png :exports results
+participant Client
+participant Director
+participant ConcreteBuilder
+
+Client --> ConcreteBuilder : new ConcreteBuilder
+Client --> Director : new Director(concreteBuilder)
+Client --> Director : Construct()
+Director --> ConcreteBuilder : BuildPartA()
+Director --> ConcreteBuilder : BuildPartB()
+Director --> ConcreteBuilder : BuildPartC()
+Director --> ConcreteBuilder : GetResult()
+#+END_SRC
+
+#+RESULTS:
+[[file:wikitmp_builder_sequence.png]]
+
+*** Implementation
+#+BEGIN_SRC C++
+Director::Create() {
+  builder.BuildPartA();
+  builder.BuildPartB();
+  builder.BuildPartC();
+};
+// client knows which concreteBuilder to use,
+// so it knows which the product is
+ConcreteBuilder builder;
+director = Director(builder);
+director.Create();
+builder.GetResult();
+#+END_SRC
+
+
+* Structure
+
+** Singleton
+
+
+#+BEGIN_SRC C++
+  class Singleton {
+  public:
+    static Singleton* Instance() {
+      if (m_instance == 0) {
+        m_instance = new Singleton;
+      }
+      return m_instance;
+    }
+  protected:
+    Singleton();
+  private:
+    static Singleton* m_instance;
+  };
+
+  Singleton *Singleton::m_instance = 0;
+#+END_SRC
+
+
+* Behavior Pattern
+** Visitor pattern
+
+ #+BEGIN_QUOTE
+ Represent an operation to be performed on the elements of an object structure.
+ Visitor lets you define a new operation without changing theclasses of the elements on which it operates.
+ #+END_QUOTE
+
+*** The problem and the naive solution
+ We have a list of classes in a class hierarchy, e.g. AST nodes.
+ We want to define many operations, each operates different on different nodes.
+
+ #+BEGIN_SRC plantuml :file wikitmp_visitor-1.png :exports results
+ abstract class Node {
+   {abstract} TypeCheck();
+   {abstract} GenerateCode();
+   {abstract} PrettyPrint();
+ }
+
+ class NumNode {
+   TypeCheck();
+   GenerateCode();
+   PrettyPrint();
+ }
+
+ class ExpNode
+
+ class AddExpNode {
+   TypeCheck();
+   GenerateCode();
+   PrettyPrint();
+ }
+
+ Node <-- NumNode
+ Node <-- ExpNode
+ ExpNode <-- AddExpNode
+ #+END_SRC
+
+ This is not good. Application code is mixed with the AST node implementation.
+
+*** The pattern
+ We define a hierarchy of visitors, and defines different behavior inside the visitors for different nodes they operate on.
+ This is called double-dispatch:
+ The virtual functions lookup is decided not only by the object the function is defined on, but also the arguments it accepts.
+
+ #+BEGIN_SRC plantuml :file wikitmp_visitor-2.png :exports results
+ abstract class Node {
+   {abstract} Accept(Visitor v);
+ }
+
+ class NumNode {
+   Accept(Visitor v);
+ }
+ note left: v.visit(this);
+
+ class ExpNode
+
+ class AddExpNode {
+   Accept(Visitor v);
+ }
+ note left: v.visit(this);
+
+
+ Node <-- NumNode
+ Node <-- ExpNode
+ ExpNode <-- AddExpNode
+
+ abstract class Visitor {
+   {abstract} visit(NumNode node);
+   {abstract} visit(AddExpNode node);
+ }
+
+ class TypeCheckVisitor {
+   visit(NumNode node);
+   visit(AddExpNode node);
+ }
+
+ class GenerateCodeVisitor {
+   visit(NumNode node);
+   visit(AddExpNode node);
+ }
+
+ class PrettyPrintVisitor {
+   visit(NumNode node);
+   visit(AddExpNode node);
+ }
+
+ Visitor <-- TypeCheckVisitor
+ Visitor <-- GenerateCodeVisitor
+ Visitor <-- PrettyPrintVisitor
+ #+END_SRC
+
+*** Example
+ #+BEGIN_SRC java
+   public interface AST {
+       public static abstract class ASTNode {
+           public abstract Object accept(Visitor visitor);
+       }
+       public static abstract class Exp extends ASTNode {
+
+       }
+       public static class NumExp extends Exp {
+           double _val;
+           public Object accept(Visitor visitor) {
+               return visitor.visit(this);
+           }
+       }
+       public static class AddExp extends CompoundArithExp {
+           public AddExp(List<Exp> args) {
+               super(args);
+           }
+           public Object accept(Visitor visitor) {
+               return visitor.visit(this);
+           }
+       }
+   }
+ #+END_SRC
+
+ #+BEGIN_SRC java
+   public class Evaluator implements Visitor<Value> {
+       public Value visit(NumExp e) {
+           return new NumVal(e.v());
+       }
+       public Value visit(AddExp e) {
+           List<Exp> operands = e.all();
+           double result = 0;
+           for (Exp exp : operands) {
+               NumVal intermediate = (NumVal) exp.accept(this); // Dynamic
+               // type-checking
+               result += intermediate.v(); // Semantics of AddExp in terms of the
+               // target language.
+           }
+           return new NumVal(result);
+       }
+   }
+ #+END_SRC

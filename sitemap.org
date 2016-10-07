@@ -1,9 +1,5 @@
 #+TITLE: Sitemap for project wiki-org
 
-   + design-pattern
-     + [[file:design-pattern/abstract-factory.org][Abstract Factory]]
-     + [[file:design-pattern/singleton.org][Singleton]]
-     + [[file:design-pattern/visitor.org][Visitor]]
    + math
      + 511
        + [[file:math/511/lp.org][Linear Programming]]
@@ -31,7 +27,6 @@
    + [[file:c-debug.org][C Debugging Techniques]]
    + [[file:c-lib.org][C Library]]
    + [[file:cpp.org][C++]]
-   + [[file:csapp.org][CSAPP Study Notes]]
    + [[file:csv.org][CSV file]]
    + [[file:centos.org][CentOS]]
    + [[file:chrome.org][Chrome Extensions]]
@@ -39,9 +34,11 @@
    + [[file:common-lisp.org][Common Lisp]]
    + [[file:compiler.org][Compiler]]
    + [[file:conkeror.org][Conkeror]]
+   + [[file:liveusb.org][Create Live USB]]
    + [[file:data-structure-old.org][Data Structure]]
    + [[file:debian.org][Debian]]
    + [[file:debian-setup.org][Debian Setup]]
+   + [[file:design-pattern.org][Design Pattern]]
    + [[file:dp.org][Dynamic Programming]]
    + [[file:emacs.org][Emacs]]
    + [[file:elisp.org][Emacs Lisp]]
@@ -73,6 +70,7 @@
    + [[file:oj.org][Online Judge Excerpts]]
    + [[file:open-source.org][Open Source Projects I should consider contribute]]
    + [[file:org.org][Org Mode]]
+   + [[file:other.org][Other]]
    + [[file:overtone.org][Overtone]]
    + [[file:palindrome.org][Palindrome]]
    + [[file:pugixml.org][Pugixml]]

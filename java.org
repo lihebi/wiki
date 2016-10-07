@@ -16,10 +16,95 @@ You can export ant =build.xml= file by: project, export, general, ant build file
 
 * List & ArrayList
 
-#+BEGIN_SRC java
-List<int> a;
-a.get(i); // no a[i]
+List is the interface. There are many implementation, including =ArrayList= and =LinkedList=.
+=ArrayList= can be accessed by index expression.
 
-ArrayList<int> a;
-a[i];
+
+* File System
+** Files
+Predicates:
+- =Files.exists(path)=
+- =Files.notExists(path)=
+- =Files.isRegularFile(file)=
+- =Files.isReadable(file)=
+- =Files.isExecutable(file)=
+- =Files.isDirectory(Path, LinkOption)=
+- =Files.isSymbolicLink(Path)=
+
+Operations:
+
+- =Files.delete(path)=
+- =Files.deleteIfExists(Path)=
+- =Files.copy(source, target, REPLACE_EXISTING)=
+- =Files.move(source, target, REPLACE_EXISTING)=
+
+* IO
+** byte stream
+
+- =InputStream=
+- =OutputStream=
+- =FileInputStream=
+- =FileOutputStream=
+
+#+BEGIN_SRC java
+  FileInputStream in = null;
+  FileOutputStream out = null;
+  in = new FileInputStream("xanadu.txt");
+  out = new FileOutputStream("outagain.txt");
+  int c;
+  // c is used for last 8 bits
+  while ((c = in.read()) != -1) {
+      out.write(c);
+  }
 #+END_SRC
+
+** character stream
+- =Reader=
+- =Writer=
+- =FileReader=
+- =FileWriter=
+
+#+BEGIN_SRC java
+  FileReader inputStream = null;
+  FileWriter outputStream = null;
+  inputStream = new FileReader("xanadu.txt");
+  outputStream = new FileWriter("characteroutput.txt");
+
+  int c;
+  // use the last 16 bits of int
+  while ((c = inputStream.read()) != -1) {
+      outputStream.write(c);
+  }
+#+END_SRC
+
+** line-oriented IO
+
+- =BufferedReader=
+- =PrintWriter=
+
+#+BEGIN_SRC java
+BufferedReader inputStream = null;
+PrintWriter outputStream = null;
+inputStream = new BufferedReader(new FileReader("xanadu.txt"));
+outputStream = new PrintWriter(new FileWriter("characteroutput.txt"));
+
+String l;
+while ((l = inputStream.readLine()) != null) {
+  outputStream.println(l);
+}
+#+END_SRC
+
+** Scanning
+=java.util.Scanner=
+
+#+BEGIN_SRC java
+Scanner s = null;
+s = new Scanner(new BufferedReader(new FileReader("xanadu.txt")));
+while (s.hasNext()) {
+  System.out.println(s.next());
+}
+#+END_SRC
+
+* Misc
+** Static import
+Import the =public static= field in the way that, can be used as a top level field, without the enclosing class.

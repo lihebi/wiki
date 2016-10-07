@@ -70,6 +70,18 @@ The bar is 45lb.
 |------------------+-------+-------+-----+----------+-----------|
 
 
+** music project
+- [ ] https://github.com/overtone/overtone/
+- [ ] http://emacs-doctor.com/emacs-org-babel-overtone-intro.html
+- [ ] clojure(Leiningen)
+- [ ] http://overtone.github.io/
+- [ ] http://freesound.org/
+- [ ] SuperCollider http://supercollider.github.io/
+- [ ] ChucK, Overtone, Extempore. Pd and Max/MSP 
+- [ ] Sonic Pi 
+- [ ] xtlang
+
+
 
 * People!
 ** Peter Norvig
@@ -84,6 +96,11 @@ https://github.com/magnars
 - package: [[https://github.com/magnars/multiple-cursors.el][multiple-cursors.el]], [[https://github.com/magnars/expand-region.el][expand-region.el]], [[https://github.com/magnars/stasis][stasis]]
 - website: [[https://github.com/magnars/emacsrocks.com][emacsrocks.com]]
 ** Harry Xu
+** Hila Cohen
+** Darko Marinov
+** Caroline Lemieux
+** Matthew B. Dwyer
+** James Clause
 
 * Knowledge Place
 Testing systems are typically evaluated using three metrics cite:2014-ESE-Avgerinos
