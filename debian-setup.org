@@ -67,6 +67,7 @@ $ cmake ..
 #+BEGIN_EXAMPLE
 bash-doc
 libstdc++-6-doc
+r-doc-info
 #+END_EXAMPLE
 
 *** Extra packages
@@ -86,6 +87,7 @@ libpng-dev libz-dev libpoppler-glib-dev libpoppler-private-dev imagemagick # for
 antlr4
 eclipse
 r-base
+r-base-dev
 
 doxygen
 plantuml

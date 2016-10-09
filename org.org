@@ -2,167 +2,112 @@
 #+TAGS: @work @home(h)
 
 * Structure
-** concepts
-*** drawer
-Under a headline, use =:DRAWERNAME:= and =:END:= to denote the beginning and end. The drawer means it is hidden by default.
-- =C-c C-x d= :: create drawer. If region is active, move the region to a drawer.
-
-*** footnote
-It can be of these format:
+** Drawer
+The heading can have a drawer, meaning it is hidden by default.
+Under a headline, use =:DRAWERNAME:= and =:END:= to denote the beginning and end.
+=C-c C-x d= also creates drawer easily. If region is active, move the region to a drawer.
+** Footnote
+Footnote can be of these format:
 - =[fn:1] some text=
 - =[fn:name]=
 - =[fn:: anonymous inline footnote!]=
 - =[fn:name: named inline footnote that can be referenced from elsewhere]=
+There should be two empty lines after the footnote definition.
 
-it ends at:
-- next footnote
-- headlines
-- two consecutive empty lines
+=C-c C-x f= inserts a footnote (at the end of page);
+=C-c C-c= jump to definition or back to reference;
+=C-c '= :: edit the footnote in a seperate buffer.
 
-Some command to operate the footnote:
-- =C-c C-x f= :: insert a footnote (at the end of page)
-- =C-c C-c= :: jump to definition or back to reference
-- =C-c '= :: edit the footnote in a seperate buffer
+** Headings
+- Moving around ::
+  =C-c C-n= :: next heading
+  =C-c C-p= :: previous heading
+  =C-c C-f= :: next heading same level
+  =C-c C-b= :: previous heading same level
+  =C-c C-u= :: parent heading
+  =C-c C-j= :: jump to some node. Direct type to navigate, and tab to expand.
 
-** motion among headings
-- =C-c C-n= :: next heading
-- =C-c C-p= :: previous heading
-- =C-c C-f= :: next heading same level
-- =C-c C-b= :: previous heading same level
-- =C-c C-u= :: parent heading
-- =C-c C-j= :: jump to some node. Direct type to navigate, and tab to expand.
+- Editing ::
+  Use the command =org-promote-subtree= and =org-demote-subtree= to adjust the heading level.
+  =M-h= marks current tree.
+  It is very useful to narrow the subtree using =C-x n s= and widen it back by =C-x n w=.
 
-** editing
+* Agenda
+- Creating :: A =TODO= keyword in the beginning of a heading mark it as a TODO item, or simply =M-S-<RET>= to create one.
+- Attributes ::
+  You can add a /schedule/ or /deadline/ for such an item,
+  by =C-c C-s= and =C-c C-d= respectively.
+  Time-stamp is normally inserted =C-c .= inserts or modifies time stamp. It can recognize a variety of format.
+  Also, in the interactive calendar and in the org buffer, use =M-<ARROW>= to move.
+  An item can have a priority within A to C, set by =C-c ,=.
+- Operations ::
+  There're a lot of operations on the entries.
+  In the org buffer, =C-c t= will rotate TODO state.
+  For a list that is not a heading, you can prepend the list with =[ ]=, and =C-c C-c= toggles it.
+  A task can be clocked.
+  Clock in via =C-c C-x C-i= and clock out via =C-c C-x C-o=.
+- Agenda View ::
+  It is better to view the TODO lists in a dedicated buffer.
+  Org keeps the variable =org-agenda-files= for the global agenda files.
+  You can add current file by =C-c [=.
+  The global agenda has different view method,
+  namely =C-c a a= for the week view, =C-c a t= for all todo items, and =C-c a L= for the timeline of current file.
+  In side the buffer, =<ENTER>= enter the org file while =<TAB>= display the org file in another window.
 
-inserting
-- =M-<RET>= :: insert heading /here/
-- =C-<RET>= :: insert heading /after current body/
-
-moving
-- =M-<left|right>= :: promote & demote
-- =M-<up>= :: move subtree up
-- =M-<down>= :: move subtree down
-
-marking
-- =M-h= :: mark current tree
-
-narrow
-- =C-x n s= :: narrow subtree
-- =C-x n w= :: widen
-
-** sparse tree
-only display content that matters.
-- =C-c / r= :: prompt a regular expression. Will show only the heading matching it. 
-- =M-g M-n= :: next match
-- =M-g M-p= :: previous match
-
-* =TODO= Lists
-** create
-- =M-S-<RET>= :: insert todo heading /here/
-- =C-S-<RET>= :: insert todo heading after body
-
-** operations
-- =C-c t= :: rotate TODO state
-- =C-c ,= :: set priority
-- =C-c C-c= :: toggle a checkbox
-
-** Viewing
-- =C-c / t= :: sparse tree for TODO lists
-- =C-c a t= :: show the global TODO list =org-todo-list=
-
-** date/time
-- =C-c .= :: insert or modify time stamp. In the interactive calendar, use =M-<ARROW>= to move
-- =S-<left|right>= :: adjust day
-
-*** inserting deadline
-- =C-c C-d= :: insert deadline
-- =C-c C-s= :: insert schedule
-- =C-c / d= :: check deadlines
-- =C-c / b= :: check before a given date
-- =C-c / a= :: check after a given date
-
-*** clocking a task
-- =C-c C-x C-i= :: start clocking
-- =C-c C-x C-o= :: end clocking
-
-** Agenda
-=org-agenda-files= variable will record a list of agenda files.
-You can add or remove the list by (will modify =init.el=):
-- =C-c [= :: add current file to agenda file list
-- =C-c ]= :: remove current file from agenda file list
-
-*** Entering
-- =C-c a= :: prompt for activation of org-agenda
-  - =a= :: calendar
-  - =t= :: todo
-  - =m= :: matching tags
-  - =L= :: timeline
-
-*** commands
-Commands in the agenda buffer:
-
-- =n= :: next line
-- =p= :: previous
-- =<TAB>= :: display the org file in another window
-- =<RET>= :: open org file as single window
-- =g= :: refresh
-- =C-c C-x C-c= :: open column view
-- =t= :: change TODO status
-- =P= :: display priority of current item
-- =+= :: increase priority
-- =-= :: decrease priority
-- =z= :: add note to the entry
-- =C-c C-d= :: add deadline
-- =C-c C-s= :: insert schedule
-- =I= :: clock in
-- =O= :: clock out
-- =X= :: clock cancel
+  In the agenda view, =d,w,vm,vy=  change the range to day, week, month, year respectively.
+  =E= to show the entry text (text inside the heading), =R= show the clock report.
+  =s= saves all buffers,  =f=, =b= and =.= go to next, previous week and today respectively.
+  
+  As always =g= to refresh.
+  It is easier to operate in such a buffer: you don't usually need the =C-c= prefix.
+  =t= changes TODO status, =,= set the priority, with =+= and =-= to raise or lower it.
+  You can still set deadline and schedule using the same binding.
+  Clocking in and out becomes =I= and =O=, and cancel with =X=.
 
 * Tags
 Tags can be the variable name plus =@= is available.
 Every heading can have tags at the end of it. Use =:tag1:tag2:= syntax.
 Tags will be inherited by default for the subtrees.
+=C-c C-c= :: at the heading, set the tags.
 
-- =C-c C-c= :: at the heading, set the tags
+# ** predefined tags
+# Put a /unique/ letter for the /fast tag selection/ by just a single keystroke.
 
-** predefined tags
-Put a /unique/ letter for the /fast tag selection/ by just a single keystroke.
+# #+BEGIN_SRC elisp
+# (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("laptop" . ?l)))
+# #+END_SRC
 
-#+BEGIN_SRC elisp
-(setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("laptop" . ?l)))
-#+END_SRC
+# You can also specify in a file basis:
+# #+BEGIN_EXAMPLE
+# #+TAGS: @work(w) @home(h)
+# #+END_EXAMPLE
 
-You can also specify in a file basis:
-#+BEGIN_EXAMPLE
-#+TAGS: @work(w) @home(h)
-#+END_EXAMPLE
+# Then =C-c C-c= on this line to "activate" it.
 
-Then =C-c C-c= on this line to "activate" it.
-
-** search
-- =C-c / m= :: construct sparse tree based on tag
+# ** search
+# - =C-c / m= :: construct sparse tree based on tag
 * Properties
 Similar to tags, we can also set the property, the key value pairs.
 It is inside the =PROPERTY= drawer. Each line is a property, where key is surrounded with =:=, and value after it.
 Property is not inherited by default.
 
-** Edit
-Editing properties is done in column view.
-First, you need to define the column format. Add and execute the following line:
-#+BEGIN_EXAMPLE
-#+COLUMNS: %25ITEM %TAGS %PRIORITY %TODO
-#+END_EXAMPLE
+# ** Edit
+# Editing properties is done in column view.
+# First, you need to define the column format. Add and execute the following line:
+# #+BEGIN_EXAMPLE
+# #+COLUMNS: %25ITEM %TAGS %PRIORITY %TODO
+# #+END_EXAMPLE
 
-- =C-c C-x C-c= :: toggle the column view
-- =g= :: refresh
-- =q= :: quit
-- =n= :: next allowed value
-- =p= :: previous allowed value
-- =e= :: edit this field
-- =v= :: show the value of the field
+# - =C-c C-x C-c= :: toggle the column view
+# - =g= :: refresh
+# - =q= :: quit
+# - =n= :: next allowed value
+# - =p= :: previous allowed value
+# - =e= :: edit this field
+# - =v= :: show the value of the field
 
-** search
-Search uses the same =C-c / m=.
+# ** search
+# Search uses the same =C-c / m=.
 
 
 * Exporting
@@ -195,6 +140,12 @@ It remains to be seen how to put a set of default bib file instead of specifying
  #+INCLUDE: "appendix-helium-guard.org" :minlevel 1
  #+INCLUDE: "appendix-valgrind-exp.org" :minlevel 1
  #+end_example
+
+*** code listing
+#+BEGIN_EXAMPLE
+#+ATTR_LATEX: :options frame=shadowbox
+#+END_EXAMPLE
+
 
 ** Beamer
 The header setup:

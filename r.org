@@ -1,172 +1,31 @@
 #+TITLE: R
 
-* Buffer
-http://www.public.iastate.edu/~hofmann/stat579/
-#+BEGIN_SRC R
-  read.csv(file, header = TRUE, sep = ",", quote = "\"",
-           dec = ".", fill = TRUE, comment.char = "", ...)
-#+END_SRC
+* Setting up
 
-Example:
-#+BEGIN_SRC R
-a<-read.csv("filename.csv"); # this will be a matrix, each column with a named header
-x <- a$name1 # access by header name, this will be a vector
-#+END_SRC
-
-** jitter(x)
-#+BEGIN_SRC R
-jitter(x, factor = 1, amount = NULL)
-#+END_SRC
-Add a small amount of noise to a numeric vector.
-
-** plot(x, y, ...)
-Possible =...= arguments:
-- 'type' what type of plot: 
-  - "p" for points,
-  - "l" for lines,
-  - "b" for both,
-  - "h" for 'histogram' like (or 'high-density') vertical lines,
-- 'main' an overall title for the plot: see 'title'.
-- 'xlab' a title for the x axis: see 'title'.
-- 'ylab' a title for the y axis: see 'title'.
-** str(obj)
-Compactly Display the Structure of an Arbitrary R Object
-** class(obj)
-Get or set an object's class.
-This can serve as a debugging method, to see the class of a data object.
-It can also be used to declare an object: =class(x) <- value=
-** TODOs
-- =as.data.frame=
-
-** graphics (built-in)
-- =barplot=: TODO Creates a bar plot with vertical or horizontal bars.
-
-** plyr
-*** TODO count
-#+BEGIN_SRC R
-count(df, vars = NULL, wt_var = NULL)
-#+END_SRC
-
-* Installation
-** Install package
-
-Install this directly in R commandline.
-
-#+BEGIN_SRC R
-install.packages(c("dplyr"))
-#+END_SRC
-
-# Use Rstudio, install, select from local archive.
-# Download from CRAN website(binary), locate to that package in Rstudio to install.
-
-# *** Trouble shooting
-
-# Error message on mac os x:
-
-# #+begin_src text
-# package 'multicore' is not installed for 'arch=x86_64'
-# #+end_src
-
-# Now you need to install from source.
-# Download source code, then use
-
-# #+begin_src text
-# R --arch x86_64 CMD INSTALL multicore_0.1-3.tar.gz
-# R --arch=i386 CMD INSTALL --libs-only multicore_0.1-3.tgz
-# #+end_src
-
-# As Matthew said at http://www.matthewckeller.com/html/64_bit_r_on_mac.html
-
-# #+BEGIN_QUOTE
-# The first command installs the package multicore for 64-bit architecture.
-# It will erase any existing ‘multicore’ library that exists at the default location where libraries are installed
-# (Library/Frameworks/R.framework/Resources/library).
-# The second command installs the package for 32-bit use in case you want that.
-# Make sure on the second command to include the --libs-only option or else you’ll erase your 64-bit package
-# and replace it with a 32-bit one.
-# #+END_QUOTE
-
-
-* Usage
-** Include a library
-#+BEGIN_SRC R
-library(class)
-#+END_SRC
-
-** Path & Execute R scripts
-#+begin_src R
-setwd("/absolute/path")
-# the following can be the relative path to the above path
-source("./xxx.R") # load a script
-#+end_src
-
-** Command line interface
-Be sure to enter a new work directory because =R= may store something in current directory.
-
-*** Getting help information
-#+begin_src R
-R
-> q()
-> help(lm)
-> help("if")
-> ?lm
-> example(topic)
-> ??solve
-#+end_src
-
-*** Function command:
-
-#+begin_src R
-> source("a.R") # load another file
-> sink("a.lis") # redirect output to a.lis
-> sink() # retore output to stdio
-> ls() # list the objects currently stored
-> objects() # create and store current objects
-> rm(x, y, z, ink, junk, temp, foo, bar) # remove objects
-
-#+end_src
+** Packages
+=library()= see the list of installed packages.
+=library(class)= load the package =class=.
+=search()= see the list of loaded packages.
+=install.packages()= and =update.packages()= install and update packages.
 
 ** Emacs ESS
-*** with org mode
-In org mode, there's a babel for R, so just =C-c C-c= would work.
-It is possible to run each single line,
-use ~C-c <quote>~ to edit code, then =C-RET= to evaluate.
-
 To start ESS session, run command =S=.
-Or create a R file, and =C-c C-c= to evaluate.
-This will prompt to create a session.
-
 ESS will create a command interface as a buffer.
 Execute =?foo= will open the =R-doc= for the function =foo=.
 
-** With Org-mode
-Org file header:
+There's a babel in org mode for R, so just =C-c C-c= would work.
+This will prompt to create a session.
+One special for this babel is you can evaluate by line, using =C-<RET>= in the edit buffer.
+
+Keep the session using the header:
 #+BEGIN_EXAMPLE
-#+OPTIONS: toc:nil
-#+LATEX_CLASS: article
-# #+LATEX_CLASS_OPTIONS: [a4paper, margin=0in, 11pt]
-#+LATEX_HEADER: \usepackage{geometry}
-#+LATEX_HEADER: \geometry{margin=1in}
-#+LATEX_HEADER: \usepackage{indentfirst}
-#+LATEX_HEADER: \usepackage{fancyhdr}
-#+LATEX_HEADER: \pagestyle{fancy}
-#+LATEX_HEADER: \fancyhf{}
-#+LATEX_HEADER: \rhead{573 HW3}
-#+LATEX_HEADER: \lhead{Hebi Li}
 #+PROPERTY: session *R*
-#+END_EXAMPLE
-
-To make the code listing looks better, add this before the /first/ code listing.
-This will apply to all listing, as well as the output of R code whose format is "org".
-
-#+BEGIN_EXAMPLE
-#+ATTR_LATEX: :options frame=shadowbox
 #+END_EXAMPLE
 
 To export a graph:
 
 #+BEGIN_EXAMPLE
-:file hw3-1.png :results output graphics :exports both
+:file image.png :results output graphics :exports both
 #+END_EXAMPLE
 
 To export ordinary result:
@@ -181,215 +40,182 @@ To export some summary data:
 :exports both :results output org
 #+END_EXAMPLE
 
+** Interactive command
+=setwd("/absolute/path")= set the working directory.
 
-* Concepts & Language Reference
-** Numbers
-R will use double precision real numbers, or double precision complex numbers.
+In the interactive command line interface, =q()= to exit, 
+=help(lm)= to show help message for a built-in function.
+=?lm= and =??solve= also shows documentation, while =example(topic)=, as its name indicates, shows the examples.
+=help.start()= opens the html documentation page.
 
-Always supply complex numbers explicitly:
-=sqrt(-17)= will give NaN and a warning,
-but =sqrt(-17+0i)= will do it.
+IO:
+=source("a.R")= loads a script.
+=sink("a.lis")= redirects the output to a file, and =sink()= restore that to standard output.
 
-
-
-** Logical
-
-=TRUE=, =FALSE=, =NA=
-
- * =!a=
- * =a & b=
- * =a | b=
-
- * =is.na(x)=. never use x==NA, that will output a vector of lengh(x) with all NA
-
-** String
-=paste()= function takes an arbitrary number of arguments
-and concatenates them one by one into character strings.
-Any numbers given among the arguments are coerced
-into character strings in the evident way,
-that is, in the same way they would be if they were printed.
-
-The recycling rule also takes place here.
-
-#+begin_src R
-> labs <- paste(c("X","Y"), 1:10, sep="")
-# c("X1", "Y2", "X3", "Y4", "X5", "Y6", "X7", "Y8", "X9", "Y10")
-#+end_src
-
-** Objects
-
-Two intrinsic attributes: mode and length.
-Have two system functions:
-=mode(object)= and =length(object)=.
-
- * mode: the basic type of its fundamental constituents
+Objects:
+=ls()= list the objects currently stored.
+=objects()= create and store current objects.
+=rm(x, y, z, ink, junk, temp, foo, bar)= remove objects
 
 
-** Vectors
+* Objects
+Objects have mode and length.
+The =typeof= gets the type of an object, while =mode= retrieves the mode of an object.
+=length= gets the length of the vector.
 
-*** Declaration
-There are multiple ways to declare a vector:
-**** ~c~ operator
-all these assignments are equivalent
+Objects have attributes.
+=names= is used for indexing
+=dim= is the dimension of a matrix
+=dimnames= is the character names of the dimensions
 
-#+begin_src R
-# c() can take an arbitrary number of vector arguments.
-# return a vector got by concatenating its arguments end to end
-> x <- c(10.4, 5.6, 3.1, 6.4, 21.7)
-> x = c(10.4, 5.6, 3.1, 6.4, 21.7)
-> x
-# display x
-> assign("x", c(10.4, 5.6, 3.1, 6.4, 21.7))
-> c(10.4, 5.6, 3.1, 6.4, 21.7) -> x
-#+end_src
+The missing values are =NA=, tested by =is.na=.
+Illegal computations produces =NaN=, e.g. =0/0=.
 
-**** Colon operator
-=1:30=: the same as: =c(1, 2, ..., 29, 30)=
+Compound objects are /factors/ (a.k.a. enumerators) and /data frames/ (lists of objects all have the same length).
+Vectors are the array of objects of the same mode.
+List can contain the objects of different modes.
+A /data frame/ is a list with class "data.frame".
+
+** Vector
+Create a vector by =c=: =c(10.4, 5.6, 3.1)=.
+This connects elements /end to end/, e.g. =c(x, 0, x)=.
+By a sequence =1:30=: the same as: =c(1, 2, ..., 29, 30)=.
 Colon operator can also specify a backward sequence: =30:1=
-Colon operater has higher priority: ~2*1:15~ is the same as =c(2, 4, …, 28, 30)=
+Colon operator has higher priority: ~2*1:15~ is the same as =c(2, 4, …, 28, 30)=
+The colon operator works, if you want a more flexible and powerful expression, =seq= is what you want:
+- ~seq(2,10)~ produces ~2:10~.
+- ~seq(-5, 5, by=.2)~
+- ~seq(length=51, from=-5, by=.2)~
 
-**** Seq
-~seq(2,10)~ produces ~2:10~
-~seq(from=1, to=30)~ is the same as ~seq(to=30, from=1)~
+Repeating can be done by =rep=:
+- ~x <- c(1,2,3)~
+- ~rep(x, times=5)~ : ~[1,2,3,1,2,3,...]~
+- ~rep(x, each=5)~ : ~[1,1,1,1,1,2,2,2,2,2,...]~
+** Indexing
 
- #+begin_src R
- > seq(-5, 5, by=.2) -> s3
- > s4 <- seq(length=51, from=-5, by=.2)
- # x = [1,2,3]
- > s5 <- rep(x, times=5) # put five copies of x end-to-end in s5
- # [1,2,3,1,2,3,...]
- > s6 <- rep(x, each=5) # repeats each element of x five times before moving on to the next.
- # [1,1,1,1,1,2,2,2,2,2,...]
- #+end_src
+Inside =[]=, it can be a number or character, or a vector of them.
+For vectors, =[]= returns the element.
+For lists, =[]= will return the the element inside a list, while =[[]]= will return the single element.
+=[]= does not allow a vector as index.
 
-**** Matrix
- #+begin_src R
- > dim(z) <- c(3,5,100)
- # 3 by 5 by 100 array
- > z[2,,] # is 5,100 array
- > z[,,] # is the entire array
- #+end_src
+If the index is integer, will select based on the position, start from 1.
+If it is negative, it means the elements other than those index.
+The index 0 will return empty.
+Other numeric values will be converted to integer towards zero.
 
-
-*** Operations
-
-Operation on vector will work on each item of the vector, producing a vector.
-Operation among multiple vectors does not require the vectors to be of same length.
-The result is the longest, small ones repeat.
+If the index is logical vector, the true ones will be returned.
+If the index is character, it is compared, /partially/, with the /names/ attributes of the vector.
+=$= can be used for indexing with character.
+The empty index =[]= will returns the entire vector with /irrelevant/ attributes removed.
+The only retained ones are the =names=, =dim= and =dimnames= attributes.
 #+begin_src R
-> 1/x # will use 1 divides all 5 values of x, just like matrix in matlab
-> y <- c(x, 0, x)
-> v <- 2*x + y + 1 # small one repeat
+fruit <- c(5, 10, 1, 20)
+names(fruit) <- c("orange", "banana", "apple", "peach")
+lunch <- fruit[c("apple","orange")]
+# matrix
+dim(z) <- c(3,5,100)~
+z[2,,]
+z[,,]
 #+end_src
 
-**** outer product
+* Operators
+- arithmetic :: =+-*/=, =^= for exp, =%%= for modulus
+- matrix :: =%*%= matrix product, =%o%= outer product
+- logic :: =!=, =&, |= for vector, =&&, ||= for no vector
+- relative :: ~>, <, ==, <=, >=~
+- general :: =<-, ->= assignments, =$= list subset, =:= sequence, =~= for model formula
 
- #+begin_src R
- > ab <- a %o% b
- # the same as
- > ab <- outer(a, b, "*")
- #+end_src
-
- we can change the function used in =outer=
-
- #+begin_src R
- > f <- function(x, y) cos(y)/(1 + x^2)
- > z <- outer(x, y, f)
- #+end_src
-
-**** matrix multiplication
-
- #+begin_src R
- > A * B # matrix of element by element products
- > A %*% B # matrix product
- > x %*% A %*% x # quadratic form ... 二次多项式 ax^2 + bxy + cy^2
- #+end_src
-
-**** solve linear equation
-
- #+begin_src R
- > b <- A %*% x
- # if b and A are given, but not x, x will contain the result
- > solve(A,b) # will also solve the system.
- # I'm not sure this should be execute after the previous statement.
- #+end_src
-
-
-
-*** Vector Indexing/Subseting/Slicing
-**** Single Dimension
- #+begin_src R
- > y <- x[!is.na(x)]
- # x's none-NA elements.
- > (x+1)[(!is.na(x)) & x>0] -> z
- > x[6] # 6th element
- > x[1:10] # first 10 elements
- > c("x","y")[rep(c(1,2,2,1), times=4)]
- # a character vector of length 16 consisting of "x", "y", "y", "x" repeated four times.
- > y <- x[-(1:5)]
- # all but the first five elements of x.
- #+end_src
-
- naming
-
- #+begin_src R
- > fruit <- c(5, 10, 1, 20)
- > names(fruit) <- c("orange", "banana", "apple", "peach")
- > lunch <- fruit[c("apple","orange")]
- #+end_src
-
- change the subset:
-
- #+begin_src R
- > x[is.na(x)] <- 0
- # replaces any missing values in x by zeros
- > y[y < 0] <- -y[y < 0]
- # is same as:
- > y <- abs(y)
- #+end_src
-
-**** indexing matrix
-
- #+begin_src R
- > x <- array(1:20, dim=c(4,5))   # Generate a 4 by 5 array.
- > x
-      [,1] [,2] [,3] [,4] [,5]
- [1,]    1    5    9   13   17
- [2,]    2    6   10   14   18
- [3,]    3    7   11   15   19
- [4,]    4    8   12   16   20
- > i <- array(c(1:3,3:1), dim=c(3,2))
- > i                             # i is a 3 by 2 index array.
-      [,1] [,2]
- [1,]    1    3
- [2,]    2    2
- [3,]    3    1
- > x[i]                          # Extract those elements
- [1] 9 6 3
- > x[i] <- 0                     # Replace those elements by zeros.
- > x
-      [,1] [,2] [,3] [,4] [,5]
- [1,]    1    5    0   13   17
- [2,]    2    0   10   14   18
- [3,]    0    7   11   15   19
- [4,]    4    8   12   16   20
- #+end_src
-
-** functions
-*** Basic Mathematics
-- =+=, =-=, =*=, =/=, =^= (power),
+Built-in functions:
 - =log=, =exp=, =sin=, =cos=, =tan=, =sqrt=
 - =min=, =max=
-- =pmax= and =pmin=: parallel maximum and minimum functions
-   a vector (of length equal to their longest argument) that contains in each element the largest (smallest) element in that position in any of the input vectors
-
-*** common functions
 - =range=: same as =c(min(x),max(x))=
 - =length(x)=, =sum(x)=, =prod(x)= (product)
 - =mean(x)=: =sum(x)/length(x)=
 - ~var(x)~: ~sum((x-mean(x))^2)/(length(x)-1)~
 - ~sort(x)~: increasing order
 - ~order()~ or ~sort.list()~
+- =paste()= function takes an arbitrary number of arguments
+  and concatenates them one by one into character strings.
+
+* Control Structure
+The compound statements are the same as C, can be a single statement without the braces.
+** Conditional
+- if :: =if (STMT) STMT else if (STMT) STMT else STMT=
+- Switch :: =switch (STMT, LIST)=
+  - the STMT is first evaluated
+  - if the value is within 1 and the length of the LIST, evaluate LIST[i], and return
+  - return NULL
+  - Notice that the LIST can be a comma separated argument of switch ... which means switch actually accepts =...=
+
+** Loop
+- =for= :: =for (NAME in VECTOR) STMT=
+- =while= :: =while (STMT) STMT
+- =repeat= :: repeat STMT
+- =break=, =next= ::
+
+* Evaluation rules
+- recycling rules :: the shortest list is recycled to the length of longest.
+- dimensional attributes :: the dimension of matrix must match. No recycle for a matrix.
+
+* Function
+=function (ARGLIST) BODY=
+
+The argument list can be a symbol, a ~symbol=value~, or a =...=.
+The body is a compound expression, surrounded with ={}=.
+Function can be assigned to a symbol.
+
+The matching of formals and actual are pretty tricky.
+1. exact matching on tags
+2. partial matching on tags
+3. positional matching for =...=
+Partial matching result must be unique, but the exact matched ones are excluded before this step is entered.
+
+* Quote
+The quote will wrap the expression into an object without evaluating it.
+The resulting object has the mode of =call=.
+The =eval= is used to evaluate it.
+
+* Debugging
+To enter the debugger, a call to =browser= function suffices.
+This allows you to browse the values at that point.
+A more powerful debugger is by a call to =debug= with the function name as argument.
+Each time that function is called, you enter the debug and can control the execution.
+Tracing can be registered by =trace= or =untrace= with the name of the function.
+It might need to be quoted in some case, so you'd better quote it, with double quotes.
+Every time the function is invoked, the return value will be printed as trace.
+* Data IO
+- =write=
+- =write.table=
+- =write.csv=
+- ~read.table("filename", header=TRUE, sep=",")~
+  - this ignores blank lines,
+  - and expect the header to be one field less than the body.
+  - =#= as comments
+
+
+* Models
+Linear model.
+
+#+BEGIN_EXAMPLE
+fm = lm(y ~ x1 + x2, data = mydataframe)
+#+END_EXAMPLE
+
+The fitted model in the variable =fm= can be accessed by:
+- =coef= :: extract the coefficients
+- =deviance= :: the Residual Sum of Square
+- =formula= :: extract the model formula
+- =plot= :: produce four plots: residuals, fitted values, diagnostics.
+- =predict(OBJECT, newdata=DATA.FRAME)= :: use the model to predict
+- =residuals= :: extract the residuals
+- =summary= :: print the summary
+
+The models can be updated, if the formula only changes a little bit.
+In the following example, the =.= means the corresponding part of the original formula.
+#+BEGIN_SRC R
+fs <- lm(y~x1 + x2, data=mydata)
+fs <- update(fs, . ~ . + x3)
+fs <- update(fs, sqrt(.) ~ .)
+#+END_SRC
 
 
 * Packages
@@ -405,66 +231,18 @@ qplot(smoker, tipperc, geom="boxplot", data=tips)
 qplot(sex:smoker, tipperc, geom="boxplot", data=tips) # combine! plot the two sets of graph in two one graph
 qplot(totbill, tip, geom="point", colour=day, data=tips) # scatter plot with colors, in regard to "day" column
 #+END_SRC
+** plot(x, y, ...)
+Possible =...= arguments:
+- =type= what type of plot: 
+  - =p= for points,
+  - =l= for lines,
+  - =b= for both,
+  - =h= for =histogram= like (or =high-density=) vertical lines,
+- =main= an overall title for the plot: see =title=.
+- =xlab= a title for the x axis: see =title=.
+- =ylab= a title for the y axis: see =title=.
 
-** dplyr: A Grammar of Data Manipulation
+** dplyr
+A Grammar of Data Manipulation
 https://cran.r-project.org/web/packages/dplyr/index.html
 https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html
-
-* Some R Scripts I wrote
-
-** Plot the US map
-#+BEGIN_SRC R :file assets/images/usmap.png :results output graphics :exports both
-# load library and prepare data
-library(ggplot2)
-library(maps)
-states <- map_data("state")
-
-# plot map
-map <- qplot(long, lat, geom="polygon", fill=I("lightgrey"), colour=I("white"), group=group, data=states)
-# inspecting map
-map
-
-# with different themes
-map + theme_classic()
-maptheme <- map + theme_classic() +
-  xlab("") + ylab("") + # no x or y labels
-    theme(axis.line=element_blank())
-# inspecting this theme
-maptheme
-
-## load city data
-data(us.cities)
-head(us.cities)
-# plot city data onto the same map, by "add" operation with "goem_point"
-maptheme + geom_point(aes(x=long, y=lat, group=1), data=us.cities)
-# the cities are in red
-maptheme + geom_point(aes(x=long, y=lat, group=1), data=us.cities, color="red")
-
-
-## http://www.public.iastate.edu/~hofmann/stat579/lectures/15-polishing.html
-## 1. plot only capitals (capital != 0)
-## 2. do not plot cities outside US (xlim, ylim)
-## 3. label the city names (geom_text)
-## 4. adjust the position of city names so that it does not overlap the point (hjust, vjust in geom_text)
-## 5. Make the text grey and smaller
-
-us.capital = subset(us.cities, capital != 0)
-head(us.capital)
-
-map <- qplot(
-    long, lat, geom="polygon", fill=I("lightgrey"), colour=I("white"),
-    group=group, data=states,
-    xlim=c(min(states$long), max(states$long)),
-    ylim=c(min(states$lat), max(states$lat)))
-
-map +
-    geom_point(aes(x=long, y=lat, group=1), data=us.capital, color="red") +
-    geom_text(
-        aes(x=long, y=lat, group=1), data=us.capital,
-        label=us.capital$name, hjust=0.5, vjust=1,
-        color="dimgrey", size=3)
-#+END_SRC
-
-#+RESULTS:
-[[file:assets/images/usmap.png]]
-

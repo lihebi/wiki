@@ -7,16 +7,28 @@
 * stack
 
 ** TODO qi's macbook
-** TODO Driver license renew
-** TODO R
+   SCHEDULED: <2016-10-11 Tue>
+** DONE [#A] R
+   SCHEDULED: <2016-10-07 Fri>
 ** TODO bison, yacc, lex
-** TODO gnus, cheatsheet etc
+   SCHEDULED: <2016-10-12 Wed>
+** DONE gnus, cheatsheet etc
+   SCHEDULED: <2016-10-07 Fri>
 ** TODO 572 hw5
+   SCHEDULED: <2016-10-10 Mon>
 ** TODO compete the run-test ... features
+   SCHEDULED: <2016-10-07 Fri>
 ** TODO GNU Emacs Calculator (calc)
-
-
-
+   SCHEDULED: <2016-10-07 Fri>
+** TODO Helium Refactor remove all dead code!
+** TODO ESS emacs system
+** TODO AWK SED full
+** TODO Speed network slides
+   DEADLINE: <2016-10-11 Tue>
+** TODO Helium Transfer function implementation
+   SCHEDULED: <2016-10-09 Sun>
+** TODO Helium Transfer function report
+   SCHEDULED: <2016-10-09 Sun>
 * TODO Open Source Ideas
 ** TODO pdf-tools
 *** +TODO two column view+
@@ -25,8 +37,11 @@
 
 * Emacs
 ** TODO reftex, org mode, default bibliography 1. don't need to set 2. easy to export to one file
+   SCHEDULED: <2016-10-07 Fri>
 ** TODO HEBI xxxx in emacs highlight the whole line!
+   SCHEDULED: <2016-10-07 Fri>
 ** TODO Ultra-mark
+   SCHEDULED: <2016-10-10 Mon>
 - at a line, create a mark, using an optional text.
 - One can view it by command similar to helm-mark-ring.
 - You need to delete it (tab and select) to remove it, otherwise it will be there
@@ -124,3 +139,4 @@ There're some pages not migrated from old wiki:
 - [X] =software/=
 - [X] =web/=
 ** DONE 572 hw 4
+** DONE Driver license renew
