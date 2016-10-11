@@ -11,25 +11,44 @@
 ** DONE compete the run-test ... features
    SCHEDULED: <2016-10-07 Fri>
 ** TODO GNU Emacs Calculator (calc)
-   SCHEDULED: <2016-10-11 Tue>
+   SCHEDULED: <2016-10-14 Fri>
 ** DONE Helium Refactor remove all dead code!
    SCHEDULED: <2016-10-09 Sun>
-** TODO Helium Transfer function implementation
+** DONE Helium Transfer function implementation
    SCHEDULED: <2016-10-09 Sun>
-** TODO Helium Transfer function report
+** DONE Helium Transfer function report
    SCHEDULED: <2016-10-09 Sun>
 ** TODO ESS emacs system
 ** TODO AWK SED full
-** TODO Speed network slides
+** DONE Speed network slides
    DEADLINE: <2016-10-11 Tue>
 ** TODO 572 hw5
-   SCHEDULED: <2016-10-10 Mon>
+   DEADLINE: <2016-10-14 Fri>
 ** TODO qi's macbook
-   SCHEDULED: <2016-10-11 Tue>
+   SCHEDULED: <2016-10-14 Fri>
 ** TODO bison, yacc, lex
    SCHEDULED: <2016-10-12 Wed>
 ** DONE Helium support duplicated function names in Resource, using ID instead of function name string
    SCHEDULED: <2016-10-10 Mon>
+** TODO Helium use fs::path instead of string for all
+   SCHEDULED: <2016-10-12 Wed>
+** TODO Helium utils thread exec refactoring
+** TODO array, double ** input generation code
+   SCHEDULED: <2016-10-11 Tue>
+** TODO Argv getopt
+   SCHEDULED: <2016-10-11 Tue>
+   - special case
+   - symbolic execution
+   - boundary values
+** TODO malloc record size
+   SCHEDULED: <2016-10-11 Tue>
+** TODO remove branch if not covered
+   SCHEDULED: <2016-10-11 Tue>
+** TODO remove 1000 limit for pairwise generation and test
+   SCHEDULED: <2016-10-11 Tue>
+** TODO try all the benchmarks ...
+   SCHEDULED: <2016-10-11 Tue>
+
 
 * TODO Open Source Ideas
 ** TODO pdf-tools
@@ -39,11 +58,11 @@
 
 * Emacs
 ** TODO reftex, org mode, default bibliography 1. don't need to set 2. easy to export to one file
-   SCHEDULED: <2016-10-07 Fri>
+   SCHEDULED: <2016-10-12 Wed>
 ** DONE HEBI xxxx in emacs highlight the whole line!
    SCHEDULED: <2016-10-07 Fri>
 ** TODO Ultra-mark
-   SCHEDULED: <2016-10-10 Mon>
+   SCHEDULED: <2016-10-14 Fri>
 - at a line, create a mark, using an optional text.
 - One can view it by command similar to helm-mark-ring.
 - You need to delete it (tab and select) to remove it, otherwise it will be there
