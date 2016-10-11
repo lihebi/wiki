@@ -33,6 +33,20 @@ ExeCount : linum : line
 
 =#= in the ExeCount means no execution.
 
+* Gprof
+Compile and link with the =-pg= option.
+When running the program, a =gmon.out= will be produced.
+It will overwrite if the file exists.
+Running the =gprof= is like:
+#+BEGIN_EXAMPLE
+gprof options exe-file profile-data-file
+#+END_EXAMPLE
+
+=exe-file= defaults to =a.out=, =profile-data-file= defaults to =gmon.out=.
+
+As I tried, this is not friendly for C++ programs. The output is full of STL namespace.
+
+
 
 * Some experience
 

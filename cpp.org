@@ -257,6 +257,34 @@ Base classes are initialized before derived classes;
 within a class, data members are initialized in the order in which they declared,
 not the position in initialization list.
 
+I did a test for the copy constructor:
+
+#+BEGIN_SRC C++
+#include <iostream>
+
+class A {
+public:
+  A() {}
+  ~A() {}
+  int get() {return a;}
+  void set(int aa) {
+    a = aa;
+  }
+private:
+  int a = 8;
+};
+
+int main() {
+  A *a = new A();
+  a->set(9);
+  A *b = new A(*a);
+  std::cout << a->get()  << "\n";
+  std::cout << b->get() << "\n";
+}
+#+END_SRC
+
+Both the outputs are 9, so the initialization ~a=8~ is not called when doing copy construction
+
 ** virtual
 *** Bottom Line
   * polymorphic base classes should declare virtual destructors.

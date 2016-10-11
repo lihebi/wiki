@@ -3,6 +3,8 @@
 - Debian Wiki: https://wiki.debian.org/
 - FreeBSD: https://www.freebsd.org/
 
+* System
+- to monitor the IO usage, use the =iostat= command from =sysstat= package.
 
 * App
 - File explorer: konquerer

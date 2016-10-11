@@ -33,3 +33,11 @@ https://github.com/zenorocha/alfred-workflows
 
 * Disable mouse acceleration
 defaults write .GlobalPreferences com.apple.mouse.scaling -1
+
+* Setting up printer at Atanasoff
+
+go to /printer/, /add advance/, use:
+- =type= :: windows printer via spools
+- =URL= :: =smb://papercut2.its.iastate.edu/Atanasoff-B01-LaserJet-9050=
+- =use= :: generic PCL Printer
+choose =duplifier=
