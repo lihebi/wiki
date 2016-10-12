@@ -8,6 +8,9 @@
 
 ** DONE gnus, cheatsheet etc
    SCHEDULED: <2016-10-07 Fri>
+
+** TODO all type input generation, e.g. struct
+   SCHEDULED: <2016-10-11 Tue>
 ** DONE compete the run-test ... features
    SCHEDULED: <2016-10-07 Fri>
 ** TODO GNU Emacs Calculator (calc)
