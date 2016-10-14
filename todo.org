@@ -3,12 +3,26 @@
 * READ PAPERS
 * WRITE HELIUM
 
+* Helium
+
+** TODO transfer function no constant
+** TODO transfer function infer only when data is more than a limit
+** TODO oracle
+** TODO switch case control flow graph
+   SCHEDULED: <2016-10-13 Thu>
+** TODO switch code selection and test coverage, test Helium getopt code
+
 
 * stack
 
 ** DONE gnus, cheatsheet etc
    SCHEDULED: <2016-10-07 Fri>
 
+** TODO remove branch based on the problematic one
+   SCHEDULED: <2016-10-12 Wed>
+
+** TODO Helium all TODO and FIXMEs
+   SCHEDULED: <2016-10-12 Wed>
 ** TODO all type input generation, e.g. struct
    SCHEDULED: <2016-10-11 Tue>
 ** DONE compete the run-test ... features
@@ -36,14 +50,14 @@
 ** TODO Helium use fs::path instead of string for all
    SCHEDULED: <2016-10-12 Wed>
 ** TODO Helium utils thread exec refactoring
-** TODO array, double ** input generation code
+** DONE array, double ** input generation code
    SCHEDULED: <2016-10-11 Tue>
-** TODO Argv getopt
+** DONE Argv getopt
    SCHEDULED: <2016-10-11 Tue>
    - special case
    - symbolic execution
    - boundary values
-** TODO malloc record size
+** DONE malloc record size
    SCHEDULED: <2016-10-11 Tue>
 ** TODO remove branch if not covered
    SCHEDULED: <2016-10-11 Tue>
@@ -58,6 +72,7 @@
 *** +TODO two column view+
 *** TODO show citation on-the-fly
 *** TODO adjust the position (center)
+** TODO wide screen coding
 
 * Emacs
 ** TODO reftex, org mode, default bibliography 1. don't need to set 2. easy to export to one file

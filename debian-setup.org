@@ -95,6 +95,11 @@ plantuml
 libxpm-dev libjpeg-dev libgif-dev libtiff5-dev # required package for compile emacs
 gdb
 sysstat
+
+tidy # xml bueatifier
+
+pylint
+pylint3
 #+END_EXAMPLE
 
 Non-package software:
