@@ -1,21 +1,18 @@
 #+TITLE: Common Lisp
 
-- https://common-lisp.net/project/asdf/
-- http://people.ace.ed.ac.uk/staff/medward2/class/moz/cm/doc/contrib/lispstyle.html
-
-- Common Lisp: https://common-lisp.net/
-- Common Lisp Book: http://www.gigamonkeys.com/book/
-- Common Lisp asdf: https://common-lisp.net/project/asdf/
-- Slime: https://common-lisp.net/project/slime/
-
-
-
-* packages
+* Installation
+** packages
 - =cl-quicklisp=
+** org babel
+first, start =M-x slime=, then you can evaluate this:
 
+#+name: hello-world
+#+header: :var message="Hello World!"
+#+begin_src lisp
+  (princ message)
+#+end_src
 
-* Slime
-** Installation
+** Slime
 - slime (emacs IDE)
 - sbcl ("lisp" executer)
 - cl-quicklisp (package manager)
@@ -36,19 +33,297 @@ CL-USER> (ql:update-client) ;; update quicklisp itself
 
 The staff added into =.sbclrc=:
 #+BEGIN_EXAMPLE
-;;; The following lines added by ql:add-to-init-file:                                                                                                                                                              
-#-quicklisp                                                                                                                                                                                                        
-(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"                                                                                                                                                      
-                                       (user-homedir-pathname))))                                                                                                                                                  
-  (when (probe-file quicklisp-init)                                                                                                                                                                                
-    (load quicklisp-init)))
+  ;;; The following lines added by ql:add-to-init-file:
+  #-quicklisp
+  (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
+  (user-homedir-pathname))))
+  (when (probe-file quicklisp-init)
+  (load quicklisp-init)))
 #+END_EXAMPLE
 
-** Commands
+*** Commands
 
 | command   | description             |
 |-----------+-------------------------|
 | C-c C-d d | slime-describe-symbol   |
 | C-c C-d f | slime-describe-function |
 | M-TAB     | slime-complete-symbol   |
-|           |                         |
+
+In a buffer of mode =lisp=, =C-c C-c= will evaluate the =defun= around cursor.
+=C-c C-z= will switch to the =slime= buffer.
+
+
+* Reference
+Common Lisp the language: http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/html/cltl/cltl2.html
+
+** Truth, falsehood, equality
+- =nil= is false, everything else is true
+- =nil= is both an atom and a list. =()= is exactly the same as =nil=
+
+- =EQ= tests for object identity. Two objects are =EQ= if they're identical.
+  It CANNOT compare numbers and characters, which gives undefined behavior.
+- =EQL= is similar to =EQ= except that it guarantees the same numeric or character value is equal. =(eql 1 1)= is =t=.
+- =EQ= is more efficient than =EQL= because it does not need to check whether it is numeric or character.
+  But =EQL= has less trouble to understand .. so use =EQL= when possible.
+- =EQUAL= is looser than =EQL=. It consider strings equivalent if they contain the same characters.
+- =EQUALP= is even looser. For example, it consider two strings are equal case-insensitively. NEVER use this.
+** Function
+#+BEGIN_SRC lisp
+  (defun name (a b
+               &optional op1 (op2 def-value) (op3 def-value op3-supplied-p)
+               &rest rests
+               &key k1 (k2 def-value k2-supplied-p) ((:kkkkk3 k3) def-value k3-supplied-p))
+    (body-forms))
+#+END_SRC
+
+First required arguments are consumed, then the optional arguments, then the rest, finally the keyword arguments.
+optional arguments can have default values (which defaults to nil), and a variable to indicate whether it is supplied.
+The rests is a list.
+keyword arguments are the same as optional arguments, except it must be supplied by keyword.
+It can be rebound to a simpler name to be used in the body.
+
+Never mix (optional, key).
+You can mix rest and key, but the behavior is, after matching all required and optional, everything are bound to rest.
+Then appropriate ones are ALSO bound to keyword arguments.
+
+The return value of function is typically the last expression.
+But you can explicit return from a function by using =RETURN-FROM SYMBOL body= special form.
+Symbol is the function name to return, and it is not evaluted.
+You must provide the function in order to return, which makes it not frequently used.
+
+The function object can be obtained by ='#=.
+One can apply the object in two ways:
+- =FUNCALL= :: the first is the function object, the rests are arguments
+- =APPLY= :: the first is the function object, then a list of arguments.
+  The list can be looser, e.g. some arguments, as long as the last one is a list.
+
+
+* Style Guide
+Reference: http://people.ace.ed.ac.uk/staff/medward2/class/moz/cm/doc/contrib/lispstyle.html
+
+- if return multiple values, use =values= instead of a list; if return no values, use =(values)=
+- =+global-constant+=
+- =*global-variable*=
+- use =setf= instead of =setq=.
+  This is more general. This includes /variables, array locations, list elements, hash table entries, structure fields, and object slots/.
+- Remember that append copies its arguments.
+  Avoid using append inside a loop to add elements to the back of a list.
+  Use the collect clause in loop, or push elements onto a list and then nreverse the list to return the original ordering.
+
+Bad:
+#+BEGIN_SRC lisp
+(let ((result ()))
+  (dolist (x list)
+    (setf result (append result (list x))))
+  result)
+#+END_SRC
+Better:
+#+BEGIN_SRC lisp
+(let ((result ()))
+  (dolist (x list)
+    (push x result))
+  (nreverse result))
+#+END_SRC
+Best:
+#+BEGIN_SRC lisp
+  (loop for x in list collect x)
+#+END_SRC
+
+- Remember that copy only copies the outer-most level of a list. Use copy-tree to copy all levels of a list.
+Lisp programmers often use the functions and and or to implement simple conditional evaluation. For example,
+
+#+BEGIN_SRC lisp
+  ;; use
+  (and x (setf y t))
+  ;; instead of
+  (when x
+    (setf y t))
+  ;; use
+  (or x (setf y t))
+  ;; instead of
+  (unless x
+    (setf y t))
+#+END_SRC
+
+* Practical Common Lisp
+http://www.gigamonkeys.com/book/
+** CD database
+#+BEGIN_SRC lisp
+  ;; (HEBI: hello world, testing environment)
+  (defun hello-world ()
+    (format t "Hello, world!"))
+
+  ;; this function makes the cd
+  (defun make-cd (title artist rating ripped)
+    ;; (HEBI: the list created is a property list. The :key is the key, and followed by the value)
+    (list :title title :artist artist :rating rating :ripped ripped))
+
+  ;; make a cd record
+  (make-cd "Roses" "Kathy Mattea" 7 t)
+
+  ;; (HEBI: the *xx* is the convention for a global variable)
+  (defvar *db* nil)
+
+  ;; (HEBI: The push will push the cd onto the global *db*)
+  (defun add-record (cd) (push cd *db*))
+
+
+
+  ;; add some records to the database
+  (add-record (make-cd "Roses" "Kathy Mattea" 7 t))
+  (add-record (make-cd "Fly" "Dixie Chicks" 8 t))
+  (add-record (make-cd "Home" "Dixie Chicks" 9 t))
+
+
+  (defun dump-db ()
+    ;; (HEBI: dolist)
+    (dolist (cd *db*)
+      ;; (HEBI: format)
+      ;; the first is the output stream, with t as standard output
+      ;; The ~a directive is the aesthetic directive; it means to consume one argument and output it in a human-readable form
+      ;; It will work for both keyword and value
+      ;; ~t is for tabulating. ~10t means emit enough spaces to move to the tenth column
+      ;; ~{ and ~} will make format: 1. require the next argument to be a list 2. consume the elements of the list for each ~a inside them
+      ;; ~% emit a new line
+      (format t "~{~a:~10t~a~%~}~%" cd)))
+
+  ;; (HEBI: note: the above function can use format to iterate the whole *db* list)
+  (defun dump-db-2 ()
+    (format t "~{~{~a:~10t~a~%~}~%~}" *db*))
+
+
+  (defun prompt-read (prompt)
+    ;; the *query-io* is a global variable that contains the input stream connected to the terminal
+    (format *query-io* "~a: " prompt)
+    ;; (HEBI: flush)
+    (force-output *query-io*)
+    ;; read-line will read the string without the trailing newline
+    (read-line *query-io*))
+
+  (defun prompt-for-cd ()
+    (make-cd
+     ;; read a string
+     (prompt-read "Title")
+     (prompt-read "Artist")
+     ;; (HEBI: parse the string to int)
+     ;; if nil, the parse-integer will emit error. :junk-allowed t will make it silent
+     ;; the surrounding "or" will make a default value of 0 instead of nil
+     (or (parse-integer (prompt-read "Rating") :junk-allowed t) 0)
+     ;; (HEBI: y-or-n-p) is a builtin function. It is very robust, in the sense that it will reopen the prompt if answer is not yY or nN.
+     (y-or-n-p "Ripped [y/n]: ")))
+
+  (defun add-cds ()
+    (loop (add-record (prompt-for-cd))
+       ;; this loop will end if the another query is answered as n
+       (if (not (y-or-n-p "Another? [y/n]: ")) (return))))
+
+  (defun save-db (filename)
+    ;; (HEBI: open the file and store the stream) as variable "out"
+    ;; filename is the filename string
+    ;; direction defaults to :input, so if want output, need to specify
+    ;; if-exists, overwrite it
+    (with-open-file (out filename
+                         :direction :output
+                         :if-exists :supersede)
+      ;; this is used to ensures that certain variables that affect the behavior of print are set to their standard values.
+      ;; be sure to use the same macro when reading the data back
+      (with-standard-io-syntax
+        ;; (HEBI: directly print the *db* to the stream)
+        ;; lisp will print the object out in the form that it can be read back
+        (print *db* out))))
+
+  ;; now you can save it
+  (save-db "~/my-cds.db")
+
+  ;; load the db back
+  (defun load-db (filename)
+    (with-open-file (in filename)
+      (with-standard-io-syntax
+        ;; use read to (HEBI: read everything from the stream in)
+        ;; use (HEBI: setf) to set result of the read to the *db* variable
+        (setf *db* (read in)))))
+
+  ;; query
+  (defun select-by-artist (artist)
+    ;; make a copy of *db* by removing if not the predicate, and return that copy
+    (remove-if-not
+     ;; (HEBI: getf can get the value of a plist by the key)
+     ;; #' is the quote for function
+     #'(lambda (cd) (equal (getf cd :artist) artist))
+     ,*db*))
+
+  (defun select (selector-fn)
+    (remove-if-not selector-fn *db*))
+
+  (defun artist-selector (artist)
+    #'(lambda (cd) (equal (getf cd :artist) artist)))
+
+  ;; use this by:
+  (select (artist-selector "Dixie Chicks"))
+
+
+  ;; keyword argument, can be called by (func :key value)
+  ;; default value using (var default)
+  ;; (var default var-p) var-p is used to check whether the argument is supplied or not
+  (defun where (&key title artist rating (ripped nil ripped-p))
+    #'(lambda (cd)
+        (and
+         (if title    (equal (getf cd :title)  title)  t)
+         (if artist   (equal (getf cd :artist) artist) t)
+         (if rating   (equal (getf cd :rating) rating) t)
+         (if ripped-p (equal (getf cd :ripped) ripped) t))))
+
+  ;; use by:
+  (select (where :rating 10 :ripped nil))
+
+  (defun update (selector-fn &key title artist rating (ripped nil ripped-p))
+    (setf *db*
+          ;; (HEBI: mapcar) apply the function to each element of the list, and return the list of results
+          (mapcar
+           #'(lambda (row)
+               (when (funcall selector-fn row)
+                 ;; this (setf (getf) xx) staff is magic. setf has nothing to do with getf
+                 (if title    (setf (getf row :title) title))
+                 (if artist   (setf (getf row :artist) artist))
+                 (if rating   (setf (getf row :rating) rating))
+                 (if ripped-p (setf (getf row :ripped) ripped)))
+               row) *db*)))
+
+  ;; this can be called:
+  (update (where :artist "Dixie Chicks") :rating 11)
+
+  (defun delete-rows (selector-fn)
+    (setf *db* (remove-if selector-fn *db*)))
+
+  ;; OK, refactoring time
+  ;; Problems for where:
+  ;; the if ... checking inside "and" is almosts the same, that's duplicate code
+  ;; for the querys that do not have other fields, we don't want to check those fields, to avoid overhead
+
+  ;; The solution is the MACRO, the code generator of lisp
+
+  ;;; (HEBI: Macros, all kinds of quoting)
+  (defun make-comparison-expr (field value)
+    ;; ' will leave the expression unevaluated.
+    ;; ` will do the same thing, and it can do one more: can evaluate part of it
+    ;; , before a subexpression will evalute that
+    `(equal (getf cd ,field) ,value))
+
+  (defun make-comparisons-list (fields)
+    (loop while fields
+       ;; using loop facility, make comparison expr for all the fields
+       ;; pop will pop the first of the list
+       collecting (make-comparison-expr (pop fields) (pop fields))))
+
+  ;; wrap comparison expr into and clause
+  (defmacro where (&rest clauses)
+    ;; ,@() will evaluate the subexpression, and splice the resulting list into the surrounding list
+    `#'(lambda (cd) (and ,@(make-comparisons-list clauses))))
+
+  ;; this can check what this macro expanded to
+  (macroexpand-1 '(where :title "Give Us a Break" :ripped t))
+
+  ;; Final test:
+  (select (where :title "Give Us a Break" :ripped t))
+#+END_SRC
+

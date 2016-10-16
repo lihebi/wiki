@@ -5,12 +5,14 @@
 
 * Helium
 
-** TODO transfer function no constant
-** TODO transfer function infer only when data is more than a limit
+** DONE transfer function no constant
+** DONE transfer function infer only when data is more than a limit
 ** TODO oracle
-** TODO switch case control flow graph
+   SCHEDULED: <2016-10-16 Sun>
+** DONE switch case control flow graph
    SCHEDULED: <2016-10-13 Thu>
-** TODO switch code selection and test coverage, test Helium getopt code
+** DONE switch code selection and test coverage, test Helium getopt code
+   SCHEDULED: <2016-10-15 Sat>
 
 
 * stack
@@ -18,10 +20,10 @@
 ** DONE gnus, cheatsheet etc
    SCHEDULED: <2016-10-07 Fri>
 
-** TODO remove branch based on the problematic one
+** DONE remove branch based on the problematic one
    SCHEDULED: <2016-10-12 Wed>
 
-** TODO Helium all TODO and FIXMEs
+** DONE Helium all TODO and FIXMEs
    SCHEDULED: <2016-10-12 Wed>
 ** TODO all type input generation, e.g. struct
    SCHEDULED: <2016-10-11 Tue>
@@ -39,7 +41,7 @@
 ** TODO AWK SED full
 ** DONE Speed network slides
    DEADLINE: <2016-10-11 Tue>
-** TODO 572 hw5
+** DONE 572 hw5
    DEADLINE: <2016-10-14 Fri>
 ** TODO qi's macbook
    SCHEDULED: <2016-10-14 Fri>
@@ -59,9 +61,9 @@
    - boundary values
 ** DONE malloc record size
    SCHEDULED: <2016-10-11 Tue>
-** TODO remove branch if not covered
+** DONE remove branch if not covered
    SCHEDULED: <2016-10-11 Tue>
-** TODO remove 1000 limit for pairwise generation and test
+** DONE remove 1000 limit for pairwise generation and test
    SCHEDULED: <2016-10-11 Tue>
 ** TODO try all the benchmarks ...
    SCHEDULED: <2016-10-11 Tue>
