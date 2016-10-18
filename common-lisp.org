@@ -199,6 +199,35 @@ predicates
 | ~/=~           | ~char/=~       | =CHAR-NOT-EQUAL= | ~string/=~       | =string-not-equal= |
 | ~<~            | ~char<~        | =CHAR-LESSP=     | ~string<~        | =string-lessp=     |
 
+** Destructive
+There are two types of destructive functions:
+- /for-side-effect/: typically use =setf=
+- /recycling operation/
+
+The recycling operations are typically those with =n= as prefix.
+80 percent of the use cases are =PUSH/NREVERSE= and =SETF/DELETE=.
+
+#+BEGIN_SRC lisp
+(defun upto (max)
+  (let ((result nil))
+    (dotimes (i max)
+      (push i result))
+    (nreverse result)))
+#+END_SRC
+
+#+BEGIN_SRC lisp
+(setf foo (delete nil foo))
+#+END_SRC
+
+=sort= is also destructive, so use it on a copy of the list. Be sure to assign it back to the variable.
+
+#+BEGIN_SRC lisp
+(defparameter *list* (list 4 3 2 1))
+(sort *list* #'<) ;; (1 2 3 4)
+*list* ;; (4)
+;; so shoud use:
+(setf *list* (sort *list* #'<))
+#+END_SRC
 
 * Style Guide
 Reference: http://people.ace.ed.ac.uk/staff/medward2/class/moz/cm/doc/contrib/lispstyle.html
