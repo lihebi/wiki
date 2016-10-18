@@ -97,6 +97,108 @@ One can apply the object in two ways:
 - =APPLY= :: the first is the function object, then a list of arguments.
   The list can be looser, e.g. some arguments, as long as the last one is a list.
 
+** Variable
+The symbol is a reference of the object.
+Assigning to the symbol will create another reference to another object.
+But, if the object is mutable, then assign to the reference will change the object.
+
+Function parameters are reference.
+So if the object is mutable, then assigning to the parameter will change the referenced object.
+
+Global variable can be defined by =defvar= and =defparameter=. Naming convention is put =*= surrounds it.
+
+#+BEGIN_EXAMPLE
+defparameter *varname* init-value "Optional document string"
+defvar *varname* optional-init-value "optional document string"
+#+END_EXAMPLE
+
+The difference (Prefer =defvar=):
+- =defparameter= will always assign the initial value
+- =defvar= will do so only if the variable is not defined;
+  =defvar= can also be used without initial value, the variable will be unbound.
+
+Although the global variable can be referred at any place, the binding is still quite lexical regarding to the binding form.
+E.g, the let binding can rebind the global variable, and everything before the return of let form sees this binding.
+After the return, the binding fall back to the previous binding.
+This is good because when you want to temporary change the =*standard-output*= to a file,
+you don't need to have to remember to change it back.
+
+This also means, assign to global variable only modify the specific binding, while the binding on the stack does not change.
+Lisp did this by looking up the name of variable: if it is declared by =defvar= or =defparameter=,
+it will creates dynamic binding.
+
+=defconstant +name+ init-value "optional document string"= is used to declare constant. Use =+= surrounds it.
+It is possible to redefine the constant using =defconstant= again, but the behavior is undefined.
+E.g. the code refer to it might need to be reevaluated to see the update.
+So, do NOT redefine a constant, otherwise it is not a constant, use =defparameter= instead.
+
+Assigning a value to a binding is:
+1. change the binding only, do not change other hidden bindings for this symbol
+2. do not change the value object the binding refers to
+
+The general assignment operator is =setf (place value)+=.
+When assigning a binding, it will call =setq= (but don't call =setq= directly!), and returns the newly assigned value.
+In the document, a /SEFTable/ thing is suitable to be a =setf= /place/.
+
+To make the code more concise, some "f-family" are invented.
+- =(incf x)= :: =(setf x (+ x 1))=
+- =(decf x)= ::
+- =(incf x 10)= ::
+
+here =incf= and =decf= modifies the argument, so they are called /modify macros/.
+Other /modify macros/:
+- =push=, =pop=, =pushnew=
+- =rotatef=, =shiftf=
+  - =(roratef a b)= is equal to =(let ((tmp a)) (setf a b b tmp) nil)=
+  - =(shiftf a b 10)= shifts all the values left, equals to =(let ((tmp a)) (setf a b b 10) tmp)=
+
+** Control Structure
+*** Conditional
+- =(if condition then-form [else-form])=
+- =(progn forms*)=
+- =(when cond forms*)=
+- =(unless cond forms*)=
+- =(cond (test-1 form*) (test-2 form*))=:
+  The test predicates are evaluated one by one until one to =t=, then evaluate the body form, and return the last.
+  To have a default, put a =t= as the last condition.
+
+*** Looping
+- =(dolist (var list-form) body-form*)=
+- =(dotimes (var count-form) body-form*)=: from 0 to the value of count-form-1, inclusively
+- =(do (var-def*) (end-test-form result-form*) statements*)= where the var-def is =(var init-form step-form)=
+  - =(do ((i 0 (1+ i)))   ((> i 4))     (print i))
+
+** Types
+*** numbers
+- =#b010101=
+- =#xaf08=
+rounding:
+- =floor= :: toward negative infinity
+- =ceiling= :: toward positive infinity
+- =truncate= :: toward 0
+- =round= :: to nearest integer
+modulus
+- =mod= :: modular
+- =rem= :: remainder
+min,max
+- =min=
+- =max=
+predicates
+- =zerop=
+- =minusp=
+- =plusp=
+- =evenp=
+- =oddp=
+- ~/=~
+
+*** characters
+
+| numeric analog | case-sensitive | case-insensitive | string case sens | string case insens |
+|----------------+----------------+------------------+------------------+--------------------|
+| ~=~            | ~char=~        | =CHAR-EQUAL=     | ~string=~        | =string-equal=     |
+| ~/=~           | ~char/=~       | =CHAR-NOT-EQUAL= | ~string/=~       | =string-not-equal= |
+| ~<~            | ~char<~        | =CHAR-LESSP=     | ~string<~        | =string-lessp=     |
+
 
 * Style Guide
 Reference: http://people.ace.ed.ac.uk/staff/medward2/class/moz/cm/doc/contrib/lispstyle.html
@@ -327,3 +429,68 @@ http://www.gigamonkeys.com/book/
   (select (where :title "Give Us a Break" :ripped t))
 #+END_SRC
 
+
+** Unit Test Framework
+
+
+#+BEGIN_SRC lisp
+  ;; the design goal of a unit test framework:
+
+  ;; - easy to add new test
+  ;; - easy to run tests
+  ;; - easy to track down test failures
+
+
+  ;; (HEBI: report test name)
+  (defmacro deftest (name parameters &body body)
+    "Define a test function. Within a test function we can call
+     other test functions or use 'check' to run individual test
+     cases."
+    `(defun ,name ,parameters
+       ;; (HEBI: hierarchy test name report)
+      (let ((*test-name* (append *test-name* (list ',name))))
+        ,@body)))
+
+
+  (defmacro with-gensyms ((&rest names) &body body)
+    ;; gensym generate a unique symbol name that the reader has never seen
+    ;; the reason to use such unique name is to avoid leaking of information
+    `(let ,(loop for n in names collect `(,n (gensym)))
+       ,@body))
+
+  (defvar *test-name* nil)
+
+
+  (defmacro combine-results (&body forms)
+    "Combine the results (as booleans) of evaluating 'forms' in order."
+    (with-gensyms (result)
+      `(let ((,result t))
+        ,@(loop for f in forms collect `(unless ,f (setf ,result nil)))
+        ,result)))
+
+  ;; this will generate
+  ;; (let ((result t))
+  ;;   (unless (foo) (setf result nil))
+  ;;   (unless (bar) (setf result nil))
+  ;;   (unless (baz) (setf result nil))
+  ;;   result)
+
+  (defun report-result (result form)
+    "Report the results of a single test case. Called by 'check'."
+    (format t "~:[FAIL~;pass~] ... ~a: ~a~%" result *test-name* form)
+    result)
+
+
+  (defmacro check (&body forms)
+    "Run each expression in 'forms' as a test case."
+    `(combine-results
+      ,@(loop for f in forms collect `(report-result ,f ',f))))
+
+
+  ;; usage example:
+  (deftest test-+ ()
+    (check
+      (= (+ 1 2) 3)
+      (= (+ 1 2 3) 6)
+      (= (+ -1 -3) -4)))
+#+END_SRC

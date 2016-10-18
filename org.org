@@ -166,6 +166,29 @@ To show the current section, add this just /after/ every top level heading.
 #+TOC: headlines [currentsection]
 #+END_EXAMPLE
 
+There's an automatic way to add table of contents before each section:
+#+BEGIN_EXAMPLE
+#+latex_header: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Topic}\tableofcontents[currentsection]\end{frame}}
+#+END_EXAMPLE
+
+The =***= will becomes block.
+These blocks can utilize the horizontal space.
+
+#+BEGIN_EXAMPLE
+*** Octave code						      :BMCOL:B_block:
+    :PROPERTIES:
+    :BEAMER_col: 0.45
+    :BEAMER_env: block
+    :END:
+*** The output						      :BMCOL:B_block:
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :BEAMER_env: block
+    :BEAMER_envargs: <2->
+    :END:
+#+END_EXAMPLE
+
+
 * Table
 #+begin_example org
 #+TBLFM: $4=$2/10
