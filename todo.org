@@ -2,6 +2,10 @@
 * LEETCODE
 * READ PAPERS
 * WRITE HELIUM
+* TODO The New Hacker's Dictionary
+* TODO The Hacker's Dictionary 
+* TODO freenode IRC
+* TODO mailing list gnus
 
 * Helium
 
