@@ -2,15 +2,15 @@
 
 * Adversarial Search
 
-This is multiple agents, also known as /game/.
+  This is multiple agents, also known as /game/.
 
 ** Minimax Algorithm
-There're two players, Min and Max, each takes turn to execute.
-Max moves first.
+   There're two players, Min and Max, each takes turn to execute.
+   Max moves first.
 
 *** The optimal strategies
 
-#+BEGIN_LaTeX
+    #+BEGIN_LaTeX
 \begin{equation*}
   MINIMAX-VALUE(n) = \left\{
   \begin{array}{r1}
@@ -19,26 +19,26 @@ Max moves first.
     min_{s \in succ(n)} MINIMAX-VALUE(s) & \text{if n is a min node}.
   \end{array} \right .
 \end{equation*}
-#+END_LaTeX
+    #+END_LaTeX
 
-Basically it recursively solve the problem.
-The Utility function is the payoff.
-It actually list the tree of state space, and it is optimal.
+    Basically it recursively solve the problem.
+    The Utility function is the payoff.
+    It actually list the tree of state space, and it is optimal.
 
 ** Alpha-Beta pruning
-The problem of minimax algorithm is its node grow exponential.
-This algorithm is used to prune the subtree that does not affect the result.
+   The problem of minimax algorithm is its node grow exponential.
+   This algorithm is used to prune the subtree that does not affect the result.
 
-This is similar for MiniMax algorithm
-- \alpha is the value of the best choise so far, for max, init from -\infty
-- \beta is the best value for min, init from +\infty
+   This is similar for MiniMax algorithm
+   - \alpha is the value of the best choise so far, for max, init from -\infty
+   - \beta is the best value for min, init from +\infty
 
-There're two procedures:
-- =Alpha-Beta-Search(state)= :: returns an action. state is the current state.
-- =Max-Value(state, \alpha, \beta)= :: returns a utility value
-- =Min-Value(state, \alpha, \beta)= :: returns a utility value
+   There're two procedures:
+   - =Alpha-Beta-Search(state)= :: returns an action. state is the current state.
+   - =Max-Value(state, \alpha, \beta)= :: returns a utility value
+   - =Min-Value(state, \alpha, \beta)= :: returns a utility value
 
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 Alpha-Beta-Search(state) {
   v = Max-Value(state, -999, +999);
   return action in ACTIONS with value v;
@@ -52,22 +52,43 @@ Max-Value(state, alpha, beta) {
     alpha = MAX(alpha,v);
   return v;
 }
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
 * Constraint Satisfaction Problems
-It seems to formulate the search problems in a uniformed representation:
-- X :: a set of variables
-- D :: each has a domain of values
-- C :: a set of constraints for each of the variable
+  It seems to formulate the search problems in a uniformed representation:
+  - X :: a set of variables
+  - D :: each has a domain of values
+  - C :: a set of constraints for each of the variable
 
-The goal is to find the assignment of values to the variables, that satisfies the constraints.
+  The goal is to find the assignment of values to the variables, that satisfies the constraints.
 
 ** Advantage
-- it uses /general purpose heuristic/ rather than /problem-specific/ ones.
+   - it uses /general purpose heuristic/ rather than /problem-specific/ ones.
 
 ** Variations
-- continuous or discrete domain
-- finite or infinite domain
-- linear or non-linear constraint
-- unary or binary or high order constraint
+   - continuous or discrete domain
+   - finite or infinite domain
+   - linear or non-linear constraint
+   - unary or binary or high order constraint
 
+
+
+* Logic
+** entailment
+Entailment: \beta \models \alpha, reads:
+the sentence \beta entails the sentence \alpha
+if and only if
+\alpha is true in all worlds where \beta is true.
+
+** Propositional logic
+a.k.a. boolean logic.
+
+logical equivalence;
+
+| a                                   | b                                                            |
+|-------------------------------------+--------------------------------------------------------------|
+| \alpha \wedge \beta                 | \beta \wedge \alpha                                          |
+| (\alpha \wedge \beta) \wedge \gamma | \alpha \wedge (\beta \wedge \gamma)                          |
+| \alpha \Rightarrow \beta            | \neg \beta \Rightarrow \neg \alpha                           |
+| \alpha \Rightarrow \beta            | \neg \alpha \vee \beta                                       |
+| \alpha \Leftrightarrow \beta        | (\alpha \Rightarrow \beta) \wedge (\beta \Rightarrow \alpha) |
