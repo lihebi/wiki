@@ -92,3 +92,45 @@ logical equivalence;
 | \alpha \Rightarrow \beta            | \neg \beta \Rightarrow \neg \alpha                           |
 | \alpha \Rightarrow \beta            | \neg \alpha \vee \beta                                       |
 | \alpha \Leftrightarrow \beta        | (\alpha \Rightarrow \beta) \wedge (\beta \Rightarrow \alpha) |
+
+ - A sentence is /valid/ if it is true in all models.
+   Deduction theorem: KB \models \alpha iff KB \Rightarrow \alpha is valid
+ - A sentence is satisfiable if it is true in /some/ models.
+   KB \models \alpha iff KB \wedge \neg \alpha is unsatisfiable.
+
+Proof method:
+- inference rules: transform the sentences to a normal form
+- model checking: truth table
+
+A clause is a disjunction of literals.
+Factoring: the result clause keeps only one copy of each literal.
+
+Conjunction: \wedge
+Disjunction: \vee
+CNF: conjunctive normal form. Conjunction of (disjunctions of literals).
+
+
+Resolution algorithm: proof by contradiction.
+I.e. to show KB \models \alpha, we show KB \wedge \neg \alpha is unsatisfiable.
+The naming resolution is because, the pair of complementary literals is resolved.
+
+ - Definite clause :: disjunction of literals with exactly one positive literal.
+
+
+** First Order Logic
+\wedge is the natural connective with \exists.
+Using \Rightarrow as the main connective with \exists often causes errors:
+
+\exists x At(x,ISU) \Rightarrow Smart(x)
+
+is true if there's anyone who is not at ISU, which may not be what you want.
+
+Properties:
+| a                   | b                   | result    |
+|---------------------+---------------------+-----------|
+| \forall x \forall y | \forall y \forall x |           |
+| \exists x \exists y | \exists y \exists x |           |
+| \exists x \forall y | \forall y \exists x | not equal |
+| \forall x           | \neg \exists x \neg |           |
+| \exists x           | \neg \forall x \neg |           |
+
