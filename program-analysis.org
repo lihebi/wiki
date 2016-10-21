@@ -1,0 +1,56 @@
+#+TITLE: Program Analysis
+
+* Tools
+
+** Daikon (forked)
+Have a set of front end, Fjalar for C.
+Written in Java.
+For C programs, it uses Fjalar to instrument, and run to get trace.
+Then it analyze the invariants.
+
+** CIL (forked)
+https://people.eecs.berkeley.edu/~necula/cil/
+
+CIL (C Intermediate Language) is a high-level representation
+along with a set of tools that permit
+1. easy analysis and
+2. source-to-source transformation of C programs.
+
+It is lower than AST but higher than typical IR.
+It /remove the ugly corners of C and output a standard language./
+It can support AST and CFG.
+
+
+** Valgrind (forked)
+Valgrind is an instrumentation framework for building dynamic analysis tools.
+
+
+** Fjalar (forked)
+http://groups.csail.mit.edu/pag/fjalar/
+
+It is a valgrind plugin.
+
+Kvasir traverses through data structures at run time and outputs their values to a trace file.
+The main role of Kvasir is to serve as a C/C++ front end for the Daikon dynamic invariant detector.
+Kvasir provides Daikon with value traces, and Daikon infers likely invariants over the data structures observed in those traces.
+
+
+The problem of instrumenting C code is:
+when instrumenting source code, it is
+1. hard to make type safe
+2. cannot know heap array size
+But a binary instrumentation suffers from not getting enough rich information.
+They seem to perform a mixed solution.
+
+** +PIN+
+A dynamic binary instrumentation tool.
+
+As a dynamic binary instrumentation tool, instrumentation is performed at run time on the compiled binary files.
+Thus, it requires no recompiling of source code and can support instrumenting programs that dynamically generate code.
+
+They are supporting windows, not good.
+** CCured
+TODO
+
+** Z3
+https://github.com/Z3Prover/z3
