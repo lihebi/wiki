@@ -1,86 +1,87 @@
 #+TITLE: Emacs
 
 * buffer
-- =list-face-displays=
+  - =list-face-displays=
 
 * Getting Help
- * =describe-key-briefly=: defaults to =C-h c=, return the command name of a key stroke.
- * =where-is=: defaults to =C-h w=, return the current shortcut for a command
- * =info=: defaults to =C-h i=, open the built-in info reader.
- * =view-echo-area-messages=
+  * =describe-key-briefly=: defaults to =C-h c=, return the command name of a key stroke.
+  * =where-is=: defaults to =C-h w=, return the current shortcut for a command
+  * =info=: defaults to =C-h i=, open the built-in info reader.
+  * =view-echo-area-messages=
 
 * Configuration
-To configure a specific key map.
-Note that the =global-set-key= will /not/ overwrite a specific key map,
-because the specific one has a higher priority.
+  To configure a specific key map.
+  Note that the =global-set-key= will /not/ overwrite a specific key map,
+  because the specific one has a higher priority.
 
-#+BEGIN_SRC elisp
+  #+BEGIN_SRC elisp
   (define-key org-mode-map (kbd "C-j") (lambda()
                                          (interactive)
                                          (join-line -1)))
-#+END_SRC
+  #+END_SRC
 
-Package installation is done by the built-in package management.
-Be sure to add it into the start script to be able to automatically install it for a new build of emacs.
+  Package installation is done by the built-in package management.
+  Be sure to add it into the start script to be able to automatically install it for a new build of emacs.
 
-- =list-package=: open the package page. Use =U x= to update all available.
+  - =list-package=: open the package page. Use =U x= to update all available.
 
 * Window and Frame
 ** window manage
-  * ~balance-window~
-  * ~toggle-window-split~
+   * ~balance-window~
+   * ~toggle-window-split~
 ** dired
-  * ~dired-next-subdir~
-  * ~dired-prev-subdir~
-  * ~dired-tree-up~
-  * ~dired-tree-down~
+   * ~dired-next-subdir~
+   * ~dired-prev-subdir~
+   * ~dired-tree-up~
+   * ~dired-tree-down~
 ** packages
-In ~*package*~ buffer, ~Ux~ to update all packages.
+   In ~*package*~ buffer, ~Ux~ to update all packages.
 * File Operation
-- =revert-buffer=: Replace current buffer text with the text of the visited file on disk. I.e. Reload file.
-- =read-only-mode=: disable it to edit read only files
+  - =revert-buffer= :: Replace current buffer text with the text of the visited file on disk. I.e. Reload file.
+  - =recover-file= :: recover from =#xxx#= file.
+  - =read-only-mode= :: disable it to edit read only files
 
 * Editing
 ** text transformation
-  * ~replace-rectangle~
-  * ~upcase-word~
-  * ~downcase-word~
-  * ~transpose-words~
-  * ~transpose-lines~
-To insert a control sequence, use ~C-q xxx~.
-- =capitalize-word=
+   * ~replace-rectangle~
+   * ~upcase-word~
+   * ~downcase-word~
+   * ~transpose-words~
+   * ~transpose-lines~
+   To insert a control sequence, use ~C-q xxx~.
+   - =capitalize-word=
 
-- =fill-paragraph=
-- =fill-region=
-- =auto-fill-mode=
+   - =fill-paragraph=
+   - =fill-region=
+   - =auto-fill-mode=
 
 ** killing
-  * ~zap-to-char~
-  * ~zap-up-to-char~
+   * ~zap-to-char~
+   * ~zap-up-to-char~
 
 ** spell checking
-Use =ispell=, and =flycheck= to check on-the-fly. Check emacs manual for detail.
+   Use =ispell=, and =flycheck= to check on-the-fly. Check emacs manual for detail.
 
 * Programming
-- =checkdoc=: check the warnings in doc string. It can also fix it: =C-h f=.
-- =C-x C-e=: evaluate
-- =C-u C-x C-e=: evaluate and insert result
+  - =checkdoc=: check the warnings in doc string. It can also fix it: =C-h f=.
+  - =C-x C-e=: evaluate
+  - =C-u C-x C-e=: evaluate and insert result
 
 
 * Moving
-- =C-M-a= :: move to the beginning of defun
-- =C-M-e= :: move to the end of defun
-- =C-M-h= :: mark defun
-- =C-M-f= :: move forward a sexp
-- =C-M-b= :: move backward a sexp
-- =C-M-k= :: kill a sexp
-- =C-M-t= :: transpose expressions
-- =C-M-<SPC>= :: mark following sexp
-- =C-M-n= :: move to the next sexp
-- =C-M-p= :: move to the previous sexp
-- =C-M-u= :: move up parenthesis
-- =C-M-d= :: move down parenthesis
-- =C-M-x= :: evaluate defun
+  - =C-M-a= :: move to the beginning of defun
+  - =C-M-e= :: move to the end of defun
+  - =C-M-h= :: mark defun
+  - =C-M-f= :: move forward a sexp
+  - =C-M-b= :: move backward a sexp
+  - =C-M-k= :: kill a sexp
+  - =C-M-t= :: transpose expressions
+  - =C-M-<SPC>= :: mark following sexp
+  - =C-M-n= :: move to the next sexp
+  - =C-M-p= :: move to the previous sexp
+  - =C-M-u= :: move up parenthesis
+  - =C-M-d= :: move down parenthesis
+  - =C-M-x= :: evaluate defun
 
 * Navigating
   * ~forward-sexp~: forward semantic block
@@ -88,62 +89,62 @@ Use =ispell=, and =flycheck= to check on-the-fly. Check emacs manual for detail.
   * =org-forward-heading-same-level=: =C-c C-f=
   * =org-backword-heading-same-level=: =C-c C-b=
 ** marking
-  * ~exhange-point-and-mark~
-  * ~mark-word~
-  * ~mark-sexp~
-  * ~mark-paragraph~
-  * ~mark-defun~
-  * ~mark-page~
-  * ~mark-whole-buffer~
-  * ~point-to-register~: save ppposition in a register
-  * ~jump-to-register~
-  * ~set-mark-command~: C-SPC, set mark, and activate it
-  * ~C-SPC C-SPC~: set mark, but not activate it.
-  * ~C-u C-SPC~: pop to previous mark in mark ring. current is stored at the end of mark ring(rotating)
-  * ~pop-global-mark~: will store both position and buffer
+   * ~exhange-point-and-mark~
+   * ~mark-word~
+   * ~mark-sexp~
+   * ~mark-paragraph~
+   * ~mark-defun~
+   * ~mark-page~
+   * ~mark-whole-buffer~
+   * ~point-to-register~: save ppposition in a register
+   * ~jump-to-register~
+   * ~set-mark-command~: C-SPC, set mark, and activate it
+   * ~C-SPC C-SPC~: set mark, but not activate it.
+   * ~C-u C-SPC~: pop to previous mark in mark ring. current is stored at the end of mark ring(rotating)
+   * ~pop-global-mark~: will store both position and buffer
 
-All events that set the mark:
- * ~C-SPC C-SPC~
- * ~C-w~
- * search
+   All events that set the mark:
+   * ~C-SPC C-SPC~
+   * ~C-w~
+   * search
 ** register
- * ~jump-to-register~: the register can store a file
- * ~copy-to-register~
- * ~insert-register~
+   * ~jump-to-register~: the register can store a file
+   * ~copy-to-register~
+   * ~insert-register~
 
 ** Tags
-- =helm-etags-select=
+   - =helm-etags-select=
 
 * Special Modes
 ** Tex Mode
-- =tex-validate-region=
+   - =tex-validate-region=
 
 * Variables
 ** File Local Variable
-On first line, emacs will try to find
-#+BEGIN_EXAMPLE
+   On first line, emacs will try to find
+   #+BEGIN_EXAMPLE
 -*- mode: Lisp; fill-column: 75; comment-column: 50; -*-=
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
-=mode= defines the major mode for this file, while unlimited numbers of variables follows, separated by =;=
-Emacs looks for local variable specifications in the second line if the first line specifies an interpreter, e.g. /shebang/.
+   =mode= defines the major mode for this file, while unlimited numbers of variables follows, separated by =;=
+   Emacs looks for local variable specifications in the second line if the first line specifies an interpreter, e.g. /shebang/.
 
-A second way to specify file local variable is to have a "local variables list" near the end of the file
-(no more than 3000 characters from the end of the file).
-The =Local Variables:= and =End:= will be matched literally.
+   A second way to specify file local variable is to have a "local variables list" near the end of the file
+   (no more than 3000 characters from the end of the file).
+   The =Local Variables:= and =End:= will be matched literally.
 
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 This     /* Local Variables:  */
 Is       /* mode: c           */
 Garbage  /* comment-column: 0 */
 Data     /* End:              */
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
 ** Directory Local Variable
-Put =.dir-locals.el= at the root directory, and it will be in effect for all the files under that directory, recursively.
-It should be an associate list, the car can be either a mode name (or =nil= applies to all modes) indicating the variables are for that mode,
-or a sub-directory name to apply only in that directory.
-#+BEGIN_SRC elisp
+   Put =.dir-locals.el= at the root directory, and it will be in effect for all the files under that directory, recursively.
+   It should be an associate list, the car can be either a mode name (or =nil= applies to all modes) indicating the variables are for that mode,
+   or a sub-directory name to apply only in that directory.
+   #+BEGIN_SRC elisp
   ((nil . ((indent-tabs-mode . t)
            (fill-column . 80)))
    (c-mode . ((c-file-style . "BSD")
@@ -151,51 +152,51 @@ or a sub-directory name to apply only in that directory.
    ("src/imported"
     . ((nil . ((change-log-default-name
                 . "ChangeLog.local"))))))
-#+END_SRC
+   #+END_SRC
 
 * Advanced Topics
 ** Info
-Info is a document system.
-It is closely bundled with emacs, so I put it here.
-To install some new info document in the system,
-issue the following commands (using =gnu-c-manual= as an example):
+   Info is a document system.
+   It is closely bundled with emacs, so I put it here.
+   To install some new info document in the system,
+   issue the following commands (using =gnu-c-manual= as an example):
 
-#+BEGIN_SRC shell
+   #+BEGIN_SRC shell
 # download the gnu-c-manual code
 make gnu-c-manual.info
 mv gnu-c-manual.info /usr/local/share/info
 cd /usr/local/share/info
 sudo install-info --info-file=gnu-c-manual.info --info-dir=.
-#+END_SRC
+   #+END_SRC
 
 *** Operations
-| key       | description                                          |
-|-----------+------------------------------------------------------|
-| SPC       | page down, can cross node                            |
-| BACKSPACE | page up, can cross node                              |
-| M-n       | ~clone-buffer~, create a new independent info window |
-| n         | next node on same level                              |
-| p         | previous                                             |
-| ]         | next node regardless of level                        |
-| [         | previous                                             |
-| u         | up node                                              |
-| l         | back                                                 |
-| r         | forward                                              |
-| m         | ~Info-menu~, convenient for search node title        |
-| s         | TODO search  a text in the whole info file           |
-| i         | TODO search indices only                             |
+    | key       | description                                          |
+    |-----------+------------------------------------------------------|
+    | SPC       | page down, can cross node                            |
+    | BACKSPACE | page up, can cross node                              |
+    | M-n       | ~clone-buffer~, create a new independent info window |
+    | n         | next node on same level                              |
+    | p         | previous                                             |
+    | ]         | next node regardless of level                        |
+    | [         | previous                                             |
+    | u         | up node                                              |
+    | l         | back                                                 |
+    | r         | forward                                              |
+    | m         | ~Info-menu~, convenient for search node title        |
+    | s         | TODO search  a text in the whole info file           |
+    | i         | TODO search indices only                             |
 
 ** Babel
-How to write a =ob-xxx.el= file?
+   How to write a =ob-xxx.el= file?
 
- * search org-mode babel, you will get a link: http://orgmode.org/worg/org-contrib/babel/
- * In this link, there's a "languages" link. http://orgmode.org/worg/org-contrib/babel/languages.html
- * Under "Develop support for new languages" section, there's link to ob-template.el: http://orgmode.org/w/worg.git/blob/HEAD:/org-contrib/babel/ob-template.el
- * follow instruction to modify it.
+   * search org-mode babel, you will get a link: http://orgmode.org/worg/org-contrib/babel/
+   * In this link, there's a "languages" link. http://orgmode.org/worg/org-contrib/babel/languages.html
+   * Under "Develop support for new languages" section, there's link to ob-template.el: http://orgmode.org/w/worg.git/blob/HEAD:/org-contrib/babel/ob-template.el
+   * follow instruction to modify it.
 
-some good example to look at: ob-plantuml.el, ob-C.el
+   some good example to look at: ob-plantuml.el, ob-C.el
 
 * Reference
-Sacha's super long Emacs Config: http://pages.sachachua.com/.emacs.d/Sacha.html
-Some emacs.d I started with https://github.com/jordonbiondo/.emacs.d/blob/master/init.el
-C++ IDE and some tutorials: http://tuhdo.github.io/
+  Sacha's super long Emacs Config: http://pages.sachachua.com/.emacs.d/Sacha.html
+  Some emacs.d I started with https://github.com/jordonbiondo/.emacs.d/blob/master/init.el
+  C++ IDE and some tutorials: http://tuhdo.github.io/

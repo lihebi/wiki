@@ -1,15 +1,17 @@
 #+TITLE: Compiler
 
+* Linker
+- =ldd= :: show the dynamic library used by an executable
 * AddressSanitizer
-- wiki: https://github.com/google/sanitizers/wiki
-- flags: https://github.com/google/sanitizers/wiki/AddressSanitizerFlags
+  - wiki: https://github.com/google/sanitizers/wiki
+  - flags: https://github.com/google/sanitizers/wiki/AddressSanitizerFlags
 
-To use it:
-#+BEGIN_EXAMPLE
+  To use it:
+  #+BEGIN_EXAMPLE
 cc -fsanitize=address a.c
-#+END_EXAMPLE
+  #+END_EXAMPLE
 
-#+BEGIN_SRC C
+  #+BEGIN_SRC C
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,65 +21,65 @@ int main() {
   char *hbuf = (char*)malloc(10*sizeof(char));
   strcpy(hbuf, "hhhhhddddd");
 }
-#+END_SRC
+  #+END_SRC
 
-Note the heap buffer overflow, it will not crash by normal compilation.
-However, it will crash and print out report after using address sanitizer.
+  Note the heap buffer overflow, it will not crash by normal compilation.
+  However, it will crash and print out report after using address sanitizer.
 
-On mac, the default behavior is just hang, does not finish.
-To make it terminates the program:
-#+BEGIN_EXAMPLE
+  On mac, the default behavior is just hang, does not finish.
+  To make it terminates the program:
+  #+BEGIN_EXAMPLE
 ASAN_OPTIONS=halt_on_error=1 ./a.out
-#+END_EXAMPLE
+  #+END_EXAMPLE
 
 * C Preprocessor (CPP)
 
-The CPP Manual : https://gcc.gnu.org/onlinedocs/cpp/
+  The CPP Manual : https://gcc.gnu.org/onlinedocs/cpp/
 ** The processing
-The following textural transformation is done before everything:
+   The following textural transformation is done before everything:
 
-1. The input file is read into memory and broken into lines.
-2. Continued lines (line ends with a backslash and newline) are merged into one long line.
-   There's NO way to prevent a backslash at the end of a line from being interpreted as a backslash-newline.
-3. All comments are replaced with single spaces.
-   Block comments (=/* */=) does not nest.
-   Line comments (=//=) can nest because it doesn't matter.
-   It is safe to put line comments inside block comments, or vice versa.
+   1. The input file is read into memory and broken into lines.
+   2. Continued lines (line ends with a backslash and newline) are merged into one long line.
+      There's NO way to prevent a backslash at the end of a line from being interpreted as a backslash-newline.
+   3. All comments are replaced with single spaces.
+      Block comments (=/* */=) does not nest.
+      Line comments (=//=) can nest because it doesn't matter.
+      It is safe to put line comments inside block comments, or vice versa.
 
-After these steps, the tokenization is performed.
-Then the true "preprocessing" is performed.
+   After these steps, the tokenization is performed.
+   Then the true "preprocessing" is performed.
 
-Preprocessing directives are lines in your program that start with =#=.
-Whitespace is allowed before and after the =#=.
-The ‘#’ is followed by an identifier, the directive name.
-The ‘#’ which begins a directive cannot come from a macro expansion.
-Also, the directive name is not macro expanded.
+   Preprocessing directives are lines in your program that start with =#=.
+   Whitespace is allowed before and after the =#=.
+   The ‘#’ is followed by an identifier, the directive name.
+   The ‘#’ which begins a directive cannot come from a macro expansion.
+   Also, the directive name is not macro expanded.
 
-The primary directives do:
-- Inclusion of header files.
-- Macro expansion.
-- Conditional compilation.
-- Line control.
-- Diagnostics.
+   The primary directives do:
+   - Inclusion of header files.
+   - Macro expansion.
+   - Conditional compilation.
+   - Line control.
+   - Diagnostics.
 
-Macro has two kinds, /object like/ (e.g. =BUFFER=) and /function like/ (i.e. takes parameters).
-For function-like macros,
-all arguments to a macro are completely macro-expanded before they are substituted into the macro body.
+   Macro has two kinds, /object like/ (e.g. =BUFFER=) and /function like/ (i.e. takes parameters).
+   For function-like macros,
+   all arguments to a macro are completely macro-expanded before they are substituted into the macro body.
 
 *** Compiler option to separate them
-Generally the compiler will do preprocessing, compilation, assembling, and linking in order.
-#+BEGIN_EXAMPLE shell
+    Generally the compiler will do preprocessing, compilation, assembling, and linking in order.
+    #+BEGIN_EXAMPLE shell
 cc -c a.c # do not do link ==> a.o
 cc -S a.c # do not do assembling => a.s
 cc -E a.c # only do preprocessing, output to stdout > a.i
-#+END_EXAMPLE
+    #+END_EXAMPLE
 
 *** self-referential macro
-A self-referential macro is one whose name appears in its definition
+    A self-referential macro is one whose name appears in its definition
 
-The self-references that do not expand in the first scan are marked so that they will not expand in the second scan either.
-e.g. =#define foo (4 + foo)=.
-In most cases, it is a bad idea to take advantage of this feature.
+    The self-references that do not expand in the first scan are marked so that they will not expand in the second scan either.
+    e.g. =#define foo (4 + foo)=.
+    In most cases, it is a bad idea to take advantage of this feature.
 
 
 
@@ -85,53 +87,53 @@ In most cases, it is a bad idea to take advantage of this feature.
 
 ** Predefined macros
 *** Standard (in language specification)
-- ~__FILE__~ :: expands to the name of the current input file, in the form of a C string constant
-  This is the path by which the preprocessor opened the file, not the short name.
-- ~__LINE__~ :: expands to the current input line number
+    - ~__FILE__~ :: expands to the name of the current input file, in the form of a C string constant
+         This is the path by which the preprocessor opened the file, not the short name.
+    - ~__LINE__~ :: expands to the current input line number
 
-One typical use of these two macros are in log message.
-#+BEGIN_SRC C
+    One typical use of these two macros are in log message.
+    #+BEGIN_SRC C
   fprintf (stderr, "Internal error: "
            "negative string length "
            "%d at %s, line %d.",
            length, __FILE__, __LINE__);
-#+END_SRC
+    #+END_SRC
 
-An ‘#include’ directive changes the expansions of __FILE__ and __LINE__ to correspond to the included file.
-Revert back when coming back.
-A ‘#line’ directive changes __LINE__, and may change __FILE__ as well.
+    An ‘#include’ directive changes the expansions of __FILE__ and __LINE__ to correspond to the included file.
+    Revert back when coming back.
+    A ‘#line’ directive changes __LINE__, and may change __FILE__ as well.
 
-Note, for debugging purpose, it is nice to have the current function name.
-However, the preprocessor does not know about what the function name is.
-There does exist a ~__func__~ and ~__FUNCTION__~, but they're not macros.
-They are strings.
+    Note, for debugging purpose, it is nice to have the current function name.
+    However, the preprocessor does not know about what the function name is.
+    There does exist a ~__func__~ and ~__FUNCTION__~, but they're not macros.
+    They are strings.
 
-- ~__DATE__~ :: expand to string constant, describing the date on which the preprocessor is being run.
-  The string constant contains eleven characters and looks like "Feb 12 1996".
-  If the day of the month is less than 10, it is padded with a space on the left.
-- ~__TIME__~ :: The string constant contains eight characters and looks like "23:59:01".
-- ~__STDC__~ :: most of the time equal to 1. I think just assume this.
-- ~__STDC_VERSION__~ :: something like =199409L=
-- ~__STDC_HOSTED__~ :: should also be assumed to be 1
-- ~__cplusplus~ :: defined when c++ compiler is used.
-- ~__OBJC__~ :: defined when OBJ-C compiler is used.
-- ~__ASSEMBLER__~ :: defined when running on assembly.
+    - ~__DATE__~ :: expand to string constant, describing the date on which the preprocessor is being run.
+         The string constant contains eleven characters and looks like "Feb 12 1996".
+         If the day of the month is less than 10, it is padded with a space on the left.
+    - ~__TIME__~ :: The string constant contains eight characters and looks like "23:59:01".
+    - ~__STDC__~ :: most of the time equal to 1. I think just assume this.
+    - ~__STDC_VERSION__~ :: something like =199409L=
+    - ~__STDC_HOSTED__~ :: should also be assumed to be 1
+    - ~__cplusplus~ :: defined when c++ compiler is used.
+    - ~__OBJC__~ :: defined when OBJ-C compiler is used.
+    - ~__ASSEMBLER__~ :: defined when running on assembly.
 *** Common GNU C extension
-I only list some interesting ones. For the full list see the page in [[https://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html][gcc manual]].
-- ~__COUNTER__~ :: expands to sequential integral values starting from 0.
-- ~__GNUC__~ :: int, major version
-- ~__GNUC_MINOR__~ :: int, minor version
+    I only list some interesting ones. For the full list see the page in [[https://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html][gcc manual]].
+    - ~__COUNTER__~ :: expands to sequential integral values starting from 0.
+    - ~__GNUC__~ :: int, major version
+    - ~__GNUC_MINOR__~ :: int, minor version
 
 *** system specific
-To find the macros that are defined in current system:
+    To find the macros that are defined in current system:
 
-#+BEGIN_SRC shell
+    #+BEGIN_SRC shell
 cpp -dM - # use standard input
 C-d # EOF, see result
-#+END_SRC
+    #+END_SRC
 
 **** MAC
-#+BEGIN_EXAMPLE C
+     #+BEGIN_EXAMPLE C
 #define OBJC_NEW_PROPERTIES 1
 #define _LP64 1
 #define __APPLE_CC__ 6000
@@ -145,46 +147,46 @@ C-d # EOF, see result
 #define __llvm__ 1
 #define __x86_64 1
 #define __x86_64__ 1
-#+END_EXAMPLE
+     #+END_EXAMPLE
 
 **** Ubuntu
-#+BEGIN_EXAMPLE C
+     #+BEGIN_EXAMPLE C
 #define __unix__ 1
 #define __linux 1
 #define __unix 1
 #define __linux__ 1
 #define unix 1
 #define __x86_64__ 1
-#+END_EXAMPLE
+     #+END_EXAMPLE
 
 ** Stringification
-https://gcc.gnu.org/onlinedocs/cpp/Stringification.html
+   https://gcc.gnu.org/onlinedocs/cpp/Stringification.html
 
-Parameters are not replaced inside string constants.
+   Parameters are not replaced inside string constants.
 
-When a macro parameter is used with a leading ‘#’,
-the preprocessor replaces it with the literal text of the actual argument, converted to a string constant.
-Unlike normal parameter replacement, the argument is not macro-expanded first.
-This is called stringification.
+   When a macro parameter is used with a leading ‘#’,
+   the preprocessor replaces it with the literal text of the actual argument, converted to a string constant.
+   Unlike normal parameter replacement, the argument is not macro-expanded first.
+   This is called stringification.
 
-Stringification in C involves more than putting double-quote characters around the fragment.
-The preprocessor backslash-escapes the quotes surrounding embedded string constants,
-and all backslashes within string and character constants,
-in order to get a valid C string constant with the proper contents. 
+   Stringification in C involves more than putting double-quote characters around the fragment.
+   The preprocessor backslash-escapes the quotes surrounding embedded string constants,
+   and all backslashes within string and character constants,
+   in order to get a valid C string constant with the proper contents. 
 ** token-pasting
-https://gcc.gnu.org/onlinedocs/cpp/Concatenation.html
+   https://gcc.gnu.org/onlinedocs/cpp/Concatenation.html
 
-=token pasting= or =token concatenation=
+   =token pasting= or =token concatenation=
 
-When a macro is expanded,
-the two tokens on either side of each ~##~ operator are combined into a single token,
-which then replaces the ~##~ and the two original tokens in the macro expansion. 
+   When a macro is expanded,
+   the two tokens on either side of each ~##~ operator are combined into a single token,
+   which then replaces the ~##~ and the two original tokens in the macro expansion. 
 
-Two tokens that don't together form a valid token cannot be pasted together.
-CPP will give warning.
+   Two tokens that don't together form a valid token cannot be pasted together.
+   CPP will give warning.
 
 
-#+BEGIN_SRC C
+   #+BEGIN_SRC C
   struct command
   {
     char *name;
@@ -196,10 +198,10 @@ CPP will give warning.
       { "help", help_command },
       ...
     };
-#+END_SRC
+   #+END_SRC
 
-can be wrote as:
-#+BEGIN_SRC C
+   can be wrote as:
+   #+BEGIN_SRC C
   #define COMMAND(NAME)  { #NAME, NAME ## _command }
   struct command commands[] =
     {
@@ -207,54 +209,54 @@ can be wrote as:
       COMMAND (help),
       ...
     };
-#+END_SRC
+   #+END_SRC
 
-Another example:
-#+BEGIN_SRC C
+   Another example:
+   #+BEGIN_SRC C
 #define paster( n ) printf_s( "token" #n " = %d", token##n )
 int token9 = 9;
-#+END_SRC
+   #+END_SRC
 
-becomes
-#+BEGIN_SRC C
+   becomes
+   #+BEGIN_SRC C
 printf_s( "token" "9" " = %d", token9 );
 // =>
 printf_s( "token9 = %d", token9 );
-#+END_SRC
+   #+END_SRC
 
 ** Line Markers
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 # linenum filename flags
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
-They mean that the following line originated in file filename at line linenum.
+   They mean that the following line originated in file filename at line linenum.
 
-After the file name comes zero or more flags, which are ‘1’, ‘2’, ‘3’, or ‘4’.
-If there are multiple flags, spaces separate them, and must be in ascending order.
+   After the file name comes zero or more flags, which are ‘1’, ‘2’, ‘3’, or ‘4’.
+   If there are multiple flags, spaces separate them, and must be in ascending order.
 
-- =1= :: This indicates the start of a new file.
-- =2= :: This indicates returning to a file (after having included another file). 
-- =3= :: This indicates that the following text comes from a system header file, so certain warnings should be suppressed. 
-- =4= :: This indicates that the following text should be treated as being wrapped in an implicit extern "C" block.
+   - =1= :: This indicates the start of a new file.
+   - =2= :: This indicates returning to a file (after having included another file). 
+   - =3= :: This indicates that the following text comes from a system header file, so certain warnings should be suppressed. 
+   - =4= :: This indicates that the following text should be treated as being wrapped in an implicit extern "C" block.
 
-They are treated like the corresponding =#line= directive,
-except that trailing flags are permitted.
+   They are treated like the corresponding =#line= directive,
+   except that trailing flags are permitted.
 
 
 * Special Notations
 ** Line Control
-It can have three formats:
-- ~#line linum~ :: a non-negative integer
-- ~#line linum filename~ :: a string constant
-- ~#line anything else~ :: This is just a dummy, anything else must be a macro, and expands to the above two format.
+   It can have three formats:
+   - ~#line linum~ :: a non-negative integer
+   - ~#line linum filename~ :: a string constant
+   - ~#line anything else~ :: This is just a dummy, anything else must be a macro, and expands to the above two format.
 
-The only things that changed are ~__FILE__~ and ~__LINE__~.
+   The only things that changed are ~__FILE__~ and ~__LINE__~.
 
 
 * GCC options
-- ~-include~ include file before parsing
-- ~-include-pch~ include precompiled header file (often names as =header.h.gch=)
-  Note that generally the include directive will look for the =.h.gch= version
-  right before looking for =.h= file in each directory.
+  - ~-include~ include file before parsing
+  - ~-include-pch~ include precompiled header file (often names as =header.h.gch=)
+    Note that generally the include directive will look for the =.h.gch= version
+    right before looking for =.h= file in each directory.
 * Misc
-- =nm a.o= list symbols from object files
+  - =nm a.o= list symbols from object files

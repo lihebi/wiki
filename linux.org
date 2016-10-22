@@ -4,8 +4,16 @@
 - FreeBSD: https://www.freebsd.org/
 
 * System
-  - to monitor the IO usage, use the =iostat= command from =sysstat= package.
+  - =iostat= :: to monitor the IO usage. (from =sysstat= package)
+  * =id= :: show the group information of current user
+  * =dmesg= :: kernel log
 
+* Shell Interaction
+  * ~Ctrl-s~ :: stop the screen
+  * ~Ctrl-q~ :: recover the screen
+  * ~Shift-pageup/down~ :: page up & down
+  * ~shift-Insert~ :: paste
+  * ~Ctrl-l~ :: clear
 * App
   - File explorer: konquerer
   - Image viewer: feh
@@ -16,13 +24,51 @@
    - =speech-dispatcher= :: =spd-say "hello"= quality is not that good
    - =espeak= :: =espeak "hello"= quality is not that good
 
+* Prompt
+  * prompt($PS1-4)
+    * ~\d~: date
+    * ~\D{format}~
+    * ~\h~: hostname
+    * ~\H~: full hostname
+    * ~\t~: time 24hour HH::MM::SS
+    * ~\T~: time 12hour HH::MM::SS
+    * ~\@~: time 12hour am/pm
+    * ~\A~: time 24hour HH::MM
+    * ~\w~: current working directory
+    * ~\W~: basename of $PWD
+** escape color
+   * 1: bold
+   * 4: underline
+   * 30-37: black, red, green, yellow, blue, pink, cyan, white
+   * 40-47: background
+   * 90-97: light
+   * 100-107: light background
+
+   example:
+   * ~\033[1;4;32;45m~
+   * ~\e[32;45m~
+   * ~\e[0m~
+
+   in PS1, use:
+   * ~\[\033[32;45m\]~
+
+
+
 * Job control
   - =C-z= to suspend.
-  - =fg= to bring it to foreground.
-  - =jobs= to list all background jobs,
-    and =kill %1= to kill the first.
-
-  - =top=, then you can see the CPU usage and all process IDs. Simply press =k= and enter the PID can kill the process.
+    - =top=, then you can see the CPU usage and all process IDs. Simply press =k= and enter the PID can kill the process.
+  * refer a job
+    - ~%n~: job number
+    - ~%%~: current job
+    - ~%+~: current job
+    - ~%-~: previous job
+    - ~%~: current job
+    - ~%ce~: the job "ce"
+    - ~%?ce~: the job, whose command has "ce"
+  - =jobs= :: list all background jobs
+  * =fg %1= :: continue it in foreground
+  * =bg %1= :: continue it in background
+  * =kill %1= :: kill the job (first)
 
 * Install fonts
   - OTF: OpenType

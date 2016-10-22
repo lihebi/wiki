@@ -3,6 +3,8 @@
 * usage
 in shell:
 
+MUST USE single quote.
+
 #+begin_src shell
 awk 'pattern {action}'
 awk 'pattern {action}' input.txt

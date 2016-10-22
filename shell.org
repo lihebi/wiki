@@ -1,447 +1,233 @@
 #+TITLE: Shell
 
-* Tmp
-- http://stackoverflow.com/questions/592620/check-if-a-program-exists-from-a-bash-script
-#+BEGIN_EXAMPLE
-$ command -v foo >/dev/null 2>&1 || { echo >&2 "I require foo but it's not installed.  Aborting."; exit 1; }
-$ type foo >/dev/null 2>&1 || { echo >&2 "I require foo but it's not installed.  Aborting."; exit 1; }
-$ hash foo 2>/dev/null || { echo >&2 "I require foo but it's not installed.  Aborting."; exit 1; }
-#+END_EXAMPLE
-* Common Tips
-- =source= will be in effect in current shell session, but not the sub-shells
-- =export= declare global variable, and will be in effect in sub-shells
-** grouping
- * ~( list )~: a subshell is created, each command in list will execute in that shell
- * ~{ list; }~: semicolon or newline is needed. No subshell is created, commands will run in current shell.
+* Concepts
+** Command Interaction
+   The first type of interaction is pipeline.
+   =<cmd1> | <cmd2>=, Each command execute in its own sub-shell.
+   The exit status of a pipeline is the exist status of the last command.
+   =<cmd1> |& <cmd2>= is short hand for =<cmd1> 2>&1 | <cmd2>=.
 
-** Operation
- * ~Ctrl-s~ 停止显示
- * ~Ctrl-q~ 恢复显示
+   Commands separated by =;= are executed sequentially.
+   The shell waits for each to terminate in turn.
+   The return status of last one is returned.
 
- * ~Shift-pageup/down~ pageup down
- * ~shift-Insert~ 粘贴。鼠标中键。
+   =&&= and =||= have a higher precedence than =;=.
+   The later command is executed based on the return result of previous one.
+   The return status is the last executed command.
 
- * ~mkdir -p~ 同时建立父目录
- * ~Ctrl-l~ 清屏
-
-* General Concepts
-** pipeline
-Each command execute in its own subshell.
-The exit status of a pipeline is the exist status of the last command.
-
-#+begin_src shell
-<cmd1> | <cmd2> # pipe
-<cmd1> |& <cmd2> # it is short hand for:
-<cmd1> 2>&1 | <cmd2>
-#+end_src
+   Grouping of command is different.
+   The grouping can be done by =()= and ={}=.
+   =()= will create a sub-shell and execute the body commands,
+   while ={}= will not create sub-shell. The last command in the body MUST terminate with =;=.
 
 ** redirection
-#+begin_src shell
-ls > dirlist 2>&1
-ls 2>&1 dirlist # wrong
-&>word # the same as
->word 2>&1
-&>>word # the same as
->>word 2>&1
-<<< word # use string directly as input
-#+end_src
+   - =ls > dirlist 2>&1=
+   - =&>word= is the same as =>word 2>&1=
+   - =&>>word= is the same as =>>word 2>&1=
 
-* Scripting Parameter
-In shell script, =cd -= will cause the folder name to be printed.
-To disable the output, simply =cd - > /dev/null=.
-** special parameters
+   /Here document/ is of the form:
+   #+BEGIN_EXAMPLE
+     cmd << AUniqueString
+     any thing
+     interesting
+     AUniqueString
+   #+END_EXAMPLE
 
-  * ~$*~: "$1c$2c$3c...", c is the first character of $IFS
-  * ~$@~: "$1" "$2" "$3" ...
-  * ~$#~: the number of positional parameters, for =a.out -h= it is 1
-  * ~$?~: exit status
-  * ~$-~: current option flags
-  * ~$$~: process ID of the shell
-  * ~$!~: process ID of the job most recently placed into the background
-  * ~$0~:
-  * ~$n~
+   The start and end unique string must be same and must not appear in the body.
+   The block will be used as the input to the command.
+   Similarly, the /here string/ is used by:
+   #+BEGIN_EXAMPLE
+     cmd <<< $word
+   #+END_EXAMPLE
 
-** 特殊变量
-
-#+begin_src shell
-$0 # 脚本名称
-$<n> # 第n个参数
-$# # 参数数量
-$* # 所有参数，作为一个字符串
-$@ # 所有参数，作为字符串数组
-#+end_src
-
-#+begin_src shell
-# example
-./a.sh hello world
-"$0" => ./a.sh
-"$1" => hello
-"$2" => world
-"$#" => 2
-"$*" => "./a.sh hello world"
-"$@" => [ "./a.sh" "hello" "world" ]
-#+end_src
-
-#+begin_src shell
-$$ # 当前进程的PID
-$? # 上一个命令的返回值
-$! # 运行在后台的最后一个进程的PID。done了也算。
-$_ # 上个命令的最后一个字段
-#+end_src
-
-
-* Control Flow
-Any redirections apply to all commands within that compound, unless explicitly overwritten.
-
-** loop
-wherever a ';' appears, it may be replaced with one or more newlines.
-
-#+begin_src shell
-until test-commands; do consequent-commands; done
-while test-commands; do consequent-commands; done
-# if in words is not presented, it is as if ~in $@~ is there
-for name [ [in [words ...] ] ; ] do commands; done
-# if any expr is omit, it is like 1
-for (( expr1 ; expr2 ; expr3 )) ; do commands; done
-for i in $(seq 1 10); do say hello; done
-for ((i=0;i<10;i++)); do echo $i; done
-for i in {1..10}; do echo $i; done
-break
-continue
-#+end_src
-
-** if
-#+begin_src shell
-if test-commands; then
-  consequent-commands;
-[elif more-test-commands; then
-  consequent-commands;
-[else alternative-consequents;]
-fi
-#+end_src
-
-** case
-
-#+begin_src shell
-case word in
-  pattern1 | pattern2) command-list ;;
-  pattern) command-list ;& # continue with the next clause
-  pattern) command-list ;;& # continue to test patterns in next clause
-  pattern) command-list ;;
-  *) default-cmd;;
-esac
-#+end_src
-
-** select
-#+begin_src shell
-select name [in words ...]; do commands; done
-#+end_src
-
- * if ~in words~ is omitted, it is ~in "$@"~.
- * PS3 will be the prompt for the selection
- * selection should be a number
- * anything else will cause the name to be set to null
- * the line read is saved in variable ~REPLY~
-
-
-* Condition
-
-| expr                              | meaning                         |
-|-----------------------------------+---------------------------------|
-| /                                 | <                               |
-| ~-f file~                         | file exists and is regular file |
-| ~-d file~                         | file exists and is directory    |
-| ~-e file~                         | file exists                     |
-| ~-e <file>~                       | 存在                            |
-| ~-a <file>~                       | 更好的存在.(有时候-e会出错)     |
-| ~-s file~                         | file exists and size > 0        |
-| ~-L <file>~                       | 符号链接?                       |
-| ~-r <file>~                       | 可读?                           |
-| ~-w <file>~                       | 可写?                           |
-| ~-x <file>~                       | 可执行?                         |
-| ~<file1> -nt <file2>~             | newer than?                     |
-| ~<file1> -ot <file2>~             | older than?                     |
-|-----------------------------------+---------------------------------|
-| ~-z string~                       | string is empty                 |
-| ~-n string~                       | string is not empty             |
-| ~string1 == string2~              | 相等? 也可直接用=               |
-| ~string1 != string2~              |                                 |
-|-----------------------------------+---------------------------------|
-| ~[ num1 -eq num2 ]~               | -eq, -ne, -lt, -le, -gt, -ge    |
-| ~(( num1 == num2 ))~              | ~== != > >= < <=~               |
-|-----------------------------------+---------------------------------|
-| ~[ false -a true ]~               | and                             |
-| ~[ false -o true ]~               | or                              |
-| ~[ !true ]~                       | not                             |
-| ~\[\[ ture && false 11 ! true ]]~ |                                 |
-
-** (())
-#+begin_src shell
-(( exp ))
-#+end_src
-
-arithmetic expression is evaluated
-
-** [[]]
-#+begin_src shell
-[[exp]]
-#+end_src
-
-evaluation of conditional expression
-
-#+BEGIN_EXAMPLE
-[[ $a == z* ]]   # True if $a starts with an "z" (wildcard matching).
-[[ $a == "z*" ]] # True if $a is equal to z* (literal matching).
-#+END_EXAMPLE
-
-** About [] [[]]
- * ~[~ is a synonym for test, and a builtin for efficiency. It is a command.
- * ~[[~ is a keyword, perform comparisons in a manner more familiar to programmers.
-
-
-* IO
-#+begin_src shell
-read -p "please input: " a b c
-echo -e "\n\thello\tworld\n" # 可以使用\n等控制字符
-#+end_src
-
-* Unix Management
- * id # 显示用户和组的信息
- * dmesg # 查看内核日志
- * uname
-  * ~-v~ 内核版本 => ~Darwin Kernel Version 13.1.0: Wed Apr ... EASE_X86_64~
-  * ~-r~ 内核发行信息 => ~13.1.0~
-  * ~-m~ 机器硬件名称 => ~x86_64~
-  * ~-n~ 网络节点。等价于~hostname~ => ~HebideMacBook-Pro.local~
-  * ~-s~ 操作系统名称。 => ~Darwin~
-  * 如果不加参数，默认使用 -s。 => ~Darwin~
- * strace ./a.out # details about system calls when a program runs
- * tcpdump -tt -r -nn xx.pcap
- * curl ifconfig.me
- * scp
-  * ~scp <local> [ -p port ] root@hostname:<path>~
-  * ~scp [-p port ] root@hostname:<path> <local>~
- * ldd a.out # 打印程序需要的shared lib
- * prompt($PS1-4)
-  * ~\d~: date
-  * ~\D{format}~
-  * ~\h~: hostname
-  * ~\H~: full hostname
-  * ~\t~: time 24hour HH::MM::SS
-  * ~\T~: time 12hour HH::MM::SS
-  * ~\@~: time 12hour am/pm
-  * ~\A~: time 24hour HH::MM
-  * ~\w~: current working directory
-  * ~\W~: basename of $PWD
-** job control
-
- * C-Z suspend
- * refer a job
-  - ~%n~: job number
-  - ~%%~: current job
-  - ~%+~: current job
-  - ~%-~: previous job
-  - ~%~: current job
-  - ~%ce~: the job "ce"
-  - ~%?ce~: the job, whose command has "ce"
- * fg %1: continue it in foreground
- * bg %1: continue it in background
- * jobs: list jobs
- * kill %1: kill the job
-** return status
- * simple command: provided by POSIX 1003.1 ~waitpid~ function(less than 128)
- * if command terminated by signal ~n~, it is ~128+n~
- * all builtin returns 2 indicating incorrect usage
-
-
-* escape color
-
-#+begin_src shell
-#!/bin/bash
-#
-#   This file echoes a bunch of color codes to the
-#   terminal to demonstrate what's available.  Each
-#   line is the color code of one forground color,
-#   out of 17 (default + 16 escapes), followed by a
-#   test use of that color on all nine background
-#   colors (default + 8 escapes).
-#
-
-T='gYw'   # The test text
-
-echo -e "\n                 40m     41m     42m     43m\
-     44m     45m     46m     47m";
-
-for FGs in '    m' '   1m' '  30m' '1;30m' '  31m' '1;31m' '  32m' \
-           '1;32m' '  33m' '1;33m' '  34m' '1;34m' '  35m' '1;35m' \
-           '  36m' '1;36m' '  37m' '1;37m';
-  do FG=${FGs// /}
-  echo -en " $FGs \033[$FG  $T  "
-  for BG in 40m 41m 42m 43m 44m 45m 46m 47m;
-    do echo -en "$EINS \033[$FG\033[$BG  $T  \033[0m";
-  done
-  echo;
-done
-echo
-#+end_src
-
-[[./img/bash-color.png]]
-
-note:
-
- * 1: bold
- * 4: underline
- * 30-37: black, red, green, yellow, blue, pink, cyan, white
- * 40-47: background
- * 90-97: light
- * 100-107: light background
-
-example:
-
- * ~\033[1;4;32;45m~
- * ~\e[32;45m~
- * ~\e[0m~
-
-in PS1, use:
-
- * ~\[\033[32;45m\]~
+   And the expansion of word will be used as the input.
 
 * expansion
- * ~xxx~ <=> ~$(xxx)~
+  There are seven kinds of expansions, in order of expansion order.
+  After these expansion are performed, the =quote removal= are performed.
+  - brace :: =/usr/local/{old,new,dist}= will expands to three strings.
+  - tilde :: home
+  - parameter and variable :: in separate section
+  - arithmetic ::
+  - command substitution :: using =$()= or =`cmd`=. The value is the output of the command, with any trailing newlines deleted.
+  - word splitting ::
+       The shell treats each character of '$IFS' as a delimiter.
+       If 'IFS' is unset, or its value is exactly =<space><tab><newline>=.
+  - filename :: The file must exists to be expanded.
+       =*= matches any string, including null string.
+       =?= matches a single character.
+       =[..]= matches any one of those.
 
-** brace expansion
+** parameter and variable expansion
+   * ~${var:-word}~: if var is unset or null, the value is expansion of word
+   * ~${var:=word}~: if var is unset or null, the expansion of word is assigned to var
 
-#+begin_src shell
-echo a{d,b,c}e
-# => ade abe ace
-mkdir /usr/local/{old,new,dist}
-#+end_src
+   Meta data:
+   * ~${#var}~: return length in character of the expansion of var
 
-** tilde expansion
+   Sub-string:
+   * ~${str:offset}~: substr from offset to end
+   * ~${str:offset:length}~: substr from offset for count characters
 
-#+begin_src shell
-~/foo # $HOME/foo
-~hebi/foo # home of user hebi
-#+end_src
+   String trimming
+   pattern is first expanded, then remove the shortest or longest match from the beginning or tailing of str.
+   Return the value, leave str unchanged.
+   * ~${str#word}~ :: /shortest/, beginning
+   * ~${str##word}~ :: longest, beginning
+   * ~${str%word}~ :: shortest, tailing
+   * ~${str%%word}~ :: longest, tailing
 
-** variable expansion
-return value:
+   Replacing
+   * ~${str/pattern/string}~: the first longest match is replaced with string
+     if pattern begins with:
+     - ~/~: all matched is replaced
+     - ~#~: match must happen in the begin
+     - ~%~: match must happen in the tail
 
- * ~${var:-word}~: if var is unset or null, the value is expansion of word
- * ~${var:=word}~: if var is unset or null, the expansion of word is assigned to var
- * ~${var:?word}~: if var is unset or null, the expansion of word is written to stderr, shell exits.
-  Otherwise the value of var is returned.
- * ~${var:+word}~: if var is unset or null, nothing returned. Otherwise expansion of word is returned.
+   Case changing
+   match of pattern will change case
+   * ~${str^pattern}~: one match, lowercase to uppercase
+   * ~${str^^pattern}~: all match, lower to upper
+   * ~${str,pattern}~: one match, upper to lower
+   * ~${str,,pattern}~: all match, upper to lower
+*** special parameters
+    * ~$*~: "$1c$2c$3c...", c is the first character of $IFS (defaults to space)
+    * ~$@~: "$1" "$2" "$3" ...
+    * ~$#~: the number of positional parameters, for =a.out -h= it is 1
+    * ~$?~: exit status
+    * ~$n~ :: the nth parameter
 
+    * ~$-~: current option flags
+    * ~$$~: process ID of the shell
+    * ~$!~: process ID of the job most recently placed into the background
 
-** 变量替换
+* IO
+  The loop can accept the redirection, thus can be used to read a file:
+  #+BEGIN_SRC shell
+  while read -r line; do
+      # some job
+  done < papers.txt
+  #+END_SRC
 
-*返回结果，但不改变原变量的值。*
+  The ordinary reading from command line:
+  #+BEGIN_SRC shell
+read -p "please input: " a b c
+  #+END_SRC
 
-#+begin_src shell
-# 若var未被声明，则以DEFAULT为其值
-${var-DEFAULT}
-${var=DEFAULT}
-# 若
-# 1. var 未被声明 或
-# 2. 其值为空
-# 则以DEFAULT为其值
-${var:-DEFAULT}
-${var:=DEFAULT}
-#+end_src
+  When using =echo=, use =-e= option can print out control characters such as =\n=.
 
-string:
+* Control Flow
+** Condition commands
+   =[=  and =]= are used to evaluate a conditional expression.
+   Expressions can be combined by: =!=, =()=, =-a=, =-o=.
 
- * ~${str:offset}~: substr(offet)
- * ~${str:offset:length}~: substr(offset, count)
- * ~${#var}~: return length in character of the expansion of var
- * ~${str#word}~: pattern is the expansion of word.
-  If the pattern matches the beginning of str,
-  return the str with the **shortest** match of pattern in str deleted.
- * ~${str##word}~: the same as above, the **longest** match is deleted
- * ~${str%word}~: The tailing of str
- * ~${str%%word}~: longest
- * ~${str/pattern/string}~: longest match os pattern is replaced with string
-  if pattern begins with
-   - ~/~: all matched is replaced
-   - ~#~: match must happen in the begin
-   - ~%~: match must happen in the tail
- * ~${str^pattern}~: the match is converted from lower case to uppercase
- * ~${str^^pattern}~: all match
- * ~${str,pattern}~: upper to lower
- * ~${str,,pattern}~: all match
+   =((...))= will cause the expression to be evaluated by shell arithmetic.
+   /If the value of the expression is non-0, the return status is 0, which is wired./
 
-** filename expansion
- * ~*~: match any string, including null string
- * ~?~: match any single character
- * ~[...]~:
-  - ~[a-dx-z]~
-  - ~[!a-d]~
-  - ~[^a-d]~
-  - ~[[:digit:][:alnum:]]~
+   =[[]]= will return 0 or 1, depending on the evaluation of the /conditional expression inside/.
+   The /bash conditional expressions/ are the table done below.
 
-** 字符串
+   The expression will performs some transformation.
+   Not-performed:
+   - /Word splitting/
+   - /filename expansion/
 
-substring使用的是bash中的正则。
+   Performed:
+   - /tilde expansion/
+   - parameter and variable expansion
+   - arithmetic expansion
+   - command substitution
+   - process substitution
+   - quote removal
 
-  * ~${#string}~ $string的长度
-  * ~${string:5}~ $string 从5位置开始的子串
-  * ~${string:5:3}~ 5位置开始，提取3个。
-  * ~${string#substring}~ 从*开头*删除substring的*最短*匹配
-  * ~${string##substring}~ 从*开头*删除substring的*最长*匹配
-  * ~${string%substring}~ 从*结尾*删除substring的*最短*匹配
-  * ~${string%%substring}~ 从*结尾*删除substring的*最长*匹配
+   When using ~==~ to compare string, the right hand side string is considered as a pattern,
+   and the operation performed is pattern matching, as described in filename expansion.
 
-  * ~${string/substring/replace}~ 第一个匹配的substring替换为replace
-  * ~${string/#substring/replace}~ 开头是substring,则换为replace
-  * ~${string/%substring/replace}~ 结尾时substring,则换为replace
+   The expression can be used with some operators:
+   - =(exp)= :: only add the precedence
+   - =!exp= :: negate
+   - =exp && exp= :: and
+   - =exp || exp= :: or
 
-substring若不加引号,则为正常字符串,加引号则可用$转义.
+*** bash conditional expression
 
-** 数值计算
+    | expr                | meaning                         |
+    |---------------------+---------------------------------|
+    | /                   | <                               |
+    | ~-f file~             | file exists and is regular file |
+    | ~-d file~             | file exists and is directory    |
+    | ~-a file~             | file exists                     |
+    | ~-s file~             | file exists and size > 0        |
+    | ~-L <file>~           | symbolic link                   |
+    |---------------------+---------------------------------|
+    | ~-r <file>~           | readable                        |
+    | ~-w <file>~           | writable                        |
+    | ~-x <file>~           | executable                      |
+    | ~<file1> -nt <file2>~ | newer than?                     |
+    | ~<file1> -ot <file2>~ | older than?                     |
+    |---------------------+---------------------------------|
+    | ~-z string~           | string is empty                 |
+    | ~-n string~           | string is not empty             |
+    | ~string1 == string2~  | equal                           |
+    | ~string1 != string2~  |                                 | 
 
-#+begin_src shell
-(( a=2+3 ))
-a = $(( 2+3 ))
+** Conditional
+   The =if= clause signature is =if ; then ; elif ; then ; else ; fi=.
+   The test command is not a condition, but a command.
+   The return code of the command is used as the condition.
+   If the command returns 0, the body is executed.
+   Non-zero will perform the =else= clause.
 
-a = ((12))
-echo $((a++)) # => 12
-echo $((++a)) # => 14
+   =case= signature is: =case word in p1) cmd;; p2) cmd;; esac=
+   The word undergoes
+   - tilde expansion
+   - parameter expansion
+   - command substitution
+   - arithmetic expansion
+     - quote removal
 
-echo ((5>3)) # => 1
-#+end_src
+   Use =*= as the default pattern.
+   Patterns can be combined with =|=.
+
+   Each case must be terminated by =;;=, =;&= or =;;&=.
+   - =;;= :: no other matches are attempted
+   - =;&= :: continue with the next clause, without even evaluate the match
+   - =;;&= :: test next pattern
+
+** loop
+   As for other languages, =break= and =continue= can be used.
+   - =until cond; do cmd; done= ::
+   - =while cond; do cmd; done= ::
+   - =for name in words; do cmd; done= :: the words can be ={1..10}=, =$(seq 1 10)=
+   - =for ((i=0;i<10;i++)); do cmd; done= ::
 
 * function
+  The function has two methods to declare, use the name and a pair of parenthesis, and the function keyword with optional parenthesis.
+  I found using function keyword and NO parenthesis is the best because:
+  - the function keyword tells me it is function, very explicitly
+  - the parenthesis is not going to accept parameter, thus it causes confusion.
+  So in a word, use: =function foo {}=
 
-#+begin_src shell
-name() compound-command [ redirections ]
-function name [()] compound-command [ redirections ]
-#+end_src
+  A function declaration can be removed by =unset -f=.
+  The argument of the function uses the same way for the argument to the script, the propositional special variables.
+  And the call to the function is used as if it is a command.
 
- * compound commands are often ~{ list; }~
- * if ~function~ keyword is present, ~()~ can be omitted.
- * function definition may be deleted by ~unset -f~
- * arguments to function become the positional parameters
+  Want the return value? The =return= statement will only set the /return code/ of the command.
+  Echo the result and assign the result to a variable may be a choice, but I found it not good because the body might echo something as well.
 
-* Script
+* Tips
+  - =source= will be in effect in current shell session, but not the sub-shells
+  - =export= declare global variable, and will be in effect in sub-shells
+** Check whether a command exists
+   Do not use =which=, it is expensive, and the return value is not well defined.
+   Use =hash= for commands and =type= when considering built-in and keywords. [fn:hashtype]
 
-* My Scripts
+   #+BEGIN_SRC shell
+  type foo >/dev/null 2>&1 || 
+      { echo >&2 "I require foo but it's not installed.  Aborting."; exit 1; }
+  hash foo 2>/dev/null ||
+      { echo >&2 "I require foo but it's not installed.  Aborting."; exit 1; }
+   #+END_SRC
 
-#+begin_src shell
-# papers.txt contains titles of papers, one per line
-# scholar.py is from web, an API-like project for Google Scholar
-while read -r line; do
-    ID=~./scholar.py -c 1 -t -p "\"$line\"" | grep "Cluster ID" | awk '{print $3}'~
-    ./scholar.py -c 1 -C $ID --citation=bt >> out.bib
-done < papers.txt
-#+end_src
+[fn:hashtype] http://stackoverflow.com/questions/592620/check-if-a-program-exists-from-a-bash-script
 
-loop counter
-
-#+begin_src shell
-count=1
-while read -r line; do
-    echo $count
-    let count=count+1
-done < papers.txt
-#+end_src
