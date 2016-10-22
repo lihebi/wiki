@@ -8,6 +8,8 @@
 ** TODO dynamic symbolic execution for invariant inference, ICSE 08
 
 * General TODO lists
+** 572 project
+   SCHEDULED: <2016-10-25 Tue>
 ** TODO color theme
 ** LEETCODE
 ** READ PAPERS
@@ -27,10 +29,10 @@
    SCHEDULED: <2016-10-07 Fri>
 ** TODO Ultra-mark
    SCHEDULED: <2016-10-21 Fri>
-- at a line, create a mark, using an optional text.
-- One can view it by command similar to helm-mark-ring.
-- You need to delete it (tab and select) to remove it, otherwise it will be there
-- The mark must be set manually, no automatic mark will set unexpectedly
+   - at a line, create a mark, using an optional text.
+   - One can view it by command similar to helm-mark-ring.
+   - You need to delete it (tab and select) to remove it, otherwise it will be there
+   - The mark must be set manually, no automatic mark will set unexpectedly
 
 * Helium
 ** Input Output Data format unify
@@ -65,12 +67,16 @@
 
 
 
-* TODO Open Source Ideas
+* Side Projects
 ** TODO pdf-tools
 *** +TODO two column view+
 *** TODO show citation on-the-fly
 *** TODO adjust the position (center)
 ** TODO wide screen coding
+** Speech synthesis, text-to-speech
+   http://www.ibm.com/watson/developercloud/doc/text-to-speech/
+   https://github.com/zenorocha/voice-elements
+   https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#tts-section
 
 * wiki
 ** TODO wiki KMP search algorithm in lisp
@@ -114,26 +120,26 @@
 ** stronglist use calendar
 ** stronglift graph
 * DONE benchmarks
-- [X] github 100
-- [X] bug benchmarks
+  - [X] github 100
+  - [X] bug benchmarks
 * DONE Old Wiki Migration
-There're some pages not migrated from old wiki:
-- [X] =leetcode=
-- [X] =633/=
-- [X] =crypto/=
-- [X] =compiler/=
-- [X] =java/=
-- [X] =coffee/=
-- [X] =ruby=
-- [X] =python/=
-- [X] =operating-system/=
-- [X] =math/=
-- [X] =scholar/=
-- [X] =database/=
-- [X] =docker/=
-- [X] =platform/=
-- [X] =software/=
-- [X] =web/=
+  There're some pages not migrated from old wiki:
+  - [X] =leetcode=
+  - [X] =633/=
+  - [X] =crypto/=
+  - [X] =compiler/=
+  - [X] =java/=
+  - [X] =coffee/=
+  - [X] =ruby=
+  - [X] =python/=
+  - [X] =operating-system/=
+  - [X] =math/=
+  - [X] =scholar/=
+  - [X] =database/=
+  - [X] =docker/=
+  - [X] =platform/=
+  - [X] =software/=
+  - [X] =web/=
 ** DONE 572 hw 4
 ** DONE Driver license renew
 ** DONE [#A] R
@@ -180,3 +186,5 @@ There're some pages not migrated from old wiki:
 ** DONE try all the benchmarks ...
    SCHEDULED: <2016-10-11 Tue>
 
+** DONE paredit
+   CLOSED: [2016-10-22 Sat 14:20]

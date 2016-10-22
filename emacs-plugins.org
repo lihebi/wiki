@@ -1,71 +1,88 @@
 #+TITLE: Emacs Plugins
 
 * Flycheck
-The default (at least the one I'm using) for C/C++ is =c/c++-clang=.
+  The default (at least the one I'm using) for C/C++ is =c/c++-clang=.
 
-- =flycheck-describe-checker=
-- =flycheck-list-errors=
+  - =flycheck-describe-checker=
+  - =flycheck-list-errors=
 
 * AUCTex
-- =C-c C-c=: tex-compile
+  - =C-c C-c=: tex-compile
 
 * DocView
-Can view pdf in emacs. It is convenient to use the same keybinding for =tex-compile=:
-when you press =C-c C-c= the second time after compilation, it will default to =\doc-view=.
+  Can view pdf in emacs. It is convenient to use the same keybinding for =tex-compile=:
+  when you press =C-c C-c= the second time after compilation, it will default to =\doc-view=.
 
 ** navigation
-- =C-p= =C-n= =C-b= =C-f= still works
-- =+= and =-= to adjust scale
-- =n= and =p= for page navigation
-- =space= and =delete= to page up and down across pages
-- =M-<= and =M->= still works
-- =M-g M-g= works as jump to page
+   - =C-p= =C-n= =C-b= =C-f= still works
+   - =+= and =-= to adjust scale
+   - =n= and =p= for page navigation
+   - =space= and =delete= to page up and down across pages
+   - =M-<= and =M->= still works
+   - =M-g M-g= works as jump to page
 
 * pdf-tools
-The doc view produce very blur text. The pdf-view-mode provided by pdf-tools solved this.
-Also, this package is said to open pdf on demand. It seems to solve my concern for pdf greatly.
+  The doc view produce very blur text. The pdf-view-mode provided by pdf-tools solved this.
+  Also, this package is said to open pdf on demand. It seems to solve my concern for pdf greatly.
 
-Extra bonus:
-- search in text
-- view and edit annotations!
+  Extra bonus:
+  - search in text
+  - view and edit annotations!
 
 
-http://emacs.stackexchange.com/questions/19686/how-to-use-pdf-tools-pdf-view-mode-in-emacs
+  http://emacs.stackexchange.com/questions/19686/how-to-use-pdf-tools-pdf-view-mode-in-emacs
 
 
 ** Installation
 
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 sudo aptitude install libpng-dev libz-dev 
 sudo aptitude install libpoppler-glib-dev 
 sudo aptitude install libpoppler-private-dev
 sudo aptitude install imagemagick
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 cd /path/to/pdf-tools
 make install-server-deps # optional
 make -s
 make install-package
 # or M-x package-install-file RET pdf-tools-${VERSION}.tar RET
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
-activate in emacs by =(pdf-tools-install)=
+   activate in emacs by =(pdf-tools-install)=
 
 
 ** key binding
-- =o=: open outline
-- =Q=: kill buffer
-- =q=: kill window
+   - =o=: open outline
+   - =Q=: kill buffer
+   - =q=: kill window
 
 * gnus
-This is built in with emacs.
-To read archive messages:
+  This is built in with emacs.
+  To read archive messages:
 
-#+BEGIN_EXAMPLE
+  #+BEGIN_EXAMPLE
 M-x gnus
 ;; in *Group*
 B ; gnus-group-browse-foreign-server
 ;; use nntp as back end
 ;; enter address: news.gmane.org
-#+END_EXAMPLE
+  #+END_EXAMPLE
+
+* Paredit
+
+  | command                     | Key | description                     |
+  |-----------------------------+-----+---------------------------------|
+  | paredit-forward-slurp-sexp  | C-) | enclose the next into this sexp |
+  | paredit-forward-barf-sexp   | C-} | exclude                         |
+  | paredit-backward-slurp-sexp | C-( |                                 |
+  | paredit-backward-barf-sexp  | C-{ |                                 |
+  |-----------------------------+-----+---------------------------------|
+  | paredit-wrap-round          | M-( |                                 |
+  | paredit-join-sexp           | M-J |                                 |
+  | paredit-splice-sexp         | M-s |                                 |
+  | paredit-split-sexp          | M-S |                                 |
+  | paredit-raise-sexp          | M-r |                                 |
+  | paredit-convolute-sexp      | M-? | exchange child and parent       |
+

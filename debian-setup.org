@@ -102,6 +102,8 @@ pylint
 pylint3
 subversion
 z3 libz3-dev
+
+gnustep-gui-runtime # for "say" to work, speech!
 #+END_EXAMPLE
 
 Non-package software:
