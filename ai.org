@@ -1,5 +1,441 @@
 #+TITLE: Artificial Intelligence
 
+* Agent Concept
+  - /An agent that senses only partial information about the state cannot be perfectly rational./
+    - False. The vacuum-cleaning agent is perfectly rational, but it senses only partial information,
+      i.e. it doesn't observe the state of the square that is adjacent to it.
+  - /There exist task environment in which no pure reflex agent can behave rationally./
+    - True.
+      Purely reflective behavior does not take the percept history into account, only the most recent percepts.
+  - /There exists a task environment in which every agent is rational./
+    - True.
+      A task environment in which there are no decisions to be made: all actions will receive the same output.
+  - /The input to an agent program is the same as the input to the agent function/
+    - False.
+      - The input to agent program: current percept
+      - the input to agent function: entire precept history
+  - /Every agent function is implementable by some program/machine combination/
+    - False. As the textbook said: "No machine can tell /in general/ whether a given program will return an answer on a given input or run forever."
+  - /suppose an agent selects its action uniformly at random from the set of possible actions./
+    /There exists a deterministic task environment in which this agent is rational./
+    - True.
+      In the environment that all actions will produce same output, it is rational.
+      Actually all agents are rational in such environment.
+  - /It is possible for a given agent to be perfectly rational in two distinct task environments./
+    - True.
+      There's recently a kickstarter project that produces dice with more than 6 faces.
+      If an agent is rational in a N face dice bet game, it will perform equally well in a 6-face dice or a 8-face dice.
+  - /Every agent is rational in an un-observable environment./
+    - False.
+      A vacuum agent that can move will be rational, but the one that does not move is not.
+  - /A perfectly rational poker-playing agent never loses./
+    - False.
+      Two such perfectly rational agent play against each other will give one lose.
+** Agent function v.s. Agent program
+   - /Can there be more than one agent program that implements a given agent function?/
+     /Give an example, or show why one is not possible./
+     - There are infinite agent programs that implement a given agent function.
+       If an agent function acts only depend on previous $n$ percepts.
+       Than, the agent implementations that have n or more memory will always produce the same action.
+   - /Are there agent functions that cannot be implemented by any agent program?/
+     - Yes. As the textbook said: "No machine can tell /in general/ whether a given program will return an answer on a given input or run forever."
+   - /Given a fixed machine architecture, does each agent program implement exactly one agent function?/
+     - Yes. A program implements a mapping from percepts to actions.
+       The same percept will only result in one action.
+   - /Given an architecture with n bits of storage, how many different possible agent programs are there?/
+     - There would be $a^{2^n}$ possible programs; $2^n$ possible states and $a$ choices for each state.
+   - /Suppose we keep the agent program fixed but speed up the machine by a factor of two./
+     /Does that change the agent function?/
+     - No. The speed does not have influence on the produced action.
+
+* State changing and implementation
+** hanoon jugs
+   #+BEGIN_QUOTE
+   /Give a complete problem formulation for each of the following./
+   /Choose a formulation that is precise enough to be implemented./
+   /d. You have three jugs, measuring 12 gallons, 8 gallons, and 3 gallons, and a water faucet./
+   /You can fill the jugs up or empty them out from one to another or onto the ground./
+   /You need to measure out exactly one gallon./
+   #+END_QUOTE
+
+   Define a 3-tuple =(x,y,z)= where x,y,z are the amount of water in the three jugs.
+   - Initial state: =(0,0,0)=.
+   - Action:
+     - FILL: given values =(x,y,z)= , generate
+       - =(12,y,z)=, =(x,8,z)=, =(x,y,4)=
+     - EMPTY: given values =(x,y,z)= , generate
+       - =(0,y,z)=, =(x,0,z)=, =(x,y,0)=
+     - POUR: Given value =(x,y)=, let ~t = min(x+y, cap(y))~, pour x into y, generate:
+       - =(x-(t-y), t)=
+   - Cost function: Number of actions.
+
+**  野人与传教士
+   三个野人，三个传教士，一艘船。如何过河？
+*** a. Formulate
+    /a. Formulate the problem precisely,/
+    /making only those distinctions necessary to ensure a valid solution./
+    /Draw a diagram of the complete state space./
+
+**** state
+     =(M1,C1,B1,M2,C2,B2)= where =M1,C1,B1= is the number of missionaries, cannibals, boats on the left side,
+     =(M2,C2,B2)= is the corresponding number on the right side.
+
+     The start state is =(3,3,1,0,0,0)=.
+     The goal: =(0,0,0,3,3,1)=
+
+**** action
+     Action: =(m,c,b)= on left side: where b means the change of boat, m and c means the change of missionaries and cannibals.
+     The action allows the boat number B1 or B2 to change from 1 to 0, along with M and C on the side move to the other side by one or two.
+     #+BEGIN_EXAMPLE
+(-1 0 -1)
+(0 -1 -1)
+(-2 0 -1)
+(0 -2 -1)
+(-1 -1 -1)
+
+(1 0 1)
+(0 1 1)
+(2 0 1)
+(0 2 1)
+(1 1 1)
+     #+END_EXAMPLE
+
+**** The complete state space
+     In the table below, the striped items are those that cannibals will eat missionaries.
+     The state that is not reachable (e.g. =(3,3,0,0,0,1)=) is not striped out.
+
+     | =(3 3 1 0 0 0)= | +=(3 2 1 0 1 0)=+ | +=(3 1 1 0 2 0)=+ | +=(3 0 1 0 3 0)=+  |
+     | +=(2 3 1 1 0 0)=+ | =(2 2 1 1 1 0)= | +=(2 1 1 1 2 0)=+ | +=(2 0 1 1 3 0)=+  |
+     | +=(1 3 1 2 0 0)=+ | +=(1 2 1 2 1 0)=+ | =(1 1 1 2 2 0)= | +=(1 0 1 2 3 0)=+  |
+     | +=(0 3 1 3 0 0)=+ | +=(0 2 1 3 1 0)=+ | +=(0 1 1 3 2 0)=+ | =(0 0 1 3 3 0)=  |
+     | =(3 3 0 0 0 1)= | +=(3 2 0 0 1 1)=+ | +=(3 1 0 0 2 1)=+ | +=(3 0 0 0 3 1)=+  |
+     | +=(2 3 0 1 0 1)=+ | =(2 2 0 1 1 1)= | +=(2 1 0 1 2 1)=+ | +=(2 0 0 1 3 1)=+  |
+     | +=(1 3 0 2 0 1)=+ | +=(1 2 0 2 1 1)=+ | =(1 1 0 2 2 1)= | +=(1 0 0 2 3 1)=+  |
+     | +=(0 3 0 3 0 1)=+ | +=(0 2 0 3 1 1)=+ | +=(0 1 0 3 2 1)=+ | =(0 0 0 3 3 1)=  |
+
+*** b. Solve
+    /Implement and solve the problem optimally using an appropriate search algorithm./
+    /Is it a good idea to check for repeated states?/
+
+    The solution:
+    #+BEGIN_EXAMPLE
+(3,3,1,0,0,0)
+-> (2,2,0,1,1,1)
+-> (3,2,1,0,1,0)
+-> (3,0,0,0,3,1)
+-> (3,1,1,0,2,0)
+-> (1,1,0,2,2,1)
+-> (2,2,1,1,1,0)
+-> (0,2,0,3,1,1)
+-> (0,3,1,3,0,0)
+-> (0,1,0,3,2,1)
+-> (0,2,1,3,1,0)
+-> (0,0,0,3,1,0)
+    #+END_EXAMPLE
+
+    Yes, we should check repeated states to avoid infinite recursion.
+
+*** c. discussion
+    /c. Why do you think people have a hard time solving this puzzle,/
+    /given that the state space is so simple?/
+
+    1. It is hard to manually work it out.
+    2. the repeat states need to be removed, which increase difficulty for manual solving.
+
+* Search Algorithm
+
+** branching factor, BFS, DFS
+   #+BEGIN_QUOTE
+   3.26 Consider the unbounded version of regular 2D grid shown in Figure 39.
+   The start state is at the origin, (0,0), and the goal state is at (x,y).
+
+   - What is the branching factor b in the state space?
+   - How many distict states are there at depth k (for k > 0)?
+   - What is the maximum number of nodes expanded by breadth-first tree search?
+   - What is the maximum number of nodes expanded by breadth-first graph search?
+   - Is h= |u-x| + |v-y| an admissible heuristic for a state at (u,v)? explain.
+   - How many nodes are expanded by A* graph search using h?
+   - Does h remain admissible if some links are removed?
+   - Does h remain admissible if some links are added between nonadjacent states?
+   #+END_QUOTE
+
+   - /What is the branching factor b in the state space?/
+     - Since it is a 2D grid, there're 4 directions for each node. The branching factor is 4.
+   - /How many distict states are there at depth k (for k > 0)?/
+     - For depth 1, there're 1+4 states;
+     - For depth 2, there're 1+4+8 states;
+     - For depth 3, there're 1+4+8+12 states;
+     - For depth k, there're 1 + 4 + 8 + .. + 4k = 2k^2 + 2k + 1
+   - /What is the maximum number of nodes expanded by breadth-first tree search?/
+     - The depth of the goal is |x|+|y|, and if we allow the loopy states on the search tree,
+       we will have 4 branches for each node. Thus the maximum total nodes to be expanded:
+       $1 + 4^1 + 4^2 + .. +  4^(|x|+|y|)$
+   - /What is the maximum number of nodes expanded by breadth-first graph search?/
+     - For graph search, we only expand nodes that are not in exploded set.
+       The expanded nodes will be the distinct state of depth |x|+|y|:
+       1 + 4 + 8 + .. + 4k
+   - /Is h= |u-x| + |v-y| an admissible heuristic for a state at (u,v)? explain./
+     - Yes. Because it never overestimates the cost:
+       it is the optimal path from (u,v) to (x,y) in a 2D grid given that all links cost 1.
+   - /f. How many nodes are expanded by =A*= graph search using h?/
+     - It is |x|*|y|. Because all the paths in the rectangle are optimal paths.
+   - /g. Does h remain admissible if some links are removed?/
+     - Yes. Removing links can only make the best path longer if possible,
+       so h remains an underestimate.
+   - /h. Does h remain admissible if some links are added between nonadjacent states?/
+     - No. We could add some links that makes the optimal solution shorter.
+       Thus h would overestimate the cost.
+
+* Formulation
+** Floor planning
+   #+BEGIN_QUOTE
+   /6.4 Given the precise formulations for each of the following as a Constraint Satisfaction Problems:/
+   1. /Rectilinear floor-planning: find non-overlapping places in a large rectangle for a number of smaller rectangles./
+   #+END_QUOTE
+
+   - Variables:
+     - WIDTH and HEIGHT for the large rectangle.
+     - R_i for each rectangles, R_{i}.w and R_{i}.h for the width and height of R_i respectively.
+     - the position P_i for /top-left/ corner of the rectangle R_i (P_{i}.x and P_{i}.y for the co-ordinates)
+   - Domains: {P_{i}.x \in [0, WIDTH]}
+   - Constraints: the four corners of R_i should not be inside the area of R_j, for each $i \neq j$
+     - for each $i \neq j$
+     - for each corner $(x,y)$ in
+       $\{(P_{i}.x, P_{i}.y)$, $(P_i.x + R_i.w, P_i.y)$, $(P_i.x, P_i.y + R_i.h)$, $(P_i.x+R_i.w, P_i.y + R_i.h)\}$
+     - $\neg (P_{j}.x < x < P_{j}.x + R_{j}.w \cap P_{j}.y < y < P_{j}.y + R_{j}.h)$
+
+** class scheduling
+   #+BEGIN_QUOTE
+   2. /Class scheduling: There is a fixed number of professors and classrooms,/
+      /a list of classes to be offered, and a list of possible time slots for classes./
+      /Each professor has a set of classes that he or she can teach./
+   #+END_QUOTE
+
+   - Variables:
+     - P_i for each professor, with $P_i.classes$ be the set of classes he or she can teach
+     - R_i for each room
+     - C_i for each class
+     - T_i for each time slot
+     - Assignment A_i, the i-th assignment, is a 4-tuple $(A_i.prof, A_i.room, A_i.class, A_i.time)$.
+   - Domain
+     - $A_i.prof$ \in {P_j}
+     - $A_i.room$ \in {R_j}
+     - $A_i.class$ \in {C_j}
+     - $A_i.time$ \in {T_j}
+   - Constraint
+     - $A_i.class \in A_i.prof.classes$ for all i
+     - $\neg (A_i.time = A_j.time \cap A_i.prof = A_j.prof)$ for all $i \neq j$
+     - $\neg (A_i.time = A_j.time \cap A_i.room = A_j.room)$ for all $i \neq j$
+
+** linving in 5 houses
+   #+BEGIN_QUOTE
+   /Consider the following logic puzzle: In five houses, each with a different color,/
+   /live five persons of different nationalities, each of whom prefers a different brand of candy,/
+   /a different drink, and a different pet./
+   /Given the following facts, the questions to answer are/
+   /"where does the zebra live, and in which house do they drink water?"/
+   /Discuss different representations of this problem as a CSP./
+   /Why would one prefer one representation over another?/
+   #+END_QUOTE
+
+   #+BEGIN_VERSE
+/The Englishman lives in the red house./
+/The Spaniard owns the dog./
+/The Norwegian lives in the first house on the left./
+/The green house is immediately to the right of the ivory house./
+/The man who eats Hershey bars lives in the house next to the man with the fox./
+/Kit Kats are eaten in the yellow house./
+/The Norwegian lives next to the blue house./
+/The Smarties eater owns snails./
+/The Snickers eater drinks orange juice./
+/The Ukrainian drinks tea./
+/The Japanese eats Milky Ways./
+/Kit Kats are eaten in a house next to the house where the horse is kept./
+/Coffee is drunk in the green house./
+/Milk is drunk in the middle house./
+   #+END_VERSE
+
+*** First representation
+    This representation is based on the house.
+
+    - Variables and domains:
+      - H for the houses
+        - .n: nationality
+        - .b: hold brand of candy
+        - .lb: the one lived in this house like the brand of candy
+        - .c: color
+        - .d: hold drink
+        - .ld: the man lived in this house like the drink
+        - .pet: hold pet
+        - .index: index of the house from left to right
+    - Domains
+      - h.n \in Englishman, Spaniard, etc.
+      - h.c \in red, green, etc.
+      - h.b \in ivory, smarties, etc.
+      - h.d \in water, tea, etc.
+      - h.p \in dog, fox, snail, etc.
+      - h.index \in [1,5]
+    - Constraints
+      - /The Englishman lives in the red house./ \\
+        \neg h.c=red \cup h.n=Englishman
+      - /The Spaniard owns the dog./ \\
+        \neg h.n=Spanisard \cup h.pet=dog
+      - /The Norwegian lives in the first house on the left./\\
+        \neg h.n = Norwegian \cup h.index = 1
+      - /The green house is immediately to the right of the ivory house./\\
+        \neg (h1.c = green \cap h2.b = ivory) \cup h1.index = h2.index + 1
+      - /The man who eats Hershey bars lives in the house next to the man with the fox./\\
+        \neg (h1.lb=Hersheybar \cap \cap h2.pet = fox) \cup | h1.index-h2.index | = 1
+      - /Kit Kats are eaten in the yellow house./\\
+        \neg h.c=yellow \cup h.lb = KitKats
+      - /The Norwegian lives next to the blue house./\\
+        \neg (h1.n=Norwegian \cap h2.c = blue) \cup | h1.index - h2.index |=1
+      - /The Smarties eater owns snails./\\
+        \neg h.lb=smarties \cup h.p = snails
+      - /The Snickers eater drinks orange juice./\\
+        \neg h.lb=snickers \cup h.ld = OrangeJuice
+      - /The Ukrainian drinks tea./
+        \neg h.n=Ukrainian \cup h.ld=tea
+      - /The Japanese eats Milky Ways./
+        \neg h.n=Japanese \cup h.lb=MilkyWays
+      - /Kit Kats are eaten in a house next to the house where the horse is kept./
+        \neg (h1.b=Kats \cap h2.pet=horse) \cup |h1.index-h2.index|=1
+      - /Coffee is drunk in the green house./
+        \neg h.d=coffee \cup h.c=green
+      - /Milk is drunk in the middle house./
+        \neg h.d=milk \cup h.index=3
+
+*** Second Representation
+    This representation is based on the Person.
+
+    - Variables:
+      - P for person
+        - .n : nationality
+        - .b : in his house, the candy that holds
+        - .lb : the brand of candy he likes
+        - .c : the color of his house
+        - .d: the drink held in his house
+        - .ld: the drink he likes
+        - .pet: his pet
+        - .index: the index of his house
+
+
+    The domains and constraints are similar.
+
+*** Comparison
+
+    Similarly, we can also derive the representation based on other variables, e.g. drink, candy, etc.
+    One would prefer one to the other based on the query type he want.
+    For example, if the query is based on the house, e.g. which house hold some drink, he would prefer the house-based representation.
+    Similarly if the query is based on person, e.g. what pet does the Englishman keeps, he would prefer the person-based representation.
+    But essentially they are the same.
+
+* Propositional Logic
+** Simple
+   #+BEGIN_QUOTE
+   /Given the following, can you prove that the unicorn is mythical?/
+   /How about magical? Horned?/
+
+   /If the unicorn is mythical, then it is immortal,/
+   /but if it is not mythical, then it is a mortal mammal./
+   /If the unicorn is either immortal or a mammal, then it is horned./
+   /The unicorn is magical if it is horned./
+   #+END_QUOTE
+
+   The formula writes:
+   - $\neg mythical \vee immortal$
+   - $mythical \vee mammal$
+   - $\neg (immortal \vee mammal) \vee horned$
+   - $\neg horned \vee magical$
+
+   We have the enumerated truth table:
+   | mythical | immortal | mammal | horned | magical |
+   |----------+----------+--------+--------+---------|
+   | T        | T        | T      | T      | T       |
+   | T        | T        | F      | T      | T       |
+   | F        | T        | T      | T      | T       |
+   | F        | F        | T      | T      | T       |
+
+   Based on these, we can derive:
+   - We cannot prove unicorn is mythical.
+   - We can prove it is magical.
+   - We can prove it is horned.
+
+** Party resolution
+   #+BEGIN_QUOTE
+   /7.18 Consider the following sentence:/
+   $((Food \Rightarrow Party) \vee (Drinks \Rightarrow Party)) \Rightarrow ((food \wedge drinks) \Rightarrow Party)$
+   1. /Determine, use enumeration, whether the sentence is/
+      /valid, satisfiable (but neg valid), or unsatisfiable./
+   2. /Convert the left-hand and right-hand sides of the main implication into CNF,/
+      /Showing each step, and explain how the results confirm your answer to (a)/
+   3. /Prove your answer to (a) using resolution./
+   #+END_QUOTE
+
+** 1
+   It is Valid.
+   The enumeration:
+   | F | D | P | left hand | right hand | left \Rightarrow right |
+   |---+---+---+-----------+------------+------------------------|
+   | T | T | T | T         | T          | T                      |
+   | T | F | T | T         | T          | T                      |
+   | F | T | T | T         | T          | T                      |
+   | F | F | T | T         | T          | T                      |
+   |---+---+---+-----------+------------+------------------------|
+   | T | T | F | F         | F          | T                      |
+   | T | F | F | T         | T          | T                      |
+   | F | T | F | T         | T          | T                      |
+   | F | F | F | T         | T          | T                      |
+
+** 2
+   left-hand CNF:
+
+   #+BEGIN_QUOTE
+   ((F \Rightarrow P) \vee (D \Rightarrow P)
+
+   \spadesuit (\neg F \vee P) \vee (\neg D \vee P)
+
+   \spadesuit (\neg F \vee P \vee \neg D \vee P)
+
+   \spadesuit (\neg F \vee \neg D \vee P)
+   #+END_QUOTE
+
+   right-hand CNF:
+
+   #+BEGIN_QUOTE
+   (F \wedge D) \Rightarrow P
+
+   \spadesuit \neg (F \wedge D) \vee P
+
+   \spadesuit (\neg F \vee \neg D) \vee P
+
+   \spadesuit \neg F \vee \neg D \vee P
+   #+END_QUOTE
+
+   As we can see, they are exactly the same. Thus the production is valid.
+
+** 3
+   We can prove it by proving the negation is unsatisfiable.
+
+   $\neg ((F \Rightarrow P) \vee (D \Rightarrow P) \Rightarrow ((F \vee D) \Rightarrow P))$
+
+   #+BEGIN_QUOTE
+   \spadesuit \neg (((F \Rightarrow P) \vee (D \Rightarrow P)) \Rightarrow ((F \wedge D) \Rightarrow P))
+
+   \spadesuit \neg ( \neg ((F \Rightarrow P) \vee (D \Rightarrow P)) \vee ((F \wedge D) \Rightarrow P))
+
+   \spadesuit ((F \Rightarrow P) \vee (D \Rightarrow P)) \wedge (\neg ((F \wedge D) \Rightarrow P))
+
+   \spadesuit ((\neg F \vee P) \vee (\neg D \vee P)) \wedge (\neg (\neg (F \wedge D) \vee P))
+
+   \spadesuit (\neg F \vee \neg D \vee P) \wedge (F \wedge D) \wedge \neg P
+
+   \spadesuit (\neg F \vee \neg D \vee P) \wedge F \wedge D \wedge \neg P
+   #+END_QUOTE
+
+   This resolves to empty clause, thus the original sentence is valid.
+
+
 * Adversarial Search
 
   This is multiple agents, also known as /game/.
@@ -75,62 +511,265 @@ Max-Value(state, alpha, beta) {
 
 * Logic
 ** entailment
-Entailment: \beta \models \alpha, reads:
-the sentence \beta entails the sentence \alpha
-if and only if
-\alpha is true in all worlds where \beta is true.
+   Entailment: \beta \models \alpha, reads:
+   the sentence \beta entails the sentence \alpha
+   if and only if
+   \alpha is true in all worlds where \beta is true.
 
 ** Propositional logic
-a.k.a. boolean logic.
+   a.k.a. boolean logic.
 
-logical equivalence;
+   logical equivalence;
 
-| a                                   | b                                                            |
-|-------------------------------------+--------------------------------------------------------------|
-| \alpha \wedge \beta                 | \beta \wedge \alpha                                          |
-| (\alpha \wedge \beta) \wedge \gamma | \alpha \wedge (\beta \wedge \gamma)                          |
-| \alpha \Rightarrow \beta            | \neg \beta \Rightarrow \neg \alpha                           |
-| \alpha \Rightarrow \beta            | \neg \alpha \vee \beta                                       |
-| \alpha \Leftrightarrow \beta        | (\alpha \Rightarrow \beta) \wedge (\beta \Rightarrow \alpha) |
+   | a                                   | b                                                            |
+   |-------------------------------------+--------------------------------------------------------------|
+   | \alpha \wedge \beta                 | \beta \wedge \alpha                                          |
+   | (\alpha \wedge \beta) \wedge \gamma | \alpha \wedge (\beta \wedge \gamma)                          |
+   | \alpha \Rightarrow \beta            | \neg \beta \Rightarrow \neg \alpha                           |
+   | \alpha \Rightarrow \beta            | \neg \alpha \vee \beta                                       |
+   | \alpha \Leftrightarrow \beta        | (\alpha \Rightarrow \beta) \wedge (\beta \Rightarrow \alpha) |
 
- - A sentence is /valid/ if it is true in all models.
-   Deduction theorem: KB \models \alpha iff KB \Rightarrow \alpha is valid
- - A sentence is satisfiable if it is true in /some/ models.
-   KB \models \alpha iff KB \wedge \neg \alpha is unsatisfiable.
+   - A sentence is /valid/ if it is true in all models.
+     Deduction theorem: KB \models \alpha iff KB \Rightarrow \alpha is valid
+   - A sentence is satisfiable if it is true in /some/ models.
+     KB \models \alpha iff KB \wedge \neg \alpha is unsatisfiable.
 
-Proof method:
-- inference rules: transform the sentences to a normal form
-- model checking: truth table
+   Proof method:
+   - inference rules: transform the sentences to a normal form
+   - model checking: truth table
 
-A clause is a disjunction of literals.
-Factoring: the result clause keeps only one copy of each literal.
+   A clause is a disjunction of literals.
+   Factoring: the result clause keeps only one copy of each literal.
 
-Conjunction: \wedge
-Disjunction: \vee
-CNF: conjunctive normal form. Conjunction of (disjunctions of literals).
+   Conjunction: \wedge
+   Disjunction: \vee
+   CNF: conjunctive normal form. Conjunction of (disjunctions of literals).
 
 
-Resolution algorithm: proof by contradiction.
-I.e. to show KB \models \alpha, we show KB \wedge \neg \alpha is unsatisfiable.
-The naming resolution is because, the pair of complementary literals is resolved.
+   Resolution algorithm: proof by contradiction.
+   I.e. to show KB \models \alpha, we show KB \wedge \neg \alpha is unsatisfiable.
+   The naming resolution is because, the pair of complementary literals is resolved.
 
- - Definite clause :: disjunction of literals with exactly one positive literal.
+   - Definite clause :: disjunction of literals with exactly one positive literal.
 
 
 ** First Order Logic
-\wedge is the natural connective with \exists.
-Using \Rightarrow as the main connective with \exists often causes errors:
+   \wedge is the natural connective with \exists.
+   Using \Rightarrow as the main connective with \exists often causes errors:
 
-\exists x At(x,ISU) \Rightarrow Smart(x)
+   \exists x At(x,ISU) \Rightarrow Smart(x)
 
-is true if there's anyone who is not at ISU, which may not be what you want.
+   is true if there's anyone who is not at ISU, which may not be what you want.
 
-Properties:
-| a                   | b                   | result    |
-|---------------------+---------------------+-----------|
-| \forall x \forall y | \forall y \forall x |           |
-| \exists x \exists y | \exists y \exists x |           |
-| \exists x \forall y | \forall y \exists x | not equal |
-| \forall x           | \neg \exists x \neg |           |
-| \exists x           | \neg \forall x \neg |           |
+   Properties:
+   | a                   | b                   | result    |
+   |---------------------+---------------------+-----------|
+   | \forall x \forall y | \forall y \forall x |           |
+   | \exists x \exists y | \exists y \exists x |           |
+   | \exists x \forall y | \forall y \exists x | not equal |
+   | \forall x           | \neg \exists x \neg |           |
+   | \exists x           | \neg \forall x \neg |           |
+
+
+
+* First order logic
+** Some problems
+*** Student problems
+    #+BEGIN_QUOTE
+    1. /Some students took French in spring 2001./
+    2. /Every student who takes French passes it./
+    3. /Only one student took Greek in spring 2001./
+    4. /The best score in Greek is always higher than the best score in French./
+    #+END_QUOTE
+
+    - =student(x)= :: x is student
+    - =f,g= :: French and German courses
+    - =take(x,c,s)= :: student =x= takes course =c= in semester =s=
+    - =pass(x,c)= :: student =x= passes course =c=
+    - =score(x,c,s)= :: the score of student =x= in course =c= in semester =s=.
+    - =x>y= :: x is greater than y
+
+    #+BEGIN_QUOTE
+    1. $\exists x student(x) \wedge take(x,f,spring2001)$
+    2. $\forall x,s student(s) \wedge take(x,f,s) \Rightarrow pass(x,f,s)$
+    3. $\exists x student(x) \wedge take(x,g,sprint2001) \wedge \forall \: y y \ne x \Rightarrow \neg take(y,g,sprint2001)$
+    4. $\forall s \exists x \forall y score(x,g,s) > score(y,f,s)$
+    #+END_QUOTE
+
+*** pollicy problems
+
+    #+BEGIN_QUOTE
+    5. /Every person who buys a policy is smart./
+    6. /No person buys an expensive policy./
+    7. /There is an agent who sells policies only to people who are not insured./
+    #+END_QUOTE
+
+    - =person(x)= :: x is person
+    - =expensive(x)= :: x is expensive
+    - =agent(x)= :: x is agent
+    - =insured(x)= :: x is insured
+    - =smart(x)= :: x is smart
+    - =buy(x,y,z)= :: =x= buys =y= from =z=
+    - =sell(x,y,z)= :: =x= sells =y= to =z=
+
+    #+BEGIN_QUOTE
+    5. \forall person(x) \wedge (\exists y,z policy(y) \wedge buy(x,y,z)) \Rightarrow smart(x)
+    6. \forall x,y,z person(x) \wedge policy(y) \wedge expensive(y) \Rightarrow \neg buy(x,y,z)
+    7. \exists x agent(x) \wedge \forall y,z policy(y) \wedge sell(x,y,z) \Rightarrow (person(z) \wedge \neg insured(z))
+    #+END_QUOTE
+
+
+*** barber
+    #+BEGIN_QUOTE
+    8. /There is a barber who shaves all men in town who do not shave themselves./
+    #+END_QUOTE
+
+    - =man(x)= :: x is man
+    - =barber(x)= :: x is a barber
+    - =shaves(x,y)= :: =x= shaves =y=
+
+    #+BEGIN_QUOTE
+    8. \exists x \forall y barber(x) \wedge man(y) \wedge \neg shaves(y,y) \Rightarrow shaves(x,y)
+    #+END_QUOTE
+
+
+*** citizen
+    #+BEGIN_QUOTE
+    9. /A person born in the UK, each of whose parents is a UK citizen or a UK resident, is a UK citizen by birth./
+    10. /A person born outside the UK, one of whose parents is a UK citizen by birth, is a UK citizen by descent./
+    #+END_QUOTE
+    - =person(x)= :: x is person
+    - =parent(x,y)= :: =x= is parent of =y=
+    - =citizen(x,c)= :: =x= is a citizen of country =c=
+    - =citizen(x,c,r)= :: =x= is a citizen of country =c=, for reason =r=
+    - =resident(x,c)= :: =x= is a resident of country =c=
+    - =born(x,c)= :: =x= was born in country =c=
+    #+BEGIN_QUOTE
+    9. \forall x person(x) \wedge born(x,UK) \wedge
+       (\forall y parent(y,x) \Rightarrow ((\exists r citizen(y,UK,r)) \vee resident(y,UK)))
+       \Rightarrow citizen(x,UK,BIRTH)
+    10. \forall x person(x) \wedge \neg born(x,UK) \wedge
+        (\exists y parent(y,x) \wedge citizen(y,UK,BIRTH))
+        \Rightarrow citizen(x,UK,DESCENT)
+    #+END_QUOTE
+
+*** other
+    #+BEGIN_QUOTE
+    11. /Politicians can fool some of the people all of the time,/
+        /and they can fool all of the people some of the time,/
+        /but they can’t fool all of the people all of the time./
+
+    12. /All Greeks speak the same language. (Use Speaks(x,l) to mean that person x speaks language l.)/
+    #+END_QUOTE
+
+    - =person(x)= :: x is person
+    - =politician(x)= :: x is politician
+    - =fool(x,y,t)= :: =x= fools =y= at time =t=
+    - =german(x)= :: =x= is German.
+
+    #+BEGIN_QUOTE
+    11. \forall x politician(x) \Rightarrow
+        (\exists y \forall t person(y) \wedge fool(x,y,t)) \wedge
+        (\exists t \forall y person(y) \Rightarrow fool(x,y,t)) \wedge
+        \neg (\forall t \forall y person(y) \Rightarrow fool(x,y,t))
+    12. \forall x,y,l german(x) \wedge german(y) \wedge Speaks(x,l) \Rightarrow Speaks(y,l)
+    #+END_QUOTE
+
+
+** Unify
+   #+BEGIN_QUOTE
+   /For each pair of atomic sentences, give the most general unifier if it exists:/
+
+   1. /P(A,B,B), P(x,y,z)/
+   2. /Q(y,G(A,B)),Q(G(x,x),y)/
+   3. /Older(Father(y),y),Older(Father(x),John)/
+   4. /Knows(Father(y),y), Knows(x,x)/
+   #+END_QUOTE
+
+*** {x/A, y/B, z/B}
+    #+BEGIN_QUOTE
+    /P(A,B,B), P(x,y,z)/
+
+    \Rightarrow /P(A,B,B), P(A,y,z)/ : {x/A}
+
+    \Rightarrow /P(A,B,B), P(A,B,z)/ : {x/A, y/B}
+
+    \Rightarrow /P(A,B,B), P(A,B,B)/ : {x/A, y/B, z/B}
+    #+END_QUOTE
+*** Cannot unify.
+    To see why:
+    #+BEGIN_QUOTE
+    Q(y,G(A,B)),Q(G(x,x),y) : {y/G(x,x)}
+
+    \Rightarrow Q(G(x,x), G(A,B)), Q(G(x,x), G(x,x)) : {y/G(x,x), x/A}
+
+    \Rightarrow Q(G(A,A), G(A,B)), Q(G(A,A), G(A,A))
+    #+END_QUOTE
+    In the last formula, A cannot be unified to B.
+
+*** {x/John, y/John}
+    #+BEGIN_QUOTE
+    /Older(Father(y),y),Older(Father(x),John)/
+
+    \Rightarrow /Older(Father(John),John),Older(Father(x),John)/ : {y/John}
+
+    \Rightarrow /Older(Father(John),John),Older(Father(John),John)/ : {y/John, x/John}
+    #+END_QUOTE
+*** cannot unify.
+
+    #+BEGIN_QUOTE
+    Knows(Father(y),y), Knows(x,x) : {x/Father(y)}
+
+    \Rightarrow Knows(Father(y),y), Knows(Father(y),Father(y))
+    #+END_QUOTE
+
+    In the last formula, y cannot be unified to Father(y).
+
+** Barber
+   #+BEGIN_QUOTE
+   /9.20 Let L be the first-order language with a single predicate S(p, q),/
+   /meaning “p shaves q.” Assume a domain of people./
+
+   1. /Consider the sentence “There exists a person P who shaves every one who does not shave themselves,/
+      /and only people that do not shave themselves.”/
+      /Express this in L./
+   2. /Convert the sentence in (a) to clausal form./
+   3. /Construct a resolution proof to show that the clauses in (b) are inherently inconsistent./
+      /(Note: you do not need any additional axioms.)/
+   #+END_QUOTE
+
+*** 1
+    \exists p \forall q person(p) \wedge person(q) \wedge (\neg S(q,q) \Leftrightarrow S(p,q))
+*** 2
+    1st order formula:
+
+    \begin{equation}
+    \exists p \: \forall q \: person(p) \wedge person(q) \wedge (\neg S(q,q) \Leftrightarrow S(p,q))
+    \end{equation}
+
+    \begin{equation}
+    \exists p \: \forall q \: person(p) \wedge person(q) \wedge (\neg S(q,q) \Rightarrow S(p,q)) \wedge (S(p,q) \Rightarrow \neg S(q,q))
+    \end{equation}
+
+    remove implication:
+
+    \begin{equation}
+    \exists p \: \forall q \: person(p) \wedge person(q) \wedge (S(q,q) \vee S(p,q)) \wedge (\neg S(p,q) \vee \neg S(q,q))
+    \end{equation}
+
+    skolemize off the existence:
+
+    \begin{equation}
+    \forall q \: person(P) \wedge person(q) \wedge (S(q,q) \vee S(P,q)) \wedge (\neg S(P,q) \vee \neg S(q,q)) : \{p={P}\}
+    \end{equation}
+
+    drop universal qualifier:
+
+    \begin{equation}
+    person(P) \wedge person(q) \wedge (S(q,q) \vee S(P,q)) \wedge (\neg S(P,q) \vee \neg S(q,q))
+    \end{equation}
+
+*** 3
+
+    The CNF above resolves to empty clause, which is false, meaning the logic is not satisfiable.
 
