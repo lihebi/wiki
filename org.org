@@ -43,9 +43,10 @@ There should be two empty lines after the footnote definition.
 - Operations ::
   There're a lot of operations on the entries.
   In the org buffer, =C-c t= will rotate TODO state.
-  For a list that is not a heading, you can prepend the list with =[ ]=, and =C-c C-c= toggles it.
+  For a list that is not a heading, you can pre-pend the list with =[ ]=, and =C-c C-c= toggles it.
   A task can be clocked.
   Clock in via =C-c C-x C-i= and clock out via =C-c C-x C-o=.
+  =C-c ^= can sort the lists, based on many attributes such as todo status, time, priority.
 - Agenda View ::
   It is better to view the TODO lists in a dedicated buffer.
   Org keeps the variable =org-agenda-files= for the global agenda files.

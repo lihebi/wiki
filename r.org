@@ -3,112 +3,112 @@
 * Setting up
 
 ** Packages
-=library()= see the list of installed packages.
-=library(class)= load the package =class=.
-=search()= see the list of loaded packages.
-=install.packages()= and =update.packages()= install and update packages.
+   =library()= see the list of installed packages.
+   =library(class)= load the package =class=.
+   =search()= see the list of loaded packages.
+   =install.packages()= and =update.packages()= install and update packages.
 
 ** Emacs ESS
-To start ESS session, run command =S=.
-ESS will create a command interface as a buffer.
-Execute =?foo= will open the =R-doc= for the function =foo=.
+   To start ESS session, run command =S=.
+   ESS will create a command interface as a buffer.
+   Execute =?foo= will open the =R-doc= for the function =foo=.
 
-There's a babel in org mode for R, so just =C-c C-c= would work.
-This will prompt to create a session.
-One special for this babel is you can evaluate by line, using =C-<RET>= in the edit buffer.
+   There's a babel in org mode for R, so just =C-c C-c= would work.
+   This will prompt to create a session.
+   One special for this babel is you can evaluate by line, using =C-<RET>= in the edit buffer.
 
-Keep the session using the header:
-#+BEGIN_EXAMPLE
+   Keep the session using the header:
+   #+BEGIN_EXAMPLE
 #+PROPERTY: session *R*
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
-To export a graph:
+   To export a graph:
 
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 :file image.png :results output graphics :exports both
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
-To export ordinary result:
+   To export ordinary result:
 
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 :exports both
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
-To export some summary data:
+   To export some summary data:
 
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 :exports both :results output org
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
 ** Interactive command
-=setwd("/absolute/path")= set the working directory.
+   =setwd("/absolute/path")= set the working directory.
 
-In the interactive command line interface, =q()= to exit, 
-=help(lm)= to show help message for a built-in function.
-=?lm= and =??solve= also shows documentation, while =example(topic)=, as its name indicates, shows the examples.
-=help.start()= opens the html documentation page.
+   In the interactive command line interface, =q()= to exit, 
+   =help(lm)= to show help message for a built-in function.
+   =?lm= and =??solve= also shows documentation, while =example(topic)=, as its name indicates, shows the examples.
+   =help.start()= opens the html documentation page.
 
-IO:
-=source("a.R")= loads a script.
-=sink("a.lis")= redirects the output to a file, and =sink()= restore that to standard output.
+   IO:
+   =source("a.R")= loads a script.
+   =sink("a.lis")= redirects the output to a file, and =sink()= restore that to standard output.
 
-Objects:
-=ls()= list the objects currently stored.
-=objects()= create and store current objects.
-=rm(x, y, z, ink, junk, temp, foo, bar)= remove objects
+   Objects:
+   =ls()= list the objects currently stored.
+   =objects()= create and store current objects.
+   =rm(x, y, z, ink, junk, temp, foo, bar)= remove objects
 
 
 * Objects
-Objects have mode and length.
-The =typeof= gets the type of an object, while =mode= retrieves the mode of an object.
-=length= gets the length of the vector.
+  Objects have mode and length.
+  The =typeof= gets the type of an object, while =mode= retrieves the mode of an object.
+  =length= gets the length of the vector.
 
-Objects have attributes.
-=names= is used for indexing
-=dim= is the dimension of a matrix
-=dimnames= is the character names of the dimensions
+  Objects have attributes.
+  =names= is used for indexing
+  =dim= is the dimension of a matrix
+  =dimnames= is the character names of the dimensions
 
-The missing values are =NA=, tested by =is.na=.
-Illegal computations produces =NaN=, e.g. =0/0=.
+  The missing values are =NA=, tested by =is.na=.
+  Illegal computations produces =NaN=, e.g. =0/0=.
 
-Compound objects are /factors/ (a.k.a. enumerators) and /data frames/ (lists of objects all have the same length).
-Vectors are the array of objects of the same mode.
-List can contain the objects of different modes.
-A /data frame/ is a list with class "data.frame".
+  Compound objects are /factors/ (a.k.a. enumerators) and /data frames/ (lists of objects all have the same length).
+  Vectors are the array of objects of the same mode.
+  List can contain the objects of different modes.
+  A /data frame/ is a list with class "data.frame".
 
 ** Vector
-Create a vector by =c=: =c(10.4, 5.6, 3.1)=.
-This connects elements /end to end/, e.g. =c(x, 0, x)=.
-By a sequence =1:30=: the same as: =c(1, 2, ..., 29, 30)=.
-Colon operator can also specify a backward sequence: =30:1=
-Colon operator has higher priority: ~2*1:15~ is the same as =c(2, 4, …, 28, 30)=
-The colon operator works, if you want a more flexible and powerful expression, =seq= is what you want:
-- ~seq(2,10)~ produces ~2:10~.
-- ~seq(-5, 5, by=.2)~
-- ~seq(length=51, from=-5, by=.2)~
+   Create a vector by =c=: =c(10.4, 5.6, 3.1)=.
+   This connects elements /end to end/, e.g. =c(x, 0, x)=.
+   By a sequence =1:30=: the same as: =c(1, 2, ..., 29, 30)=.
+   Colon operator can also specify a backward sequence: =30:1=
+   Colon operator has higher priority: ~2*1:15~ is the same as =c(2, 4, …, 28, 30)=
+   The colon operator works, if you want a more flexible and powerful expression, =seq= is what you want:
+   - ~seq(2,10)~ produces ~2:10~.
+   - ~seq(-5, 5, by=.2)~
+   - ~seq(length=51, from=-5, by=.2)~
 
-Repeating can be done by =rep=:
-- ~x <- c(1,2,3)~
-- ~rep(x, times=5)~ : ~[1,2,3,1,2,3,...]~
-- ~rep(x, each=5)~ : ~[1,1,1,1,1,2,2,2,2,2,...]~
+   Repeating can be done by =rep=:
+   - ~x <- c(1,2,3)~
+   - ~rep(x, times=5)~ : ~[1,2,3,1,2,3,...]~
+   - ~rep(x, each=5)~ : ~[1,1,1,1,1,2,2,2,2,2,...]~
 ** Indexing
 
-Inside =[]=, it can be a number or character, or a vector of them.
-For vectors, =[]= returns the element.
-For lists, =[]= will return the the element inside a list, while =[[]]= will return the single element.
-=[]= does not allow a vector as index.
+   Inside =[]=, it can be a number or character, or a vector of them.
+   For vectors, =[]= returns the element.
+   For lists, =[]= will return the the element inside a list, while =[[]]= will return the single element.
+   =[]= does not allow a vector as index.
 
-If the index is integer, will select based on the position, start from 1.
-If it is negative, it means the elements other than those index.
-The index 0 will return empty.
-Other numeric values will be converted to integer towards zero.
+   If the index is integer, will select based on the position, start from 1.
+   If it is negative, it means the elements other than those index.
+   The index 0 will return empty.
+   Other numeric values will be converted to integer towards zero.
 
-If the index is logical vector, the true ones will be returned.
-If the index is character, it is compared, /partially/, with the /names/ attributes of the vector.
-=$= can be used for indexing with character.
-The empty index =[]= will returns the entire vector with /irrelevant/ attributes removed.
-The only retained ones are the =names=, =dim= and =dimnames= attributes.
-#+begin_src R
+   If the index is logical vector, the true ones will be returned.
+   If the index is character, it is compared, /partially/, with the /names/ attributes of the vector.
+   =$= can be used for indexing with character.
+   The empty index =[]= will returns the entire vector with /irrelevant/ attributes removed.
+   The only retained ones are the =names=, =dim= and =dimnames= attributes.
+   #+begin_src R
 fruit <- c(5, 10, 1, 20)
 names(fruit) <- c("orange", "banana", "apple", "peach")
 lunch <- fruit[c("apple","orange")]
@@ -116,111 +116,151 @@ lunch <- fruit[c("apple","orange")]
 dim(z) <- c(3,5,100)~
 z[2,,]
 z[,,]
-#+end_src
+   #+end_src
+
+** data example
+
+#+BEGIN_SRC R
+  args = commandArgs(trailingOnly=TRUE)
+  csvfile = args[1]
+  csv = read.csv(csvfile, header=TRUE)
+
+  total_test <- dim(csv)[[1]]
+  sub = subset(csv, reach_code>=5)
+  total_reach_poi <- dim(sub)[[1]]
+  sub = subset(csv, reach_code==5 & status_code == 1)
+  total_fail_poi <- dim(sub)[[1]]
+
+  sub <- sub[1:(length(csv)-2)]
+  ## (HEBI: callin ga function)
+  funcs = TransferFunction(sub);
+
+  ## (HEBI: define a function)
+  Constant <- function(data) {
+      ## (HEBI: return value as a vector)
+      ret <- c()
+      i <- 1
+      ## (HEBI: a for loop using the vector as range)
+      for (i in c(1:length(data))) {
+          col = data[i];
+          ## (HEBI: Get the name of a column)
+          name = names(col);
+          if (substr(name, 1, 6) == "output") {
+              ## (HEBI: remove of NA)
+              newcol = col[!is.na(col)];
+              if (length(newcol) > 2) {
+                  value <- newcol[1]
+                  ## (HEBI: check the value of the vector is all the same)
+                  if (length(newcol[newcol != value]) == 0) {
+                      ## (HEBI: pushing a new value to the return vector)
+                      ret <- c(ret, paste("name = ",  value))}}}}
+      return(ret)}
+
+#+END_SRC
 
 * Operators
-- arithmetic :: =+-*/=, =^= for exp, =%%= for modulus
-- matrix :: =%*%= matrix product, =%o%= outer product
-- logic :: =!=, =&, |= for vector, =&&, ||= for no vector
-- relative :: ~>, <, ==, <=, >=~
-- general :: =<-, ->= assignments, =$= list subset, =:= sequence, =~= for model formula
+  - arithmetic :: =+-*/=, =^= for exp, =%%= for modulus
+  - matrix :: =%*%= matrix product, =%o%= outer product
+  - logic :: =!=, =&, |= for vector, =&&, ||= for no vector
+  - relative :: ~>, <, ==, <=, >=~
+  - general :: =<-, ->= assignments, =$= list subset, =:= sequence, =~= for model formula
 
-Built-in functions:
-- =log=, =exp=, =sin=, =cos=, =tan=, =sqrt=
-- =min=, =max=
-- =range=: same as =c(min(x),max(x))=
-- =length(x)=, =sum(x)=, =prod(x)= (product)
-- =mean(x)=: =sum(x)/length(x)=
-- ~var(x)~: ~sum((x-mean(x))^2)/(length(x)-1)~
-- ~sort(x)~: increasing order
-- ~order()~ or ~sort.list()~
-- =paste()= function takes an arbitrary number of arguments
-  and concatenates them one by one into character strings.
+  Built-in functions:
+  - =log=, =exp=, =sin=, =cos=, =tan=, =sqrt=
+  - =min=, =max=
+  - =range=: same as =c(min(x),max(x))=
+  - =length(x)=, =sum(x)=, =prod(x)= (product)
+  - =mean(x)=: =sum(x)/length(x)=
+  - ~var(x)~: ~sum((x-mean(x))^2)/(length(x)-1)~
+  - ~sort(x)~: increasing order
+  - ~order()~ or ~sort.list()~
+  - =paste()= function takes an arbitrary number of arguments
+    and concatenates them one by one into character strings.
 
 * Control Structure
-The compound statements are the same as C, can be a single statement without the braces.
+  The compound statements are the same as C, can be a single statement without the braces.
 ** Conditional
-- if :: =if (STMT) STMT else if (STMT) STMT else STMT=
-- Switch :: =switch (STMT, LIST)=
-  - the STMT is first evaluated
-  - if the value is within 1 and the length of the LIST, evaluate LIST[i], and return
-  - return NULL
-  - Notice that the LIST can be a comma separated argument of switch ... which means switch actually accepts =...=
+   - if :: =if (STMT) STMT else if (STMT) STMT else STMT=
+   - Switch :: =switch (STMT, LIST)=
+        - the STMT is first evaluated
+        - if the value is within 1 and the length of the LIST, evaluate LIST[i], and return
+        - return NULL
+        - Notice that the LIST can be a comma separated argument of switch ... which means switch actually accepts =...=
 
 ** Loop
-- =for= :: =for (NAME in VECTOR) STMT=
-- =while= :: =while (STMT) STMT
-- =repeat= :: repeat STMT
-- =break=, =next= ::
+   - =for= :: =for (NAME in VECTOR) STMT=
+   - =while= :: =while (STMT) STMT
+   - =repeat= :: repeat STMT
+   - =break=, =next= ::
 
 * Evaluation rules
-- recycling rules :: the shortest list is recycled to the length of longest.
-- dimensional attributes :: the dimension of matrix must match. No recycle for a matrix.
+  - recycling rules :: the shortest list is recycled to the length of longest.
+  - dimensional attributes :: the dimension of matrix must match. No recycle for a matrix.
 
 * Function
-=function (ARGLIST) BODY=
+  =function (ARGLIST) BODY=
 
-The argument list can be a symbol, a ~symbol=value~, or a =...=.
-The body is a compound expression, surrounded with ={}=.
-Function can be assigned to a symbol.
+  The argument list can be a symbol, a ~symbol=value~, or a =...=.
+  The body is a compound expression, surrounded with ={}=.
+  Function can be assigned to a symbol.
 
-The matching of formals and actual are pretty tricky.
-1. exact matching on tags
-2. partial matching on tags
-3. positional matching for =...=
-Partial matching result must be unique, but the exact matched ones are excluded before this step is entered.
+  The matching of formals and actual are pretty tricky.
+  1. exact matching on tags
+  2. partial matching on tags
+  3. positional matching for =...=
+  Partial matching result must be unique, but the exact matched ones are excluded before this step is entered.
 
 * Quote
-The quote will wrap the expression into an object without evaluating it.
-The resulting object has the mode of =call=.
-The =eval= is used to evaluate it.
+  The quote will wrap the expression into an object without evaluating it.
+  The resulting object has the mode of =call=.
+  The =eval= is used to evaluate it.
 
 * Debugging
-To enter the debugger, a call to =browser= function suffices.
-This allows you to browse the values at that point.
-A more powerful debugger is by a call to =debug= with the function name as argument.
-Each time that function is called, you enter the debug and can control the execution.
-Tracing can be registered by =trace= or =untrace= with the name of the function.
-It might need to be quoted in some case, so you'd better quote it, with double quotes.
-Every time the function is invoked, the return value will be printed as trace.
+  To enter the debugger, a call to =browser= function suffices.
+  This allows you to browse the values at that point.
+  A more powerful debugger is by a call to =debug= with the function name as argument.
+  Each time that function is called, you enter the debug and can control the execution.
+  Tracing can be registered by =trace= or =untrace= with the name of the function.
+  It might need to be quoted in some case, so you'd better quote it, with double quotes.
+  Every time the function is invoked, the return value will be printed as trace.
 * Data IO
-- =write=
-- =write.table=
-- =write.csv=
-- ~read.table("filename", header=TRUE, sep=",")~
-  - this ignores blank lines,
-  - and expect the header to be one field less than the body.
-  - =#= as comments
+  - =write=
+  - =write.table=
+  - =write.csv=
+  - ~read.table("filename", header=TRUE, sep=",")~
+    - this ignores blank lines,
+    - and expect the header to be one field less than the body.
+    - =#= as comments
 
 
 * Models
-Linear model.
+  Linear model.
 
-#+BEGIN_EXAMPLE
+  #+BEGIN_EXAMPLE
 fm = lm(y ~ x1 + x2, data = mydataframe)
-#+END_EXAMPLE
+  #+END_EXAMPLE
 
-The fitted model in the variable =fm= can be accessed by:
-- =coef= :: extract the coefficients
-- =deviance= :: the Residual Sum of Square
-- =formula= :: extract the model formula
-- =plot= :: produce four plots: residuals, fitted values, diagnostics.
-- =predict(OBJECT, newdata=DATA.FRAME)= :: use the model to predict
-- =residuals= :: extract the residuals
-- =summary= :: print the summary
+  The fitted model in the variable =fm= can be accessed by:
+  - =coef= :: extract the coefficients
+  - =deviance= :: the Residual Sum of Square
+  - =formula= :: extract the model formula
+  - =plot= :: produce four plots: residuals, fitted values, diagnostics.
+  - =predict(OBJECT, newdata=DATA.FRAME)= :: use the model to predict
+  - =residuals= :: extract the residuals
+  - =summary= :: print the summary
 
-The models can be updated, if the formula only changes a little bit.
-In the following example, the =.= means the corresponding part of the original formula.
-#+BEGIN_SRC R
+  The models can be updated, if the formula only changes a little bit.
+  In the following example, the =.= means the corresponding part of the original formula.
+  #+BEGIN_SRC R
 fs <- lm(y~x1 + x2, data=mydata)
 fs <- update(fs, . ~ . + x3)
 fs <- update(fs, sqrt(.) ~ .)
-#+END_SRC
+  #+END_SRC
 
 
 * Packages
 ** ggplot2
-#+BEGIN_SRC R
+   #+BEGIN_SRC R
 qplot(totbill, tip, geom="point", data=tips) # scatter plot
 qplot(totbill, tip, geom="point", data=tips) + geom_smooth(method="lm") # with linear relationship line
 qplot(tip, geom="histogram", data=tip) # histogram
@@ -230,19 +270,19 @@ qplot(sex, tipperc, geom="boxplot", data=tips)
 qplot(smoker, tipperc, geom="boxplot", data=tips)
 qplot(sex:smoker, tipperc, geom="boxplot", data=tips) # combine! plot the two sets of graph in two one graph
 qplot(totbill, tip, geom="point", colour=day, data=tips) # scatter plot with colors, in regard to "day" column
-#+END_SRC
+   #+END_SRC
 ** plot(x, y, ...)
-Possible =...= arguments:
-- =type= what type of plot: 
-  - =p= for points,
-  - =l= for lines,
-  - =b= for both,
-  - =h= for =histogram= like (or =high-density=) vertical lines,
-- =main= an overall title for the plot: see =title=.
-- =xlab= a title for the x axis: see =title=.
-- =ylab= a title for the y axis: see =title=.
+   Possible =...= arguments:
+   - =type= what type of plot: 
+     - =p= for points,
+     - =l= for lines,
+     - =b= for both,
+     - =h= for =histogram= like (or =high-density=) vertical lines,
+   - =main= an overall title for the plot: see =title=.
+   - =xlab= a title for the x axis: see =title=.
+   - =ylab= a title for the y axis: see =title=.
 
 ** dplyr
-A Grammar of Data Manipulation
-https://cran.r-project.org/web/packages/dplyr/index.html
-https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html
+   A Grammar of Data Manipulation
+   https://cran.r-project.org/web/packages/dplyr/index.html
+   https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html

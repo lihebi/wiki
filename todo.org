@@ -11,9 +11,6 @@
 ** 572 project
    SCHEDULED: <2016-10-25 Tue>
 ** TODO color theme
-** LEETCODE
-** READ PAPERS
-** WRITE HELIUM
 ** TODO The New Hacker's Dictionary
 ** TODO The Hacker's Dictionary 
 ** TODO freenode IRC
@@ -33,50 +30,6 @@
    - One can view it by command similar to helm-mark-ring.
    - You need to delete it (tab and select) to remove it, otherwise it will be there
    - The mark must be set manually, no automatic mark will set unexpectedly
-
-* Helium                                                             :helium:
-** TODO Invariant selection & validation with successfully runs
-** DONE bug studies
-   CLOSED: [2016-10-22 Sat 14:39]
-** TODO [#A] Make the server working
-   SCHEDULED: <2016-10-22 Sat>
-** TODO [#A] better documentation support
-   SCHEDULED: <2016-10-22 Sat>
-** DONE More concrete details for the risks
-   CLOSED: [2016-10-22 Sat 14:39] SCHEDULED: <2016-10-22 Sat>
-** TODO [#A] Add small examples to test each components
-   SCHEDULED: <2016-10-22 Sat>
-** TODO [#A] oracle
-   SCHEDULED: <2016-10-23 Sun>
-** TODO all type input generation, e.g. struct
-   SCHEDULED: <2016-10-19 Wed>
-** TODO Helium use fs::path instead of string for all
-   SCHEDULED: <2016-10-20 Thu>
-** TODO Helium utils thread exec refactoring
-** TODO [#A] snippet script refactor
-   SCHEDULED: <2016-10-22 Sat>
-
-** STARTED Oracle for buffer overflow really working
-   SCHEDULED: <2016-10-20 Thu>
-** STARTED Loop bugs
-   SCHEDULED: <2016-10-20 Thu>
-** STARTED Z3
-   SCHEDULED: <2016-10-20 Thu>
-** STARTED predefined invariant integration
-   SCHEDULED: <2016-10-20 Thu>
-** DONE AST generate code: not only selected
-   CLOSED: [2016-10-22 Sat 14:35]
-
-** DONE Input Output Data format unify
-   CLOSED: [2016-10-22 Sat 14:30]
-** DONE transfer function no constant
-** DONE transfer function infer only when data is more than a limit
-** DONE switch case control flow graph
-   SCHEDULED: <2016-10-13 Thu>
-** DONE switch code selection and test coverage, test Helium getopt code
-   SCHEDULED: <2016-10-15 Sat>
-
-
 
 * Side Projects
 ** TODO pdf-tools
