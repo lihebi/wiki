@@ -1,4 +1,5 @@
 #+TITLE: Artificial Intelligence
+#+LATEX_CLASS: fse
 
 * Agent Concept
   - /An agent that senses only partial information about the state cannot be perfectly rational./

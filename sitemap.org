@@ -17,6 +17,7 @@
      + [[file:recitation/recite1.org][COMS342 Recitation 1]]
      + [[file:recitation/recite3.org][COMS342 Recitation 3]]
      + [[file:recitation/recite-oct-17-18.org][COMS342 Recitation Oct 17 & 18]]
+     + [[file:recitation/recite-oct-24-25.org][Lambda Calculus Example]]
    + subdir
      + [[file:subdir/test.org][test]]
    + [[file:tmp.org][A tmp]]
