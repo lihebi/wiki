@@ -107,6 +107,7 @@ gnustep-gui-runtime # for "say" to work, speech!
 perl # for building virtual box guest addition
 linux-headers-`uname -r`
 libsigsegv-dev # handling sigsegv
+cloc
     #+END_EXAMPLE
 
     Non-package software:
