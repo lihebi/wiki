@@ -1,0 +1,119 @@
+#+TITLE: Unix Signal Handling
+
+* Ordinary signal handling
+  The handling of ordinary signals are easy:
+
+  #+BEGIN_SRC C
+  #include <signal.h>
+  static void my_handler(int signum) {
+    printf("received signal\n");
+  }
+
+  int main() {
+    struct sigaction sa;
+    sa.sa_handler = my_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_SIGINFO;
+    // this segv does not work
+    sigaction(SIGSEGV, &sa, NULL);
+    // this sigint will work
+    sigaction(SIGINT, &sa, NULL);
+  }
+  #+END_SRC
+
+* SIGSEGV handling
+** Motivation
+   The reason that I want to handle the =SIGSEGV= is that I want to get the coverage from =gcov=.
+   Gcov will not report any coverage information if the program terminates by receiving some signals.
+   Fortunately we can explicitly ask gcov to dump it by calling =__gcov_flush()= inside the handler.
+   I confirmed this can work for ordinary signal handling.
+
+   #+BEGIN_SRC C
+  // declaring the prototype of gcov
+  void __gcov_flush(void);
+
+  void myhanlder() {
+    __gcov_flush();
+  }
+   #+END_SRC
+
+   After experiment, I found:
+   1. address sanitizer cannot work with this handling. AddressSanitizer will hijact the signal, and maybe output another signal.
+   2. Even if I turned off address sanitizer, and the handler function is executed, the coverage information is still not able to get.
+      This possibly because the handler is running on a different stack.
+
+
+** a new stack
+   However, handling the SIGSEGV is challenging.
+   The above will not work [fn:1].
+
+   #+BEGIN_QUOTE
+   By default, when a signal is delivered, its handler is called on the same stack where the program was running.
+   But if the signal is due to stack overflow, then attempting to execute the handler will cause a second segfault.
+   Linux is smart enough not to send this segfault back to the same signal handler, which would prevent an infinite cascade of segfaults.
+   Instead, in effect, the signal handler does not work.
+   #+END_QUOTE
+
+   Instead, we need to make a new stack and install the handler on that stack.
+
+   #+BEGIN_SRC C
+  #include <signal.h>
+  void sigsegv_handler(int signum, siginfo_t *info, void *data) {
+    printf("Received signal finally\n");
+    exit(1);
+  }
+
+  #define SEGV_STACK_SIZE BUFSIZ
+
+  int main() {
+    struct sigaction action;
+    bzero(&action, sizeof(action));
+    action.sa_flags = SA_SIGINFO|SA_STACK;
+    action.sa_sigaction = &sigsegv_handler;
+    sigaction(SIGSEGV, &action, NULL);
+
+
+    stack_t segv_stack;
+    segv_stack.ss_sp = valloc(SEGV_STACK_SIZE);
+    segv_stack.ss_flags = 0;
+    segv_stack.ss_size = SEGV_STACK_SIZE;
+    sigaltstack(&segv_stack, NULL);
+
+    char buf[10];
+    char *src = "super long string";
+    strcpy(buf, src);
+  }
+   #+END_SRC
+
+
+
+** libsigsegv
+   I also tried another library, the libsigsegv [fn:2].
+   I followed two of their methods, but I cannot make either work.
+   The code lists here as a reference:
+
+   #+BEGIN_SRC C
+  #include <signal.h>
+  #include <sigsegv.h>
+  int handler (void *fault_address, int serious) {
+    printf("Handler triggered.\n");
+    return 0;
+  }
+  void stackoverflow_handler (int emergency, stackoverflow_context_t scp) {
+    printf("Handler received\n");
+  }
+  int main() {
+    char* mystack; // don't know how to use
+    sigsegv_install_handler (&handler);
+    stackoverflow_install_handler (&stackoverflow_handler,
+                                   mystack, SIGSTKSZ);
+  }
+   #+END_SRC
+
+
+
+
+
+
+[fn:1] https://rethinkdb.com/blog/handling-stack-overflow-on-custom-stacks/
+[fn:2] https://www.gnu.org/software/libsigsegv/
