@@ -1,5 +1,19 @@
 #+TITLE: R
 
+
+* Tmp
+
+- =str= :: show the structure of arbitrary type
+- =na.omit= :: can omit the NA values in data frame
+
+A data frame is a list of equal-length vectors.
+When getting the data from read.csv, the result is a data frame.
+Use =names= to work on data frames will emit the names.
+- Since it is a list, using =[]= to index will give also the list, a.k.a. data frame, retaining names.
+  You can use a vector as index.
+- Using =[[]]= to index will give the value, dropping names.
+  You cannot use a vector as index.
+
 * Setting up
 
 ** Packages
@@ -121,6 +135,7 @@ z[,,]
 ** data example
 
 #+BEGIN_SRC R
+  ## (HEBI: Command line arguments)
   args = commandArgs(trailingOnly=TRUE)
   csvfile = args[1]
   csv = read.csv(csvfile, header=TRUE)
