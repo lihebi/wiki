@@ -4,18 +4,18 @@
 
 * Basic System
 ** The sources.list file, add:
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 # backports
 deb http://ftp.debian.org/debian jessie-backports main
 # conkeror (the current version startup error)
 deb     http://noone.org/conkeror-nightly-debs jessie main
 deb-src http://noone.org/conkeror-nightly-debs jessie main
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
 ** Install these packages:
 
 *** X11
-#+BEGIN_EXAMPLE
+    #+BEGIN_EXAMPLE
 xorg xinit tmux stumpwm xcursor-themes
 ratpoison conky dzen2
 rxvt-unicode-256color
@@ -23,63 +23,63 @@ xsel
 autocutsel
 xdm
 pavucontrol # this is GUI to config pulseaudio! Very useful
-#+END_EXAMPLE
+    #+END_EXAMPLE
 
 *** Essential
-#+BEGIN_EXAMPLE
+    #+BEGIN_EXAMPLE
 global build-essential sudo git cifs-utils curl pkg-config cmake
-#+END_EXAMPLE
+    #+END_EXAMPLE
 
 *** APP
-#+BEGIN_EXAMPLE
+    #+BEGIN_EXAMPLE
 xpdf feh emacs silversearcher-ag conkeror sqlite3 tree
-#+END_EXAMPLE
+    #+END_EXAMPLE
 
 *** Helium
-#+BEGIN_EXAMPLE
+    #+BEGIN_EXAMPLE
 exuberant-ctags libsqlite3-dev autoconf graphviz
 gnulib libboost-all-dev libgtest-dev libpugixml-dev
 llvm clang
 feh cmake
-#+END_EXAMPLE
+    #+END_EXAMPLE
 
 **** Note
-#+BEGIN_EXAMPLE
+     #+BEGIN_EXAMPLE
 cd /tmp
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=RELEASE /usr/src/gtest
 make
 sudo mv libg* /usr/lib/
-#+END_EXAMPLE
+     #+END_EXAMPLE
 
-Note: if gtest is compiled with g++, clang++ cannot link it!
-See: http://stackoverflow.com/questions/37321069/googletest-clang-error-compiling-assert-falsefalse
-To use clang for compilation:
-#+BEGIN_EXAMPLE
+     Note: if gtest is compiled with g++, clang++ cannot link it!
+     See: http://stackoverflow.com/questions/37321069/googletest-clang-error-compiling-assert-falsefalse
+     To use clang for compilation:
+     #+BEGIN_EXAMPLE
 export CC=/usr/bin/clang
 $ export CXX=/usr/bin/clang++
 $ cmake ..
-#+END_EXAMPLE
+     #+END_EXAMPLE
 
 
 *** documentation packages
-#+BEGIN_EXAMPLE
+    #+BEGIN_EXAMPLE
 bash-doc
 libstdc++-6-doc
 r-doc-info
-#+END_EXAMPLE
+    #+END_EXAMPLE
 
 *** Extra packages
-#+BEGIN_EXAMPLE
+    #+BEGIN_EXAMPLE
 openjdk-7-jdk
 chromium llvm clang
 texlive-full
 zlib1g-dev
-#+END_EXAMPLE
+    #+END_EXAMPLE
 
 *** pending packages:
-#+BEGIN_EXAMPLE
+    #+BEGIN_EXAMPLE
 cl-quicklisp # need manual installation
 libpng-dev libz-dev libpoppler-glib-dev libpoppler-private-dev imagemagick # for emacs pdf-tools package # need installation
 
@@ -104,19 +104,22 @@ subversion
 z3 libz3-dev
 
 gnustep-gui-runtime # for "say" to work, speech!
-#+END_EXAMPLE
+perl # for building virtual box guest addition
+linux-headers-`uname -r`
+libsigsegv-dev # handling sigsegv
+    #+END_EXAMPLE
 
-Non-package software:
-- https://www.soimort.org/translate-shell/
+    Non-package software:
+    - https://www.soimort.org/translate-shell/
 **** note for cl-quicklisp
-1. use apt to install
-2. locate the file quicklisp.lisp
-3. sbcl --load /path/to/quicklisp.lisp
-4. (ql:installxxx)
-5. (ql:init-xxx)
-5. open emacs, install slime
-6. (ql:quickload "clx-truetype")
-6. run (xft:cache-fonts) once
+     1. use apt to install
+     2. locate the file quicklisp.lisp
+     3. sbcl --load /path/to/quicklisp.lisp
+                                            4. (ql:installxxx)
+                                            5. (ql:init-xxx)
+     5. open emacs, install slime
+     6. (ql:quickload "clx-truetype")
+     6. run (xft:cache-fonts) once
 
 ** Add to sudo
 #+BEGIN_QUOTE
@@ -146,4 +149,11 @@ git config --global push.default simple
 ** wallpaper setup
 #+BEGIN_EXAMPLE
 feh --bg-fill /path/to/wallpaper.suffix
+#+END_EXAMPLE
+
+** Other staff
+https://github.com/kiwanami/emacs-edbi
+You need to install the perl servers:
+#+BEGIN_EXAMPLE
+cpan RPC::EPC::Service DBI DBD::SQLite DBD::Pg DBD::mysql
 #+END_EXAMPLE
