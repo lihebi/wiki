@@ -18,6 +18,8 @@
   - File explorer: konquerer
   - Image viewer: feh
 
+  - image processing: graphicsmagick, imagemagick
+
 ** Speech recognition engines
    - =gnustep-gui-runtime= :: =say "hello"= It is not working yet
    - =festival= :: =echo "hello" | festival --tts= The speech is pretty smooth

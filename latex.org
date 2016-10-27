@@ -1,11 +1,11 @@
 #+TITLE: Latex
 * Installation
-/Library/TeX/texbin/
-
+To see what is your tex home:
 #+BEGIN_EXAMPLE
 kpsewhich -var-value=TEXMFHOME
 #+END_EXAMPLE
 
+It should be something like "~/texmf".
 
 * General Structures
 ** enumerate

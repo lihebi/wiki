@@ -1,8 +1,39 @@
 #+TITLE: Common Lisp
 
 * Installation
+** quicklisp
+#+BEGIN_SRC lisp
+;; sbcl --load /path/to/quicklisp.lisp
+(load "/path/to/quicklisp.lisp")
+(quicklisp-quickstart:install)
+
+;; setting up
+(load "~/quicklisp/setup.lisp")
+;; load quicklisp when you start lisp
+(ql:add-to-init-file)
+
+;; install/remove a software
+(ql:quickload "clx-truetype")
+(ql:uninstall "clx-truetype")
+
+;; query installed packages
+(ql:system-apropos "substring")
+
+;; updating all packages
+(ql:update-all-dists)
+;; update quicklisp itself
+(ql:update-client)
+#+END_SRC
+
+
+A list of packages used:
+- clx-truetype :: for stumpwm ttf-font
+- zpng :: for stumpwm screenshot
 ** packages
 - =cl-quicklisp=
+
+
+
 ** org babel
 first, start =M-x slime=, then you can evaluate this:
 

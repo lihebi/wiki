@@ -108,6 +108,11 @@ perl # for building virtual box guest addition
 linux-headers-`uname -r`
 libsigsegv-dev # handling sigsegv
 cloc
+
+# image processing utilities
+imagemagick
+imagemagick-doc
+graphicsmagick
     #+END_EXAMPLE
 
     Non-package software:

@@ -1,5 +1,14 @@
 #+TITLE: TODO List
 * TODO fse template
+* TODO pldi template
+* TODO helium paper
+* DONE vm creation issue
+  CLOSED: [2016-10-27 Thu 17:20]
+* DONE stumpwm screenshot
+  CLOSED: [2016-10-27 Thu 16:00]
+* DONE stumpwm config repo
+  CLOSED: [2016-10-27 Thu 15:50]
+
 * Research
 ** TODO What is dynamic symbolic execution?
 ** TODO CCured
