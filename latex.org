@@ -1,45 +1,45 @@
 #+TITLE: Latex
 * Installation
-To see what is your tex home:
-#+BEGIN_EXAMPLE
+  To see what is your tex home:
+  #+BEGIN_EXAMPLE
 kpsewhich -var-value=TEXMFHOME
-#+END_EXAMPLE
+  #+END_EXAMPLE
 
-It should be something like "~/texmf".
+  It should be something like "~/texmf".
 
 * General Structures
 ** enumerate
 
-#+begin_src latex
+   #+begin_src latex
 \begin{enumerate}
   \item xxx
   \item xxx
   \item xxx
 \end{enumerate}
-#+end_src
+   #+end_src
 
 ** itemize
 
-#+begin_src latex
+   #+begin_src latex
 \begin{itemize}
   \item like this,
   \item and like this.
 \end{itemize}
-#+end_src
+   #+end_src
 
 ** description
 
-#+begin_src latex
+   #+begin_src latex
 \begin{description}
   \item[Word] Definition
   \item[Concept] Explanation
   \item[Idea] Text
 \end{description}
-#+end_src
+   #+end_src
 
 ** table
 
-#+begin_src latex
+   #+begin_src latex
 \begin{table}
 \centering
 \begin{tabular}{l|r}
@@ -49,37 +49,37 @@ Gadgets & 13
 \end{tabular}
 \caption{\label{tab:widgets}An example table.}
 \end{table}
-#+end_src
+   #+end_src
 
 ** figure
 
-#+begin_src latex
+   #+begin_src latex
 \begin{figure}
   \centering
   \includegraphics[width=0.3\textwidth]{frog.jpg}
   \caption{\label{fig:frog}This frog was uploaded to writeLaTeX via the project menu.}
 \end{figure}
-#+end_src
+   #+end_src
 
-`figure*` can make the figure two column
+   `figure*` can make the figure two column
 
 ** small things
 
-label:
+   label:
 
-#+begin_src latex
+   #+begin_src latex
 \label{xxx}
 \ref{xxx}
 
 \label{xx:yy}
 \ref{xx:yy}
-#+end_src
+   #+end_src
 
 * 在latex中写中文
 
-`fc-list` 可以查看当前安装的字体。
+  `fc-list` 可以查看当前安装的字体。
 
-#+begin_src latex
+  #+begin_src latex
 \documentclass{article}
 \usepackage{fontspec}
 \setromanfont{LiHei Pro} % 俪黑Pro
@@ -92,65 +92,65 @@ label:
 在Mac下的XeTeX里写中文~
 
 \end{document}
-#+end_src
+  #+end_src
 
-其中有两行line break的设定是为了解决XeTeX中文的断行问题，
-其余的部份就是用fontspec package来设定字型。
-romanfont是默认使用的字型，
-monofont是默认的等宽字，不指定的话只要用到等宽字就会看到乱码
+  其中有两行line break的设定是为了解决XeTeX中文的断行问题，
+  其余的部份就是用fontspec package来设定字型。
+  romanfont是默认使用的字型，
+  monofont是默认的等宽字，不指定的话只要用到等宽字就会看到乱码
 
-要用xelatex编译
+  要用xelatex编译
 
 * in-pdf comment
 
-Comments can be added to the margins of the document using the `\todo{Here's a comment in the margin!}` todo command, as shown in the example on the right. You can also add inline comments:
+  Comments can be added to the margins of the document using the `\todo{Here's a comment in the margin!}` todo command, as shown in the example on the right. You can also add inline comments:
 
-`\todo[inline, color=green!40]{This is an inline comment.}`
+  `\todo[inline, color=green!40]{This is an inline comment.}`
 
 * global class and style file
 ** location
-On Mac OS X, Put it in:
+   On Mac OS X, Put it in:
 
-#+begin_src text
+   #+begin_src text
 /Users/hebi/Library/texmf/tex/latex/local/fse/acmcopyright.sty
 /Users/hebi/Library/texmf/tex/latex/local/fse/sig-alternate-05-2015.cls
-#+end_src
+   #+end_src
 
-On linux, it should be =~/texmf/tex/latex/local/= and =/usr/local/share/texmf=.
-Or maybe =/usr/local/texlive/texmf-local/tex/latex/local/=.
+   On linux, it should be =~/texmf/tex/latex/local/= and =/usr/local/share/texmf=.
+   Or maybe =/usr/local/texlive/texmf-local/tex/latex/local/=.
 
-Then you can just use =\documentclass{sig-alternate-05-2015}= globally.
+   Then you can just use =\documentclass{sig-alternate-05-2015}= globally.
 
 ** database
 
-Command to update the =ls-R= database
-- =texhash=
-- =mktexlsr=
+   Command to update the =ls-R= database
+   - =texhash=
+   - =mktexlsr=
 
-check whether it works or not:
-- =kpsewhich sig-alternate-05-2015.cls=
+   check whether it works or not:
+   - =kpsewhich sig-alternate-05-2015.cls=
 
 * Packages
 ** titlesec
-http://ctan.org/pkg/titlesec
+   http://ctan.org/pkg/titlesec
 ** geometry
-The the default for LaTeX is to have no indent after sectional headings.
-Thus the first paragraph will have no indent.
-To indent it, ~\usepackage{indentfirst}~.
+   The the default for LaTeX is to have no indent after sectional headings.
+   Thus the first paragraph will have no indent.
+   To indent it, ~\usepackage{indentfirst}~.
 
-The default =article= class has too much margin.
-To change it:
-#+begin_src latex
+   The default =article= class has too much margin.
+   To change it:
+   #+begin_src latex
 %% this does not work
 %% the default should be 1in, 11pt
 %% \documentclass[a4paper, margin=1in, 11pt]{article} 
 \usepackage{geometry}
 \geometry{margin=1in}
-#+end_src
+   #+end_src
 
 ** fancyhdr
-use headers and footers
-#+begin_src latex
+   use headers and footers
+   #+begin_src latex
   \usepackage{fancyhdr}
   \pagestyle{fancy}
   \fancyhf{}
@@ -159,78 +159,44 @@ use headers and footers
   \rfoot{Page \thepage}
   %% \lfoot{xxx}
   %% \cfoot{xxx}
-#+end_src
+   #+end_src
 
 ** qtree
-The =[= and =]= should be surrounded by spaces!
+   The =[= and =]= should be surrounded by spaces!
 
-#+BEGIN_SRC latex
+   #+BEGIN_SRC latex
 \usepackage{qtree}
 \Tree [ .S [ .S [ .S a ] [ .S a ] + ] [ .S a ] * ]
-#+END_SRC
+   #+END_SRC
 
 ** listings
 
-#+BEGIN_EXAMPLE
+   #+BEGIN_EXAMPLE
 \lstset{language=C,numbers=none,frame=shadowbox, basicstyle=\small, breaklines=true, basewidth={0.45em,0.3em}, stringstyle=\ttfamily}
-#+END_EXAMPLE
+   #+END_EXAMPLE
 
 * Symbols
 
-| code              | symbol           |
-|-------------------+------------------|
-| =\alpha=          | $\alpha$         |
-| =\theta=          | $\theta$         |
-| =\phi=            | $\phi$           |
-| =\varphi=         | $\varphi$        |
-| =\xi=             | $\xi$            |
-| =\mu=             | $\mu$            |
-| =\pi=             | $\pi$            |
-| =\rho=            | $\rho$           |
-| =\sigma=          | $\sigma$         |
-| =\epsilon=        | $\epsilon$       |
-| =\partial=        | $\partial$       |
-|-------------------+------------------|
-| =\quad=           | $\quad$          |
-| =\qquad=          | $\qquad$         |
-|-------------------+------------------|
-| =\cup=            | $\cup$           |
-| =\bigcup=         | $\bigcup$        |
-| =\cap=            | $\cap$           |
-| =\vee=            | $\vee$           |
-| =\wedge=          | $\wedge$         |
-| =\in=             | $\in$            |
-| =\notin=          | $\notin$         |
-| =\neg=            | $\neg$           |
-| =\subset=         | $\subset$        |
-| =\subseteq=       | $\subseteq$      |
-| =\supset=         | $\supset$        |
-| =\supseteq=       | $\supseteq$      |
-|-------------------+------------------|
-| =\leq= (or =\le=) | $\le$            |
-| =\geq= (or =\ge=) | $\ge$            |
-| =\neq=            | $\neq$           |
-|-------------------+------------------|
-| =\leftarrow=      | $\leftarrow$     |
-| =\rightarrow=     | $\rightarrow$    |
-|-------------------+------------------|
-| =\infty=          | $\infty$         |
-| =\propto=         | $\propto$        |
-| =\forall=         | $\forall$        |
-| =\lfloor=         | $\lfloor$        |
-| =\rfloor=         | $\rfloor$        |
-| =\lceil=          | $\lceil$         |
-| =\rceil=          | $\rceil$         |
-|-------------------+------------------|
-| =\sum=            | $\sum$           |
-| =\int=            | $\int$           |
-| =\prod=           | $\prod$          |
-| =\hat{a}=         | $\hat{a}$        |
-| =\frac{a}{b}=     | $\frac{a}{b}$    |
-| =\ldots=          | $\ldots$         |
-| =\sqrt{n}=        | $\sqrt{n}$       |
-| =\overline{abc}=  | $\overline{abc}$ |
-| =\times=          | $\times$         |
+  - alpha beta :: =\alpha= (\alpha) =\theta= (\theta) =\phi= (\phi) =\varphi=
+       (\varphi) =\xi= (\xi) =\mu= (\mu) =\pi= (\pi) =\rho= (\rho) =\sigma=
+       (\sigma) =\epsilon= (\epsilon) =\partial= (\partial)
+  - spacing :: =\quad= ($\quad$) =\qquad= ($\qquad$)
+  - logic :: =\cup= (\cup) =\bigcup= ($\bigcup$) =\cap= (\cap) =\vee= (\vee)
+       =\wedge= (\wedge) =\in= (\in) =\notin= (\notin) =\neg= (\neg) =\subset=
+       (\subset) =\subseteq= ($\subseteq$) =\supset= (\supset) =\supseteq=
+       ($\supseteq$) =\le= (\le) =\ge= (\ge) =\neq= (\neq) =\forall= (\forall)
+       =\exists= (\exists)
+  - arrow :: =\leftarrow= (\leftarrow) =\rightarrow= (\rightarrow)
+       =\Rightarrow= (\Rightarrow) =\Leftarrow= (\Leftarrow)
+       =\Leftrightarrow= (\Leftrightarrow) =\longrightarrow=
+       ($\longrightarrow$)
+  - accents :: =\hat{a}= ($\hat{a}$) =\vec{x}= ($\vec{x}$)
+  - math :: =\infty= (\infty) =\propto= (\propto) =\lfloor= (\lfloor)
+       =\rfloor= (\rfloor) =\lceil= (\lceil) =\rceil= (\rceil) =\sum= (\sum)
+       =\int= (\int) =\prod= (\prod) =\times= (\times) =\ldots= ( $\ldots$ )
+       =\frac{a}{b}= ($\frac{a}{b}$) =\sqrt{n}= ($\sqrt{n}$)
+       =\overline{abc}= ($\overline{abc}$)
+  - mark :: =\checkmark= (\checkmark)
 
 * Font size
 It can be used after table environment
