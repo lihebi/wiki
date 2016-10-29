@@ -1,5 +1,7 @@
 #+TITLE: Emacs Plugins
 
+https://www.emacswiki.org/emacs/KeyChord
+
 * Flycheck
   The default (at least the one I'm using) for C/C++ is =c/c++-clang=.
 

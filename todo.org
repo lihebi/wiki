@@ -1,5 +1,6 @@
 #+TITLE: TODO List
-* TODO 572 hw7
+* Stack
+** TODO cruise
 * TODO helium paper
 * Research
 ** TODO What is dynamic symbolic execution?
@@ -9,8 +10,6 @@
 ** TODO dynamic symbolic execution for invariant inference, ICSE 08
 
 * General TODO lists
-** 572 project
-   SCHEDULED: <2016-10-25 Tue>
 ** TODO color theme
 ** TODO The New Hacker's Dictionary
 ** TODO The Hacker's Dictionary 
@@ -21,10 +20,6 @@
 ** TODO bison, yacc, lex
    SCHEDULED: <2016-10-19 Wed>
 * Emacs
-** TODO reftex, org mode, default bibliography 1. don't need to set 2. easy to export to one file
-   SCHEDULED: <2016-10-19 Wed>
-** DONE HEBI xxxx in emacs highlight the whole line!
-   SCHEDULED: <2016-10-07 Fri>
 ** TODO Ultra-mark
    SCHEDULED: <2016-10-21 Fri>
    - at a line, create a mark, using an optional text.
@@ -37,11 +32,6 @@
 *** +TODO two column view+
 *** TODO show citation on-the-fly
 *** TODO adjust the position (center)
-** TODO wide screen coding
-** Speech synthesis, text-to-speech
-   http://www.ibm.com/watson/developercloud/doc/text-to-speech/
-   https://github.com/zenorocha/voice-elements
-   https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#tts-section
 
 * wiki
 ** TODO wiki KMP search algorithm in lisp
@@ -84,6 +74,8 @@
 ** DONE wiki stronglift all data
 ** stronglist use calendar
 ** stronglift graph
+* DONE 572 hw7
+  CLOSED: [2016-10-28 Fri 13:07]
 * DONE fse template
   CLOSED: [2016-10-27 Thu 18:17]
 * DONE pldi template
@@ -164,3 +156,11 @@
 
 ** DONE paredit
    CLOSED: [2016-10-22 Sat 14:20]
+** DONE reftex, org mode, default bibliography 1. don't need to set 2. easy to export to one file
+   CLOSED: [2016-10-29 Sat 12:11] SCHEDULED: <2016-10-19 Wed>
+** DONE HEBI xxxx in emacs highlight the whole line!
+   SCHEDULED: <2016-10-07 Fri>
+** DONE 572 project
+   CLOSED: [2016-10-29 Sat 14:11] SCHEDULED: <2016-10-25 Tue>
+** DONE paper ideas writeup
+   CLOSED: [2016-10-29 Sat 14:10]
