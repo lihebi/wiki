@@ -32,7 +32,7 @@
 *** +TODO two column view+
 *** TODO show citation on-the-fly
 *** TODO adjust the position (center)
-
+** TODO Academic Citation Center visualization
 * wiki
 ** TODO wiki KMP search algorithm in lisp
 ** TODO [#C] remove all Chinese in wiki
