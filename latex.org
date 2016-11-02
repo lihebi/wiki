@@ -119,7 +119,11 @@ Gadgets & 13
    On linux, it should be =~/texmf/tex/latex/local/= and =/usr/local/share/texmf=.
    Or maybe =/usr/local/texlive/texmf-local/tex/latex/local/=.
 
-   Then you can just use =\documentclass{sig-alternate-05-2015}= globally.
+   Then you can just use =\documentclass{sig-alternate-05-2015}=
+   globally.
+
+Use =kpsewhich -var-value=TEXMFHOME= to check the folder.
+Don't need to update database.
 
 ** database
 
