@@ -774,3 +774,12 @@ Max-Value(state, alpha, beta) {
 
     The CNF above resolves to empty clause, which is false, meaning the logic is not satisfiable.
 
+
+
+* Bayesian
+
+- Node X is conditionally independent of all other nodes in the
+  network, given its markov blanket. (parents, children, and
+  children's parents).
+- Node X is conditionally independent of its non-descendants given its
+  parent.
