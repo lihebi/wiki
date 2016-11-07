@@ -1,2 +1,96 @@
 #+TITLE: Tikz
 
+* Code Structure
+#+BEGIN_SRC latex
+  \usepackage{tikz}
+  \usetikzlibrary{shapes.multipart}
+
+  \tikzset{>=latex}
+  \tikzset{grid/.style={gray,very thin,opacity=1}}
+
+  \begin{figure*}[ht]
+    \centering
+    \begin{tikzpicture}[options]
+    \end{tikzpicture}
+    \caption{}
+    \label{}
+  \end{figure*}
+#+END_SRC
+
+\tikz command; is the same as begin and end tikzpicture, and put
+command inside.
+
+The most common errors for tikz are:
+- miss semicolon
+- miss curly braces
+- miss include tikz library
+
+* Simple
+#+BEGIN_SRC latex
+  \draw[grid] (-2,0) grid (2,12);
+  \draw[grid,blue] (-10,0) grid (-3,12);
+#+END_SRC
+* Style
+
+Action
+- draw=green
+- fill=green!70!blue
+- opacity=1
+- scale=0.8
+
+Shape
+- rectangle
+- rounded corners
+
+String type:
+- dashed
+- dotted
+- thick
+
+* Coordinate
+#+BEGIN_SRC latex
+([shift={(2,-0.5)}] iflen.east)
+#+END_SRC
+
+* Node
+- align=left :: have to have this to make the "\\" able to create
+     newline
+- text=color :: apply on text
+- draw=color :: apply on border
+- color :: apply for everything
+
+=\path node=  is the same as =\node=.
+
+To add the arrow tips, first add =[->]= option for the tikz environment.
+
+#+BEGIN_SRC latex
+\node (poi)[cfg,bench] at (0,0) {\texttt{strcpy(buf,s)}};
+\draw (c9) -- (poi);
+\draw[dotted] (c8) -- node[mystyle,auto]{The Text} (c9); % auto will place the label above the edge
+\draw (c8) -- node[tf,auto,']{false} (poi); % swap(') will swap the auto label to the other half
+\draw (callbar) .. controls ++(right:3) and +(left:3) .. (bar.west); % edge that curves
+#+END_SRC
+
+
+The text of a node can be anything, e.g. =lstlisting= environemnt.
+
+
+** Label
+- every label/.style
+- label position={north east}
+
+#+BEGIN_SRC latex
+\node (A)[opt,label={right:label text}] at (0,0) {text};
+#+END_SRC
+
+* Packages
+** shapes.multipart
+#+BEGIN_SRC latex
+\usetikzlibrary{shapes.multipart}
+#+END_SRC
+
+It adds to the node following options:
+#+BEGIN_EXAMPLE
+mynode/.style={split, rectangle split parts=2}
+#+END_EXAMPLE
+

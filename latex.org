@@ -23,22 +23,22 @@ kpsewhich sig-alternate-05-2015.cls
    - alpha beta :: =\alpha= (\alpha) =\theta= (\theta) =\phi= (\phi) =\varphi=
         (\varphi) =\xi= (\xi) =\mu= (\mu) =\pi= (\pi) =\rho= (\rho) =\sigma=
         (\sigma) =\epsilon= (\epsilon) =\partial= (\partial)
-   - spacing :: =\quad= ($\quad$) =\qquad= ($\qquad$)
-   - logic :: =\cup= (\cup) =\bigcup= ($\bigcup$) =\cap= (\cap) =\vee= (\vee)
+   - spacing :: =\quad= (\quad) =\qquad= (\qquad)
+   - logic :: =\cup= (\cup) =\bigcup= (\bigcup) =\cap= (\cap) =\vee= (\vee)
         =\wedge= (\wedge) =\in= (\in) =\notin= (\notin) =\neg= (\neg) =\subset=
-        (\subset) =\subseteq= ($\subseteq$) =\supset= (\supset) =\supseteq=
-        ($\supseteq$) =\le= (\le) =\ge= (\ge) =\neq= (\neq) =\forall= (\forall)
+        (\subset) =\subseteq= (\subseteq) =\supset= (\supset) =\supseteq=
+        (\supseteq) =\le= (\le) =\ge= (\ge) =\neq= (\neq) =\forall= (\forall)
         =\exists= (\exists)
    - arrow :: =\leftarrow= (\leftarrow) =\rightarrow= (\rightarrow)
         =\Rightarrow= (\Rightarrow) =\Leftarrow= (\Leftarrow)
         =\Leftrightarrow= (\Leftrightarrow) =\longrightarrow=
-        ($\longrightarrow$)
-   - accents :: =\hat{a}= ($\hat{a}$) =\vec{x}= ($\vec{x}$)
+        (\longrightarrow)
+   - accents :: =\hat{a}= (\hat{a}) =\vec{x}= (\vec{x})
    - math :: =\infty= (\infty) =\propto= (\propto) =\lfloor= (\lfloor)
         =\rfloor= (\rfloor) =\lceil= (\lceil) =\rceil= (\rceil) =\sum= (\sum)
-        =\int= (\int) =\prod= (\prod) =\times= (\times) =\ldots= ( $\ldots$ )
-        =\frac{a}{b}= ($\frac{a}{b}$) =\sqrt{n}= ($\sqrt{n}$)
-        =\overline{abc}= ($\overline{abc}$)
+        =\int= (\int) =\prod= (\prod) =\times= (\times) =\ldots= ( \ldots )
+        =\frac{a}{b}= (\frac{a}{b}) =\sqrt{n}= (\sqrt{n})
+        =\overline{abc}= (\overline{abc})
    - mark :: =\checkmark= (\checkmark)
 
 ** Font size
@@ -222,6 +222,14 @@ emphasize
         emph={[2]root,base}, emphstyle={[2]\color{blue}}}
 \lstset{morecomment=[s][\color{blue}]{/*+}{*/} % /*+ xxx */ will be in blue!
         morecomment=[s][\color{red}]{/*-}{*/}}
+#+END_SRC
+
+Style arbitrary content:
+#+BEGIN_SRC latex
+\lstset{escapeinside={(*@}{@*)}}
+\begin{lstlisting}
+(*@\color{red}everything here will be red@*)
+\end{lstlisting}
 #+END_SRC
 
 
