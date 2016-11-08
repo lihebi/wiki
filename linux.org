@@ -199,3 +199,10 @@ nmcli device wifi list
 nmcli device wifi connect IASTATE
 nmcli device wifi connect ID password pwd
    #+END_EXAMPLE
+
+* Remove viewer
+
+The lab machines are accessed via spice. The client for spice is
+virt-viewer. It can be installed through package manager. The actual
+client is called remote-viewer, which is shipped with virt-viewer. So
+the command to connect to the .vv file: =remove-viewer console.vv=.
