@@ -1,5 +1,14 @@
 #+TITLE: Linux
 
+
+One of the most wired error I had (multiple times) is that,
+my dist is full.
+Then I cannot log into my account. Hopefully the home partition is
+separate from root partition, I can still log into root to discover
+this thing.
+
+One of the situation I encountered is the =xsession-errors= file is more than 400G.
+
 - Debian Wiki: https://wiki.debian.org/
 - FreeBSD: https://www.freebsd.org/
 
