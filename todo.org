@@ -1,6 +1,7 @@
 #+TITLE: TODO List
 * Stack
 ** TODO cruise
+** latex cite link
 * TODO helium paper
 * Research
 ** TODO What is dynamic symbolic execution?

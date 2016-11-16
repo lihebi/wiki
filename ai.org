@@ -783,3 +783,67 @@ Max-Value(state, alpha, beta) {
   children's parents).
 - Node X is conditionally independent of its non-descendants given its
   parent.
+
+
+- sample space :: The set of all possible worlds
+- \Omega :: the sample space
+- \omega :: an element of the space. Each element has a probability
+     P(\omega), and sum up to one.
+- prior :: also called /unconditional probabilities/ or /prior
+     probabilities/.
+- posterior :: also called /conditional probability/ or /posterior
+     probability/.
+- evidence :: the results observed
+- product rule :: A different form of the definition of conditional probability
+  $P(a\vedge b) = P(a|b) P(b)$
+- random variables :: begin with uppercase letter.
+- domain :: the set of possible values the random variable can take
+- probability distribution :: for discrete random variables
+- probability density function :: for continuous random variables,
+     because the vector is infinite.
+- joint probability distribution :: the P for two variables with some
+     interaction
+- full joint probability distribution :: all variables
+- inclusion-exclusion principle ::
+  P(a\vee b) = P(a) + P(b) - P(a\vedge b).
+- probabilistic inference :: computation of posterior probabilities given evidence
+- marginalization :: also called /summing out/, because it sums the
+     conditional probabilities. The process of computing the
+     unconditional probability, aka marginal probability
+- normalization :: when calculating a conditional probability, there's
+     a constant. It is typically not important, so replace it with
+     \alpha. The alpha is to set the probabilities to sum to 1.
+     P(X|e) = \alpha P(X,e)
+- conditioning rule :: P(Y) = \sum_{z} P(Y|z)P(z)
+- (absolute) independence :: P(X|Y)=P(X)
+- Bayes rule :: P(b|a) = \frac{P(a|b)P(b)}{P(a)}
+- conditional independence :: P(X,Y|Z) = P(X|Z) P(Y|Z)
+- naive Bayes :: a single cause directly influences a number of
+     effects, all of which conditionally independent, given the cause.
+     It is also called /Bayesian classifier/, /idiot Bayes/.
+     P(Cause,E1,E2,...,En) = P(Cause) \prod_i P(Ei|Cause)
+- conditional probability table (CPT) :: each row shows a conditional probability
+- each variable is conditionally independent of its non-descendants, given its parents.
+- Markov blanket :: parents, children, and children's parents
+
+For continuous variables, the Bayes needs to do something.  Of course
+we can do discretization, but the precision is lost.  One common
+solution is to define standard families of probability density
+functions, with a finite number of parameters.
+Another solution is non-parameter one.
+Now I list some parameter models.
+
+- Gausion (normal) distribution :: N(\mu, \sigma^2)(x) has the mean \mu and the variance \sigma^2.
+
+A network with both discrete and continuous variables is called hybrid Bayesian network.
+- linear Gaussian ::
+- conditional Gaussian ::
+- probit distribution ::
+- logit distribution ::
+- logistic function ::
+
+Exact Inference
+- query variables ::
+- event :: some assignments to a set of evidence variables
+- evidence variables ::
+- hidden variables :: non-query non-evidence variables
