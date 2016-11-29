@@ -1,0 +1,92 @@
+#+TITLE: Recitation Nov28
+
+* online resources
+http://lpn.swi-prolog.org/lpnpage.php?pageid=top
+
+swipl library
+http://www.swi-prolog.org/pldoc/man?section=lists
+
+* Structure of Porlog program
+* How to run?
+write a .pl or .prolog file, and load by
+
+#+BEGIN_EXAMPLE
+swipl file.pl
+#+END_EXAMPLE
+
+or enter swipl repl and then 
+#+BEGIN_EXAMPLE
+?- [file].
+#+END_EXAMPLE
+
+Evaulte any query in the repl.
+
+* syntax
+1. the varaible starts with Upper case or underscore
+2. underscore means anonymous varaible
+3. functor must be followed directly by brace, no space
+4. ends with dot(.)
+
+* Print out many solutions
+
+#+BEGIN_SRC prolog
+lectures(monday, nolecture).
+lectures(tuesday, vp).
+lectures(wednessday, mpl).
+lectures(thrusday, se).
+lectures(friday, ds).
+lectures(friday, mpl).
+lectures(saturday, ddbms).
+%% ?- lectures(friday, X), write(X),nl.
+%% ?- lectures(friday, X), write(X), nl, fail.
+#+END_SRC
+
+* member
+#+BEGIN_SRC prolog
+member(X,[X|T]).
+member(X,[H|T]) :- member(X,T).
+#+END_SRC
+using anonymous varaible:
+#+BEGIN_SRC prolog
+member(X,[X|_]).
+member(X,[_|T]) :- member(X,T).
+#+END_SRC
+
+* append and reverse
+append a list
+#+BEGIN_SRC prolog
+append([], L, L).
+append([X|Xs], L, [X|Ys]) :- append(Xs, L, Ys).
+#+END_SRC
+
+reverse a list
+#+BEGIN_SRC prolog
+reverse([], []).
+reverse([X|Xs], L) :- reverse(Xs, Ys), append(Ys, [X], L).
+#+END_SRC
+
+* min of a list
+
+#+BEGIN_SRC prolog
+min([H|T], Min) :- min(T, H, Min).
+min([], Min, Min).
+min([H|T], Min, Min1) :-
+  (   H < Min
+  ->  min(T, H, Min1)
+  ;   min(T, Min, Min1) ).
+#+END_SRC
+
+* parsing a simple grammar
+word -> num animal
+num -> "one" | "two"
+animal -> "dog" | "cat"
+
+#+BEGIN_SRC prolog
+  %% word([d]).
+  word([A,B]) :- num(A), animal(B).
+  num(one).
+  num(two).
+  noun(dog).
+  noun(cat).
+#+END_SRC
+
