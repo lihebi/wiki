@@ -1,6 +1,16 @@
 #+TITLE: TODO List
+
+* cheatsheet
+** TODO latex
+** STARTED elisp
+** TODO emacs, get ready for yasnippet!!!!
+** TIKZ
 * Stack
 ** TODO cruise
+** latex cite link
+** Travis CI https://github.com/integrations/travis-ci
+** inline enumitem
+   http://tex.stackexchange.com/questions/103086/customizing-inline-enumerate-with-enumitem-still-not-working
 * TODO helium paper
 * Research
 ** TODO What is dynamic symbolic execution?

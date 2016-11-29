@@ -96,67 +96,67 @@ Without this feature, you have to write some hard to understand code:
 * Regular Expression
 ** syntax
 *** basics
-| symbol           | description                         |
-|------------------+-------------------------------------|
-| /                | <                                   |
-| =.=              | match anything except a newline     |
-| =*=              |                                     |
-| =+=              |                                     |
-| =?=              |                                     |
+| symbol     | description                         |
+|------------+-------------------------------------|
+| /          | <                                   |
+| =.=          | match anything except a newline     |
+| =*=          |                                     |
+| =+=          |                                     |
+| =?=          |                                     |
 | =*?=, =+?=, =??= | non-greedy, match the smallest part |
-| =[]=             |                                     |
-| =[^]=            |                                     |
-| =^=              |                                     |
-| =$=              |                                     |
+| =[]=         |                                     |
+| =[^]=        |                                     |
+| =^=          |                                     |
+| =$=          |                                     |
 
 *** Character classes
 Use the double =[[]]= form. E.g. =[[:ascii:]]=, and also the negative writes =[^[:ascii:]]=.
 
-| symbol  | description        |
-|---------+--------------------|
-| /       | <                  |
-| =ascii= | 0-127              |
-| =alnum= | letter or digit    |
-| =alpha= | letter             |
-| =blank= | space and tab      |
-| =cntrl= | ASCII control char |
-| =digit= | 0-9                |
-| =lower= | lower-case         |
-| =upper= | upper-case         |
-| =punct= | punctuation        |
-| =space= | whitespace         |
-| =word=  | =\w=               |
+| symbol | description        |
+|--------+--------------------|
+| /      | <                  |
+| =ascii=  | 0-127              |
+| =alnum=  | letter or digit    |
+| =alpha=  | letter             |
+| =blank=  | space and tab      |
+| =cntrl=  | ASCII control char |
+| =digit=  | 0-9                |
+| =lower=  | lower-case         |
+| =upper=  | upper-case         |
+| =punct=  | punctuation        |
+| =space=  | whitespace         |
+| =word=   | =\w=                 |
 
 *** Backslash
 Backslash is also used in elisp read syntax. So when you want one =\= in the string, you need to write double.
 
-| symbol      | description                                                       |
-|-------------+-------------------------------------------------------------------|
-| /           | <                                                                 |
+| symbol    | description                                                       |
+|-----------+-------------------------------------------------------------------|
+| /         | <                                                                 |
 | =\1= (pipe) | either one of two expressions. Can be used in capturing group     |
-| =\{\}=      | ={}= counter part                                                 |
+| =\{\}=      | ={}= counter part                                                   |
 | =\(\)=      | capturing group                                                   |
 | =\(?:\)=    | non-capturing group                                               |
 | =\(?NUM:\)= | numbered capturing group.. If conflict numbers, last one will win |
 | =\DIGIT=    | back reference                                                    |
-|-------------+-------------------------------------------------------------------|
+|-----------+-------------------------------------------------------------------|
 | =\w=        |                                                                   |
 | =\W=        |                                                                   |
 | =\b=        |                                                                   |
 | =\B=        |                                                                   |
-|-------------+-------------------------------------------------------------------|
+|-----------+-------------------------------------------------------------------|
 
 *** Syntax code
 =\sCODE= can be used to refer to any character "whose syntax is CODE".
 =\SCODE= is the negative form.
 See the "Syntax Class Table" chapter of elisp manual for details.
 
-| symbol      | description |
-|-------------+-------------|
-| /           | <           |
+| symbol    | description |
+|-----------+-------------|
+| /         | <           |
 | =\s-=       | whitespace  |
 | =\s[space]= | whitespace  |
-| =\sw=       | =\w=        |
+| =\sw=       | =\w=          |
 | =\s.=       | punctuation |
 
 ** constructing
