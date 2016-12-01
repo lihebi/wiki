@@ -1,10 +1,17 @@
 #+TITLE: TODO List
 
 * cheatsheet
-** TODO latex
-** STARTED elisp
-** TODO emacs, get ready for yasnippet!!!!
+** DONE latex
+   CLOSED: [2016-11-29 Tue 11:42]
+** DONE elisp
+   CLOSED: [2016-11-29 Tue 11:42]
+** DONE emacs, get ready for yasnippet!!!!
+   CLOSED: [2016-11-29 Tue 12:30]
 ** TIKZ
+** awk
+** python
+** 572 lab
+** 572 term project
 * Stack
 ** TODO cruise
 ** latex cite link
