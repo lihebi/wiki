@@ -1,5 +1,20 @@
 #+TITLE: TODO List
 
+* Important
+** [#A] 572 lab
+   SCHEDULED: <2016-12-01 Thu>
+** [#A] 572 term project
+   SCHEDULED: <2016-12-01 Thu>
+** DONE outline in the cheatsheet
+   CLOSED: [2016-12-01 Thu 14:22]
+** DONE AI
+   CLOSED: [2016-12-01 Thu 16:22]
+** DONE finish MIT AI videos today and write down cheatsheet
+   CLOSED: [2016-12-01 Thu 19:19]
+** DONE also finish the review (or rather preview) of 572 lectures and AIMA book, and write down cheatsheet
+   CLOSED: [2016-12-01 Thu 16:22]
+** 342 hw9 solution clean up
+
 * cheatsheet
 ** DONE latex
    CLOSED: [2016-11-29 Tue 11:42]
@@ -7,12 +22,14 @@
    CLOSED: [2016-11-29 Tue 11:42]
 ** DONE emacs, get ready for yasnippet!!!!
    CLOSED: [2016-11-29 Tue 12:30]
-** TIKZ
+** DONE TIKZ
+   CLOSED: [2016-12-01 Thu 13:26]
 ** awk
 ** python
-** 572 lab
-** 572 term project
+
+
 * Stack
+** stumpwm start emacs command and give feedback
 ** TODO cruise
 ** latex cite link
 ** Travis CI https://github.com/integrations/travis-ci
