@@ -1,11 +1,17 @@
 #+TITLE: TODO List
 
 * Important
-** [#A] 572 term project
-   SCHEDULED: <2016-12-01 Thu>
+** DONE [#A] 572 term project
+   CLOSED: [2016-12-03 Sat 15:35] SCHEDULED: <2016-12-01 Thu>
 ** DONE fse16 read
    CLOSED: [2016-12-03 Sat 13:25]
 ** 342 final exam
+
+* 572
+** finish the 9999 C version
+** download project for all languages (with size difference)
+** do the back-end analysis
+** write report
 
 * cheatsheet
 ** awk
