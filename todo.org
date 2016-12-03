@@ -3,7 +3,9 @@
 * Important
 ** [#A] 572 term project
    SCHEDULED: <2016-12-01 Thu>
-** fse16 read
+** DONE fse16 read
+   CLOSED: [2016-12-03 Sat 13:25]
+** 342 final exam
 
 * cheatsheet
 ** awk
