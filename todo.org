@@ -1,8 +1,6 @@
 #+TITLE: TODO List
+
 * Stack
-** Helium
-** 342 final solution
-** write 572 report
 ** AI write up cheatsheet
 ** tax treat
 ** emacs bibtex formatter
@@ -212,6 +210,24 @@
 ** DONE finish the 9999 C version
    CLOSED: [2016-12-05 Mon 10:42]
 ** DONE download project for all languages (with size difference)
-   CLOSED: [2016-12-07 Wed 15:43]
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE add commit number
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE add feature: has wiki, has page, create at, last update (can all be got from json file)
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE change number star into category (discretize)
+   CLOSED: [2016-12-09 Fri 00:08]
 ** DONE do the back-end analysis
-   CLOSED: [2016-12-07 Wed 15:43]
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE add fork number
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE add watcher number
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE write slides
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE Helium
+   CLOSED: [2016-12-09 Fri 14:38]
+** DONE 342 final solution
+   CLOSED: [2016-12-09 Fri 14:38]
+** DONE write 572 report
+   CLOSED: [2016-12-09 Fri 14:38]
