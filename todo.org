@@ -2,8 +2,14 @@
 * 572
 ** DONE finish the 9999 C version
    CLOSED: [2016-12-05 Mon 10:42]
-** download project for all languages (with size difference)
-** do the back-end analysis
+** STARTED download project for all languages (with size difference)
+** TODO add commit number
+** TODO add feature: has wiki, has page, create at, last update (can all be got from json file)
+** TODO change number star into category (discretize)
+** STARTED do the back-end analysis
+** TODO add fork number
+** TODO add watcher number
+** write slides
 ** write report
 
 * Stack
