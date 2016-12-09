@@ -1,12 +1,8 @@
 #+TITLE: TODO List
-* 572
-** DONE finish the 9999 C version
-   CLOSED: [2016-12-05 Mon 10:42]
-** download project for all languages (with size difference)
-** do the back-end analysis
-** write report
-
 * Stack
+** Helium
+** 342 final solution
+** write 572 report
 ** AI write up cheatsheet
 ** tax treat
 ** emacs bibtex formatter
@@ -213,3 +209,9 @@
    CLOSED: [2016-12-05 Mon 10:50]
 ** DONE python
    CLOSED: [2016-12-05 Mon 13:40]
+** DONE finish the 9999 C version
+   CLOSED: [2016-12-05 Mon 10:42]
+** DONE download project for all languages (with size difference)
+   CLOSED: [2016-12-07 Wed 15:43]
+** DONE do the back-end analysis
+   CLOSED: [2016-12-07 Wed 15:43]
