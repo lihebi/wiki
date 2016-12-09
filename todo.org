@@ -1,16 +1,7 @@
 #+TITLE: TODO List
-* 572
-** DONE finish the 9999 C version
-   CLOSED: [2016-12-05 Mon 10:42]
-** STARTED download project for all languages (with size difference)
-** TODO add commit number
-** TODO add feature: has wiki, has page, create at, last update (can all be got from json file)
-** TODO change number star into category (discretize)
-** STARTED do the back-end analysis
-** TODO add fork number
-** TODO add watcher number
-** write slides
-** write report
+
+* TODO cs342 final
+* TODO cs572 report
 
 * Stack
 ** AI write up cheatsheet
@@ -219,3 +210,21 @@
    CLOSED: [2016-12-05 Mon 10:50]
 ** DONE python
    CLOSED: [2016-12-05 Mon 13:40]
+** DONE finish the 9999 C version
+   CLOSED: [2016-12-05 Mon 10:42]
+** DONE download project for all languages (with size difference)
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE add commit number
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE add feature: has wiki, has page, create at, last update (can all be got from json file)
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE change number star into category (discretize)
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE do the back-end analysis
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE add fork number
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE add watcher number
+   CLOSED: [2016-12-09 Fri 00:08]
+** DONE write slides
+   CLOSED: [2016-12-09 Fri 00:08]
