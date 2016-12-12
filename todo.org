@@ -1,18 +1,29 @@
 #+TITLE: TODO List
 
+* Helium
+** DONE Helium Test cases
+   CLOSED: [2016-12-12 Mon 17:00]
+** Better timeout scripting
+** Helium Build rate final debugging (hopefully)!
+** Better preprocess dependency resolving
+** Add more annotation for the generated program
+- which benchmark
+- on which poi
+
+** Execution refactoring:
+*** timeout
+*** seg fault
+*** replacing those .first, .second with meaningful names
+** Assertion experiment
+*** better POI generation
+** Refactoring
+*** configuration file
+
 * Stack
-** AI write up cheatsheet
-** tax treat
-** emacs bibtex formatter
-** stumpwm start emacs command and give feedback
-** stumpwm mode line for double display
-** DONE cruise
-   CLOSED: [2016-12-02 Fri 10:21]
 ** latex cite link
 ** Travis CI https://github.com/integrations/travis-ci
 ** inline enumitem
    http://tex.stackexchange.com/questions/103086/customizing-inline-enumerate-with-enumitem-still-not-working
-* TODO helium paper
 * Research
 ** TODO What is dynamic symbolic execution?
 ** TODO CCured
@@ -20,34 +31,14 @@
 ** TODO CUTE
 ** TODO dynamic symbolic execution for invariant inference, ICSE 08
 
-* General TODO lists
-** TODO color theme
-** TODO The New Hacker's Dictionary
-** TODO The Hacker's Dictionary 
-** TODO freenode IRC
-** TODO mailing list gnus
-** TODO ESS emacs system
-** TODO AWK SED full
-** TODO bison, yacc, lex
-   SCHEDULED: <2016-10-19 Wed>
-* Emacs
-** TODO Ultra-mark
-   SCHEDULED: <2016-10-21 Fri>
-   - at a line, create a mark, using an optional text.
-   - One can view it by command similar to helm-mark-ring.
-   - You need to delete it (tab and select) to remove it, otherwise it will be there
-   - The mark must be set manually, no automatic mark will set unexpectedly
-
 * Side Projects
-** TODO pdf-tools
-*** +TODO two column view+
-*** TODO show citation on-the-fly
-*** TODO adjust the position (center)
 ** TODO Academic Citation Center visualization
 * wiki
-** TODO wiki KMP search algorithm in lisp
+** DONE wiki KMP search algorithm in lisp
+   CLOSED: [2016-12-12 Mon 16:07]
 ** TODO [#C] remove all Chinese in wiki
-** TODO leetcode write-up, write using lisp!
+** CANCELED leetcode write-up, write using lisp!
+   CLOSED: [2016-12-12 Mon 16:07]
 ** TODO Wiki code listing style
 
 * Learn
@@ -231,3 +222,46 @@
    CLOSED: [2016-12-09 Fri 14:38]
 ** DONE write 572 report
    CLOSED: [2016-12-09 Fri 14:38]
+** CANCELED AI write up cheatsheet
+   CLOSED: [2016-12-12 Mon 16:05]
+** DONE tax treat
+   CLOSED: [2016-12-12 Mon 16:05]
+** CANCELED emacs bibtex formatter
+   CLOSED: [2016-12-12 Mon 16:05]
+** CANCELED stumpwm start emacs command and give feedback
+   CLOSED: [2016-12-12 Mon 16:05]
+** CANCELED stumpwm mode line for double display
+   CLOSED: [2016-12-12 Mon 16:05]
+** DONE cruise
+   CLOSED: [2016-12-02 Fri 10:21]
+* DONE helium paper
+  CLOSED: [2016-12-12 Mon 16:06]
+** CANCELED color theme
+   CLOSED: [2016-12-12 Mon 16:06]
+** CANCELED The New Hacker's Dictionary
+   CLOSED: [2016-12-12 Mon 16:06]
+** CANCELED The Hacker's Dictionary 
+   CLOSED: [2016-12-12 Mon 16:06]
+** CANCELED freenode IRC
+   CLOSED: [2016-12-12 Mon 16:06]
+** CANCELED mailing list gnus
+   CLOSED: [2016-12-12 Mon 16:06]
+** CANCELED ESS emacs system
+   CLOSED: [2016-12-12 Mon 16:06]
+** CANCELED AWK SED full
+   CLOSED: [2016-12-12 Mon 16:06]
+** CANCELED bison, yacc, lex
+   CLOSED: [2016-12-12 Mon 16:06] SCHEDULED: <2016-10-19 Wed>
+** CANCELED Ultra-mark
+   CLOSED: [2016-12-12 Mon 16:06] SCHEDULED: <2016-10-21 Fri>
+   - at a line, create a mark, using an optional text.
+   - One can view it by command similar to helm-mark-ring.
+   - You need to delete it (tab and select) to remove it, otherwise it will be there
+   - The mark must be set manually, no automatic mark will set unexpectedly
+** TODO pdf-tools
+*** CANCELED +TODO two column view+
+    CLOSED: [2016-12-12 Mon 16:07]
+*** CANCELED show citation on-the-fly
+    CLOSED: [2016-12-12 Mon 16:07]
+*** CANCELED adjust the position (center)
+    CLOSED: [2016-12-12 Mon 16:07]
