@@ -37,33 +37,35 @@ static int init_idle_conns(void) {
 
 
 * Helium
-** DONE Helium Test cases
-   CLOSED: [2016-12-12 Mon 17:00]
-** DONE Better timeout scripting
-   CLOSED: [2016-12-13 Tue 11:33]
-** DONE Helium Build rate final debugging (hopefully)!
-   CLOSED: [2016-12-13 Tue 11:33]
-** DONE Add more annotation for the generated program
-   CLOSED: [2016-12-13 Tue 11:34]
-   - which benchmark
-   - on which poi
 ** Execution refactoring:
 *** timeout
-*** seg fault
-*** replacing those .first, .second with meaningful names
+*** DONE seg fault
+    CLOSED: [2016-12-14 Wed 12:42]
+*** CANCELED replacing those .first, .second with meaningful names
+    CLOSED: [2016-12-14 Wed 12:42]
 ** STARTED Assertion experiment
-*** better POI generation
-*** The Value?
-*** DONE Use simple benchmark to get ready
-    CLOSED: [2016-12-13 Tue 13:32]
-*** use different runs?
+*** [#C] better POI generation
+    - Look up the values in symbol table??
+    - or without that, simply print the result out??
+*** DONE use different runs? Refactoring, add configure file
+    CLOSED: [2016-12-14 Wed 12:04]
 *** how to merge branch to get only one path??
-*** how to get used transfer functions? Then how to remove/merge?
-** Refactoring
-*** configuration file
+*** DONE how to get used transfer functions? Then how to remove/merge?
+    CLOSED: [2016-12-14 Wed 12:42]
+    - I'm going to use ALL the functions related to the variables
+
+** How about today's report
+*** show a couple of examples, and ask if this is what we expected
+*** show what's the difficulty of extend to more complicated ones
+*** Show the list of assertions, and discuss which kind is easy to handle
+
+*** Scope of analysis
+
 ** experiment
-*** compiler error limit
+*** DONE compiler error limit
+    CLOSED: [2016-12-14 Wed 12:51]
 *** Instrumentation bug! Fix it right now
+    - how to collect them: run with and without instrument, see the errors
 
 * Deferred Helium
 ** Better preprocess dependency resolving
@@ -313,3 +315,19 @@ static int init_idle_conns(void) {
     CLOSED: [2016-12-12 Mon 16:07]
 *** CANCELED adjust the position (center)
     CLOSED: [2016-12-12 Mon 16:07]
+** DONE Helium Test cases
+   CLOSED: [2016-12-12 Mon 17:00]
+** DONE Better timeout scripting
+   CLOSED: [2016-12-13 Tue 11:33]
+** DONE Helium Build rate final debugging (hopefully)!
+   CLOSED: [2016-12-13 Tue 11:33]
+** DONE Add more annotation for the generated program
+   CLOSED: [2016-12-13 Tue 11:34]
+   - which benchmark
+   - on which poi
+** DONE configuration file
+    CLOSED: [2016-12-14 Wed 11:17]
+*** CANCELED The Value?
+    CLOSED: [2016-12-14 Wed 11:14]
+*** DONE Use simple benchmark to get ready
+    CLOSED: [2016-12-13 Tue 13:32]
