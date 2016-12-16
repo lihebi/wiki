@@ -1,69 +1,33 @@
 #+TITLE: TODO List
 
-
-* Result!!
-
-nsf--termbox/termbox.c:594
-
-#+BEGIN_SRC C
-read_up_to(64);
-int read_up_to(int n) {
-  assert(n>0);
-}
-#+END_SRC
-
-samr7--vanitygen/pattern.c:432
-#+BEGIN_SRC C
-p = snprintf(&linebuf[p], rem, "[Prob %.1f%%]", prob*100);
-assert(p>0);
-#+END_SRC
-
-constant p=11
-
-spdk--spdk/conn.c:144
-
-#+BEGIN_SRC C
-if (g_conn_idle_interval_in_tsc == -1)
-  spdk_isc(...)
-STAILQ_INIT(&g_idle_conn_list_head);
-if (iit_idle_conns() < 0) {
-  return -1;
-}
-
-static int init_idle_conns(void) {
-  assert(g_epoll_fd == 0);
-}
-#+END_SRC
-
+* Visa
+** TODO study plan
+   SCHEDULED: <2016-12-16 Fri>
+** TODO CV, all material
+   SCHEDULED: <2016-12-16 Fri>
+** TODO picture
+   SCHEDULED: <2016-12-16 Fri>
+** TODO train to home
+** TODO phone number
+** TODO hotel
+** TODO chengdu
 
 * Helium
 ** Execution refactoring:
 *** timeout
-*** DONE seg fault
-    CLOSED: [2016-12-14 Wed 12:42]
-*** CANCELED replacing those .first, .second with meaningful names
-    CLOSED: [2016-12-14 Wed 12:42]
-** STARTED Assertion experiment
+** STARTED [#A] Assertion experiment
 *** [#C] better POI generation
     - Look up the values in symbol table??
     - or without that, simply print the result out??
-*** DONE use different runs? Refactoring, add configure file
-    CLOSED: [2016-12-14 Wed 12:04]
 *** how to merge branch to get only one path??
-*** DONE how to get used transfer functions? Then how to remove/merge?
-    CLOSED: [2016-12-14 Wed 12:42]
-    - I'm going to use ALL the functions related to the variables
 
 ** How about today's report
 *** show a couple of examples, and ask if this is what we expected
 *** show what's the difficulty of extend to more complicated ones
 *** Show the list of assertions, and discuss which kind is easy to handle
-
 *** Scope of analysis
 
 ** experiment
-*** DONE compiler error limit
-    CLOSED: [2016-12-14 Wed 12:51]
 *** Instrumentation bug! Fix it right now
     - how to collect them: run with and without instrument, see the errors
 
@@ -331,3 +295,14 @@ static int init_idle_conns(void) {
     CLOSED: [2016-12-14 Wed 11:14]
 *** DONE Use simple benchmark to get ready
     CLOSED: [2016-12-13 Tue 13:32]
+*** DONE compiler error limit
+    CLOSED: [2016-12-14 Wed 12:51]
+*** DONE seg fault
+    CLOSED: [2016-12-14 Wed 12:42]
+*** CANCELED replacing those .first, .second with meaningful names
+    CLOSED: [2016-12-14 Wed 12:42]
+*** DONE use different runs? Refactoring, add configure file
+    CLOSED: [2016-12-14 Wed 12:04]
+*** DONE how to get used transfer functions? Then how to remove/merge?
+    CLOSED: [2016-12-14 Wed 12:42]
+    - I'm going to use ALL the functions related to the variables
