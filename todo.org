@@ -7,10 +7,9 @@
    SCHEDULED: <2016-12-16 Fri>
 ** TODO picture
    SCHEDULED: <2016-12-16 Fri>
-** TODO train to home
-** TODO phone number
-** TODO hotel
 ** TODO chengdu
+
+
 
 * Helium
 ** Execution refactoring:
@@ -21,11 +20,12 @@
     - or without that, simply print the result out??
 *** how to merge branch to get only one path??
 
-** How about today's report
-*** show a couple of examples, and ask if this is what we expected
-*** show what's the difficulty of extend to more complicated ones
-*** Show the list of assertions, and discuss which kind is easy to handle
-*** Scope of analysis
+** experiment design, together with previous design document
+** Implement the above design
+** implement the grammar patching algorithm
+** query the type of variable used in assertion, better POI generation
+** run on all assertions
+** implement add "exit" to branches incurred by if
 
 ** experiment
 *** Instrumentation bug! Fix it right now
@@ -33,11 +33,16 @@
 
 * Deferred Helium
 ** Better preprocess dependency resolving
+** Scope of analysis
+
+
 * Stack
 ** latex cite link
 ** Travis CI https://github.com/integrations/travis-ci
 ** inline enumitem
    http://tex.stackexchange.com/questions/103086/customizing-inline-enumerate-with-enumitem-still-not-working
+
+
 * Research
 ** TODO What is dynamic symbolic execution?
 ** TODO CCured
@@ -306,3 +311,17 @@
 *** DONE how to get used transfer functions? Then how to remove/merge?
     CLOSED: [2016-12-14 Wed 12:42]
     - I'm going to use ALL the functions related to the variables
+** DONE 342 final solution adjust
+   CLOSED: [2016-12-20 Tue 09:12]
+** DONE train to home
+   CLOSED: [2016-12-20 Tue 09:12]
+** DONE phone number
+   CLOSED: [2016-12-20 Tue 09:38]
+** DONE hotel
+   CLOSED: [2016-12-20 Tue 09:38]
+** DONE How about today's report
+   CLOSED: [2016-12-20 Tue 09:38]
+*** show a couple of examples, and ask if this is what we expected
+*** show what's the difficulty of extend to more complicated ones
+*** Show the list of assertions, and discuss which kind is easy to handle
+*** Scope of analysis
