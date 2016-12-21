@@ -34,6 +34,7 @@ This site records knowledge I would need to remember.
 * Misc
   - [[file:chrome.org][chrome extension]]
   - [[file:mac.org][Mac]]
+  - Windows has [[file:autohotkey.org][AutoHotKey]]
   - [[file:supercollider.org][SuperCollider]] is a server and a language for music synthesizing.
   - [[file:overtone.org][Overtone]] offers a /clojure/ wrapper and emacs environment for the SuperCollider backend.
   - [[file:poem.org][Poems]] I recite.

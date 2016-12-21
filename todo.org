@@ -1,8 +1,18 @@
 #+TITLE: TODO List
 
+* Stack
+** latex cite link
+** Travis CI https://github.com/integrations/travis-ci
+** inline enumitem
+   http://tex.stackexchange.com/questions/103086/customizing-inline-enumerate-with-enumitem-still-not-working
+** llvm email
+** DONE autohotkey map capslock to ctrl
+   CLOSED: [2016-12-20 Tue 23:09]
+
+
 * Visa
-** TODO study plan
-   SCHEDULED: <2016-12-16 Fri>
+** DONE study plan
+   CLOSED: [2016-12-20 Tue 22:41] SCHEDULED: <2016-12-16 Fri>
 ** TODO CV, all material
    SCHEDULED: <2016-12-16 Fri>
 ** TODO picture
@@ -35,12 +45,6 @@
 ** Better preprocess dependency resolving
 ** Scope of analysis
 
-
-* Stack
-** latex cite link
-** Travis CI https://github.com/integrations/travis-ci
-** inline enumitem
-   http://tex.stackexchange.com/questions/103086/customizing-inline-enumerate-with-enumitem-still-not-working
 
 
 * Research

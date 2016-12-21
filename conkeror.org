@@ -38,3 +38,4 @@
 
 * Commands
 Commands can be called directly by =M-x=.
+To reload the init file, use the command =reinit=.
