@@ -33,6 +33,7 @@ This site records knowledge I would need to remember.
   - [[http://www.aosabook.org/][these wonderful aosabook books]]?
 * Misc
   - [[file:chrome.org][chrome extension]]
+  - [[file:vpn.org][VPN]]
   - [[file:mac.org][Mac]]
   - Windows has [[file:autohotkey.org][AutoHotKey]]
   - [[file:supercollider.org][SuperCollider]] is a server and a language for music synthesizing.

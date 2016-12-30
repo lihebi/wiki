@@ -1,0 +1,59 @@
+#+TITLE: VPN
+
+#+BEGIN_EXAMPLE
+apt-get purge "lxc-docker*"
+apt-get purge "docker.io*"
+apt-get update
+apt-get install apt-transport-https ca-certificates gnupg2
+sudo apt-key adv \
+       --keyserver hkp://ha.pool.sks-keyservers.net:80 \
+       --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+deb https://apt.dockerproject.org/repo debian-jessie main
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+apt-get update
+apt-cache policy docker-engine
+apt-get update
+apt-get install docker-engine
+service docker start
+docker run hello-world
+
+#+END_EXAMPLE
+
+https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/clients.md
+https://hub.docker.com/r/fcojean/l2tp-ipsec-vpn-server/
+
+#+BEGIN_EXAMPLE
+docker pull fcojean/l2tp-ipsec-vpn-server
+
+#+END_EXAMPLE
+
+vpn.env
+
+#+BEGIN_EXAMPLE
+VPN_IPSEC_PSK=<IPsec pre-shared key>
+VPN_USER_CREDENTIAL_LIST=[{"login":"userTest1","password":"test1"},{"login":"userTest2","password":"test2"}]
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+modprobe af_key
+docker run \
+    --name l2tp-ipsec-vpn-server \
+    --env-file ./vpn.env \
+    -p 500:500/udp \
+    -p 4500:4500/udp \
+    -v /lib/modules:/lib/modules:ro \
+    -d --privileged \
+    fcojean/l2tp-ipsec-vpn-server
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+docker logs l2tp-ipsec-vpn-server
+docker exec -it l2tp-ipsec-vpn-server ipsec status
+#+END_EXAMPLE
+
