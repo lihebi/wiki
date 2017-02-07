@@ -826,6 +826,54 @@ For detail, refer to [[https://msdn.microsoft.com/en-us/library/dd293668.aspx][R
  #+end_src
 
 
+** Exception Handling
+
+C++ Exception is handled by try-catch clause.  Catch accept an
+argument, a reference to the type of the exception.  It can accept
+=...=, meaning all kinds of exceptions.  The throw expression accepts
+one argument. The type of that argument should match the type of the
+argument of catch.  If throw is used without argument, it means
+Rethrows the currently handled exception.  So, throw can accept an int
+value, as long as the corresponding catch accept an int.
+
+Catching of exception usually is the reference. The =std::exception= is
+the standard base class for exceptions. The signature is:
+
+#+BEGIN_SRC C++
+class exception {
+public:
+  exception () throw();
+  exception (const exception&) throw();
+  exception& operator= (const exception&) throw();
+  virtual ~exception() throw();
+  virtual const char* what() const throw();
+}
+#+END_SRC
+
+The what virtual function should be overwritten and returns a
+null-terminated string.
+
+*** Exception specification
+This is deprecated. In the declaration of a function, you can add a
+throw keyword and the type of exception in parenthesis. Throw is a
+specifier, and is part of the function type.
+
+#+BEGIN_SRC C++ 
+double myfunction (char param) throw (int);
+#+END_SRC
+
+If the function throws exception other than =int=, the function
+=std::unexpected= is called. Function without throw specifier will never
+call =std::unexpected=, and do the normal exception handling. If here
+there's no type in the parenthesis, it means the function should not
+throw any exception.
+
+=noexcept= is the current in use one. If no argument provided, it is
+same as =noexcept(true)=. If argument is provided, it is evaluated and
+if it evaluates to true, it means this function is not throwing any
+exception. Otherwise the function is potentially throwing. =throw ()= is
+same as =noexcept(true)= but is deprecated.
+
 * Library
 ** Stream
 *** file stream
