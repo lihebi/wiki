@@ -1,5 +1,21 @@
 #+TITLE: Python
 
+* Emacs support
+Install the =elpy= package. It provides:
+- =C-c C-c= runs the shell and send the current buffer
+- =C-c C-d= runs =elpy-doc=
+- =C-c C-t= runs =elpy-test=, which runs the unittest discover
+
+* Unit Test
+#+BEGIN_SRC python
+class MyTest(unittest.TestCase):
+    def test_me(self):
+        self.assertEqual(1,2)
+unittest.main()
+#+END_SRC
+
+python unit test can support automatic test discovery. To use that,
+the file must be named =test_xxx.py=, and run the =python -m unittest discover=.
 
 * Concept
 
