@@ -30,6 +30,8 @@
 ** window manage
    * ~balance-window~
    * ~toggle-window-split~
+   - =enlarge-window=
+   - =shrink-window=
 ** dired
    * ~dired-next-subdir~
    * ~dired-prev-subdir~
