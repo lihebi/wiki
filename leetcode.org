@@ -9,7 +9,8 @@
 
 
 
-* tmp
+* New
+** 1 [Easy] Two Sum
 #+BEGIN_QUOTE
 Given an array of integers, return indices of the two numbers such
 that they add up to a specific target.
@@ -25,14 +26,41 @@ visited ones.
           if nums[i] in buf_dict:
               return [buf_dict[nums[i]], i]
           else:
-              buf_dict[target-nums[i]] = i # target-num
+              buf_dict[target-nums[i]] = i # (HEBI: target-num)
 #+END_SRC
+
+** 128 [Hard] Longest Consecutive Sequence
+#+BEGIN_QUOTE
+Given an unsorted array of integers, find the length of the longest consecutive elements sequence.
+#+END_QUOTE
+
+Record only the border value.
+
+#+BEGIN_SRC python
+  def longestConsecutive(self, nums):
+      ret = 0
+      mydict={}
+      for num in nums:
+          if num in mydict:
+              pass
+          else:
+              left = mydict[num-1] if num-1 in mydict else 0
+              right = mydict[num+1] if num+1 in mydict else 0
+              length = left + right + 1
+              mydict[num] = length
+              # (HEBI: important! Do not update the immediate, but the far-most one, because that is the edge)
+              mydict[num-left] = length
+              mydict[num+right] = length
+              ret = length if length > ret else ret
+      return ret
+#+END_SRC
+
 
 
 
 * Some snippet
 
-#+BEGIN_SRC C++
+#+BEGIN_SRC cpp
 /**
  * rotate clockwise
  * (x,y) -> (y, -x)
@@ -63,7 +91,7 @@ if (tmp > res) res = tmp;
 
 To get a smaller iterator, use =upper_bound= and decrease it (after check if it is begin)
 
-#+BEGIN_SRC C++
+#+BEGIN_SRC cpp
   auto pre_it = m_data.upper_bound(val);
   auto next_it = pre_it;
   int pre_low, pre_high;
