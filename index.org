@@ -15,7 +15,7 @@ This site records knowledge I would need to remember.
   - Scripting: [[file:awk.org][awk]], [[file:sed.org][sed]], [[file:r.org][R]], [[file:./shell.org][shell]], [[file:shell-utils.org][shell utilities]], [[file:js.org][js]], [[file:python.org][python]].
   - Markup: [[file:regex.org][Regular Expression]], [[file:latex.org][latex]] ([[file:tikz.org][tikz]]), [[file:markdown.org][markdown]], [[file:org.org][Org Mode]], [[file:xpath.org][XPath]], [[file:dot.org][Graphviz/Dot]], [[file:uml.org][UML]], [[file:csv.org][CSV]].
   - C family: [[file:c.org][C]], [[file:cpp.org][C++]],- [[file:stl.org][Standard Template Library(STL)]], [[file:c-lib.org][C standard library]], [[file:boost.org][Boost]], [[file:pugixml.org][Pugixml]], [[file:google-test.org][Google Test]], [[file:c-debug.org][C debugging techniques]], [[file:signal.org][Signal Handling]].
-  - Lisp: [[file:emacs.org][Emacs]], [[file:lisp.org][Lisp]], [[file:elisp.org][Emacs Lisp]], [[file:emacs-lisp.org][Emacs Part of Elisp]], [[file:common-lisp.org][Common Lisp]], [[file:clojure.org][Clojure]]
+  - Lisp: [[file:emacs.org][Emacs]], [[file:emacs-plugins.org][Emacs Plugins]], [[file:lisp.org][Lisp]], [[file:elisp.org][Emacs Lisp]], [[file:emacs-lisp.org][Emacs Part of Elisp]], [[file:common-lisp.org][Common Lisp]], [[file:clojure.org][Clojure]]
   - Other languages: [[file:hungarian.org][Hungarian notation]], [[file:assembly.org][assembly]], [[file:sql.org][SQL]], [[file:git.org][Git]], [[file:java.org][Java]].
 
 * Algorithm
