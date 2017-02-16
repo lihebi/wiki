@@ -7,6 +7,29 @@
 - recursive
 - finding rules using examples
 
+
+
+* tmp
+#+BEGIN_QUOTE
+Given an array of integers, return indices of the two numbers such
+that they add up to a specific target.
+#+END_QUOTE
+
+Instead of iterate the array twice, use a dictionary to store the
+visited ones.
+
+#+BEGIN_SRC python
+  def twoSum(self, nums, target):
+      buf_dict = {}
+      for i in range(0,len(nums)):
+          if nums[i] in buf_dict:
+              return [buf_dict[nums[i]], i]
+          else:
+              buf_dict[target-nums[i]] = i # target-num
+#+END_SRC
+
+
+
 * Some snippet
 
 #+BEGIN_SRC C++
