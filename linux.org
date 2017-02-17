@@ -27,6 +27,17 @@ One of the situation I encountered is the =xsession-errors= file is more than 40
   - File explorer: konquerer
   - Image viewer: feh
 
+setting the wallpaper by:
+#+BEGIN_EXAMPLE
+feh --bg-fill /path/to/wall/paper
+#+END_EXAMPLE
+
+And load previous setting by:
+#+BEGIN_EXAMPLE
+sh ~/.fehbg &
+#+END_EXAMPLE
+
+
   - image processing: graphicsmagick, imagemagick
 
 ** Speech recognition engines
@@ -76,6 +87,8 @@ One of the situation I encountered is the =xsession-errors= file is more than 40
     - ~%~: current job
     - ~%ce~: the job "ce"
     - ~%?ce~: the job, whose command has "ce"
+
+Some commands:
   - =jobs= :: list all background jobs
   * =fg %1= :: continue it in foreground
   * =bg %1= :: continue it in background
