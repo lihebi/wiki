@@ -33,6 +33,7 @@
    + [[file:c-debug.org][C Debugging Techniques]]
    + [[file:c-lib.org][C Library]]
    + [[file:cpp.org][C++]]
+   + [[file:cmake.org][CMake]]
    + [[file:csv.org][CSV file]]
    + [[file:centos.org][CentOS]]
    + [[file:chrome.org][Chrome Extensions]]

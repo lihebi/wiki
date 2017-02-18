@@ -1,0 +1,119 @@
+#+TITLE: CMake
+
+* Language
+
+** Organization
+
+The entry point is =CMakeLists.txt=. It can add other directories by
+=add_subdirectory()= command, and that directory should also contains a
+=CMakeLists.txt=. Use =include()= command can include a =<module>.cmake=
+file.
+
+** Syntax
+The =CMakeLists.txt= file contains commands separated by white spaces.
+Command is an identifier with paren-enclosed arguments separated by
+white spaces. The paren-enclosing can be nested.
+
+Arguments can be
+
+| type              | escape sequence | variable reference |
+|                   | <c>             | <c>                |
+|-------------------+-----------------+--------------------|
+| =bracket_argument=  | $\times$        | $\times$           |
+| =quoted_argument=   | $\checkmark$    | $\checkmark$       |
+| =unquoted_argument= | $\checkmark$    | $\checkmark$       |
+
+The length of = can be 0 or more.
+#+BEGIN_EXAMPLE
+bracket_argument ::=  bracket_open bracket_content bracket_close
+bracket_open     ::=  '[' '='{len} '['
+bracket_content  ::=  <any text not containing a bracket_close
+                       of the same {len} as the bracket_open>
+bracket_close    ::=  ']' '='{len} ']'
+#+END_EXAMPLE
+
+
+** Variable
+Variable syntax is =${VAR}= or =$ENV{VAR}=. The reference can be nested
+and evaluate the inner first: =${outer_${inner_variable}_variable}=.
+
+- set()
+- unset()
+
+Inside set and unset, the variable don't need =$=. Two or more values are
+connected into *list* (separated by =;=). Zero values is implicit unset.
+#+BEGIN_EXAMPLE
+set(<variable> <value>... [PARENT_SCOPE])
+set(<variable> <value>... CACHE <type> <docstring> [FORCE])
+set(ENV{<variable>} <value>...)
+#+END_EXAMPLE
+
+Variables have dynamic scope.
+- function scope :: created by =function= command. Not visible outside function.
+- directory scope :: the =CMakeLists.txt=
+- persistent scope :: the "cache" variable is available across multiple
+  runs within a project build tree
+
+** Comments
+a leading =#= is a line comment. A =#= followed *immediately* by bracket
+argument, i.e. ~#[=[xxx]=]~, can be multiple line or inline comments.
+
+** Control Structure
+*** Conditional
+- if()
+- elseif()
+- else()
+- endif()
+
+#+BEGIN_EXAMPLE
+if(expression)
+  COMMAND1(ARGS ...)
+elseif(expression2)
+  COMMAND1(ARGS ...)
+  COMMAND2(ARGS ...)
+else()
+  COMMAND1(ARGS ...)
+endif()
+#+END_EXAMPLE
+
+The expression can be:
+- constant: 0 OFF, NO FALSE, N are false
+- variable: true if defined and not false constant
+- NOT, AND, OR
+- EXISTS path-to-file-or-dir
+- ...
+
+*** Loop
+- foreach()
+- endforeach()
+
+#+BEGIN_EXAMPLE
+foreach(loop_var arg1 arg2 ...)
+  COMMAND1(ARGS ...)
+  COMMAND2(ARGS ...)
+  ...
+endforeach(loop_var)
+
+foreach(loop_var RANGE total)
+foreach(loop_var RANGE start stop [step])
+#+END_EXAMPLE
+
+- while()
+- endwhile()
+
+#+BEGIN_SRC 
+while(condition)
+  COMMAND1(ARGS ...)
+  COMMAND2(ARGS ...)
+  ...
+endwhile(condition)
+#+END_SRC
+
+- break()
+- continue()
+
+** Command Definition
+- macro()
+- endmacro()
+- function()
+- endfunction()
