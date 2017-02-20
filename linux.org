@@ -219,3 +219,32 @@ The lab machines are accessed via spice. The client for spice is
 virt-viewer. It can be installed through package manager. The actual
 client is called remote-viewer, which is shipped with virt-viewer. So
 the command to connect to the .vv file: =remove-viewer console.vv=.
+
+
+* File Management
+
+** Swap File
+
+A swap file can also be used as swap memory. When doing linking, the
+=ld= might fail because of lack of memory.
+
+Check the current swap:
+#+BEGIN_EXAMPLE
+swapon -s
+#+END_EXAMPLE
+
+Create swap file:
+#+BEGIN_EXAMPLE
+dd if=/dev/zero of=/path/to/extraswap bs=1M count=4096
+mkswap /path/to/extraswap
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+swapon /path/to/extraswap
+swapoff /path/to/extraswap
+#+END_EXAMPLE
+
+This will not be in effect after reboot. To automatically swap it on, in =/etc/fstab=
+#+BEGIN_EXAMPLE
+/path/to/extraswap none swap sw 0 0
+#+END_EXAMPLE
