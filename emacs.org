@@ -72,19 +72,24 @@
 
 
 * Moving
+Defun movement:
   - =C-M-a= :: move to the beginning of defun
   - =C-M-e= :: move to the end of defun
   - =C-M-h= :: mark defun
+  - =C-M-x= :: evaluate defun
+
+Sexp movement
   - =C-M-f= :: move forward a sexp
   - =C-M-b= :: move backward a sexp
   - =C-M-k= :: kill a sexp
-  - =C-M-t= :: transpose expressions
   - =C-M-<SPC>= :: mark following sexp
   - =C-M-n= :: move to the next sexp
   - =C-M-p= :: move to the previous sexp
+
+Other
+  - =C-M-t= :: transpose expressions
   - =C-M-u= :: move up parenthesis
   - =C-M-d= :: move down parenthesis
-  - =C-M-x= :: evaluate defun
 
 * Navigating
   * ~forward-sexp~: forward semantic block
