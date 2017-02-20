@@ -54,7 +54,10 @@ Same as ratpoison:
 - ~C-t +~: balance frame
 - ~C-t o~: next frame
 - ~C-t -~: show desktop
-- =remove-split= to remove the current frame
+
+Other commands
+- =remove-split= :: to remove the current frame
+- =fclear= :: clear the current frame, show the desktop
 
 To resize frames interactively, =C-t r= and then use the arrows.
 
