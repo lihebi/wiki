@@ -16,6 +16,7 @@ One of the situation I encountered is the =xsession-errors= file is more than 40
   - =iostat= :: to monitor the IO usage. (from =sysstat= package)
   * =id= :: show the group information of current user
   * =dmesg= :: kernel log
+  - =/proc/cpuinfo= :: the file describing CPU
 
 * Shell Interaction
   * ~Ctrl-s~ :: stop the screen
