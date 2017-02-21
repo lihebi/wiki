@@ -9,6 +9,10 @@ The entry point is =CMakeLists.txt=. It can add other directories by
 =CMakeLists.txt=. Use =include()= command can include a =<module>.cmake=
 file.
 
+
+** Option
+- =CMAKE_EXPORT_COMPILE_COMMANDS=ON= :: export =compile_commands.json=
+
 ** Syntax
 The =CMakeLists.txt= file contains commands separated by white spaces.
 Command is an identifier with paren-enclosed arguments separated by
