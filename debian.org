@@ -102,6 +102,7 @@ Some examples:
 
 * Package Management
 - =/etc/apt/sources.list=
+- =/var/cache/apt/archives/=
 
 Once installed google-chrome deb file downloaded from google,
 it will add one file: =/etc/apt/sources.list.d/google-chrome=.
