@@ -17,11 +17,22 @@ cd llvm/projects
 svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt
 cd ../..
 mkdir build
+#+END_SRC
+
+Using make
+#+BEGIN_SRC shell
 cmake -G "Unix Makefiles" ../llvm
 make
 make install
 #+end_src
 
+Or using Ninja
+
+#+BEGIN_EXAMPLE
+cmake -G Ninja ..
+ninja
+ninja install
+#+END_EXAMPLE
 * try the llvm toolchain
 
 - ~clang --help~
