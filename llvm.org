@@ -15,13 +15,13 @@ cd llvm/tools
 svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
 cd llvm/projects
 svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt
-cd ../..
+cd ..
 mkdir build
 #+END_SRC
 
 Using make
 #+BEGIN_SRC shell
-cmake -G "Unix Makefiles" ../llvm
+cmake -G "Unix Makefiles" ..
 make
 make install
 #+end_src
@@ -32,6 +32,15 @@ Or using Ninja
 cmake -G Ninja ..
 ninja
 ninja install
+#+END_EXAMPLE
+
+Note that using Ninja will be slow and consume a lot of memory. The
+resulting executable is huge (in my case the clang executable is
+5G). This is because the debug information is built-in to the
+executable. So use the release build:
+
+#+BEGIN_EXAMPLE
+cmake -G Ninja .. -DLLVM_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
 #+END_EXAMPLE
 * try the llvm toolchain
 
