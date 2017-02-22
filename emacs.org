@@ -58,6 +58,8 @@
    - =fill-region=
    - =auto-fill-mode=
 
+When replace-string, use =C-q C-j= to represent newline.
+
 ** killing
    * ~zap-to-char~
    * ~zap-up-to-char~
