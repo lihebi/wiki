@@ -1,6 +1,91 @@
 #+TITLE: C++
 
+* Idioms
+** Curiously recurring template pattern (CRTP)
 
+a class X derives from a class template instantiation using X itself
+as template argument.
+
+General form:
+#+BEGIN_SRC cpp
+tempalte <class T> class Base {
+  // methods of Base can access members of Derived
+};
+class Derived : public Base<Derived> {};
+#+END_SRC
+
+*** Static Polymorphism
+It can achieve effect of virtual function but without the cost of
+dynamic polymorphism.
+
+#+BEGIN_SRC cpp
+  template <class T> struct Base {
+    void implementation() {
+      static_cast<T*>(this)->implementation();
+    }
+    static void static_func() {
+      T::static_sub_func();
+    }
+  };
+  struct Derived : public Base<Derived> {
+    void implementation();
+    static void static_sub_func();
+  };
+#+END_SRC
+
+*** Object Counter
+=counter<X>= and =counter<Y>= are different class, so the counters are
+separate for X and Y.
+
+#+BEGIN_SRC cpp
+  template <typename T> struct counter {
+    static int objects_created;
+    static int objects_alive;
+    counter() {
+      ++objects_created;
+      ++objects_alive;
+   }
+    counter(const counter&) {
+      ++objects_created;
+      ++objects_alive;
+    }
+  protected:
+    ~counter() {
+      -- objects_alive;
+    }
+  };
+  template <typename T> int counter<T>::objects_created(0);
+  template <typename T> int counter<T>::objects_alive(0);
+
+  class X : counter<X> {};
+  class Y : counter<Y> {};
+#+END_SRC
+*** Polymorphic Copy Construction
+When using polymorphism, one sometimes needs to create copies of
+objects by the base class pointer. So a clone virtual function is
+created in the base class, and defined in every derived classes. To
+avoid duplication in the derived class:
+
+#+BEGIN_SRC cpp
+  class Shape {
+  public:
+    virtual ~Shape() {};
+    virtual Shape *clone() const = 0;
+  };
+  // CRTP class
+  template <typename Derived> class Shape_CRTP : public Shape {
+  public:
+    virtual Shape *clone() const {
+      return new Derived(static_cast<Derived const&>(*this));
+    }
+  };
+  // ensure correct usage
+  #define Derive_Shape_CRTP(Type) class Type: public Shape_CRTP(Type)
+  // usage
+  Derive_Shape_CRTP(Square) {};
+  Derive_Shape_CRTP(Circle) {};
+
+#+END_SRC
 
 * extern
 #+BEGIN_SRC C++
