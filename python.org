@@ -6,6 +6,14 @@ Install the =elpy= package. It provides:
 - =C-c C-d= runs =elpy-doc=
 - =C-c C-t= runs =elpy-test=, which runs the unittest discover
 
+To enable linter python in emacs, use pylint. It will use =pylint=
+executable. And it also needs the configure file. Generate it:
+
+#+BEGIN_EXAMPLE
+pylint --generate-rcfile > ~/.pylintrc
+#+END_EXAMPLE
+
+
 * Unit Test
 #+BEGIN_SRC python
 class MyTest(unittest.TestCase):
