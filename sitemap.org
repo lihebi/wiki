@@ -37,6 +37,7 @@
    + [[file:csv.org][CSV file]]
    + [[file:centos.org][CentOS]]
    + [[file:chrome.org][Chrome Extensions]]
+   + [[file:clang.org][Clang]]
    + [[file:clojure.org][Clojure]]
    + [[file:common-lisp.org][Common Lisp]]
    + [[file:compiler.org][Compiler]]

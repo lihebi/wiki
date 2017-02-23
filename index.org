@@ -7,9 +7,10 @@ This site records knowledge I would need to remember.
   Some popular distributions: [[file:linux.org][Linux]], [[file:debian.org][Debian]], [[file:centos.org][CentOS]]
   The [[file:debian-setup.org][setup]] of debian.
 
-  Some essential apps: , [[file:conkeror.org][conkeror]], [[file:stumpwm.org][StumpWM]], [[file:x11.org][X11]], [[file:lvm.org][LVM]], [[file:tmux.org][Tmux]], [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]].
+  Some essential apps: , [[file:conkeror.org][conkeror]], [[file:stumpwm.org][StumpWM]], [[file:x11.org][X11]], [[file:tmux.org][Tmux]], [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]].
 
 * Coding
+  - Compilation: [[file:llvm.org][LLVM]], [[file:clang.org][Clang]]
   - Be sure to be familiar with [[file:design-pattern.org][Design Pattern]] before you code.
   - Compiler techniques: [[file:compiler.org][compiler]], [[file:llvm.org][LLVM]], [[file:gdb.org][GDB]], [[file:gcov.org][gcov]].
   - Scripting: [[file:awk.org][awk]], [[file:sed.org][sed]], [[file:r.org][R]], [[file:./shell.org][shell]], [[file:shell-utils.org][shell utilities]], [[file:js.org][js]], [[file:python.org][python]].
