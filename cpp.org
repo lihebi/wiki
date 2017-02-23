@@ -913,8 +913,19 @@ For detail, refer to [[https://msdn.microsoft.com/en-us/library/dd293668.aspx][R
                    count for it. It must be converted to =shared_ptr=
                    before use.
 
+The =weak_ptr= can help break the /reference-count cycle/ problem.
 
+#+BEGIN_SRC cpp
+  class widget {
+    shared_ptr<gadget> g;
+  };
+  class gadget {
+    weak_ptr<widget> w;
+  };
+#+END_SRC
 
+If both are =shared_ptr=, the ownership is not clear, so destructing
+them would be a problem.
    #+begin_src C++
     std::unique_ptr<Type> ptr; // ensure that the pointer is deleted after going out of scope.
     std::shared_ptr<Type> ptr;
