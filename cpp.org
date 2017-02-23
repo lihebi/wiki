@@ -907,7 +907,11 @@ For detail, refer to [[https://msdn.microsoft.com/en-us/library/dd293668.aspx][R
 ** Smart Pointer
 
    - =unique_ptr= :: cannot be copied
-   - =shared_ptr= :: can be copied. Will destroy when the last reference destroy.
+   - =shared_ptr= :: can be copied. Will destroy when the last reference
+                     destroy.
+   - =weak_ptr= :: reference to an object, but does not increase the
+                   count for it. It must be converted to =shared_ptr=
+                   before use.
 
 
 
