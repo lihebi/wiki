@@ -7,7 +7,7 @@
 - =-ast-list= :: list ast nodes
 
 #+BEGIN_EXAMPLE
-clang -Xclang -ast-dump a.c
+clang -Xclang -ast-dump -fsyntax-only a.c
 clang -emit-ast a.c
 clang-check -ast-list lib/parser.cpp | grep AddValue
 clang-check a.cc -ast-dump -ast-dump-filter=StdStringA --
