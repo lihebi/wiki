@@ -225,4 +225,6 @@ const FileEntry *getFileEntryForID (FileID FID) const;
 
 * Reference
 
-- A article as tutorial: http://bastian.rieck.ru/blog/posts/2016/baby_steps_libclang_function_extents/
+- A article as tutorial:
+  http://bastian.rieck.ru/blog/posts/2016/baby_steps_libclang_function_extents/
+- a repo of samples: https://github.com/eliben/llvm-clang-samples
