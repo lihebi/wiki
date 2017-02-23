@@ -965,6 +965,49 @@ if it evaluates to true, it means this function is not throwing any
 exception. Otherwise the function is potentially throwing. =throw ()= is
 same as =noexcept(true)= but is deprecated.
 
+
+** Template
+*** Template specialization
+Use when you want to define a different implementation for a template
+when a specific type is passed as template parameter.
+
+The syntax is this: put an empty inside the brackets, and put a =<char>=
+after the class name. When instantiate this class with =char=, it will
+use the specialized one.
+
+#+BEGIN_SRC cpp
+template <class T> class mycontainer { ... };
+template <> class mycontainer <char> { ... };
+#+END_SRC
+
+So only have the second form is not valid.
+
+*** Non-type parameter
+The parameter can not just be a type name, but also a regular type.
+
+#+BEGIN_SRC cpp
+template <class T, int N>
+class mysequence {
+    T memblock [N];
+  public:
+    void setmember (int x, T value);
+    T getmember (int x);
+};
+#+END_SRC
+
+It can have default values:
+
+#+BEGIN_SRC cpp
+template <class T=char, int N=10> class mysequence {..};
+#+END_SRC
+
+Then the following calls are equivalent:
+
+#+BEGIN_SRC cpp
+mysequence<> myseq;
+mysequence<char,10> myseq;
+#+END_SRC
+
 * Library
 ** Stream
 *** file stream
