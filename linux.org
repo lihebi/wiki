@@ -12,6 +12,10 @@ One of the situation I encountered is the =xsession-errors= file is more than 40
 - Debian Wiki: https://wiki.debian.org/
 - FreeBSD: https://www.freebsd.org/
 
+* Files
+In Unix, everything is a file.
+- =/etc/X11/rgb.txt= :: rgb file
+
 * System
   - =iostat= :: to monitor the IO usage. (from =sysstat= package)
   * =id= :: show the group information of current user
