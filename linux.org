@@ -249,3 +249,23 @@ This will not be in effect after reboot. To automatically swap it on, in =/etc/f
 #+BEGIN_EXAMPLE
 /path/to/extraswap none swap sw 0 0
 #+END_EXAMPLE
+
+* Drivers
+I was installing drivers for my RX470 on Debian strench. The good news
+is it works out of box, I guess using
+=xserver-xorg-video-amdgpu=. However the temperature is 58 idle.
+
+To fix that, I tried to install the newest driver, the =amdgpu-pro=. It
+does not support Debian officially, although I can modify the install
+script to pass the system test (it tests Ubuntu or steam). The
+installation script failed, but leaves me with the
+=/var/opt/amdgpu-pro-local= repo, which is also visible by =apt=. All the
+things can be removed by running =amdgpu-pro-uninstall=. Installing
+=amdgpu-pro= package will fail the machine, and you will not be able to
+log in again. The integrated graphic card would still work to log in
+and fix this but unless you have one, don't try it ... Installing
+=xserver-xorg-video-amdgpu-pro= seems did gives me a temperature of 50,
+much better ..
+
+Of course, the fan on the GPU is spinning all the time even if I use
+integrated graphic. The RGB lighting is not going to be customize-able.
