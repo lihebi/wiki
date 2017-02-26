@@ -238,6 +238,8 @@ Networking:
 - =interfaces=
 
 * Wireless
+For a supported wireless card, directly install =wicd= and run
+=wicd-client -n=.
 
 ** wireless driver for mac
 *** Debian Installation on mac:
@@ -246,7 +248,9 @@ Networking:
 2. Clean install Mac OS
 3. Reboot, Cmd-R to boot into recover, partition two more partitions for debian and swap.
 4. Use unetbootin to create Debian USB stick
-5. Install Debian normally, but use the pre-defined partition! Use ext-4 and mount at =/=
+5. Install Debian normally, but use the pre-defined partition! Use
+   ext-4 and mount at =/=
+
 
 
 *** wireless
