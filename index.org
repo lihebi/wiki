@@ -21,7 +21,7 @@ This site records knowledge I would need to remember.
 
 * Algorithm
   - OJ: [[file:leetcode.org][Leetcode]], [[file:alg-string.org][String algorithms]], [[file:palindrome.org][Palindrome]], [[file:data-structure.org][data structure]], [[file:data-structure-old.org][old data structure page]], [[file:oj.org][algorithm in practice]].
-  - Computation Theory: [[file:511/np.org][NP]], [[file:511/np-problems.org][NP problems]], [[file:531/NPC.org][NPC]], [[file:511/approximation.org][Approximation]], [[file:511/lp.org][Linear Programming]], [[file:531/tm.org][Turing Machine]], [[file:531/decidability.org][Decidability]].
+  - Computation Theory: [[file:math/511/np.org][NP]], [[file:math/511/np-problems.org][NP problems]], [[file:math/531/NPC.org][NPC]], [[file:math/511/approximation.org][Approximation]], [[file:math/511/lp.org][Linear Programming]], [[file:math/531/tm.org][Turing Machine]], [[file:math/531/decidability.org][Decidability]].
   - AI: [[file:search-alg.org][Search algorithm]], [[file:name-alg.org][Name Algorithm]], [[file:machine-learning.org][Machine Learning]], [[file:ai.org][Artificial Intelligence]]
   - Other: [[file:math-fund.org][Fundamental of math]]
 
