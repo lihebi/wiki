@@ -83,6 +83,14 @@ The text of a node can be anything, e.g. =lstlisting= environemnt.
 \node (A)[opt,label={right:label text}] at (0,0) {text};
 #+END_SRC
 
+* Matrix
+#+BEGIN_SRC latex
+\matrix {
+  \node {}; & \node {}; \\
+  \node {}; & \node {}; \\
+};
+#+END_SRC
+
 * Packages
 ** shapes.multipart
 #+BEGIN_SRC latex

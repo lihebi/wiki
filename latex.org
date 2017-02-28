@@ -244,8 +244,17 @@ Style arbitrary content:
 
 
 
-*** tikz
+** tikz
 see [[file:tikz.org][tikz]]
+
+** ulem
+- uline :: regular underline
+- uuline :: double underline
+- uwave :: wave
+- sout :: strike out
+- xout :: dense cross out
+- dashuline :: dash
+- dotuline :: dot
 
 * Bibliography
 cite link (need to load a package like =hyperref= or =url=)
