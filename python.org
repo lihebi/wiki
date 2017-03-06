@@ -1,5 +1,62 @@
 #+TITLE: Python
 
+* Language
+The ultimate reference:
+- language reference: https://docs.python.org/2/reference/
+- standard library: https://docs.python.org/2/library
+
+For python 3
+- https://docs.python.org/3.7/reference/
+- https://docs.python.org/3.7/library/
+
+
+=atom= is the most basic expression, while the =enclosure= is interesting.
+
+#+BEGIN_EXAMPLE
+atom      ::=  identifier | literal | enclosure
+enclosure ::=  parenth_form | list_display | dict_display | set_display
+               | generator_expression | yield_atom
+#+END_EXAMPLE
+
+The =display= is a special syntax for python to create lists and dicts, using /comprehension/.
+
+#+BEGIN_EXAMPLE
+list_display ::=  "[" [starred_list | comprehension] "]"
+set_display ::=  "{" (starred_list | comprehension) "}"
+
+dict_display       ::=  "{" [key_datum_list | dict_comprehension] "}"
+key_datum_list     ::=  key_datum ("," key_datum)* [","]
+key_datum          ::=  expression ":" expression | "**" or_expr
+dict_comprehension ::=  expression ":" expression comp_for
+#+END_EXAMPLE
+
+And the comprehension grammar:
+#+BEGIN_EXAMPLE
+comprehension ::=  expression comp_for
+comp_for      ::=  [ASYNC] "for" target_list "in" or_test [comp_iter]
+comp_iter     ::=  comp_for | comp_if
+comp_if       ::=  "if" expression_nocond [comp_iter]
+#+END_EXAMPLE
+
+The =comp_for= non-terminal contains one or more =for= clause, and zero or more =if= clause.
+
+The evaluation of these displays will evaluate from left to right, so
+the last assignment will prevail in the case of set and dict. The
+comprehension is executed by nesting the for and if clauses from left
+to right.
+
+So some examples:
+
+#+BEGIN_SRC python
+((a,b) for a in range(2) for b in range(3))
+[(a,b) for a in range(2) for b in range(3)]
+{(a,b) for a in range(2) for b in range(3)}
+
+{a:b for a in (1,2) for b in (3,4)}
+#+END_SRC
+
+Note the out-most braces are required, which also creates a scope.
+
 * Emacs support
 Install the =elpy= package. It provides:
 - =C-c C-c= runs the shell and send the current buffer
