@@ -176,3 +176,26 @@ After installation, use =nvidia-xconfig= will write =/etc/X11/xorg.conf=.
 The original one will be backed up (actually original one is empty).
 
 But, I haven't been able to boot to login page using nvidia card...
+
+* Natural Scrolling
+
+The old solution is to swap the pointer button "4" and "5", by =xmodmap= or =xinput=:
+
+#+BEGIN_EXAMPLE
+xmodmap -e "pointer = 1 2 3 4 5"
+xinput --set-button-map 10 1 2 3 5 4
+#+END_EXAMPLE
+
+The 10 is the id, to find it out, run xinput without argument.
+
+But this way is deprecated, as of chromium 49 and above, it does not work any more.
+So use the xinput way to /set the property/:
+
+#+BEGIN_EXAMPLE
+xinput set-prop 10 "libinput Natural Scrolling Enabled" 1
+#+END_EXAMPLE
+
+I'm using logitech G900 and the property might be different. It works!
+
+Not sure if the xinput command should be run each time the system
+boots. That would be hard for specifying ID.
