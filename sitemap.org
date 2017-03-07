@@ -56,6 +56,7 @@
    + [[file:gdb.org][GDB]]
    + [[file:gnulib.org][GNULib]]
    + [[file:git.org][Git]]
+   + [[file:gnus.org][Gnus]]
    + [[file:golf.org][Golf]]
    + [[file:dot.org][Graphviz/Dot]]
    + [[file:guitar.org][Guitar]]

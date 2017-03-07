@@ -1,0 +1,142 @@
+#+TITLE: Gnus
+
+Finally I decide to learn Gnus the hard way. I have to learn it, I
+need to read news.
+
+This is built in with emacs.
+To read archive messages:
+
+#+BEGIN_QUOTE
+In emacs, <DEL> means backspace, <delete> means the delete key.
+#+END_QUOTE
+
+* Tutorial
+Inside emacs, run =gnus= command. This brings the =*Group*= buffer.
+
+Some settings
+#+BEGIN_SRC elisp
+(setq gnus-default-nntp-server "news.gmane.org")
+(setq gnus-select-method '(nntp "news.gmane.org"))
+(setq gnus-use-adaptive-scoring t)
+(add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+#+END_SRC
+
+** In Group Buffer:
+# - B :: =gnus-group-browse-foreign-server=, use =nntp= as back-end and =news.gmane.org= as address.
+
+*** Finding the groups
+- A A :: List all groups that are available from the server(s).
+- u :: toggle subscription of the group
+- l :: list only subscribed ones with unread articles
+- L :: show all subscribed groups
+
+*** Management
+- <Ret> :: enter the group
+- g :: check for news
+- q :: quit
+- c :: catchup: mark all unread articles in the group under cursor as read
+- C :: catchup: mark all +unread+ articles in the group under cursor as read
+- m :: create a new message
+- a :: create a new post
+- ^ :: enter server buffer
+
+*** Topic
+- t :: toggle topic minor mode. Topic mode group subscriptions into categories.
+- T n (gnus-topic-create-topic) :: create a new topic
+- T <Del> (gnus-topic-delete) :: delete topic under cursor
+- T m (gnus-topic-move-group) :: move the group under cursor to a topic
+- T h (gnus-topic-hide-topic) ::
+- T s (gnus-topic-show-topic) ::
+
+
+** In Article (Summary) buffer
+*** Navigating
+- <RET> :: view article under cursor
+- n :: next unread article
+- p :: previous unread article
+- N :: next article
+- P :: previous article
+- <SPC> :: scroll down, move to next unread article when at bottom
+- <DEL> :: scroll up, but will not move article
+- ^ :: fetch parent article
+
+*** Replying
+- F :: follow-up to group and cite the article
+- f :: follow-up to group without citing the article
+- R :: reply by mail and cite the article
+- r :: reply by mail without cite the article
+- m :: new mail
+- a :: new post
+
+*** Management
+- c :: catchup ALL in the buffer
+- T T :: toggle threading (flat style or thread style)
+- t :: toggle all headers (a lot of MIME information)
+- TODO L :: create low score
+- TODO I :: create high score
+- ! :: mark as important
+- ? :: mark as dormant
+
+*** Marking
+
+**** Unread
+- ! :: ticked. This means important, and will always show
+- ? :: dormant. This will show up whenever there are follow-ups.
+- space :: unread at all
+**** Read
+- r :: marked as read by =d=
+- R :: actually read
+- O :: old. Marked as read in previous sessions.
+- Y :: having a too level score (computed by emacs by rules, e.g. when
+       you mark an article as read while didn't really read it, the
+       related ones are marked like this)
+
+**** Operation
+- ! ::
+- ? ::
+- d :: mark as read
+- / o :: gnus-summary-insert-old-articles, show all read articles
+- M-u :: gnus-summary-clear-mark-forward
+- V R :: gnus-summary-rescore
+
+** In a message buffer
+- C-c C-c :: send
+- C-c C-d :: save as draft
+- C-c C-k :: kill
+- C-c C-m f :: attach file
+
+
+* Gmail Setup
+Add the credential information to =~/.authinfo=
+
+#+BEGIN_EXAMPLE
+machine imap.gmail.com login <username> password <password> port imaps
+machine smtp.gmail.com login <username> password <password> port 587
+#+END_EXAMPLE
+
+Add the following into =.gnus=
+
+#+BEGIN_EXAMPLE
+(setq user-mail-address "lihebi.emacs@gmail.com"
+      user-full-name "Hebi Li")
+
+(setq gnus-select-method
+      '(nnimap "gmail"
+	       (nnimap-address "imap.gmail.com")  ; it could also be imap.googlemail.com if that's your server.
+	       (nnimap-server-port "imaps")
+	       (nnimap-stream ssl)))
+
+(setq smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-service 587
+      gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
+
+
+;; send mail using gmail smtp, no require for installation of sendmail or something
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "lihebi.emacs@gmail.com" nil))
+      smtpmail-default-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-service 587
+      starttls-use-gnutls t)
+#+END_EXAMPLE

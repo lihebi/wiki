@@ -54,7 +54,7 @@
    To insert a control sequence, use ~C-q xxx~.
    - =capitalize-word=
 
-   - =fill-paragraph=
+   - =fill-paragraph= (M-q)
    - =fill-region=
    - =auto-fill-mode=
 

@@ -60,18 +60,6 @@ make install-package
    - =Q=: kill buffer
    - =q=: kill window
 
-* gnus
-  This is built in with emacs.
-  To read archive messages:
-
-  #+BEGIN_EXAMPLE
-M-x gnus
-;; in *Group*
-B ; gnus-group-browse-foreign-server
-;; use nntp as back end
-;; enter address: news.gmane.org
-  #+END_EXAMPLE
-
 * Paredit
 
   | command                     | Key | description                     |
