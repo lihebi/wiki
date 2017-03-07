@@ -89,6 +89,7 @@
    + [[file:regex.org][Regular Expression]]
    + [[file:sql.org][SQL]]
    + [[file:stl.org][STL]]
+   + [[file:samba.org][Samba]]
    + [[file:search-alg.org][Search ALgorithm]]
    + [[file:shell.org][Shell]]
    + [[file:shell-utils.org][Shell Utilities]]

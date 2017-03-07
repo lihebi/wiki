@@ -1,0 +1,54 @@
+#+TITLE: Samba
+
+This is an open source implementation of Microsoft =SMB/CIFS= for Linux.
+
+* Setup
+
+To set up, first install =samba= package.
+
+Add a user. This can be your own user name, but use a different password. The user must already exist in the system. Add the password by:
+
+#+BEGIN_EXAMPLE
+sudo smbpasswd -a <username>
+#+END_EXAMPLE
+
+Note that we actually "add" a new user by =-a= option. This is needed
+and is not the same thing as create a user for the system.
+
+Inside =/etc/samba/smb.conf=, add at the bottom:
+
+#+BEGIN_EXAMPLE
+[<folder_name>]
+path = /home/<user_name>/<folder_name>
+valid users = <user_name>
+read only = no
+#+END_EXAMPLE
+
+Note that the default configure file does share the home directory as read-only. So apart from this share, you can access =home= share.
+Note again that the path need to be read and writable by the user if necessary.
+
+Then restart the service:
+
+#+BEGIN_EXAMPLE
+sudo service smbd restart
+#+END_EXAMPLE
+
+You don't need to restart the service when setting or changing the password.
+
+
+* Access
+On Linux, you need to install =smbclient=.
+List all shares by:
+#+BEGIN_EXAMPLE
+smbclient -L //<HOST_IP_OR_NAME>/<folder_name> -U <user>
+#+END_EXAMPLE
+
+Connect:
+#+BEGIN_EXAMPLE
+  smbclient //<HOST_IP_OR_NAME>/<folder_name> -U <user>
+#+END_EXAMPLE
+
+On mac, go to finder, =go= menu, connect to server, and enter:
+#+BEGIN_EXAMPLE
+smb://<ip>
+#+END_EXAMPLE
