@@ -52,3 +52,25 @@ On mac, go to finder, =go= menu, connect to server, and enter:
 #+BEGIN_EXAMPLE
 smb://<ip>
 #+END_EXAMPLE
+
+* Mounting the disk
+
+To auto mount the disk, add the entry to =/etc/fstab=:
+
+#+BEGIN_EXAMPLE
+/dev/sda1  /mnt/smbshare   auto    defaults        0       0
+#+END_EXAMPLE
+
+The suggested one is the following but I don't like it
+#+BEGIN_EXAMPLE
+/dev/sda1 /media/NASHDD1 auto nofail,uid=enter_uid_here,gid=enter_gid_here,noatime 0 0
+#+END_EXAMPLE
+
+See fstab(5) manpage for detail.
+
+To determin uid and gid for a user, use
+
+#+BEGIN_EXAMPLE
+id -u <username>
+id -g <username>
+#+END_EXAMPLE
