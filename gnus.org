@@ -30,6 +30,9 @@ Some settings
 - l :: list only subscribed ones with unread articles
 - L :: show all subscribed groups
 
+Also, if you want to add RSS feeds, in group buffer:
+- G R :: and paste the rss feed url
+
 *** Management
 - <Ret> :: enter the group
 - g :: check for news
