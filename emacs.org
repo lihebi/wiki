@@ -67,6 +67,12 @@ When replace-string, use =C-q C-j= to represent newline.
 ** spell checking
    Use =ispell=, and =flycheck= to check on-the-fly. Check emacs manual for detail.
 
+** Replace regexp for multiple files inside project
+1. =find-name-dired=, select the root directory, and provide a pattern for files
+2. press =t= to toggle mark all files
+3. press Q for query and replace in files, and provide regexp and replacement
+4. proceed each of the match by: =SPC= to confirm, and =n= to skip to next.
+
 * Programming
   - =checkdoc=: check the warnings in doc string. It can also fix it: =C-h f=.
   - =C-x C-e=: evaluate
