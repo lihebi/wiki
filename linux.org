@@ -273,3 +273,11 @@ much better ..
 
 Of course, the fan on the GPU is spinning all the time even if I use
 integrated graphic. The RGB lighting is not going to be customize-able.
+
+* Encoding
+When converting MS windows format to unix format, you can use emacs and call =set-buffer-file-coding-system= and set to unix.
+Or you can use =dos2unix=, perhaps by
+
+#+BEGIN_EXAMPLE
+find . -name *.java | xargs dos2unix
+#+END_EXAMPLE
