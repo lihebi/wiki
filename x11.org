@@ -30,6 +30,11 @@ Rotate
 xrandr --output HDMI-1 --rotate left
 #+END_EXAMPLE
 
+Chagne resolution
+#+BEGIN_EXAMPLE
+xrandr --output HDMI-1 --mode 1920x1080
+#+END_EXAMPLE
+
 * Display Manager
 Install xdm. It will use the file =$HOME/.xsession=, so
 #+BEGIN_EXAMPLE
