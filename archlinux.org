@@ -4,3 +4,161 @@ ArchLinux has the most up-to-date binary software.
 
 You can back up configuration by:
 - https://github.com/CyberShadow/aconfmgr
+
+
+* Installation
+
+Download the image (no need extra package files as the time of 2011 ..), and burn to USB.
+
+The system will boot into the host OS.
+
+
+** Verify UEFI
+Nowadays (start from 2017) Arch only supports 64 bits ... and seems to
+prefer UEFI .. Fine
+
+First, verify the boot mode to be UEFI by checking
+the following folder exists
+#+BEGIN_EXAMPLE
+ls /sys/firmware/efi/efivars
+#+END_EXAMPLE
+
+** System clock
+#+BEGIN_EXAMPLE
+timedatectl set-ntp true
+#+END_EXAMPLE
+
+** Partition
+#+BEGIN_EXAMPLE
+parted /dev/sda mklabel gpt
+parted /dev/sda mkpart ESP fat32 1MiB 513MiB
+parted /dev/sda set 1 boot on
+parted /dev/sda mkpart primary linux-swap 513MiB 5GiB
+parted /dev/sda mkpart primary ext4 5GiB 100%
+#+END_EXAMPLE
+
+This creates
+- sda1 :: =/boot= the EFI System Partition (ESP), swp, and a root
+- sda2 :: swap
+- sda3 :: =/=
+
+Format:
+#+BEGIN_EXAMPLE
+mkfs.fat -F32 /dev/sda1
+mkfs.ext4 /dev/sda3
+#+END_EXAMPLE
+
+Mount
+#+BEGIN_EXAMPLE
+mount /dev/sda1 /mnt
+mkdir /mnt/boot
+mount /dev/sda3 /mnt/boot
+#+END_EXAMPLE
+
+
+** Select mirror
+look into =/etc/pacman.d/mirrorlist= and modify if necessary. The order
+matters. The file will be copied to new system.
+
+** Install base system
+#+BEGIN_EXAMPLE
+pacstrap /mnt base
+#+END_EXAMPLE
+
+** chroot
+#+BEGIN_EXAMPLE
+genfstab -U /mnt >> /mnt/etc/fstab
+arch-chroot /mnt
+#+END_EXAMPLE
+
+** Configure
+Now we are in the new system.
+
+#+BEGIN_EXAMPLE
+ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
+hwclock --systohc
+#+END_EXAMPLE
+
+Uncomment =en_US.UTF-8 UTF-8= inside =/etc/locale.gen= and run
+#+BEGIN_EXAMPLE
+locale-gen
+#+END_EXAMPLE
+
+Set =LANG= in =/etc/locale.conf=
+
+#+BEGIN_EXAMPLE
+LANG=en_US.UTF-8
+#+END_EXAMPLE
+
+Set hostname in =/etc/hostname=
+#+BEGIN_EXAMPLE
+myhostname
+#+END_EXAMPLE
+
+Set root password
+#+BEGIN_EXAMPLE
+passwd
+#+END_EXAMPLE
+
+
+Now reboot
+
+* System Setup
+DHCP is not enabled by default. It is the philloshophy for Arch: installing a package will not enable any service. Enable it by;
+
+#+BEGIN_EXAMPLE
+systemctl enable dhcpcd
+#+END_EXAMPLE
+
+So maybe a list of packages.
+
+- base-devel
+- emacs
+- xterm
+- xorg-server
+- xorg-xinit
+- mlocate
+- rxvt-unicode
+
+Install using AUR
+- stumpwm (depends on cl-ppcre adn clx-git)
+- clx-truetype ( depends on cl-zpb-ttf)
+- quicklisp (it seems not installed, I have to use my previous method to install it)
+
+
+* Pacman
+Option
+- S :: sync, a.k.a install
+- Q :: query
+
+Parameter:
+- s :: search
+- y :: fetch new package list. Usually use with =u=
+- u :: update all packages
+- i :: more information
+
+Typical usage:
+- Syu :: update whole system
+- S :: install package
+- R :: remove package
+- Rs :: remove package and its unused dependencies
+- Ss :: search package
+- Qi :: show description of a package
+
+* AUR
+Have to search through its web interface. Find the git download link
+and clone it. It is pullable.
+
+Go into the folder and
+#+BEGIN_EXAMPLE
+makepkg -si
+#+END_EXAMPLE
+
+=-s= alone will build it, with =i= to install it after build. The
+dependencies are automatically installed if can be found by pacman. If
+it is also on AUR, you have to install manually.
+
+The md5sum line can be skipped for some package. Just replace the
+md5sum value inside the quotes with ='SKIP'=.
+
+
