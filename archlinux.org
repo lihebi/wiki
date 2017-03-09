@@ -1,0 +1,6 @@
+#+TITLE: ArchLinux
+
+ArchLinux has the most up-to-date binary software.
+
+You can back up configuration by:
+- https://github.com/CyberShadow/aconfmgr

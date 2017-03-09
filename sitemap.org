@@ -22,6 +22,7 @@
    + subdir
      + [[file:subdir/test.org][test]]
    + [[file:tmp.org][A tmp]]
+   + [[file:archlinux.org][ArchLinux]]
    + [[file:ai.org][Artificial Intelligence]]
    + [[file:assembly.org][Assembly]]
    + [[file:report.org][Assertion Experiment]]

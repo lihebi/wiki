@@ -4,7 +4,7 @@ This site records knowledge I would need to remember.
 
 * OS
   First, install the system by [[file:liveusb.org][Live USB]].
-  Some popular distributions: [[file:linux.org][Linux]], [[file:debian.org][Debian]], [[file:centos.org][CentOS]]
+  Some popular distributions: [[file:linux.org][Linux]], [[file:debian.org][Debian]], [[file:centos.org][CentOS]], [[file:archlinux.org][ArchLinux]].
   The [[file:debian-setup.org][setup]] of debian. File sharing by [[file:samba.org][samba]].
 
   Some essential apps: , [[file:conkeror.org][conkeror]], [[file:stumpwm.org][StumpWM]], [[file:x11.org][X11]], [[file:tmux.org][Tmux]], [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]].
