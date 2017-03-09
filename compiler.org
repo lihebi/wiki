@@ -1,0 +1,4 @@
+#+TITLE: Compiler
+
+This file describe the general concept of a compiler. I'm going to
+relearn it in the hard way.

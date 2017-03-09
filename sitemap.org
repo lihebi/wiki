@@ -42,6 +42,7 @@
    + [[file:clojure.org][Clojure]]
    + [[file:common-lisp.org][Common Lisp]]
    + [[file:compiler.org][Compiler]]
+   + [[file:compiler-impl.org][Compiler Implementation]]
    + [[file:conkeror.org][Conkeror]]
    + [[file:liveusb.org][Create Live USB]]
    + [[file:data-structure-old.org][Data Structure]]
