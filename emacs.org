@@ -72,6 +72,9 @@ When replace-string, use =C-q C-j= to represent newline.
 2. press =t= to toggle mark all files
 3. press Q for query and replace in files, and provide regexp and replacement
 4. proceed each of the match by: =SPC= to confirm, and =n= to skip to next.
+5. Finally all files are not saved. To save that, =C-x s= will prompt
+   all file and wait for your confirm by =y=. To avoid hitting =y= many
+   times, use =C-x s !=.
 
 * Programming
   - =checkdoc=: check the warnings in doc string. It can also fix it: =C-h f=.
