@@ -34,7 +34,7 @@ expression.
 - Grammar is most useful for describing nested structures such as
   parentheses, begin-end, if-then-else.
 
-** Fix the grammar
+** Write/Fix the grammar
 - Ambiguity ::
 - Left Recursion :: Top down parser cannot handle left recursion.
 - Left Factoring :: a technique to rewrite production rule to achieve
@@ -77,7 +77,7 @@ Left recursive grammar can cause a recursive-descent parser (even the
 one with backtracking) into an infinite-loop. Because it try to expand
 A without consuming any input.
 
-*** LL(1)
+*** TODO LL(1)
 What's the LL?
 - L :: Scanning input from Left to right
 - L :: producing Leftmost derivation
@@ -87,8 +87,8 @@ It is rich enough to cover most programming constructs. However,
 left-recursive and ambiguous can not.
 
 The parser will construct a predictive parsing table.  To solve LL(1),
-we use /non-recursive predictive parsing/.  Do not need recursive call,
-because it constructs a parsing table. It is table-driven.
+we use /non-recursive predictive parsing/.  Do not need recursive call
+(really??), because it constructs a parsing table. It is table-driven.
 
 - algorithm 1: construct predictive parsing table
 - algorithm 2: table driven predictive parsing
@@ -154,6 +154,92 @@ The drawback: hard to construct by hand.
 
 **** Simple LR Parsing (SLR)
 
+- LR(0) Item :: each production rule will be written in a dot format:
+                put one dot somewhere in the rule. This will result in
+                many items.
+- Set of LR(0) Items :: a set of the items
+- Canonical LR(0) collection :: a collection of /sets/ of LR(0) Items,
+     that is typically used (others are useless).
+
+To construct Canonical LR(0) collection, introduce the CLOSURE and
+GOTO functions:
+- CLOSURE(I) :: where I is a set of items, if $A \rightarrow \alpha
+                \cdot B \beta$ is in CLOSURE(I), and $B \rightarrow
+                \gamma$, $B \rightarrow \cdot \gamma$ is in the set.
+- GOTO(I,X) :: where I is a set of items, X is a grammar
+               symbol. Produce a closure, if $A \rightarrow \alpha
+               \cdot X \beta$, $A \rightarrow \alpha X \cdot \beta$ is
+               in GOTO(T,X).
+
+Now the algorithm to construct canonical LR(0) items
+#+BEGIN_EXAMPLE cpp
+void items(G') {
+  C=CLOSURE({S->.S'});
+  repeat until no new {
+    for (each set I in C) {
+      for (each grammar symbol X) {
+        add GOTO(I,X) to C}}}}
+#+END_EXAMPLE
+
+Now we can define LR(0) Automata:
+- state :: the canonical LR(0) collection
+- transition :: GOTO function
+
+Set up for parsing: Now we have the components:
+- input :: the remaining input
+- stack :: the stack holds the states. Note that each state
+           corresponding to exactly one symbol (yes, but why??). So we
+           can always convert to the symbols from states.
+- parsing table :: contains two parts: ACTION and GOTO
+  - ACTION(i,a) :: state i, next terminal a. The result is
+    - shift j :: shift the terminal and go to state j
+    - reduce $A \rightarrow \beta$ :: reduce \beta (on the top of stack)
+       to A
+    - accept ::
+    - error ::
+  - GOTO(i, A)=j :: map state i and non-terminal A to state j
+
+Parsing algorithm:
+- action = shift s :: do it
+- action = reduce $A \rightarrow \beta$ :: do the reduction by popping
+     out $|\beta|$ states, and then push state GOTO(stack.top, A).
+
+The algorithm can be written as:
+
+#+BEGIN_EXAMPLE cpp
+  while (true) {
+    s = stack.top;
+    a = next input;
+    if (ACTION(s,a) = shift t) {
+      stack.push(t)
+      advance(a)
+    } else if (ACTION(s,a) = reduce A to beta) {
+      stack.pop(len(beta));
+      t = stack.top
+      stack.push(GOTO(t,A))
+      output production A->beta
+    } else if (ACTION=accept | error) {}
+  }
+#+END_EXAMPLE
+
+Algorithm for construct SLR parsing table:
+1. get canonical LR(0) collection
+2. ACTION(i,a) = 
+  - shift j :: if $A \rightarrow \alpha \cdot a \beta$ is in I_i, and
+               GOTO(I_i,a)=I_j
+  - reduce A to \alpha :: if $A \rightarrow \alpha \cdot$ in I_i and a
+       in FOLLOW(A).
+  - accept :: if $S' \rightarrow S \cdot$ is in I_i and a = $
+
+**** LR(1)
+So we now allow lookahead. By this we can handle more grammars than
+LR(0). There're two methods:
+- canonical-LR (LR) :: construct based on LR(1) items, a much larger
+     set than LR(0) items. The parsing table is much bigger, so not
+     good in practice.
+- lookahead-LR (LALR) :: based on LR(0) (??? should be LR(1) here?)
+     sets of items, but has many fewer states than LR(1) items. The
+     parsing table is no bigger than SLR tables. The modern choice.
 
 * FIRST and FOLLOW
 The construction of /both/ top-down and bottom-up parsers needs these
