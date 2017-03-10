@@ -34,13 +34,39 @@ expression.
 - Grammar is most useful for describing nested structures such as
   parentheses, begin-end, if-then-else.
 
-** Write/Fix the grammar
-- Ambiguity ::
-- Left Recursion :: Top down parser cannot handle left recursion.
-- Left Factoring :: a technique to rewrite production rule to achieve
-                    the effect that we wait until enough input has
-                    been seen to make decision. It makes grammar more
-                    suitable for predictive or top-down parsing.
+** AST
+- In Syntax Tree, interior nodes represent programming constructs.
+- In parse tree, interior nodes represent non-terminals
+- many non-terminals of a grammar represent programming constructs,
+  but others are helpers of one sort of another, such as term, factors.
+- In syntax tree, these helpers typically are not needed and hence dropped.
+
+To conclude:
+- concrete syntax tree :: the parse tree
+- concrete syntax :: the underlying grammar of a parse tree
+
+** TODO Write/Fix the grammar
+*** TODO Ambiguity
+*** Left Recursion
+
+Top down parser cannot handle left recursion.
+
+The grammar
+#+BEGIN_EXAMPLE
+A ::= A alpha | beta
+#+END_EXAMPLE
+
+Can be rewritten as:
+#+BEGIN_EXAMPLE
+A ::= beta R
+R ::= alpha | epsilon
+#+END_EXAMPLE
+
+*** Left Factoring
+a technique to rewrite production rule to achieve the effect that we
+wait until enough input has been seen to make decision. It makes
+grammar more suitable for predictive or top-down parsing.
+
 
 ** Top Down Parsing
 - Recusrive descent parsing ::
