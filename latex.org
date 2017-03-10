@@ -20,25 +20,27 @@ kpsewhich sig-alternate-05-2015.cls
 * Literals
 ** Symbols
 
-   - alpha beta :: =\alpha= (\alpha) =\theta= (\theta) =\phi= (\phi) =\varphi=
-        (\varphi) =\xi= (\xi) =\mu= (\mu) =\pi= (\pi) =\rho= (\rho) =\sigma=
-        (\sigma) =\epsilon= (\epsilon) =\partial= (\partial)
+   - alpha beta :: =\alpha= (\alpha) =\beta= (\beta) =\gamma= (\gamma)
+                   =\theta= (\theta) =\phi= (\phi) =\varphi= (\varphi) =\xi=
+                   (\xi) =\mu= (\mu) =\pi= (\pi) =\rho= (\rho) =\sigma=
+                   (\sigma) =\epsilon= (\epsilon) =\partial= (\partial)
    - spacing :: =\quad= (\quad) =\qquad= (\qquad)
-   - logic :: =\cup= (\cup) =\bigcup= (\bigcup) =\cap= (\cap) =\vee= (\vee)
-        =\wedge= (\wedge) =\in= (\in) =\notin= (\notin) =\neg= (\neg) =\subset=
-        (\subset) =\subseteq= (\subseteq) =\supset= (\supset) =\supseteq=
-        (\supseteq) =\le= (\le) =\ge= (\ge) =\neq= (\neq) =\forall= (\forall)
-        =\exists= (\exists)
+   - logic :: =\cup= (\cup) =\bigcup= (\bigcup) =\cap= (\cap) =\vee=
+              (\vee) =\wedge= (\wedge) =\in= (\in) =\notin= (\notin)
+              =\neg= (\neg) =\subset= (\subset) =\subseteq=
+              (\subseteq) =\supset= (\supset) =\supseteq= (\supseteq)
+              =\le= (\le) =\ge= (\ge) =\neq= (\neq) =\forall=
+              (\forall) =\exists= (\exists)
    - arrow :: =\leftarrow= (\leftarrow) =\rightarrow= (\rightarrow)
-        =\Rightarrow= (\Rightarrow) =\Leftarrow= (\Leftarrow)
-        =\Leftrightarrow= (\Leftrightarrow) =\longrightarrow=
-        (\longrightarrow)
+              =\Rightarrow= (\Rightarrow) =\Leftarrow= (\Leftarrow)
+              =\Leftrightarrow= (\Leftrightarrow) =\longrightarrow=
+              (\longrightarrow)
    - accents :: =\hat{a}= (\hat{a}) =\vec{x}= (\vec{x})
    - math :: =\infty= (\infty) =\propto= (\propto) =\lfloor= (\lfloor)
-        =\rfloor= (\rfloor) =\lceil= (\lceil) =\rceil= (\rceil) =\sum= (\sum)
-        =\int= (\int) =\prod= (\prod) =\times= (\times) =\ldots= ( \ldots )
-        =\frac{a}{b}= (\frac{a}{b}) =\sqrt{n}= (\sqrt{n})
-        =\overline{abc}= (\overline{abc})
+             =\rfloor= (\rfloor) =\lceil= (\lceil) =\rceil= (\rceil)
+             =\sum= (\sum) =\int= (\int) =\prod= (\prod) =\times= (\times)
+             =\ldots= ( \ldots ) =\frac{a}{b}= (\frac{a}{b}) =\sqrt{n}=
+             (\sqrt{n}) =\overline{abc}= (\overline{abc})
    - mark :: =\checkmark= (\checkmark)
 
 ** Font size
