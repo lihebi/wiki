@@ -179,3 +179,27 @@ two functions.
      correction. (What are they??) [Dragon P196]
 
 
+
+* Tools
+** Elsa and Elkhound
+- http://www.scottmcpeak.com/elkhound/
+
+Elkhound is an ancient parser generator, and Elsa is the C++ parser built upon it.
+It is clean docs, maybe clean code, worth to check out.
+
+It implements the Generalized LR (GLR) parsing, which works with any context-free grammars.
+LR parsers (like bison) requires the grammar to be LALR(1).
+
+- GLR: https://en.wikipedia.org/wiki/GLR_parser
+
+
+Parsing with arbitrary context-free grammars has two key advantages:
+(1) unbounded lookahead, and (2) support for ambiguous grammars. Both
+of them are achieved by allowing multiple potential parses to coexist
+for as long as necessary.
+
+The downside, since it is more general, is slower performance.
+
+** Semantic Design Inc
+A Commercial Parser Front end:
+- http://www.semanticdesigns.com/Products/FrontEnds/CppFrontEnd.html
