@@ -2,3 +2,180 @@
 
 This file describe the general concept of a compiler. I'm going to
 relearn it in the hard way.
+
+
+* Parser
+
+Three category of parsers:
+- universal :: Cocke–Younger–Kasami algorithm (CYK) and the Earley
+               parser. They can parse any grammar, but slow.
+- bottom up :: build parse tree from bottom to top
+- top down :: build parse tree from top to bottom
+
+There are many different methods of each top-down and bottom-up
+parsers. The most efficient top-down and bottom-up methods work only
+for subclasses of grammars. Some important subclasses is LL and LR
+grammar.
+
+- LL grammar :: often used by hand-implemented parser
+- LR grammar :: accept more grammars, but usually construct by tools
+
+Some terms:
+- parse tree :: a graphical representation of a derivation that
+                filters out the order in which productions are applied
+                to replace non-terminals.
+
+Of course, regular expression is a subset of context free grammar.
+
+About how to divide lexer rules and parser rules: use regular
+expression.
+- Regular expression is most useful for describing structure of
+  constructs, such as ID and keywords.
+- Grammar is most useful for describing nested structures such as
+  parentheses, begin-end, if-then-else.
+
+** Fix the grammar
+- Ambiguity ::
+- Left Recursion :: Top down parser cannot handle left recursion.
+- Left Factoring :: a technique to rewrite production rule to achieve
+                    the effect that we wait until enough input has
+                    been seen to make decision. It makes grammar more
+                    suitable for predictive or top-down parsing.
+
+** Top Down Parsing
+- Recusrive descent parsing ::
+  - general form of top-down parsing
+  - may require backtracking
+- Predictive parsing ::
+  - a special case of recursive-descent parsing
+  - do not require backtracking
+  - By look ahead fixed number (usually 1) of tokens
+- LL(k) :: A class of grammar, for which we can construct a predictive
+           parser by looking k symbols ahead.
+
+The general recursive descent parsing problem is:
+
+#+BEGIN_EXAMPLE cpp
+void A() {
+  choose an A-production
+  for (i = 1 to k) {
+    if (xi is nonterminal) call X();
+    else if (xi = input symbol) advance_to_next_symbol();
+    else error();
+  }
+}
+#+END_EXAMPLE
+
+This is non-deterministic since it begins with choose a production. To
+augment backtracking to the algorithm, we need:
+- try different productions
+- at error, return to the line of choose production
+- we need a local variable to store where is the input symbol when
+  choosing production.
+
+Left recursive grammar can cause a recursive-descent parser (even the
+one with backtracking) into an infinite-loop. Because it try to expand
+A without consuming any input.
+
+*** LL(1)
+What's the LL?
+- L :: Scanning input from Left to right
+- L :: producing Leftmost derivation
+- 1 :: lookahead 1 symbol
+
+It is rich enough to cover most programming constructs. However,
+left-recursive and ambiguous can not.
+
+The parser will construct a predictive parsing table.  To solve LL(1),
+we use /non-recursive predictive parsing/.  Do not need recursive call,
+because it constructs a parsing table. It is table-driven.
+
+- algorithm 1: construct predictive parsing table
+- algorithm 2: table driven predictive parsing
+
+*** Recursive Decent Parser v.s. LR Parser generator
+Well, In a word, this is actually important. See what the clang guys say [fn:clang]
+
+#+BEGIN_QUOTE
+Clang is the "C Language Family Front-end", which means we intend to
+support the most popular members of the C family. We are convinced
+that the right parsing technology for this class of languages is a
+hand-built recursive-descent parser. Because it is plain C++ code,
+recursive descent makes it very easy for new developers to understand
+the code, it easily supports ad-hoc rules and other strange hacks
+required by C/C++, and makes it straight-forward to implement
+excellent diagnostics and error recovery.
+#+END_QUOTE
+
+[fn:clang] http://clang.llvm.org/features.html
+
+
+
+** Bottom Up Parsing
+- shift-reduce parsing :: a general style of bottom-up parsing
+- LR grammar :: the largest class of grammars for which shift-reduce
+                parsers can be built
+
+The bottom up parsing can think as reducing a string to the start
+symbol. At each reduction step, a substring is replaced by a
+non-terminal. Thus the key decisions are:
+- when to reduce
+- what production to apply
+
+*** shift-reduce parsing
+Think about a stack holding current string, and the input holding the rest input tokens.
+- shift :: move from input to stack
+- reduce :: replace a substring at the top of the stack
+
+The conflict here:
+- shift/reduce conflict :: don't know to shift or reduce.
+- reduce/reduce conflict :: don't know which production rule to use
+
+Grammar that contains these conflicts are non-LR grammar.
+
+*** LR(k) Parsing
+- L :: left to right scanning
+- R :: producing rightmost derivation
+- k :: number of lookahead (when omitted, assume 1)
+
+LR parsers are table driven, like the non-recursive LL parsers.
+- LR Grammar :: a grammar for which we can construct a LR parser for it.
+
+Over LL parsing, it is better because:
+- LR parsers can be constructed to recognize virtually all programming
+  language constructs for which context-free grammars can be written.
+- the most general non-backtracking shift-reduce parsing, and can be
+  implemented as efficient as others
+- can detect syntactic error as soon as it is possible to do so on a
+  left-to-right scan of input
+- LR grammar is super set of LL grammar
+
+The drawback: hard to construct by hand.
+
+**** Simple LR Parsing (SLR)
+
+
+* FIRST and FOLLOW
+The construction of /both/ top-down and bottom-up parsers needs these
+two functions.
+
+- FIRST($\alpha$) :: $\alpha$ is a string of grammar symbols. The set
+     of terminals that $\alpha$ can begin with. E.g ~A::=cB~, ~FIRST(A)=c~
+- FOLLOW(A) :: non-terminal A, to be the set of terminals that can
+               appear immediately to the right of A.
+
+
+* Error Recovery
+
+- panic-mode :: discard input symbols until /synchronizing tokens/ are
+                found. This is typically delimiters, such as semicolon
+                or braces.
+- phrase-level :: perform local correction, such as remove extra
+                  semicolon, replace coma with semicolon. This is not
+                  good.
+- error-production :: use common errors
+- global-correction :: there are some algorithms to choose a minimal
+     sequence of changes to obtain a globally least cost
+     correction. (What are they??) [Dragon P196]
+
+
