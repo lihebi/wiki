@@ -120,6 +120,7 @@ So maybe a list of packages.
 - mlocate
 - rxvt-unicode
 - texlive-core
+- xorg-xinput
 
 Pdf Tools
 - libzip
