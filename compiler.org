@@ -289,3 +289,8 @@ The downside, since it is more general, is slower performance.
 ** Semantic Design Inc
 A Commercial Parser Front end:
 - http://www.semanticdesigns.com/Products/FrontEnds/CppFrontEnd.html
+
+** Parser generator
+- yacc & lex :: generate LALR
+- bison & flex :: open source for yacc, so also LALR
+- antlr :: top down parser generator, generates recursive-descent parser
