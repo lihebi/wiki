@@ -119,6 +119,12 @@ So maybe a list of packages.
 - xorg-xinit
 - mlocate
 - rxvt-unicode
+- texlive-core
+
+Pdf Tools
+- libzip
+- poppler-glib
+- imagemagick
 
 Install using AUR
 - stumpwm (depends on cl-ppcre adn clx-git)
