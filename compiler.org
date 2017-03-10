@@ -241,6 +241,48 @@ LR(0). There're two methods:
      sets of items, but has many fewer states than LR(1) items. The
      parsing table is no bigger than SLR tables. The modern choice.
 
+
+
+* Syntax Directed Translation
+- Syntax Directed Definition (SDD) :: a context-free grammar together
+     with attributes and rules. Attributes are associated with grammar
+     symbols, and rules are associated with productions.
+  - synthesized attribute :: for a non-terminal A at a parse tree node
+       N is defined by a semantic rule associated with the production
+       at N. This includes N and its children.
+  - inherited attribute :: for a non-terminal B at a parse tree node N
+       is defined by a semantic rule associated with the production at
+       the parent of N. This includes N's parent, N, and N's siblings.
+  - S-attributed :: an SDD is S-attributed if every attribute is
+                    synthesized. We can evaluate it in any bottom-up
+                    fashion, e.g. a post order traversal.
+  - L-attributed :: an SDD is L-attributed if each attribute is either
+                    synthesized or, inherited but only depends on the
+                    value of the parent and the symbols to the left of
+                    it on its siblings. This rule says the evaluation
+                    should go from left to right, but not right to
+                    left.
+- Syntax Directed Translation Scheme (SDT) :: a context free grammar
+     with program fragment embedded within production bodies. (This is
+     the typical grammar file for a parser generator like ANTLR!)
+
+Any SDT can be implemented by
+1. build the parse tree
+2. perform the actions in a left-to-right depth-first order, that is
+   during a pre-order traversal.
+
+Typically SDT's are implemented during parsing, without building a
+parse tree. We focus on two important classes of SDD:
+1. grammar is LR-parsable and SDD is S-attributed, using Postfix
+   Translation Scheme.  This scheme essentially do a bottom-up parsing
+   and evaluate the attributes in place (right at ends of
+   productions).
+2. grammar is LL-parsable and SDD is L-attributed. The L-attributed
+   SDD is more general, but we must assume the grammar is
+   LL-parsable. Otherwise it is "impossible to perform translation in
+   connection with either an LL or an LR parser". The solution is to
+   evaluate in a pre-order traversal of the tree.
+
 * FIRST and FOLLOW
 The construction of /both/ top-down and bottom-up parsers needs these
 two functions.
