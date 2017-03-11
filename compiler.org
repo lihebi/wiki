@@ -45,6 +45,20 @@ To conclude:
 - concrete syntax tree :: the parse tree
 - concrete syntax :: the underlying grammar of a parse tree
 
+Some new understanding of them (quotes from dragon book):
+- CST :: A parse tree pictorially shows how the start symbol of a
+         grammar derives a string in the language.
+- AST :: Abstract syntax trees, or simply syntax trees, differ from
+         parse trees because superficial distinctions of form,
+         unimportant for translation, do not appear in syntax trees.
+
+That is to say, CST exactly reflect the grammar, and AST removes a lot
+of things but keep the structure.  This includes:
+- remove non-value-carrying leaves
+- remove unary productions
+- compress spines caused by left or right recursive grammar rules into
+  explicit list nodes.
+
 ** TODO Write/Fix the grammar
 *** TODO Ambiguity
 *** Left Recursion
