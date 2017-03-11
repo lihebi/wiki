@@ -59,6 +59,53 @@ of things but keep the structure.  This includes:
 - compress spines caused by left or right recursive grammar rules into
   explicit list nodes.
 
+The implementation of AST is different for different parser designers. For example as the Clang fold said[fn:clang-ast]:
+
+#+BEGIN_QUOTE
+Clang’s AST is different from ASTs produced by some other compilers in
+that it closely resembles both the written C++ code and the C++
+standard. For example, parenthesis expressions and compile time
+constants are available in an unreduced form in the AST. This makes
+Clang’s AST a good fit for refactoring tools.
+#+END_QUOTE
+
+#+BEGIN_EXAMPLE
+var a = 2,
+    b = (a + 2) * 3;
+#+END_EXAMPLE
+
+Here, the ( ) around a + 2 is not represented in the AST, because the
+structure of the tree, combined with operator precedence rules,
+absolutely implies that it must exist, and moreover a + 2 * 3 would
+have been a different tree structure. [fn:estree] [fn:getify-cst]
+
+Estools [fn:estools] is a good collection of repos that have many
+interesting discussion threads about AST and CST.
+
+Also, a post from semantic design [fn:semantic-design], mentioned: 
+
+#+BEGIN_QUOTE
+Typical parser generators force the grammar engineer to specify not
+only the grammar, but also to explicitly specify how to procedurally
+build the AST as well.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+In contrast, DMS automatically builds a syntax tree, either a concrete
+tree ("CST", mainly for debugging, containing all the language
+tokens), or what amounts to an AST (for production, in which non-value
+carrying terminals are eliminated, useless unary productions are
+removed, and lists are formed).
+#+END_QUOTE
+
+A very good comparison on a lecture note [fn:lecture].
+
+[fn:clang-ast] http://clang.llvm.org/docs/IntroductionToTheClangAST.html
+[fn:estree] https://github.com/estree/estree/issues/41
+[fn:getify-cst] https://github.com/getify/concrete-syntax-tree
+[fn:estools] https://github.com/estools
+[fn:semantic-design] http://www.semdesigns.com/Products/DMS/LifeAfterParsing.html?Home=DMSToolkit
+[fn:lecture] http://www.cse.chalmers.se/edu/year/2011/course/TIN321/lectures/proglang-02.html
 ** TODO Write/Fix the grammar
 *** TODO Ambiguity
 *** Left Recursion
@@ -376,3 +423,15 @@ A Commercial Parser Front end:
 - yacc & lex :: generate LALR
 - bison & flex :: open source for yacc, so also LALR
 - antlr :: top down parser generator, generates recursive-descent parser
+
+
+
+* Samples
+#+BEGIN_SRC clang
+int main() {
+  int a,b;
+  b=a+b;
+  int* arp[5];
+  b=(a+b)*a;
+}
+#+END_SRC
