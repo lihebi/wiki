@@ -92,8 +92,6 @@ document.getElementById("quote").innerHTML = quotes[i % quotes.length];
 - [ ] Sonic Pi 
 - [ ] xtlang
 
-
-
 * People!
 ** Peter Norvig
 http://www.norvig.com/
@@ -112,6 +110,11 @@ https://github.com/magnars
 ** Caroline Lemieux
 ** Matthew B. Dwyer
 ** James Clause
+** Eli Bendersky
+http://eli.thegreenplace.net/
+
+He wrote many blog posts about parsers, C, lisp, including the clang
+example repository.
 
 * Knowledge Place
 Testing systems are typically evaluated using three metrics cite:2014-ESE-Avgerinos
