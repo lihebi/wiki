@@ -157,6 +157,7 @@ Tmp
 - antlr2
 - curl
 - openconnect # cisco anyconnect!
+- debootstrap # bootstrap a debian system
 
 AUR
 - dpkg
