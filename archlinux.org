@@ -121,6 +121,8 @@ So maybe a list of packages.
 - rxvt-unicode
 - texlive-core
 - xorg-xinput
+- xorg-xdm
+- xorg-xconsole
 
 Pdf Tools
 - libzip
