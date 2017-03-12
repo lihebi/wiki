@@ -76,3 +76,10 @@ make install-package
   | paredit-raise-sexp          | M-r |                                 |
   | paredit-convolute-sexp      | M-? | exchange child and parent       |
 
+* Magit
+
+=C-x g= to enter, and
+- =c c= to commmit
+- =c a= to amend commit
+- =P u= to push
+- =F u= to pull
