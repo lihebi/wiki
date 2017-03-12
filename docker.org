@@ -1,0 +1,17 @@
+#+TITLE: Docker
+
+Install =docker= package and start the service by
+#+BEGIN_EXAMPLE
+systemctl start docker
+systemctl enable docker
+#+END_EXAMPLE
+
+We can build Debian image easily on Arch:
+
+#+BEGIN_EXAMPLE
+mkdir jessie-chroot
+# debootstrap jessie ./jessie-chroot http://http.debian.net/debian/
+# cd jessie-chroot
+# tar cpf - . | docker import - debian
+# docker run -t -i --rm debian /bin/bash
+#+END_EXAMPLE
