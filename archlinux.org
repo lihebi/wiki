@@ -120,6 +120,12 @@ So maybe a list of packages.
 - mlocate
 - rxvt-unicode
 - texlive-core
+- texlive-most: this includes 1) texlive-bibtexextra 2) texlive-core
+  3) texlive-fontsextra 4) texlive-formatsextra 5) texlive-games 6)
+  texlive-genericextra 7) texlive-htmlxml 8) texlive-humanities 9)
+  texlive-latexextra 10) texlive-music 11) texlive-pictures 12)
+  texlive-plainextra 13) texlive-pstricks 14) texlive-publishers 15)
+  texlive-science
 - xorg-xinput
 - xorg-xdm
 - xorg-xconsole
@@ -150,6 +156,7 @@ Tmp
 - pavucontrol
 - antlr2
 - curl
+- openconnect # cisco anyconnect!
 
 AUR
 - dpkg
