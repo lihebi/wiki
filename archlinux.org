@@ -134,6 +134,21 @@ Install using AUR
 - clx-truetype ( depends on cl-zpb-ttf)
 - quicklisp (it seems not installed, I have to use my previous method to install it)
 
+Tmp
+- ctags
+- pugixml
+- bash-completion
+- cmake
+- ninja
+- gtest
+- doxygen
+- boost
+- clang
+- llvm
+- llvm-libs
+
+AUR
+
 
 * Pacman
 Option
@@ -171,3 +186,12 @@ The md5sum line can be skipped for some package. Just replace the
 md5sum value inside the quotes with ='SKIP'=.
 
 
+
+* Setup
+
+Although I set the right timezone (check by =timedatectl=), the clock
+is still incorrect. To fix that, install =ntp= package and run
+
+#+BEGIN_EXAMPLE
+sudo ntpd -qg
+#+END_EXAMPLE
