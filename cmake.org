@@ -121,3 +121,12 @@ endwhile(condition)
 - endmacro()
 - function()
 - endfunction()
+
+* Trouble Shooting
+
+When using =find_package(PythonInterp 2.7 REQUIRED)=, it keeps find the 3.6 version.
+To solve that, invoke cmake like this:
+
+#+BEGIN_EXAMPLE
+cmake -DPYTHON_EXECUTABLE=/usr/bin/python2 ..
+#+END_EXAMPLE
