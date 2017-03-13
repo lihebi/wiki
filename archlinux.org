@@ -146,8 +146,13 @@ Tmp
 - clang
 - llvm
 - llvm-libs
+- the_silver_searcher
+- pavucontrol
+- antlr2
+- curl
 
 AUR
+- dpkg
 
 
 * Pacman
