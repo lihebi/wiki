@@ -83,3 +83,25 @@ make install-package
 - =c a= to amend commit
 - =P u= to push
 - =F u= to pull
+
+* Speedbar
+This is strictly not a plugin. Toggle by =speedbar=.
+
+- q :: quit
+- g :: refresh
+- t :: toggle slowbar mode, which stop update until activate
+- n,p :: next, previous
+- M-n,M-p :: restricted next/previous. Will 1) skip subdirectory, and
+             2) will not leave subdirectory
+- f :: file mode
+- b :: buffer mode
+- r :: previous mode
+
+- = :: expand
+- - :: hide
+- RET :: open
+
+
+** Buffer Mode
+- k :: kill the buffer
+- r :: revert the buffer
