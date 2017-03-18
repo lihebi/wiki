@@ -132,8 +132,8 @@ outer()
 - ~str.startswith(s)~ ::
 - ~str.endswith(s)~ ::
 
-
-
+**** Slicing
+String is an immutable object. It can use slicing. E.g. reversing a string is as easy as ="hello"[::-1]=!
 *** TODO tuple
 *** List
 **** Slicing
