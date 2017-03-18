@@ -133,7 +133,16 @@ outer()
 - ~str.endswith(s)~ ::
 
 **** Slicing
-String is an immutable object. It can use slicing. E.g. reversing a string is as easy as ="hello"[::-1]=!
+String is an immutable object. It can use slicing. E.g. reversing a
+string is as easy as ="hello"[::-1]=!
+
+However, notice that when using a negative step, the slicing should be
+=lst[end:begin:-1]=. This is because ~x = i + n*k~:
+
+#+BEGIN_QUOTE
+with a third “step” parameter: a[i:j:k] selects all items of a with index x where x = i + n*k, n >= 0 and i <= x < j.
+#+END_QUOTE
+
 *** TODO tuple
 *** List
 **** Slicing
