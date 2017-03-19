@@ -1,5 +1,12 @@
 #+TITLE: Python
 
+* TODO
+** TODO define a static method of a class? so that I can avoid calling of self
+** TODO define an inline function to avoid passing constant parameter: the scope of variable?
+** TODO python debugger for emacs
+** TODO a tree reader for leetcode
+
+
 * Language
 The ultimate reference:
 - language reference: https://docs.python.org/2/reference/
@@ -124,6 +131,7 @@ outer()
 **** Concatenation
 - concatenate two strings directly by =+=.
 - need to convert integer to string before concatenate: =s + str(35)=
+- "".join(lst) works
 
 **** split
 - ~str.split(sep=None)~ :: default by white space
@@ -140,8 +148,16 @@ However, notice that when using a negative step, the slicing should be
 =lst[end:begin:-1]=. This is because ~x = i + n*k~:
 
 #+BEGIN_QUOTE
-with a third “step” parameter: a[i:j:k] selects all items of a with index x where x = i + n*k, n >= 0 and i <= x < j.
+with a third “step” parameter: a[i:j:k] selects all items of a with
+index x where x = i + n*k, n >= 0 and i <= x < j.
 #+END_QUOTE
+
+Also, the negative step does not always work as expect. E.g. the i
+index is included and j is not; the j can not be negative, then how
+can I include the first one in the list??
+
+Thus if want to get a reverse of a sub-string, I would get sub-string
+first and then reverse it.
 
 *** TODO tuple
 *** List
@@ -169,6 +185,15 @@ b = a # only a reference
 **** create a list
 - ~range(stop)~
 - ~range(start, stop[, step])~
+
+Creating a matrix:
+#+BEGIN_SRC python
+newmat=[[-1 for x in range(height)] for y in range(width)]
+#+END_SRC
+
+**** Modify a list
+- list.append
+- list.pop
 
 *** Dictionary
 Create:
@@ -448,6 +473,11 @@ s = subprocess.check_output('wc -l', stdin=p.stdout)
 #+BEGIN_SRC python
 return_code = subprocess.call("echo Hello World", shell=True, stdout=subprocess.DEVNULL)
 #+END_SRC
+
+* Standard Library
+** math
+- math.pow
+- math.log
 
 * Third party libraries
 
