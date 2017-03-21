@@ -152,6 +152,10 @@ systemctl enable dhcpcd
 - the_silver_searcher
 - antlr2
 - curl
+- libxslt
+- python
+- python2
+- ispell
 
 **** audio
 - pavucontrol
@@ -172,6 +176,9 @@ systemctl enable dhcpcd
 - quicklisp
   - On arch, after install quicklisp via AUR, it prompts: to load
     quicklisp /etc/default/quicklisp into ~/.sbclrc.
+
+- rtags-git
+- plantuml
 
 ** Then
 run
