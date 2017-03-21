@@ -8,7 +8,8 @@ You can back up configuration by:
 
 * Installation
 
-Download the image (no need extra package files as the time of 2011 ..), and burn to USB.
+Download the image (no need extra package files as the time of 2011
+..), and burn to USB.
 
 The system will boot into the host OS.
 
@@ -100,6 +101,12 @@ Set root password
 passwd
 #+END_EXAMPLE
 
+Install grub
+#+BEGIN_EXAMPLE
+pacman -S grub efibootmgr
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=myarch
+grub-mkconfig -o /boot/grub/grub.cfg
+#+END_EXAMPLE
 
 Now reboot
 
@@ -110,7 +117,8 @@ DHCP is not enabled by default. It is the philloshophy for Arch: installing a pa
 systemctl enable dhcpcd
 #+END_EXAMPLE
 
-So maybe a list of packages.
+** Intall packages
+*** Essential packages
 
 - base-devel
 - emacs
@@ -129,22 +137,31 @@ So maybe a list of packages.
 - xorg-xinput
 - xorg-xdm
 - xorg-xconsole
+- tmux
+- cmake
+- clang
+- llvm
+- bash-completion
 
-Pdf Tools
+*** Apps
+- chromium
+
+*** for Pdf Tools
 - libzip
 - poppler-glib
 - imagemagick
 
-Install using AUR
-- stumpwm (depends on cl-ppcre adn clx-git)
-- clx-truetype ( depends on cl-zpb-ttf)
-- quicklisp (it seems not installed, I have to use my previous method to install it)
+*** Install using AUR (in order!)
+- cl-ppcre
+- clx-git
+- stumpwm
+- quicklisp
+  - On arch, after install quicklisp via AUR, it prompts: to load
+    quicklisp /etc/default/quicklisp into ~/.sbclrc.
 
-Tmp
+*** Tmp
 - ctags
 - pugixml
-- bash-completion
-- cmake
 - ninja
 - gtest
 - doxygen
@@ -159,9 +176,14 @@ Tmp
 - openconnect # cisco anyconnect!
 - debootstrap # bootstrap a debian system
 
-AUR
-- dpkg
+** Then
+run
+- setup-quicklisp
+- setup-git
 
+
+* Trouble shooting
+- After booting stumpwm, sbcl cannot be executed.
 
 * Pacman
 Option

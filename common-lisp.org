@@ -25,6 +25,10 @@
 (ql:update-client)
 #+END_SRC
 
+- (ql:quickload "name") :: load a system
+- (ql:system-apropos "term") :: search
+
+
 
 A list of packages used:
 - clx-truetype :: for stumpwm ttf-font
