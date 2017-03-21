@@ -130,3 +130,15 @@ To solve that, invoke cmake like this:
 #+BEGIN_EXAMPLE
 cmake -DPYTHON_EXECUTABLE=/usr/bin/python2 ..
 #+END_EXAMPLE
+
+
+To change the boost version, change the enviroment variable:
+#+BEGIN_EXAMPLE
+export BOOST_ROOT=/path/to/alternative/boost
+#+END_EXAMPLE
+
+To build the boost:
+#+BEGIN_EXAMPLE
+./bootstrap.sh --without-libraries=atomic,chrono,context,coroutine,exception,graph,graph_parallel,iostreams,locale,log,math,mpi,python,random,serialization,signals,test,timer,wave
+./b2 --prefix=/path/to/custom/location link=static cxxflags="-fPIC -static -Wl,--whole-archive" threading=multi install
+#+END_EXAMPLE
