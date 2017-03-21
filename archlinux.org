@@ -156,6 +156,7 @@ systemctl enable dhcpcd
 - python
 - python2
 - ispell
+- feh
 
 **** audio
 - pavucontrol
