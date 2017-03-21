@@ -143,6 +143,10 @@ systemctl enable dhcpcd
 - llvm
 - bash-completion
 
+**** audio
+- pavucontrol
+- pulseaudio
+
 *** Apps
 - chromium
 
