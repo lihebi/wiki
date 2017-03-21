@@ -204,3 +204,11 @@ I'm using logitech G900 and the property might be different. It works!
 
 Not sure if the xinput command should be run each time the system
 boots. That would be hard for specifying ID.
+
+The detail is, you can do this:
+
+#+BEGIN_EXAMPLE
+xinput # show a list of devices
+xinput list-props <ID> # list of properties
+xinput set-prop <deviceID> <propID> <value>
+#+END_EXAMPLE
