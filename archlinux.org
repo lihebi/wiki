@@ -141,7 +141,17 @@ systemctl enable dhcpcd
 - cmake
 - clang
 - llvm
+- clang-tools-extra
 - bash-completion
+- ctags
+- pugixml
+- ninja
+- gtest
+- doxygen
+- boost
+- the_silver_searcher
+- antlr2
+- curl
 
 **** audio
 - pavucontrol
@@ -163,23 +173,6 @@ systemctl enable dhcpcd
   - On arch, after install quicklisp via AUR, it prompts: to load
     quicklisp /etc/default/quicklisp into ~/.sbclrc.
 
-*** Tmp
-- ctags
-- pugixml
-- ninja
-- gtest
-- doxygen
-- boost
-- clang
-- llvm
-- llvm-libs
-- the_silver_searcher
-- pavucontrol
-- antlr2
-- curl
-- openconnect # cisco anyconnect!
-- debootstrap # bootstrap a debian system
-
 ** Then
 run
 - setup-quicklisp
@@ -199,6 +192,7 @@ Parameter:
 - y :: fetch new package list. Usually use with =u=
 - u :: update all packages
 - i :: more information
+- l :: location of files
 
 Typical usage:
 - Syu :: update whole system
