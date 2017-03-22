@@ -15,3 +15,24 @@ mkdir jessie-chroot
 # tar cpf - . | docker import - debian
 # docker run -t -i --rm debian /bin/bash
 #+END_EXAMPLE
+
+
+
+* General operations
+
+#+BEGIN_EXAMPLE
+# run container in daemon mode, must have -t
+docker run -d -t debian /bin/bash
+# run command non-interactively and get output
+docker exec <ID> echo "hello"
+# attach and enter th 
+docker exec -it <ID> /bin/bash
+#+END_EXAMPLE
+
+* Remove sudo
+#+BEGIN_EXAMPLE
+sudo groupadd docker
+sudo gpasswd -a ${USER} docker
+sudo service docker restart
+newgrp docker
+#+END_EXAMPLE
