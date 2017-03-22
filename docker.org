@@ -16,7 +16,11 @@ mkdir jessie-chroot
 # docker run -t -i --rm debian /bin/bash
 #+END_EXAMPLE
 
+Re-launch a stopped container can be done by =docker start
+<container>= and will be detached by default if it is run by that.
 
+You can assign a name to the container so that you can better remember
+and reference it.
 
 * General operations
 
