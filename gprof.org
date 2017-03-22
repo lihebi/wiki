@@ -1,0 +1,25 @@
+#+TITLE: Gprof
+
+It is a performance profiling tool for the running time of procedures.
+
+* Steps
+** Compile and Run program
+Compile with flag =-pg=. It should appear in both compile and link
+options, otherwise no call-graph will be produced. Running program as
+normal, and =gmon.out= will be produced in the current working directory.
+
+** Running gprof
+#+BEGIN_EXAMPLE
+gprof OPTIONS EXECUTABLE-FILE PROFILE-DATA-FILES
+#+END_EXAMPLE
+
+- options (pq as default, specify to overwrite)
+  - p :: flat profile
+  - q :: call graph
+  - A :: annotated source code
+- EXECUTABLE-FILE :: if not given, use =a.out=
+- PROFILE-DATA-FILES :: if not given, use =gmon.out=
+
+Most likely, no options needed. Just run =gprof= in the same directory
+with =a.out= and =gmon.out=, it will print to =stdout= the flat
+profile and call graph profile.

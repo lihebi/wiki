@@ -61,6 +61,7 @@
    + [[file:git.org][Git]]
    + [[file:gnus.org][Gnus]]
    + [[file:golf.org][Golf]]
+   + [[file:gprof.org][Gprof]]
    + [[file:dot.org][Graphviz/Dot]]
    + [[file:guitar.org][Guitar]]
    + [[file:hebi.org][Hebi]]

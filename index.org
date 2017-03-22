@@ -15,7 +15,7 @@ Reading news using [[file:gnus.org][Gnus]].
 
 * Coding
   - Be sure to be familiar with [[file:design-pattern.org][Design Pattern]] before you code.
-  - Compiler techniques: [[file:compiler.org][compiler]], [[file:compiler-impl.org][compiler implementation]], [[file:llvm.org][LLVM]], [[file:clang.org][Clang]], [[file:gdb.org][GDB]], [[file:gcov.org][gcov]].
+  - Compiler techniques: [[file:compiler.org][compiler]], [[file:compiler-impl.org][compiler implementation]], [[file:llvm.org][LLVM]], [[file:clang.org][Clang]], [[file:gdb.org][GDB]], [[file:gcov.org][gcov]], [[file:gprof.org][gprof]]
   - Scripting: [[file:awk.org][awk]], [[file:sed.org][sed]], [[file:r.org][R]], [[file:./shell.org][shell]], [[file:shell-utils.org][shell utilities]], [[file:js.org][js]], [[file:python.org][python]].
   - Markup: [[file:regex.org][Regular Expression]], [[file:latex.org][latex]] ([[file:tikz.org][tikz]]), [[file:markdown.org][markdown]], [[file:org.org][Org Mode]], [[file:xpath.org][XPath]], [[file:dot.org][Graphviz/Dot]], [[file:uml.org][UML]], [[file:csv.org][CSV]].
   - C family: [[file:c.org][C]], [[file:cpp.org][C++]],- [[file:stl.org][Standard Template Library(STL)]], [[file:c-lib.org][C standard library]], [[file:boost.org][Boost]], [[file:pugixml.org][Pugixml]], [[file:google-test.org][Google Test]], [[file:c-debug.org][C debugging techniques]], [[file:signal.org][Signal Handling]].
