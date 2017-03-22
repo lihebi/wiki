@@ -40,3 +40,15 @@ sudo gpasswd -a ${USER} docker
 sudo service docker restart
 newgrp docker
 #+END_EXAMPLE
+
+* Dockerfile
+
+I'm trying a docker file for srcml container. 
+#+BEGIN_EXAMPLE
+FROM debian
+RUN apt-get -y update & apt-get install -y libarchive-dev libcurl4-openssl-dev
+RUN wget http://131.123.42.38/lmcrs/beta/srcML-Ubuntu14.04-64.deb srcml.deb
+RUN dpkg -i srcml.deb
+#+END_EXAMPLE
+* TODO Docker hub
+When pushing and pulling, what exactly happens?
