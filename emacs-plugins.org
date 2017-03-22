@@ -105,3 +105,48 @@ This is strictly not a plugin. Toggle by =speedbar=.
 ** Buffer Mode
 - k :: kill the buffer
 - r :: revert the buffer
+
+* EDBI
+This is database viewer for MySQL, Sqlite, Postgresql.
+
+Install =edbi= and =edbi-sqlite= package and run as root:
+
+#+BEGIN_EXAMPLE
+cpan RPC::EPC::Service DBI DBD::SQLite DBD::Pg DBD::mysql
+#+END_EXAMPLE
+
+Run =edbi-sqlite= to open a sqlite database. This will open /database view/.
+
+To sum up:
+- n/p :: nav rows
+- c :: query editor
+- C-c C-c :: execute
+- q :: quit
+- RET :: go into
+- SPC :: display info
+- V :: show table data
+
+** Database View
+- n/p :: nav rows
+- c :: switch to query editor buffer
+- RET :: show table data
+- SPC :: show table definition
+- q :: quit and disconnenct
+
+** Table definition View
+- n/p ::
+- c ::
+- V :: show table data
+- q :: kill buffer
+
+** Query Editor
+- C-c C-c :: execute
+- C-c q :: kill buffer
+- M-p/n :: SQL history back/forward
+
+** Query Result Viewer
+- n/p ::
+- SPC :: display whole data at current cell, hit SPC again to dismiss
+- q :: quit
+
+
