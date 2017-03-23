@@ -85,6 +85,7 @@
    + [[file:org.org][Org Mode]]
    + [[file:other.org][Other]]
    + [[file:overtone.org][Overtone]]
+   + [[file:posix.org][POSIX]]
    + [[file:palindrome.org][Palindrome]]
    + [[file:program-analysis.org][Program Analysis]]
    + [[file:pugixml.org][Pugixml]]

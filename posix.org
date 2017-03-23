@@ -1,0 +1,91 @@
+#+TITLE: POSIX
+
+* pThread
+
+#+BEGIN_SRC cpp
+#include <pthread.h>
+pthread_create (thread, attr, start_routine, arg)
+pthread_exit (status)
+pthread_join (threadid, status)
+pthread_detach (threadid)
+#+END_SRC
+
+** Create threads
+If main() finishes before the threads it has created, and exits with
+pthread_exit(), the other threads will continue to execute. Otherwise,
+they will be automatically terminated when main() finishes.
+
+#+BEGIN_SRC cpp
+  #define NUM_THREADS     5
+
+  struct thread_data{
+    int  thread_id;
+    char *message;
+  };
+
+  int main() {
+    pthread_t threads[NUM_THREADS];
+    struct thread_data td[NUM_THREADS];
+
+    int rc;
+    int i;
+
+    for( i=0; i < NUM_THREADS; i++ ){
+      td[i].thread_id = i;
+      td[i].message = "This is message";
+      rc = pthread_create(&threads[i], NULL, PrintHello, (void *)&td[i]);
+      if (rc){
+        cout << "Error:unable to create thread," << rc << endl;
+        exit(-1);
+      }
+    }
+    pthread_exit(NULL);
+  }
+#+END_SRC
+
+** Join and Detach
+
+#+BEGIN_SRC cpp
+  int main () {
+    int rc;
+    int i;
+	
+    pthread_t threads[NUM_THREADS];
+    pthread_attr_t attr;
+    void *status;
+
+    // Initialize and set thread joinable
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+    for( i=0; i < NUM_THREADS; i++ ){
+      cout << "main() : creating thread, " << i << endl;
+      rc = pthread_create(&threads[i], &attr, wait, (void *)i );
+		
+      if (rc){
+        cout << "Error:unable to create thread," << rc << endl;
+        exit(-1);
+      }
+    }
+
+    // free attribute and wait for the other threads
+    pthread_attr_destroy(&attr);
+	
+    for( i=0; i < NUM_THREADS; i++ ){
+      rc = pthread_join(threads[i], &status);
+		
+      if (rc){
+        cout << "Error:unable to join," << rc << endl;
+        exit(-1);
+      }
+		
+      cout << "Main: completed thread id :" << i ;
+      cout << "  exiting with status :" << status << endl;
+    }
+
+    cout << "Main: program exiting." << endl;
+    pthread_exit(NULL);
+  }
+#+END_SRC
+
+* std::thread
