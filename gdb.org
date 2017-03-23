@@ -7,6 +7,9 @@
 
 In the breakpoints buffer, =D= to remove one.
 
+- C-x C-a C-b :: gud-break
+- C-x C-a C-d :: gud-remove
+
 * Commands
 
 - next :: next instruction
