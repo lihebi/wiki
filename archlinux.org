@@ -159,6 +159,9 @@ systemctl enable dhcpcd
 - feh
 - debootstrap
 - tidy
+- unzip
+- gperftools
+- valgrind
 
 **** audio
 - pavucontrol
