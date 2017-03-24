@@ -1,0 +1,44 @@
+#+TITLE: Doxygen
+
+The documentation is like this:
+
+#+BEGIN_SRC cpp
+  /**
+   ,* \brief Brief
+   ,*
+   ,* Some documents.
+   ,*/
+#+END_SRC
+
+
+Define a group and subgroups by:
+
+#+BEGIN_SRC cpp
+  /**
+   ,* \defgroup mygroup
+   ,* Can only define once.
+   ,* This must be in its own group, otherwise the documented thing will not be in the group.
+   ,*/
+
+  /**
+   ,* \defgroup mysubgroup
+   ,* \ingroup mygroup
+   ,* This is a subgroup of \ref mygroup
+   ,*/
+
+  /**
+   ,* \ingroup mygroup
+   ,* This class will be inside mygroup
+   ,*/
+
+  /**
+   ,* \addtogroup mygroup
+   ,* @{
+   ,* everything in between will be put into that group
+   ,* This commend actaully weakly define a group.
+   ,*/
+
+  /** @}*/
+#+END_SRC
+
+Main page can be specified in =\mainpage TITLE= block.
