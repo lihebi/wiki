@@ -162,6 +162,7 @@ systemctl enable dhcpcd
 - unzip
 - gperftools
 - valgrind
+- cloc
 
 **** audio
 - pavucontrol
