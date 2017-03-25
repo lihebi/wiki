@@ -1,0 +1,30 @@
+#+TITLE: ASCII
+
+VT100 Escape Code
+
+http://www.climagic.org/mirrors/VT100_Escape_Codes.html
+
+All the code starts from =^[=, this is ASCII code for ESC, so they are
+called escape code. ESC has decimal value of 27. So in C, sending it is like:
+
+#+BEGIN_SRC c
+printf("%c[2K", 27);
+printf("\33[2K");
+#+END_SRC
+
+=[2k= suffix identify the code "clean the line", so the printf will
+clean the line.  It is equivalent to send =\33[2K=. Note that it only
+clean the line, in order to overwrite the text you need to make the
+cursor to the beginning by =\r=.
+
+Use only =\r= without cleaning the line will have trouble if the
+previous line is longer than the new line.
+
+Some code might be interesting:
+| Name          | description                  | ESC Code |
+|---------------+------------------------------+----------|
+| cleareol EL0  | Clear line from cursor right | ^[[K     |
+| cleareol EL0  | Clear line from cursor right | ^[[0K    |
+| clearbol EL1  | Clear line from cursor left  | ^[[1K    |
+| clearline EL2 | Clear entire line            | ^[[2K    |
+#+END_EXAMPLE
