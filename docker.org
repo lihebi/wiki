@@ -32,7 +32,10 @@ and reference it.
   - -t :: assign a tty. Even when using -d, you need this.
   - -p <port> :: export the port <port> of the container. The host
                  port will be randomly assigned. Running =docker ps=
-                 will show the port binding information.
+                 will show the port binding information.  If the port
+                 is not set when running a container, you have to
+                 commit it, and run it again to assign a port or
+                 another port.
 - docker exec <ID> echo "hello" :: run some command with arguments on the already run container <ID>
   - ID can be the UUID or container name
   - you can use -it as well, e.g. docker exec -it <ID> /bin/bash
