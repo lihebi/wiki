@@ -24,14 +24,36 @@ and reference it.
 
 * General operations
 
+- docker images :: list images
+- docker images <name> :: list images whose name is "name" (can have different) tags
+- docker run [option] <image> /bin/bash :: run a *fresh* container based on the image.
+  - -i :: interactive
+  - -d :: detach (opposite to -i)
+  - -t :: assign a tty. Even when using -d, you need this.
+- docker exec <ID> echo "hello" :: run some command with arguments on the already run container <ID>
+  - ID can be the UUID or container name
+  - you can use -it as well, e.g. docker exec -it <ID> /bin/bash
+- docker start <ID> :: start an already stopped container
+- docker diff <ID> :: show the difference made from the base image
+- docker commit <ID> lihebi/my-container :: create a new image based on the container <ID>
+- docker login :: login so that you can push
+- docker push lihebi/my-container :: push to docker hub
+- docker pull lihebi/my-container :: pull from the internet
+
+Alternatively, you can write a Dockerfile to specify how to build a image.
+
 #+BEGIN_EXAMPLE
-# run container in daemon mode, must have -t
-docker run -d -t debian /bin/bash
-# run command non-interactively and get output
-docker exec <ID> echo "hello"
-# attach and enter th 
-docker exec -it <ID> /bin/bash
+FROM ubuntu 15.04
+RUN ech o"hello" > /tmp/newfile
 #+END_EXAMPLE
+
+In the folder containing Dockerfile, run to build the image:
+#+BEGIN_EXAMPLE
+docker build -t my-ubuntu .
+#+END_EXAMPLE
+
+- docker history <image> :: show which layers are used to create <image>
+
 
 * Remove sudo
 #+BEGIN_EXAMPLE
