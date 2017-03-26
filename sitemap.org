@@ -79,6 +79,7 @@
    + [[file:linux.org][Linux]]
    + [[file:mac.org][Mac OS]]
    + [[file:machine-learning.org][Machine Learning]]
+   + [[file:mailman.org][Mailman]]
    + [[file:make.org][Make]]
    + [[file:markdown.org][Markdown]]
    + [[file:name-alg.org][Name Algorithm]]

@@ -1,0 +1,65 @@
+#+TITLE: Mailman
+
+This article records the process of setting up a mailman server.
+
+#+BEGIN_EXAMPLE
+FROM debian:jessie
+RUN apt-get -y update
+RUN apt-get install -y wget emacs
+RUN apt-get install -y mailman apache2 postfix
+RUN cp /etc/mailman/apache.conf /etc/apache2/sites-available/mailman.conf
+#+END_EXAMPLE
+
+
+edit =/etc/apache2/sites-available/mailman.conf= and add:
+
+#+BEGIN_EXAMPLE
+<VirtualHost *:80>
+ServerName lists.example.com
+DocumentRoot /var/www/lists
+ErrorLog /var/log/apache2/lists-error.log
+CustomLog /var/log/apache2/lists-access.log combined
+
+<Directory /var/lib/mailman/archives/>
+    Options FollowSymLinks
+    AllowOverride None
+</Directory>
+
+Alias /pipermail/ /var/lib/mailman/archives/public/
+Alias /images/mailman/ /usr/share/images/mailman/
+ScriptAlias /admin /usr/lib/cgi-bin/mailman/admin
+ScriptAlias /admindb /usr/lib/cgi-bin/mailman/admindb
+ScriptAlias /confirm /usr/lib/cgi-bin/mailman/confirm
+ScriptAlias /create /usr/lib/cgi-bin/mailman/create
+ScriptAlias /edithtml /usr/lib/cgi-bin/mailman/edithtml
+ScriptAlias /listinfo /usr/lib/cgi-bin/mailman/listinfo
+ScriptAlias /options /usr/lib/cgi-bin/mailman/options
+ScriptAlias /private /usr/lib/cgi-bin/mailman/private
+ScriptAlias /rmlist /usr/lib/cgi-bin/mailman/rmlist
+ScriptAlias /roster /usr/lib/cgi-bin/mailman/roster
+ScriptAlias /subscribe /usr/lib/cgi-bin/mailman/subscribe
+ScriptAlias /mailman/ /usr/lib/cgi-bin/mailman/
+ScriptAlias / /usr/lib/cgi-bin/mailman/listinfo
+</VirtualHost>
+#+END_EXAMPLE
+
+Then run commands:
+#+BEGIN_EXAMPLE
+mkdir /var/www/lists
+a2ensite mailman.conf
+/etc/init.d/apache2 restart
+#+END_EXAMPLE
+
+Now I can see the apache page on 80 port.
+The following things are not successful.
+
+I was following a tutorial here:
+https://www.howtoforge.com/how-to-install-and-configure-mailman-with-postfix-on-debian-squeeze
+
+Modify =/etc/mailman/mm_cfg.py=:
+
+#+BEGIN_EXAMPLE
+DEFAULT_URL_PATTERN = 'http://%s/'
+DEFAULT_EMAIL_HOST = 'lists.example.com'
+DEFAULT_URL_HOST = 'lists.example.com'
+#+END_EXAMPLE

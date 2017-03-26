@@ -10,7 +10,7 @@ This site records knowledge I would need to remember.
 
   Some essential apps: , [[file:conkeror.org][conkeror]], [[file:stumpwm.org][StumpWM]], [[file:x11.org][X11]], [[file:tmux.org][Tmux]], [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]].
 
-Reading news using [[file:gnus.org][Gnus]].
+Reading news using [[file:gnus.org][Gnus]]. [[file:mailman.org][Mailman]]
 
 [[file:docker.org][docker]]
 
