@@ -163,6 +163,7 @@ systemctl enable dhcpcd
 - gperftools
 - valgrind
 - cloc
+- svn
 
 **** audio
 - pavucontrol
