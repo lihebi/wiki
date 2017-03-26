@@ -164,6 +164,7 @@ systemctl enable dhcpcd
 - valgrind
 - cloc
 - svn
+- clojure
 
 **** audio
 - pavucontrol
@@ -187,6 +188,7 @@ systemctl enable dhcpcd
 
 - rtags-git
 - plantuml
+- leiningen2-git
 
 ** Then
 run
