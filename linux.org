@@ -51,6 +51,25 @@ sh ~/.fehbg &
    - =speech-dispatcher= :: =spd-say "hello"= quality is not that good
    - =espeak= :: =espeak "hello"= quality is not that good
 
+** mplayer
+Interactive controls:
+- LEFT/RIGHT :: 10 sec
+- UP/DOWN :: 1 min
+- PGUP/PGDWN :: 10 min
+- =[]= :: playback speed by 10%
+- {} :: half/double speed
+- BACKSPACE :: reset playback speed
+- /* :: volume
+- SPACE :: pause
+- f :: toggle fullscreen
+- o :: OSD
+
+When changing the speed, the pitch changed. To disable this, start
+mplayer by =mplayer -af scaletempo=.
+
+To stretch the images to full screen, pass the =-zoom= option when
+starting.
+
 * Prompt
   * prompt($PS1-4)
     * ~\d~: date
