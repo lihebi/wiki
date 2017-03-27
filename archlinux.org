@@ -165,6 +165,8 @@ systemctl enable dhcpcd
 - cloc
 - svn
 - clojure
+- ntfs-3g
+- mplayer
 
 **** audio
 - pavucontrol
