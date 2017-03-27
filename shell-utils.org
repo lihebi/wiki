@@ -1,5 +1,12 @@
 #+TITLE: Shell Utilities
 
+* Q&A
+** redirect output of time
+#+BEGIN_EXAMPLE
+{ time sleep 1 ; } 2> time.txt
+{ time sleep 1 ; } 2>&1 | tee -a time.txt
+#+END_EXAMPLE
+
 * Mathematics
 ** random number generation
 #+BEGIN_SRC shell
