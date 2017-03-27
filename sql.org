@@ -89,3 +89,53 @@ Some useful ones:
 - =.tables ?TABLE?= show the tables (optionally only the tables that match the pattern =?TABLE?=).
   There's no statements like =show tables;= in MySQL.
 - =.schema ?TABLE?=: similar to =describe tablename;=
+
+
+
+** C interface
+
+- #include <sqlite3.h>
+
+Execute a command
+
+#+BEGIN_SRC cpp
+  sqlite3 *db = nullptr;
+  db = sqlite3_open("/path/to/index.db", &db)
+  char *cmd = "insert into mytable values (1, 3, 'hello');";
+  char *errmsg = nullptr;
+  int rc = sqlite3_exec(db, cmd, nullptr, nullptr, &errmsg);
+  if (rc != SQLITE_OK) {
+    fprintf(stderr, "SQL error: %s\n", errmsg);
+    sqlite3_free(errmsg);
+  }
+#+END_SRC
+
+Query
+
+#+BEGIN_SRC cpp
+  sqlite3 *db = nullptr;
+  db = sqlite3_open("/path/to/index.db", &db)
+  char *cmd = "select * from mytable;";
+  sqlite3_stmt *stmt = nullptr;
+  int rc;
+  rc = sqlite3_prepare_v2(db, cmd, -1, &stmt, nullptr);
+  assert(rc == SQLITE_OK);
+  while (true) {
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+      // data row
+      int column_count = sqlite3_column_count(stmt);
+      for (int i=0;i<column_count;i++) {
+        // get data as int
+        int data = sqlite3_column_int(stmt, i);
+        // get data as string
+        const unsigned char *s = sqlite3_column_text(stmt, i);
+      }
+    } else if (rc == SQLITE_DONE) {
+      break;
+    } else {
+      assert(false);
+    }
+  }
+  sqlite3_finalize(stmt);
+#+END_SRC
