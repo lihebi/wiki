@@ -1,19 +1,5 @@
 #+TITLE: R
 
-
-* Tmp
-
-- =str= :: show the structure of arbitrary type
-- =na.omit= :: can omit the NA values in data frame
-
-A data frame is a list of equal-length vectors.
-When getting the data from read.csv, the result is a data frame.
-Use =names= to work on data frames will emit the names.
-- Since it is a list, using =[]= to index will give also the list, a.k.a. data frame, retaining names.
-  You can use a vector as index.
-- Using =[[]]= to index will give the value, dropping names.
-  You cannot use a vector as index.
-
 * Setting up
 
 ** Packages
@@ -57,38 +43,62 @@ Use =names= to work on data frames will emit the names.
 ** Interactive command
    =setwd("/absolute/path")= set the working directory.
 
-   In the interactive command line interface, =q()= to exit, 
-   =help(lm)= to show help message for a built-in function.
-   =?lm= and =??solve= also shows documentation, while =example(topic)=, as its name indicates, shows the examples.
-   =help.start()= opens the html documentation page.
+   In the interactive command line interface, =q()= to exit, =help(lm)=
+   to show help message for a built-in function.  =?lm= and =??solve=
+   also shows documentation, while =example(topic)=, as its name
+   indicates, shows the examples.  =help.start()= opens the html
+   documentation page.
 
-   IO:
-   =source("a.R")= loads a script.
-   =sink("a.lis")= redirects the output to a file, and =sink()= restore that to standard output.
+   IO: =source("a.R")= loads a script.  =sink("a.lis")= redirects the
+   output to a file, and =sink()= restore that to standard output.
+   - =save.image("mydata.Rdata")= will save in current directory
+   - =load("mydata.Rdata")= load from current directory
 
-   Objects:
-   =ls()= list the objects currently stored.
-   =objects()= create and store current objects.
-   =rm(x, y, z, ink, junk, temp, foo, bar)= remove objects
+   For getting current status:
+   - =getwd()= current dir
+   - =setwd()= set current dir
+   - =ls()= list the objects currently stored.
+   - =rm(x, y, z, ink, junk, temp, foo, bar)= remove objects
+   - =rm(list=ls())= remove all objects
+   - =objects()= create and store current objects.
 
+** Commonly used functions
+   - =str= show the structure of arbitrary type
+   - =summary= print the summary
+   To see the data, you can use:
+   - dim()
+   - length()
+   - head()
+   - tail()
+   - =summary(dataset)= shows some information like max,min,mean
+   - =class(data$col)= get type
+   - =levels(data$col)= if it is factor, get the values
 
 * Objects
-  Objects have mode and length.
-  The =typeof= gets the type of an object, while =mode= retrieves the mode of an object.
-  =length= gets the length of the vector.
+  Objects have mode and length.  The =typeof= gets the type of an
+  object, while =mode= retrieves the mode of an object.  =length= gets
+  the length of the vector.
 
-  Objects have attributes.
-  =names= is used for indexing
-  =dim= is the dimension of a matrix
-  =dimnames= is the character names of the dimensions
+  Objects have attributes.  =names= is used for indexing =dim= is the
+  dimension of a matrix =dimnames= is the character names of the
+  dimensions
 
-  The missing values are =NA=, tested by =is.na=.
-  Illegal computations produces =NaN=, e.g. =0/0=.
+  The missing values are =NA=, tested by =is.na=.  Illegal
+  computations produces =NaN=, e.g. =0/0=.
 
-  Compound objects are /factors/ (a.k.a. enumerators) and /data frames/ (lists of objects all have the same length).
-  Vectors are the array of objects of the same mode.
-  List can contain the objects of different modes.
-  A /data frame/ is a list with class "data.frame".
+  Compound objects are /factors/ (a.k.a. enumerators) and /data
+  frames/ (lists of objects all have the same length).  Vectors are
+  the array of objects of the same mode.  List can contain the objects
+  of different modes.  A /data frame/ is a list with class
+  "data.frame".
+
+  Using bracket expression with predicates to select part of data is
+  very useful. Inside the bracket, the column names do not need to
+  have prefix.
+
+  Type Conversion: you can change a type of a vector by
+  - =as.factor(x)=
+  - as.numeric()
 
 ** Vector
    Create a vector by =c=: =c(10.4, 5.6, 3.1)=.
@@ -117,6 +127,8 @@ Use =names= to work on data frames will emit the names.
    The index 0 will return empty.
    Other numeric values will be converted to integer towards zero.
 
+   The index can be a integer vector, which selects a bunch of values.
+
    If the index is logical vector, the true ones will be returned.
    If the index is character, it is compared, /partially/, with the /names/ attributes of the vector.
    =$= can be used for indexing with character.
@@ -132,9 +144,25 @@ z[2,,]
 z[,,]
    #+end_src
 
+   Matrix can be created by the =matrix= function.
+   #+BEGIN_SRC R
+matrix(1:9, nrow=3,byrow=TRUE)
+   #+END_SRC
+
+** Data frame
+   - =na.omit= :: can omit the NA values in data frame
+
+   A data frame is a list of equal-length vectors.
+   When getting the data from read.csv, the result is a data frame.
+   Use =names= to work on data frames will emit the names.
+   - Since it is a list, using =[]= to index will give also the list, a.k.a. data frame, retaining names.
+     You can use a vector as index.
+   - Using =[[]]= to index will give the value, dropping names.
+     You cannot use a vector as index.
+
 ** data example
 
-#+BEGIN_SRC R
+   #+BEGIN_SRC R
   ## (HEBI: Command line arguments)
   args = commandArgs(trailingOnly=TRUE)
   csvfile = args[1]
@@ -171,7 +199,7 @@ z[,,]
                       ret <- c(ret, paste("name = ",  value))}}}}
       return(ret)}
 
-#+END_SRC
+   #+END_SRC
 
 * Operators
   - arithmetic :: =+-*/=, =^= for exp, =%%= for modulus
@@ -197,10 +225,10 @@ z[,,]
 ** Conditional
    - if :: =if (STMT) STMT else if (STMT) STMT else STMT=
    - Switch :: =switch (STMT, LIST)=
-        - the STMT is first evaluated
-        - if the value is within 1 and the length of the LIST, evaluate LIST[i], and return
-        - return NULL
-        - Notice that the LIST can be a comma separated argument of switch ... which means switch actually accepts =...=
+               - the STMT is first evaluated
+               - if the value is within 1 and the length of the LIST, evaluate LIST[i], and return
+               - return NULL
+               - Notice that the LIST can be a comma separated argument of switch ... which means switch actually accepts =...=
 
 ** Loop
    - =for= :: =for (NAME in VECTOR) STMT=
@@ -231,6 +259,9 @@ z[,,]
   The =eval= is used to evaluate it.
 
 * Debugging
+
+  The =print= function can output the value of a variable.
+
   To enter the debugger, a call to =browser= function suffices.
   This allows you to browse the values at that point.
   A more powerful debugger is by a call to =debug= with the function name as argument.
@@ -238,6 +269,9 @@ z[,,]
   Tracing can be registered by =trace= or =untrace= with the name of the function.
   It might need to be quoted in some case, so you'd better quote it, with double quotes.
   Every time the function is invoked, the return value will be printed as trace.
+
+
+
 * Data IO
   - =write=
   - =write.table=
@@ -246,32 +280,88 @@ z[,,]
     - this ignores blank lines,
     - and expect the header to be one field less than the body.
     - =#= as comments
+  - read.delim
+  - =cat= outputs the data, no index, no newline
+
+
+  - attach(data) :: make the columns into this namespace
+  - detach(data) :: remove those
+
+
 
 
 * Models
-  Linear model.
+** Linear model.
 
-  #+BEGIN_EXAMPLE
-fm = lm(y ~ x1 + x2, data = mydataframe)
-  #+END_EXAMPLE
+   #+BEGIN_EXAMPLE
+ fm = lm(y ~ x1 + x2, data = mydataframe)
+   #+END_EXAMPLE
 
-  The fitted model in the variable =fm= can be accessed by:
-  - =coef= :: extract the coefficients
-  - =deviance= :: the Residual Sum of Square
-  - =formula= :: extract the model formula
-  - =plot= :: produce four plots: residuals, fitted values, diagnostics.
-  - =predict(OBJECT, newdata=DATA.FRAME)= :: use the model to predict
-  - =residuals= :: extract the residuals
-  - =summary= :: print the summary
+   The fitted model in the variable =fm= can be accessed by:
+   - =coef= :: extract the coefficients
+   - =deviance= :: the Residual Sum of Square
+   - =formula= :: extract the model formula
+   - =plot= :: produce four plots: residuals, fitted values, diagnostics.
+   - =predict(OBJECT, newdata=DATA.FRAME)= :: use the model to predict
+   - =residuals= :: extract the residuals
 
-  The models can be updated, if the formula only changes a little bit.
-  In the following example, the =.= means the corresponding part of the original formula.
-  #+BEGIN_SRC R
+   The models can be updated, if the formula only changes a little bit.
+   In the following example, the =.= means the corresponding part of the original formula.
+   #+BEGIN_SRC R
 fs <- lm(y~x1 + x2, data=mydata)
 fs <- update(fs, . ~ . + x3)
 fs <- update(fs, sqrt(.) ~ .)
-  #+END_SRC
+   #+END_SRC
 
+* Plot
+  Process data:
+  - table
+  - cut(data, breaks=c(1,3,8))
+
+** Decoration
+   - box
+   - axis
+   - las attribute
+   - legend
+   - par
+   - text
+   - mtext
+   - points
+** Plot Types
+*** plot
+    - lines
+    - abline
+*** barplot
+*** pie
+*** boxplot
+    - quantile
+*** hist
+    - lines(density(data))
+*** TODO stem
+*** TODO mosaicplot
+*** pairs
+** Device Driver
+   When outputting some image, you have to tell R which format you want
+   to use. The default on linux is X11, that's why it opens a image
+   immediately after plotting. To use a device, call the device function,
+   and after that all graphics output will be sent to that device.
+   - X11
+   - pdf
+   - png
+   - jpeg
+
+   When you have finished with a device, terminate it by =dev.off()=.
+
+   To output to a file TODO to open plot in emacs:
+   #+BEGIN_SRC R
+  pdf("test1.pdf")
+  dev.control(displaylist = "enable")
+  plot(1:10)
+  dev.copy(pdf, "test2.pdf")
+  dev.off()
+  # should now have a valid test2.pdf
+  dev.off() # finished
+   #+END_SRC
 
 * Packages
 ** ggplot2
