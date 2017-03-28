@@ -10,6 +10,10 @@ In the breakpoints buffer, =D= to remove one.
 - C-x C-a C-b :: gud-break
 - C-x C-a C-d :: gud-remove
 
+When program stops at some point (with triangle prefix), =b= will set
+breakpoint. So in gud terminal, type =b if (xxx)= will set conditional
+breakpoints.
+
 * Commands
 
 - next :: next instruction
