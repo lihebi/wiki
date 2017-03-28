@@ -119,7 +119,9 @@ realpath -f /relative/path # this will follow symbolic link
 du -sm * | sort -nr
 #+END_SRC
 
-
+** unzip
+- =-o= overwrite existing file without prompt
+- =-d= extract to specified directory
 
 
 
