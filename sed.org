@@ -1,102 +1,132 @@
 #+TITLE: sed
 
-* Introduction
-The sed version on Mac OS and GNU Linux are different.
-So, use gnu! On Mac, install
-#+BEGIN_EXAMPLE
-brew install gnu-sed
-#+END_EXAMPLE
+* Invoke
+- In shell script, use shebang =#!/bin/sed -f= or =#!/bin/sed -nf=.
+- In command line, =sed [OPTION] [INPUT]=
+ - INPUT :: if not exists, or is ~-~, use =stdin=. If multiple,
+            concatenate them first, then apply to the whole
+ * -n :: by default each line of input is echoed to the standard output
+   after all of the commands have been applied to it. The -n option
+   suppresses this behavior
+ * -e :: expressions in string. can have multiple: sed -e 'xxx' -e 'xxx' -e 'xxx' file.txt
+ * -f :: script file
+ - -E :: extended expression
+ - -i :: modify in place
 
-This will make a =gsed= command available.
-To write a cross platform script, use
-#+BEGIN_SRC shell
-echo "OSTYPE: " $OSTYPE
-SED=sed
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-    SED=sed
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-    SED=gsed
-fi
-$SED -E -e "460,$ s/REG[0-9]{1,2}//g" compress42.c.orig > compress42.bugsig.c
-#+END_SRC
+* How Sed Works
+=sed= maintains two data buffers: /pattern space/ and /hold space/,
+both of them initially empty.  It copies a line from input, remove
+trailing newline, and put into pattern space. Commands matched by
+address are processed. After the last command, the pattern space is
+printed out (unless -n is used), and pattern space is deleted (unless
+special commands like 'D' are used). Next cycle begins and process the
+next line.
 
-** About the regular expression version
-=-E= will enable extra features, such as:
-- a{1,2}
+The hold space, on the other hand, holds data between cycles.
+- h :: hold. replace hold space with pattern space
+- H :: Hold. append line from pattern space to hold space, with a newline before it
+- g :: Replace the contents of the pattern space with the contents of
+       the hold space.
+- G :: Append line from hold space to pattern space, with a newline before it
+- x :: Exchange the contents of the hold and pattern spaces.
 
-See =re_format(7)= for details.
 
-There's no =\d=, so use =[0-9]= instead. The man page says =[:digit:]= can be used, but it seems not working.
 
-* usage
-in shell script
+* Commands
+The commands is of form =[addr]X[options]=
+- options :: specific for different commands
+- X :: single-letter comand
+- [addr] :: X will only be applied to the matched lines by addr
 
-#+begin_src shell
-#!/bin/sed -f
-#!/bin/sed -nf
-#+end_src
+Commands can be separated by semi-colon or newline.
+- Most commonly used command:
+  - d: delete
+  - D: Delete. delete line from pattern space until the first newline, and restart the cycle
+  - p: print pattern buffer
+  - P: print line from pattern space until first newline
+  - =: print line number
+  - n: (next) print pattern space, then replace with next line
+  - N: append line from input file to pattern space
+  - s/REGEXP/REPLACEMENT/FLAGS: if REGEXP is matched, the matched
+       part is replaced by REPLACEMENT
+    - REPLACEMENT:
+      - \1-\9: refers to the capture group
+      - &: refers to whole match
+    - flag:
+      - g: replace all matches
+      - [N]: only replace N-th match
+      - p: if substitution was made, print the new pattern space
+      - w FILE: if substitution was made, write the result to FILE
+      - I: case insensitive
 
-* concepts
- * input
- * output
- * pattern space
- * hold space: This is a spare pattern space, used to remember the data in pattern buffer
+- Not so common:
+  - =a TEXT=: append TEXT after a line. It actually even after the
+              newline, starting a new line.
+  - =i TEXT=: insert TEXT before a line, starting a new line.
+  - =b LABEL=: branch unconditionally to LABEL
+  - =c TEXT=: change line to TEXT
+  - =l=: Print the pattern space in an unambiguous form. Print newline as '\n'.
+  - =#=: begin a line comment
+  - =q [EXIT-CODE]=: quit with code
+  - ={ COMMANDS }=: commands should be separated by =;=, this allows
+                    share address.
+  - =r=: read a file
+  - =w=: write
+  - =b=: branch
+  - =t=: test
+  - =:label=: label
 
-* workflow
- * copy a line from input(exclude the tailing newline) into pattern buffer
- * apply command(s) to it
- * output
+* Address
+  - LINE: single line number
+    - NUMBER: line start from 1
+    - =$=: last line
+    - FIRST~STEP: matches every STEP-th line starting with line FIRST
+  - regular expression:
+    - =/REGEXP/=:
+    - =/REGEXP/I=: case insensitive
+  - range:
+    - =LINE,LINE=:
+    - =LINE,REGEXP=: starting from LINE; REGEXP will check the
+                     /following/ line, i.e. range span at least two
+                     lines. LINE can be 0, in which case REGEXP is
+                     trying to matching start from beginning.
+    - =ADDR,+N=: ADDR adn N lines following it.
+    - =ADDR,-N= and the lines following until next line whose line number
+      is multiple of N (this line is considered matched)
+    - append =!= to range will inverse it.
 
-* cmd args
- * -n: by default each line of input is echoed to the standard output after all of the commands have been applied to it. The -n option suppresses this behavior
- * -e: sed -e 'xxx' -e 'xxx' -e 'xxx'
- * -f: script file
+** Regular expression
+*** Basic and Extended RE
+| Basic       | Extended  |
+|-------------+-----------|
+| \+          | +         |
+| \?          | ?         |
+| \{I,J\}     | {I,J}     |
+| \(capture\) | (capture) |
+| \<alter>    | <alter>   |
 
-* range
-sed will only apply command for the lines in the specified range.
-If the command is preceded with =!=, that means the command works on lines not in the range.
+alter is actually the vertical line.
 
-#+begin_src shell
-sed '1,100 s/A/a/' # by line number
-sed '101,$ s/A/a/' # $ is last line
-sed '/start/,/stop/ s/#.*//' # by pattern
-#+end_src
+*** Common
+Bracket Expressions (can be used in both basic and extended RE)
+Put inside ~[[]]~ the following
+- :space:
+- :digit:
+- :alnum:
+- :alpha:
+- :lower:
+- :upper:
 
-* commands
+Extension
+- \w
+- \W
+- \b
+- \B
+- \s
+- \S
+- \<
+- \>
 
-** edit
-
-| shortcut | name       | description |
-|----------+------------+-------------|
-| /        | <          | <           |
-| a        | add        |             |
-| i        | insert     |             |
-| c        | change     |             |
-| d        | delete     |             |
-| s        | substitute |             |
-|          |            |             |
-
-** output
-
-| shortcut | name  | description |
-|----------+-------+-------------|
-| /        | <     | <           |
-| =        | print |             |
-| l        | look  |             |
-| p        | print |             |
-| n        | next  |             |
-| r        | read  |             |
-| w        | write |             |
-
-** flow control
-
-| shortcut | name   | description |
-|----------+--------+-------------|
-| /        | <      | <           |
-| q        | quit   |             |
-| b        | branch |             |
-| t        | test   |             |
-| :label   |        |             |
 
 * examples
 
@@ -139,3 +169,33 @@ sed '/^$/d' # remove all empty lines
 sed '11,$ d' # only output first 10 lines
 sed '1,/^$/ d' # delete everything up to the first blank line.
 #+end_src
+
+* Trouble Shooting
+** GNU sed on Mac
+The sed version on Mac OS and GNU Linux are different.
+So, use gnu! On Mac, install
+#+BEGIN_EXAMPLE
+brew install gnu-sed
+#+END_EXAMPLE
+
+This will make a =gsed= command available.
+To write a cross platform script, use
+#+BEGIN_SRC shell
+echo "OSTYPE: " $OSTYPE
+SED=sed
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    SED=sed
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    SED=gsed
+fi
+$SED -E -e "460,$ s/REG[0-9]{1,2}//g" compress42.c.orig > compress42.bugsig.c
+#+END_SRC
+
+** About the regular expression version
+=-E= will enable extra features, such as:
+- a{1,2}
+
+See =re_format(7)= for details.
+
+There's no =\d=, so use =[0-9]= instead. The man page says =[:digit:]= can be used, but it seems not working.
+
