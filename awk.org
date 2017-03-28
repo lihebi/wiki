@@ -1,56 +1,93 @@
 #+TITLE: awk
 
-* usage
-in shell:
+* Introduction
+Use shebang =#! /bin/awk -f= for script file. In terminal, Invoke by
+=awk 'PROGRAM' INPUT-FILE1 INPUT-FILE2 ...=. MUST USE single
+quote. Run a script by =awk -f script.awk INPUT-FILES=.
 
-MUST USE single quote.
+The "program" contains a list of statements. Each of form =pattern
+{action}=.  A missing { action } means print the line; a missing
+pattern always matches.  Pattern-action statements are separated by
+newlines or semicolons.
 
-#+begin_src shell
-awk 'pattern {action}'
-awk 'pattern {action}' input.txt
-awk -f script.awk input.txt
-#+end_src
-
-=pattern {action}=
-
-A missing { action } means print the line;
-a missing pattern always matches.
-Pattern-action statements are separated by newlines or semicolons.
+Invoking options:
+- =-F FS= :: set FS
+- =-v VAR=VAL= :: set variable before the program begins
 
 ** Important Variables
-- =FS (Field Separator)= :: regular expression used to separate fields; also settable by option -Ffs.
 - =NF= :: number of fields in the current record
-- =NR= :: ordinal number of the current record
-- =FNR= :: ordinal number of the current record in the current file
+- =NR= :: line number of current record
+- =FNR= :: line number of current record in the current file
 - =FILENAME= :: the name of the current input file
+- =FS (Field Separator)= :: regular expression used to separate fields; also settable by option -Ffs.
 - =RS= :: input record separator (default newline)
 - =OFS= :: output field separator (default blank)
 - =ORS= :: output record separator (default newline)
 
+AWK first read record using RS as separator from input. For each
+record, awk use FS to split it into fields.
+
+
+awk is line-based, and the content of lines are splited into fields
+=$1=, =$2=, ... by the separator =FS=.  =$0= refers to the entire
+line. Function parameters are local, all other variables are global.
+
 
 * patterns
 
-Patterns are arbitrary Boolean combinations (with =!= =||= =&&=)
-of regular expressions and relational expressions.
+Patterns are arbitrary Boolean combinations (with =!= =||= =&&=) of
+regular expressions and relational expressions.
 
-A pattern may consist of two patterns separated by a comma;
-in this case, the action is performed for all lines from an occurrence of the first pattern though an occurrence of the second.
+A pattern may consist of two patterns separated by a comma; in this
+case, the action is performed for all lines from an occurrence of the
+first pattern though an occurrence of the second.
 
-special patterns: =BEGIN=, =END=.
-Cannot combine with other patterns.
+special patterns: =BEGIN=, =END=.  Cannot combine with other patterns.
 
-* actions
+Also, we can match part of the input by using regular expression
+comparison operators (=~= and =!~=). =EXP ~ /REGEXP/= returns true if
+match. This can be used in patterns, as well as as conditions for if,
+while, for, do statements.
 
-An action is a sequence of statements.
-Statements are terminated by semicolons, newlines or right braces
+Case sensitivity is controled by =IGNORECASE= variable. You can set
+when invoking awk, or set the variable in the awk program. Another way
+to ignore case is to call =tolower= or =toupper= function before
+comparison.
 
-* variable
-awk is line-based, and the content of lines are splited into fields =$1=, =$2=, ... by the separator =FS=.
-=$0= refers to the entire line.
+* Actions
 
-* examples
-An example is better than a thousand of words.
+An action is a sequence of statements.  Statements are terminated by
+semicolons, newlines or right braces.
 
+Reference of user-defined variable do not use $. E.g. ~myvar=$2~ will
+assign $2 to myvar! Refer the var directly: no need to use a $ as
+shell variables.
+
+** Control Structure
+- =if (condition) then-body [else else-body]=
+- =while (condition) body=
+- =do body while (condition)=
+- =for (init;cond;inc) body=
+- switch(expr) {case val: body default: body}
+- break
+- continue
+- next: stop current record immediately and go on to next
+
+** String Functions
+- =sub(ere, repl[, in])= :: substitute the first match of ere inside
+     in (or $0) by repl. Return number of substitution. =&= can be
+     used in repl.
+- =gsub(ere, repl[, in])= :: sub for all matches
+- index(s,t) :: index t inside s, 0 if not occur.
+- length([s]) :: return length for s (or $0)
+- match(s, ere) :: return position of match of ere in s
+- split(s, a[, fs]) :: split s into array a
+- sprintf(fmt, expr, expr, ...) :: printf with format string
+- substr(s, m[, n]) :: return substring from m with length at most n
+- tolower(s) :: return lowercase
+- toupper(s) :: uppercase
+
+* Examples
 #+begin_src shell
 awk 'NR==10 {print}' input.txt # output 10th line, or empty is less than 10 lines
 #+end_src
