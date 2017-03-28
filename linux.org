@@ -70,6 +70,13 @@ mplayer by =mplayer -af scaletempo=.
 To stretch the images to full screen, pass the =-zoom= option when
 starting.
 
+** youtube-dl
+When downloading a playlist, you can make the template to number the files
+#+BEGIN_EXAMPLE
+youtube-dl -o "%(playlist_index)s-%(title)s.%(ext)s" <playlist_link>
+#+END_EXAMPLE
+
+
 * Prompt
   * prompt($PS1-4)
     * ~\d~: date
