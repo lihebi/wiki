@@ -168,6 +168,10 @@ systemctl enable dhcpcd
 - ntfs-3g
 - mplayer
 - openssh
+- python-pip
+- ipython
+- r
+- youtube-dl
 
 **** audio
 - pavucontrol
