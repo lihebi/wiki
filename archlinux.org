@@ -172,6 +172,8 @@ systemctl enable dhcpcd
 - ipython
 - r
 - youtube-dl
+- spice # the command is remove-viewer
+- virt-viewer
 
 **** audio
 - pavucontrol
