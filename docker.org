@@ -80,3 +80,19 @@ RUN dpkg -i srcml.deb
 #+END_EXAMPLE
 * TODO Docker hub
 When pushing and pulling, what exactly happens?
+
+
+* Config
+=C-p C-q= is the default binding for detaching a container. This
+blocks C-p, I have to type it twice, must change.  In
+=~/.docker/config.json=, add:
+
+#+BEGIN_EXAMPLE
+{
+"detachKeys": "ctrl-],ctrl-["
+}
+#+END_EXAMPLE
+
+Restart docker daemon to take effect. This can also be set by
+=--detach-keys= option.
+
