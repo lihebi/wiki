@@ -82,7 +82,8 @@ RUN dpkg -i srcml.deb
 When pushing and pulling, what exactly happens?
 
 
-* Config
+* Trouble Shooting
+** I have to type double C-p to take effect
 =C-p C-q= is the default binding for detaching a container. This
 blocks C-p, I have to type it twice, must change.  In
 =~/.docker/config.json=, add:
@@ -96,3 +97,19 @@ blocks C-p, I have to type it twice, must change.  In
 Restart docker daemon to take effect. This can also be set by
 =--detach-keys= option.
 
+
+** Docker exec tty is not a real tty
+I cannot connect to emacs server through emacsclient -t, and error
+message is terminal is not found. You can not open tmux also. But the
+problem does not appear when using docker run command.
+
+The solution is when starting a exec command, use script to run bash:
+
+#+BEGIN_EXAMPLE
+docker exec -it my-container script -q -c "/bin/bash" /dev/null
+docker exec -it my-container env TERM=xterm script -q -c "/bin/bash" /dev/null
+#+END_EXAMPLE
+
+The TERM is not necessary here because in my case docker always set it
+to xterm. I actually change it to screen-256color in my bashrc file to
+get the correct colors.
