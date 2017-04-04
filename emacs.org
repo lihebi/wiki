@@ -3,6 +3,7 @@
 * buffer
   - =list-face-displays=
   - =fill-region=
+- count-matches
 
 * Getting Help
   * =describe-key-briefly=: defaults to =C-h c=, return the command name of a key stroke.
