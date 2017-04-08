@@ -175,10 +175,12 @@ systemctl enable dhcpcd
 - spice # the command is remove-viewer
 - virt-viewer
 - rapidjson
+- ruby
+- markdown
 
 *** For Helium
 - zeromq
-
+- memcached libmemcached
 **** audio
 - pavucontrol
 - pulseaudio

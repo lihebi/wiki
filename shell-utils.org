@@ -1,5 +1,12 @@
 #+TITLE: Shell Utilities
 
+* Tmp
+#+BEGIN_EXAMPLE
+find ~/data/fast/pick-master/ -name '*.[ch]'
+#+END_EXAMPLE
+
+- sort -k 4 -n
+
 * Q&A
 ** redirect output of time
 #+BEGIN_EXAMPLE

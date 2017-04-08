@@ -1,4 +1,22 @@
 #+TITLE: awk
+* tmp
+
+#+BEGIN_EXAMPLE
+match($0, /#include <(.*)>/, a) {print a[1]}
+#+END_EXAMPLE
+- sum line of numbers
+#+BEGIN_EXAMPLE
+awk '{s+=$1} END {print s}' mydatafile
+#+END_EXAMPLE
+
+
+
+The quote for command must be single quote! not double.
+That is because the double quote will do shell substitution.
+
+#+BEGIN_EXAMPLE
+awk '{print $0}'
+#+END_EXAMPLE
 
 * Introduction
 Use shebang =#! /bin/awk -f= for script file. In terminal, Invoke by
