@@ -1,0 +1,115 @@
+#+TITLE: Cpp Libraries
+
+* RapidJson
+
+#+BEGIN_SRC cpp
+  #include <rapidjson/istreamwrapper.h>
+  #include <rapidjson/document.h>
+  #include <rapidjson/prettywriter.h>
+#+END_SRC
+
+
+** Parse Document
+
+#+BEGIN_SRC cpp
+  const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
+  Document d;
+  d.Parse(json);
+
+  rapidjson::Document document;
+  std::ifstream ifs(p.string());
+  rapidjson::IStreamWrapper isw(ifs);
+  document.ParseStream(isw);
+  assert(document.IsArray());
+#+END_SRC
+
+** Create Document
+#+BEGIN_SRC cpp
+  rapidjson::Document doc;
+  doc.SetObject();
+  doc.SetArray();
+#+END_SRC
+
+** Access Document
+#+BEGIN_SRC cpp
+  for (rapidjson::Value &field : v["fields"].GetArray()) {
+    Fields.push_back(field.GetString());
+   }
+#+END_SRC
+
+** Create Value & Save Document
+#+BEGIN_SRC cpp
+  // rapidjson::kObjectType
+  Value array(kArrayType);
+  Document::AllocatorType &allocator = document.GetAllocator();
+  array.PushBack("hello", allocator).PushBack("world", allocator);
+
+  document.AddMember("array", array, allocator);
+
+  document.AddMember("Name", "XYZ", allocator);
+  document.AddMember("Name", "5", allocator);
+  document.AddMember("Name", 5, allocator);
+
+  rapidjson::Value str;
+  std::string Name = "hello";
+  str.SetString(Name.c_str(), allocator);
+#+END_SRC
+
+** Save
+
+#+BEGIN_SRC cpp
+  rapidjson::StringBuffer sb;
+  rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+  rapidjson::Writer<rapidjson::StringBuffer> writer(sb);
+  v.Accept(writer);
+  os << sb.GetString() << "\n";
+#+END_SRC
+
+** Reference
+
+*** GenericDocument : public GenericValue
+- Allocator GetAllocator()
+- ParseStream
+- Parse
+
+*** GenericValue
+**** Predicate
+- IsNull
+- IsBool
+- IsObject
+- IsArray
+- IsNumber
+- IsInt
+- IsString
+
+**** Object
+- SetObject()
+- GetObject
+- operator[]
+- MemberBegin
+- MemberEnd
+- HasMember
+- FindMember
+- AddMember(name, value, allocator)
+- RemoveMember
+
+**** Array
+- SetArray
+- GetArray
+- Size
+- Empty()
+- Clear
+- operator[](index)
+- Begin
+- End
+- PushBack
+- PopBack
+- Erase
+
+**** Other
+- SetBool()
+- GetBool
+- GetInt
+- SetInt
+- GetString
+- SetString

@@ -1,0 +1,13 @@
+#+TITLE: Python Libraries
+
+* Json
+
+#+BEGIN_SRC python
+import json
+json.dumps({"C": 0, "D": 1})
+
+json.loads("a string of json")
+
+json.dump(obj, fp)
+json.load(fp)
+#+END_SRC
