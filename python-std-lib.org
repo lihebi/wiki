@@ -255,7 +255,7 @@ class time.struct_time: returned by gmtime(), localtime() and strptime()
 
 * Concurrent
 
-** TODO threading
+** threading
 The package name is =threading=, the object is =Thread=.
 
 Functions
@@ -357,7 +357,7 @@ Thread.  It seems to use fork but don't have explicit exec on the
 document?? Wired and seems just do something thread can do (except the
 sharing of memory of course).
 
-** TODO Process (subprocess module)
+** Process (subprocess module)
 - subprocess.run(args, *, stdin=None, input=None, stdout=None,
   stderr=None, shell=False, timeout=None, check=False)
   - run the command and wait for it to complete. Return a
@@ -423,28 +423,31 @@ Popen object
   - None indicate hasn't terminated
   - -N means terminated by signal N
 
-* TODO Internet
+* Internet
+** urllib.request
+package urllib.request
 
+Functions
+- urlopen(url, data=None)
+  - url can be a string or Request object
+  - for http and https, returns a http.client.HTTPResponse object
+  - for FTP, file, data urls, return a urllib.response.addinfourl object
+- pathname2url(path): do quoting
+- url2pathname(path): do unquoting
 
-* Json
-
-#+BEGIN_SRC python
-import json
-json.dumps({"C": 0, "D": 1})
-
-json.loads("a string of json")
-
-json.dump(obj, fp)
-json.load(fp)
-#+END_SRC
-
-
-** Reference
-- json.dump(obj, fp, indent=None)
-  - indent=2
-
-
-* urllib
+class Request
+- constructor: (url, data=None, headers={}, method=None)
+  - url: a string
+  - headers: a dictionary.
+  - method: a string. 'GET' is default. Available values: 'HEAD', 'POST'
+methods:
+  - get_method()
+  - add_header(key, val)
+  - has_header(key)
+  - get_header(key)
+  - remove_header(key)
+  - get_full_url()
+  - header_items(): return a list of tuples (key, value)
 
 #+BEGIN_SRC python
   req = request.Request(query)
@@ -455,3 +458,25 @@ json.load(fp)
   # deprecated
   urllib.request.urlretrieve(url[, filename])
 #+END_SRC
+
+** urllib.parse
+- quote(string)
+- quote_plus(string)
+- unquote(string)
+- unquote_plus(string)
+- urlencode(query)
+
+* Data
+** Json
+
+#+BEGIN_SRC python
+import json
+json.dumps({"C": 0, "D": 1})
+json.loads("a string of json")
+
+json.dump(obj, fp, indent=2)
+json.load(fp)
+#+END_SRC
+
+
+
