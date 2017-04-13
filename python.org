@@ -9,8 +9,8 @@
 
 * Language
 The ultimate reference:
-- language reference: https://docs.python.org/2/reference/
-- standard library: https://docs.python.org/2/library
+# - language reference: https://docs.python.org/2/reference/
+# - standard library: https://docs.python.org/2/library
 
 For python 3
 - https://docs.python.org/3.7/reference/
@@ -449,6 +449,9 @@ for root,dirs,files in os.walk('.'):
 - =os.path.abspath('relative/path/to/file')=
 - =os.path.exists("/path/to/file")=
 - =os.rename('old', 'new')=
+- =os.path.isfile=
+
+
 
 ** Shell command
 - =os.system= :: simply run command
