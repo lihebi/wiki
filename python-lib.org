@@ -256,7 +256,135 @@ class time.struct_time: returned by gmtime(), localtime() and strptime()
 * Concurrent
 
 ** TODO threading
+The package name is =threading=, the object is =Thread=.
+
+Functions
+- threading.active_count(): number of Thread object
+- threading.current_thread(): current Thread object
+- threading.enumerate(): return a list of all Thread objects
+- threading.meain(): the main Thread object
+- threading.local(): the instance of local storage. Different for
+  different threads. Typical usage: ~mydata = threading.local()~
+
+Two ways to specify what to run:
+- pass a callable object to the =target= argument when constructing Thread
+- define a subclass of Thread and override the =run= method.
+
+Methods:
+- =start=: start the thread. It will call =run= method in a separate
+  thread. The thread terminate when =run= terminate
+- =join(timeout=None)=: the calling thread will block until this thread terminate
+  - timeout should be float in seconds
+- =is_alive=: test whether the thread terminate
+
+** Thread Sync
+class threading.Lock
+- acquire()
+- release()
+
+class threading.RLock
+- this is recursive lock. The same thread can acquire the lock
+  multiple times. They will be nested and only when the last release
+  is called, the lock can be acquired by another thead
+- acquire()
+- release()
+
+
+class threading.Condition(lock=None)
+- the lock must be a Lock or RLock. If none, a RLock is created
+- acquire()
+- release()
+- wait(timeout=None): wait until notified
+  - release underlying lock
+  - block until notify
+  - re-acquire the lock and return
+  - typical usage: =while not item_is_available(): cv.wait()=
+  - often use =with= statement: =with cv: cv.wait_for(pred); get();
+- wait_for(predicate, timeout=None)
+  - this is same as =while not predicate(): cv.wait()=, thus more
+    convenient than =wait=
+- notify(n=1): notify one thread
+- notify_all(): notify all threads waiting on this condition
+
+class threading.Semaphore: this class manage resources with limited capacity.
+- acquire(): decrease capacity
+- release(): increase capacity
+
+class threading.Event
+- is_set():
+- set(): set flag to true
+- clear(): set flag to false
+- wait(timeout=None): block until internal flag is true
+
+class threading.Timer(interval, function) : Thread
+- interval is float in seconds, function is callable. use =start=
+  method to start the thread, and the function will be called after
+  the delay.
+- cancel(): stop the timer and cancel the execution. Only work if the
+  the timer is still waiting.
+
+class threading.Barrier(parties, action=None, timeout=None)
+- parties is integer. Every thread calling wait will block, until
+  /parties/ number of such call is called. Then all players unblock
+  and do things simultaneously.
+- wait(timeout=None)
+- reset(): reset the barrier. The thread waiting for it will receive =BrokenBarrierError=
+- abort(): all current and /future/ wait call for it will get =BrokenBarrierError=
+- parties: number of parties
+- n_waiting: number of current waiting
+- broken: True or False
+
+*** Using with statement
+Lock, RLock, Condition, Semaphore can be used.
+
+#+BEGIN_SRC python
+with somelock:
+  # do somthing
+#+END_SRC
+
+is equivalent to:
+#+BEGIN_SRC python
+somelock.acquire()
+try:
+  # do something
+finally:
+  somelock.release()
+#+END_SRC
+
+** multiprocessing
+This provide multiprocessing.Process class, having similar API with
+Thread.  It seems to use fork but don't have explicit exec on the
+document?? Wired and seems just do something thread can do (except the
+sharing of memory of course).
+
 ** TODO Process (subprocess module)
+- subprocess.run(args, *, stdin=None, input=None, stdout=None,
+  stderr=None, shell=False, timeout=None, check=False)
+  - run the command and wait for it to complete. Return a
+    =CompleteProcess= instance.
+  - if check is True, raise CalledProcessError exception if return
+    code non-zero. This replace the check_call and check_output.
+
+class subprocess.CompletedProcess
+- args
+- returncode
+- stdout: captured if PIPE is passed to stdout 
+- stderr: captured if PIPE is passed to stderr
+- check_returncode(): if returncode is non-zero, raise CalledProcessError
+
+Variables:
+- subprocess.DEVNULL
+- subprocess.PIPE
+- subprocess.STDOUT: this is only used in the place of stderr to redirect it to stdout
+
+class subprocess.CalledProcessError
+- returncode
+- cmd
+- output: same as stdout
+- stdout
+- stderr
+
+The followings are from 2.7, now only use run.
 - subprocess.call(args, *, stdin=None, stdout=None, stderr=None, shell=False)
   - args: a list of argument, including arg0
   - it can also be a string due to that *
@@ -270,8 +398,6 @@ class time.struct_time: returned by gmtime(), localtime() and strptime()
 - check_call(args, *, ...): same as call, except it will raise exception if return non-0
 - check_output(args, *, stdin=None, stderr=None, shell=False, universal_newlines=False)
   - if return non-0, raise exception. Otherwise return the stdout
-- subprocess.PIPE
-- subprocess.STDOUT: this is only used in the place of stderr to redirect it to stdout
 
 Popen object
 - Popen constructor
