@@ -1,29 +1,92 @@
 #+TITLE: Hebi's Personal Wiki
 
-This site records knowledge I would need to remember.
+A human needs to learn so so many things through his life. He can
+master something at some period of time, but never think he can be
+expert after a month not touching it. What happen next is looking into
+various of manuals to figure out the details and, of course, getting
+the memory back. The memory does help, but not that much if the manual
+is not written in a uniform format. That's the rational to create this
+page: a consistent format for all manuals.
 
-* OS
-  First, install the system by [[file:liveusb.org][Live USB]].
-  Some popular distributions: [[file:linux.org][Linux]], [[file:debian.org][Debian]], [[file:centos.org][CentOS]], [[file:archlinux.org][ArchLinux]].
-  The [[file:debian-setup.org][setup]] of debian. File sharing by [[file:samba.org][samba]].
-  [[file:posix.org][POSIX]]
+Of course most of the material in this wiki are for programming
+related because I'm not aware of some area having more various of
+reference manuals than the area of computer science.
 
-  Some essential apps: , [[file:conkeror.org][conkeror]], [[file:stumpwm.org][StumpWM]], [[file:x11.org][X11]], [[file:tmux.org][Tmux]], [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]].
+I'm talking about references, or manuals, not tutorials. At some point
+when you get more comfortable at programing, tutorial should be some
+easy-and-fun reading material rather than what you want to read in
+your morning time.
 
-Reading news using [[file:gnus.org][Gnus]]. [[file:mailman.org][Mailman]]
+The structure of the wiki is basically one page per topic, except some
+large ones having sub-topics, like C family and the standard and
+non-standard libraries. The index of the pages is on this page
+only. It should contain entries to all the pages.
 
-[[file:docker.org][docker]]
+Get a [[file:linux.org][Linux]] distribution and enjoy the freedom and productivity after
+a deep learning curve. My distribution path come along Ubuntu,
+[[file:archlinux.org][ArchLinux]], gentoo, [[file:centos.org][CentOS]], [[file:debian.org][Debian]], then finally back to [[file:archlinux.org][ArchLinux]].  I
+used debian for a long time and there's a page for [[file:debian-setup.org][setup]] of it.  I
+installed linux for hundreds of times, if not thousands. [[file:liveusb.org][Live USB]].
+Some terms related: [[file:posix.org][POSIX]] and [[file:samba.org][samba]].  I use [[file:stumpwm.org][StumpWM]] as my [[file:x11.org][X11]] window
+manager.  [[file:tmux.org][Tmux]] for session manage. [[file:conkeror.org][conkeror]] used to be my default
+browser but I go back to chromium because the performance.  [[file:docker.org][docker]] is
+fantastic in that I can create a machine to play with very cheaply.
 
-* Coding
-  - Be sure to be familiar with [[file:design-pattern.org][Design Pattern]] before you code.
-  - Compiler techniques: [[file:compiler.org][compiler]], [[file:compiler-impl.org][compiler implementation]], [[file:llvm.org][LLVM]], [[file:clang.org][Clang]], [[file:gdb.org][GDB]], [[file:gcov.org][gcov]], [[file:gprof.org][gprof]]
-  - Scripting: [[file:awk.org][awk]], [[file:sed.org][sed]], [[file:r.org][R]], [[file:./shell.org][shell]], [[file:shell-utils.org][shell utilities]], [[file:js.org][js]]
-  - Python: [[file:python.org][python]], [[file:python-std-lib.org][python standard libraries]], [[file:python-3rd-lib.org][python 3rd party libraries]]
-  - Markup: [[file:regex.org][Regular Expression]], [[file:latex.org][latex]] ([[file:tikz.org][tikz]]), [[file:markdown.org][markdown]], [[file:org.org][Org Mode]], [[file:xpath.org][XPath]], [[file:dot.org][Graphviz/Dot]], [[file:uml.org][UML]], [[file:csv.org][CSV]], [[file:doxygen.org][Doxygen]]
-  - C family: [[file:c.org][C]], [[file:cpp.org][C++]],- [[file:stl.org][Standard Template Library(STL)]], [[file:c-lib.org][C standard library]], [[file:boost.org][Boost]], [[file:pugixml.org][Pugixml]], [[file:cpp-lib.org][C++ Libraries]], [[file:google-test.org][Google Test]], [[file:c-debug.org][C debugging techniques]], [[file:signal.org][Signal Handling]].
-  - Lisp: [[file:emacs.org][Emacs]], [[file:emacs-plugins.org][Emacs Plugins]], [[file:elisp.org][Emacs Lisp]], [[file:emacs-lisp.org][Emacs Part of Elisp]], [[file:common-lisp.org][Common Lisp]], [[file:clojure.org][Clojure]]
-  - Other languages: [[file:hungarian.org][Hungarian notation]], [[file:assembly.org][assembly]], [[file:sql.org][SQL]], [[file:git.org][Git]], [[file:java.org][Java]].
-  - [[file:ascii.org][ASCII]]
+When scripting, the old unix utilities are always helpful and fast
+[[file:awk.org][awk]], [[file:sed.org][sed]], [[file:./shell.org][shell]], [[file:shell-utils.org][shell utilities]].  [[file:regex.org][Regular Expression]] is very
+important in almost all unix scripting tasks. I found [[file:python.org][python]] now is
+pretty easy to use, although I'm stronly against using the stupid
+indent as part of syntax. [[file:python-std-lib.org][python standard libraries]], [[file:python-3rd-lib.org][python 3rd party
+libraries]].  [[file:r.org][R]] is not a regular scripting language, but domain specific
+to do Data analysis.
+
+Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide the ultimate
+way to create academic figures.  [[file:markdown.org][markdown]] is not recommanded from
+me. Instead I use [[file:org.org][Org Mode]] extensively.  [[file:doxygen.org][Doxygen]] generates good
+documents and [[file:uml.org][UML]] figures using [[file:dot.org][Graphviz/Dot]].
+
+
+
+C family is the most fundamental language. Almost all the new and
+fancy languages are written in C family. So, never think they can have
+better performance than C. The legacy [[file:c.org][C]] is small and elegent. It is a
+good /start point/ if you want to learn serious compilers. C comes
+with [[file:c-lib.org][C standard library]]. C is tightly related to Unix features, for
+example [[file:signal.org][Signal Handling]] for C. [[file:cpp.org][C++]] is the language that achieve a good
+balance between performance and morden features. It even continues to
+offer many fancy features. It comes with [[file:stl.org][Standard Template
+Library(STL)]], [[file:cpp-lib.org][C++ Libraries]].  Third party libraries includes [[file:boost.org][Boost]],
+[[file:pugixml.org][Pugixml]], [[file:google-test.org][Google Test]]. Debugging using [[file:gdb.org][GDB]], of course: [[file:c-debug.org][C debugging
+techniques]].
+
+The area of compiler is interesting and pretty hard.  [[file:compiler.org][compiler]],
+[[file:compiler-impl.org][compiler implementation]], [[file:llvm.org][LLVM]], [[file:clang.org][Clang]],, [[file:gcov.org][gcov]], [[file:gprof.org][gprof]] [[file:make.org][make]], [[file:cmake.org][cmake]],
+[[file:autoconf.org][autoconf]]
+
+Faminilar with [[file:design-pattern.org][Design Pattern]] when coding, and this can be learned
+best by doing refactoring. BTW refactoring is /THE/ most important
+thing to do no matter whatever the project is, even academic
+projects. Those who says refactoring is not important may simply
+because they have never written serious code to be useful or big
+enough to require a refactoring. In other word, TOY programs. Sorry if
+I'm too aggressive here, but I am.
+
+There're well-known discussion for what's the best editor to use. Vim
+is good, and I used it for roughly 4 years when I'm very young. But
+I'll never recommand it after trying [[file:emacs.org][Emacs]]. Some commonly used [[file:emacs-plugins.org][Emacs
+Plugins]]. Emacs makes me a fan of lisp.  [[file:elisp.org][Emacs Lisp]], [[file:emacs-lisp.org][Emacs Part of
+Elisp]]. [[file:common-lisp.org][Common Lisp]] is more serious lisp, the StumpWM is written in it.
+[[file:clojure.org][Clojure]] arise recently and the authors are advertising it a lot.  Yes,
+Emacs is a full-fledged opearting system. Reading news using [[file:gnus.org][Gnus]]. BTW
+use [[file:mailman.org][Mailman]] to set up a mailing list server.
+
+Web development is boring. [[file:js.org][js]]. Other small things: [[file:xpath.org][XPath]],
+[[file:csv.org][CSV]]. [[file:hungarian.org][Hungarian notation]], [[file:assembly.org][assembly]], [[file:sql.org][SQL]], [[file:git.org][Git]], [[file:java.org][Java]]. [[file:ascii.org][ASCII]]
+
+
+
+-----
+
 * Algorithm
   - OJ: [[file:leetcode.org][Leetcode]], [[file:alg-string.org][String algorithms]], [[file:palindrome.org][Palindrome]], [[file:data-structure.org][data structure]], [[file:data-structure-old.org][old data structure page]], [[file:oj.org][algorithm in practice]].
   - Computation Theory: [[file:math/511/np.org][NP]], [[file:math/511/np-problems.org][NP problems]], [[file:math/531/NPC.org][NPC]], [[file:math/511/approximation.org][Approximation]], [[file:math/511/lp.org][Linear Programming]], [[file:math/531/tm.org][Turing Machine]], [[file:math/531/decidability.org][Decidability]].
