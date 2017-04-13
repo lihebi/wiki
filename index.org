@@ -66,10 +66,11 @@ The area of compiler is interesting and pretty hard.  [[file:compiler.org][compi
 Faminilar with [[file:design-pattern.org][Design Pattern]] when coding, and this can be learned
 best by doing refactoring. BTW refactoring is /THE/ most important
 thing to do no matter whatever the project is, even academic
-projects. Those who says refactoring is not important may simply
-because they have never written serious code to be useful or big
-enough to require a refactoring. In other word, TOY programs. Sorry if
-I'm too aggressive here, but I am.
+projects. If you can rewrite the sentence 10 times in your academic
+paper (I do this too), why you don't give the same priority to your
+code? Those who says refactoring is not important may simply because
+they have never written serious code to be useful or big enough to
+require a refactoring. In other word, TOY programs.
 
 There're well-known discussion for what's the best editor to use. Vim
 is good, and I used it for roughly 4 years when I'm very young. But
