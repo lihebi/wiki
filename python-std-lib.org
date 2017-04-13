@@ -1,6 +1,7 @@
 #+TITLE: Python Libraries
 
 This contains both standard library and third party library
+- https://docs.python.org/3.7/library/
 
 
 * Built-in exceptions
@@ -146,9 +147,11 @@ Filesystem
 - os.getcwd(): current working directory
 - os.chdir(path): change cwd
 - os.mkdir(path)
+- os.listdir(path='.'): list all in this dir
 - os.makedirs(path)
-- os.remove(path)
-- os.removedirs(path)
+- os.remove(path): remove a file
+- os.removedirs(path): foo/bar/aaa will try to remove aaa, than bar, then foo. Don't use!
+- os.rmdir(): remove an empty dir
 - os.rename(src, dst)
 - os.renames(old, new)
 - os.rmdir(path): only work if dir is empty
@@ -156,6 +159,12 @@ Filesystem
   - seems to be vulnerable
 - os.walk(top, topdown=True): for each directory including top itself,
   it yields 3-tuple (dirpath, dirnames, filenames)
+
+shutil
+- copy(src,dst)
+- copytree(src, dst): recursive
+- rmtree(path): rm -r
+- move(src, dst)
 
 popen family is deprecated. Use subprocess.
 

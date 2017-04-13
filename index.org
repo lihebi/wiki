@@ -73,13 +73,13 @@ they have never written serious code to be useful or big enough to
 require a refactoring. In other word, TOY programs.
 
 There're well-known discussion for what's the best editor to use. Vim
-is good, and I used it for roughly 4 years when I'm very young. But
-I'll never recommand it after trying [[file:emacs.org][Emacs]]. Some commonly used [[file:emacs-plugins.org][Emacs
-Plugins]]. Emacs makes me a fan of lisp.  [[file:elisp.org][Emacs Lisp]], [[file:emacs-lisp.org][Emacs Part of
-Elisp]]. [[file:common-lisp.org][Common Lisp]] is more serious lisp, the StumpWM is written in it.
-[[file:clojure.org][Clojure]] arise recently and the authors are advertising it a lot.  Yes,
-Emacs is a full-fledged opearting system. Reading news using [[file:gnus.org][Gnus]]. BTW
-use [[file:mailman.org][Mailman]] to set up a mailing list server.
+is good, and I used it for roughly 4 years when I'm in undergraduate
+study. But I'll never recommand it after trying [[file:emacs.org][Emacs]]. Some commonly
+used [[file:emacs-plugins.org][Emacs Plugins]]. Emacs makes me a fan of lisp.  [[file:elisp.org][Emacs Lisp]], [[file:emacs-lisp.org][Emacs
+Part of Elisp]]. [[file:common-lisp.org][Common Lisp]] is more serious lisp, the StumpWM is
+written in it.  [[file:clojure.org][Clojure]] arise recently and the authors are advertising
+it a lot.  Yes, Emacs is a full-fledged opearting system. Reading news
+using [[file:gnus.org][Gnus]]. BTW use [[file:mailman.org][Mailman]] to set up a mailing list server.
 
 Web development is boring. [[file:js.org][js]]. Other small things: [[file:xpath.org][XPath]],
 [[file:csv.org][CSV]]. [[file:hungarian.org][Hungarian notation]], [[file:assembly.org][assembly]], [[file:sql.org][SQL]], [[file:git.org][Git]], [[file:java.org][Java]]. [[file:ascii.org][ASCII]]
