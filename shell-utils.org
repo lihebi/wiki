@@ -76,7 +76,9 @@ any characters will represent itself if not:
 Repeated lines in the input will not be detected if they are not adjacent,
 so it may be necessary to sort the files first.
 
- * ~uniq -c~: Precede each output line with the count of the number of times the line occurred in the input, followed by a single space.
+ * ~uniq -c~: Precede each output line with the count of the number of
+   times the line occurred in the input, followed by a single
+   space. You can then comtine this with =sort -n=
  * ~-u~: Only output lines that are not repeated in the input.
  * ~-i~: Case insensitive comparison of lines.
 

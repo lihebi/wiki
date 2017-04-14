@@ -22,6 +22,13 @@ large ones having sub-topics, like C family and the standard and
 non-standard libraries. The index of the pages is on this page
 only. It should contain entries to all the pages.
 
+If you don't like my style of writing, and you like the idea, you are
+always encouraged to create your own wiki. Head to
+https://github.com/lihebi/wiki for the source files for this site if
+you are interested.
+
+-----
+* Get everything organized
 Get a [[file:linux.org][Linux]] distribution and enjoy the freedom and productivity after
 a deep learning curve. My distribution path come along Ubuntu,
 [[file:archlinux.org][ArchLinux]], gentoo, [[file:centos.org][CentOS]], [[file:debian.org][Debian]], then finally back to [[file:archlinux.org][ArchLinux]].  I
@@ -32,33 +39,44 @@ manager.  [[file:tmux.org][Tmux]] for session manage. [[file:conkeror.org][conke
 browser but I go back to chromium because the performance.  [[file:docker.org][docker]] is
 fantastic in that I can create a machine to play with very cheaply.
 
-When scripting, the old unix utilities are always helpful and fast
-[[file:awk.org][awk]], [[file:sed.org][sed]], [[file:./shell.org][shell]], [[file:shell-utils.org][shell utilities]].  [[file:regex.org][Regular Expression]] is very
+There're well-known discussion for what's the best editor to use. Vim
+is good, and I used it for roughly 4 years when I'm in undergraduate
+study. But I'll never recommand it after trying [[file:emacs.org][Emacs]]. Some commonly
+used [[file:emacs-plugins.org][Emacs Plugins]]. Emacs makes me a fan of lisp.  [[file:elisp.org][Emacs Lisp]], [[file:emacs-lisp.org][Emacs
+Part of Elisp]]. [[file:common-lisp.org][Common Lisp]] is more serious lisp, the StumpWM is
+written in it.  [[file:clojure.org][Clojure]] arise recently and the authors are advertising
+it a lot.  Yes, Emacs is a full-fledged opearting system. Reading news
+using [[file:gnus.org][Gnus]]. BTW use [[file:mailman.org][Mailman]] to set up a mailing list server.
+
+* Working on Projects
+A project typically contains three parts: the main program and a bunch
+of scripts to automate things, as well as documentation. For a
+project, I use C family.  C family is the most fundamental
+language. Almost all the new and fancy languages are written in C
+family. So, never think they can have better performance than C. The
+legacy [[file:c.org][C]] is small and elegent. It is a good /start point/ if you want
+to learn serious compilers. C comes with [[file:c-lib.org][C standard library]]. C is
+tightly related to Unix features, for example [[file:signal.org][Signal Handling]] for
+C. [[file:cpp.org][C++]] is the language that achieve a good balance between performance
+and morden features. It even continues to offer many fancy
+features. It comes with [[file:stl.org][Standard Template Library(STL)]], [[file:cpp-lib.org][C++ Libraries]].
+Third party libraries includes [[file:boost.org][Boost]], [[file:pugixml.org][Pugixml]], [[file:google-test.org][Google Test]]. Debugging
+using [[file:gdb.org][GDB]], of course: [[file:c-debug.org][C debugging techniques]].
+
+The second part, scripting, the old unix utilities are always helpful
+and fast [[file:awk.org][awk]], [[file:sed.org][sed]], [[file:./shell.org][shell]], [[file:shell-utils.org][shell utilities]].  [[file:regex.org][Regular Expression]] is very
 important in almost all unix scripting tasks. I found [[file:python.org][python]] now is
 pretty easy to use, although I'm stronly against using the stupid
 indent as part of syntax. [[file:python-std-lib.org][python standard libraries]], [[file:python-3rd-lib.org][python 3rd party
 libraries]].  [[file:r.org][R]] is not a regular scripting language, but domain specific
 to do Data analysis.
 
-Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide the ultimate
-way to create academic figures.  [[file:markdown.org][markdown]] is not recommanded from
-me. Instead I use [[file:org.org][Org Mode]] extensively.  [[file:doxygen.org][Doxygen]] generates good
-documents and [[file:uml.org][UML]] figures using [[file:dot.org][Graphviz/Dot]].
+The 3rd part, Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide
+the ultimate way to create academic figures.  [[file:markdown.org][markdown]] is not
+recommanded from me. Instead I use [[file:org.org][Org Mode]] extensively.  [[file:doxygen.org][Doxygen]]
+generates good documents and [[file:uml.org][UML]] figures using [[file:dot.org][Graphviz/Dot]].
 
-
-
-C family is the most fundamental language. Almost all the new and
-fancy languages are written in C family. So, never think they can have
-better performance than C. The legacy [[file:c.org][C]] is small and elegent. It is a
-good /start point/ if you want to learn serious compilers. C comes
-with [[file:c-lib.org][C standard library]]. C is tightly related to Unix features, for
-example [[file:signal.org][Signal Handling]] for C. [[file:cpp.org][C++]] is the language that achieve a good
-balance between performance and morden features. It even continues to
-offer many fancy features. It comes with [[file:stl.org][Standard Template
-Library(STL)]], [[file:cpp-lib.org][C++ Libraries]].  Third party libraries includes [[file:boost.org][Boost]],
-[[file:pugixml.org][Pugixml]], [[file:google-test.org][Google Test]]. Debugging using [[file:gdb.org][GDB]], of course: [[file:c-debug.org][C debugging
-techniques]].
-
+* Dark Corners
 The area of compiler is interesting and pretty hard.  [[file:compiler.org][compiler]],
 [[file:compiler-impl.org][compiler implementation]], [[file:llvm.org][LLVM]], [[file:clang.org][Clang]],, [[file:gcov.org][gcov]], [[file:gprof.org][gprof]] [[file:make.org][make]], [[file:cmake.org][cmake]],
 [[file:autoconf.org][autoconf]]
@@ -72,15 +90,7 @@ code? Those who says refactoring is not important may simply because
 they have never written serious code to be useful or big enough to
 require a refactoring. In other word, TOY programs.
 
-There're well-known discussion for what's the best editor to use. Vim
-is good, and I used it for roughly 4 years when I'm in undergraduate
-study. But I'll never recommand it after trying [[file:emacs.org][Emacs]]. Some commonly
-used [[file:emacs-plugins.org][Emacs Plugins]]. Emacs makes me a fan of lisp.  [[file:elisp.org][Emacs Lisp]], [[file:emacs-lisp.org][Emacs
-Part of Elisp]]. [[file:common-lisp.org][Common Lisp]] is more serious lisp, the StumpWM is
-written in it.  [[file:clojure.org][Clojure]] arise recently and the authors are advertising
-it a lot.  Yes, Emacs is a full-fledged opearting system. Reading news
-using [[file:gnus.org][Gnus]]. BTW use [[file:mailman.org][Mailman]] to set up a mailing list server.
-
+* Misc
 Web development is boring. [[file:js.org][js]]. Other small things: [[file:xpath.org][XPath]],
 [[file:csv.org][CSV]]. [[file:hungarian.org][Hungarian notation]], [[file:assembly.org][assembly]], [[file:sql.org][SQL]], [[file:git.org][Git]], [[file:java.org][Java]]. [[file:ascii.org][ASCII]]
 
