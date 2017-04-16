@@ -41,26 +41,23 @@
    #+END_EXAMPLE
 
 ** Interactive command
-   =setwd("/absolute/path")= set the working directory.
+We need to know what's going on in the current workspace.  =getwd()=
+and =setwd()= get and set the current dir.  =ls()= list the objects
+currently stored.  =rm(x, y, z)= remove objects =rm(list=ls())= remove
+all objects. =objects()= create and store current objects.
 
-   In the interactive command line interface, =q()= to exit, =help(lm)=
-   to show help message for a built-in function.  =?lm= and =??solve=
-   also shows documentation, while =example(topic)=, as its name
-   indicates, shows the examples.  =help.start()= opens the html
-   documentation page.
+We can perform some IO by =save.image("mydata.Rdata")= and
+=load("mydata.Rdata")= will save and load workspace in current
+directory respectively.  =source("a.R")= loads a script.
+=sink("a.lis")= redirects the output to a file, and =sink()= restore
+that to standard output.
 
-   IO: =source("a.R")= loads a script.  =sink("a.lis")= redirects the
-   output to a file, and =sink()= restore that to standard output.
-   - =save.image("mydata.Rdata")= will save in current directory
-   - =load("mydata.Rdata")= load from current directory
+You can view documentation by calling help =help(lm)=. =?lm= and
+=??solve= also shows documentation, while =example(topic)=, as its
+name indicates, shows the examples.  =help.start()= opens the html
+documentation page.
 
-   For getting current status:
-   - =getwd()= current dir
-   - =setwd()= set current dir
-   - =ls()= list the objects currently stored.
-   - =rm(x, y, z, ink, junk, temp, foo, bar)= remove objects
-   - =rm(list=ls())= remove all objects
-   - =objects()= create and store current objects.
+Finally, =q()= quit R.
 
 ** Commonly used functions
    - =str= show the structure of arbitrary type
