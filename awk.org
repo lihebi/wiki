@@ -28,19 +28,16 @@ The "program" contains a list of statements. Each of form =pattern
 pattern always matches.  Pattern-action statements are separated by
 newlines or semicolons.
 
+The program starts by evaluating the /all/ BEGIN patterns in
+order. Each file is processed in turn by reading data until a record
+separator. This typically means one line at a time, for all the
+files. All patterns are examined against the line. If match, action is
+executed.
+
 Invoking options:
 - =-F FS= :: set FS
 - =-v VAR=VAL= :: set variable before the program begins
 
-** Important Variables
-- =NF= :: number of fields in the current record
-- =NR= :: line number of current record
-- =FNR= :: line number of current record in the current file
-- =FILENAME= :: the name of the current input file
-- =FS (Field Separator)= :: regular expression used to separate fields; also settable by option -Ffs.
-- =RS= :: input record separator (default newline)
-- =OFS= :: output field separator (default blank)
-- =ORS= :: output record separator (default newline)
 
 AWK first read record using RS as separator from input. For each
 record, awk use FS to split it into fields.
@@ -56,9 +53,10 @@ line. Function parameters are local, all other variables are global.
 Patterns are arbitrary Boolean combinations (with =!= =||= =&&=) of
 regular expressions and relational expressions.
 
-A pattern may consist of two patterns separated by a comma; in this
-case, the action is performed for all lines from an occurrence of the
-first pattern though an occurrence of the second.
+A pattern may consist of two patterns separated by a comma, it is
+called pattern range. In this case, the action is performed for all
+lines from an occurrence of the first pattern though an occurrence of
+the second, inclusive.
 
 special patterns: =BEGIN=, =END=.  Cannot combine with other patterns.
 
@@ -80,6 +78,41 @@ semicolons, newlines or right braces.
 Reference of user-defined variable do not use $. E.g. ~myvar=$2~ will
 assign $2 to myvar! Refer the var directly: no need to use a $ as
 shell variables.
+
+Expressions are very similar to C. The added contents are:
+- $N: field reference
+- expr expr: string concatenation
+- string [!]~ pattern: ERE match
+- expr in array
+- (index) in array
+
+** Variables
+- Except function parameters, all variables are
+  /global/. Uninitialized value have both a numeric value of 0 and a
+  string value of empty string.
+- field variable can be referenced by $N or $expr where expr is
+  numerical expression. They are assignable. Reference to non-exist
+  fields is uninitialized value. NF is the number of fields. Assign to
+  non-exist field increase NF.
+
+Important Variables
+- =NF= :: number of fields in the current record
+- =NR= :: line number of current record
+- =FNR= :: line number of current record in the current file
+- =FILENAME= :: the name of the current input file
+- =FS (Field Separator)= :: regular expression used to separate fields; also settable by option -Ffs.
+- =RS= :: input record separator (default newline)
+- =OFS= :: output field separator (default blank)
+- =ORS= :: output record separator (default newline)
+
+** Output
+print and printf write to standard output by default. Redirect is supported.
+- > expr : file
+- >> expr : file
+- | expr : command
+
+
+
 
 ** Control Structure
 - =if (condition) then-body [else else-body]=
@@ -104,6 +137,11 @@ shell variables.
 - substr(s, m[, n]) :: return substring from m with length at most n
 - tolower(s) :: return lowercase
 - toupper(s) :: uppercase
+
+* User-defined Functions
+#+BEGIN_EXAMPLE
+function name([param, ...]) {statements}
+#+END_EXAMPLE
 
 * Examples
 #+begin_src shell
