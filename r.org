@@ -214,8 +214,11 @@ matrix(1:9, nrow=3,byrow=TRUE)
   - ~var(x)~: ~sum((x-mean(x))^2)/(length(x)-1)~
   - ~sort(x)~: increasing order
   - ~order()~ or ~sort.list()~
-  - =paste()= function takes an arbitrary number of arguments
-    and concatenates them one by one into character strings.
+  - =paste(sep=" ")= function takes an arbitrary number of arguments
+    and concatenates them one by one into character strings. The
+    argument can be numeric.
+  - =toString(8)=: convert integer to string
+  - =round(x, digits=0)=
 
 * Control Structure
   The compound statements are the same as C, can be a single statement without the braces.
