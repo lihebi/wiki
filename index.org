@@ -3,10 +3,9 @@
 A human needs to learn so so many things through his life. He can
 master something at some period of time, but never think he can be
 expert after a month not touching it. What happen next is looking into
-various of manuals to figure out the details and, of course, getting
-the memory back. The memory does help, but not that much if the manual
-is not written in a uniform format. That's the rational to create this
-page: a consistent format for all manuals.
+various of manuals to get the memory back. The memory does help, but
+not that much if the manual is not written in a uniform format. That's
+the rational to create this page: a consistent format for all manuals.
 
 Of course most of the material in this wiki are for programming
 related because I'm not aware of some area having more various of
@@ -41,14 +40,20 @@ fantastic in that I can create a machine to play with very cheaply.
 
 There're well-known discussion for what's the best editor to use. Vim
 is good, and I used it for roughly 4 years when I'm in undergraduate
-study. But I'll never recommand it after trying [[file:emacs.org][Emacs]]. Some commonly
-used [[file:emacs-plugins.org][Emacs Plugins]]. Emacs makes me a fan of lisp.  [[file:elisp.org][Emacs Lisp]], [[file:emacs-lisp.org][Emacs
-Part of Elisp]]. [[file:common-lisp.org][Common Lisp]] is more serious lisp, the StumpWM is
+study. But I'll never recommand it after switching to [[file:emacs.org][Emacs]]. Yes,
+Emacs is a full-fledged opearting system. Emacs is a much better
+choice thanks a lot to the [[file:elisp.org][Emacs Lisp]] language. There're tons of [[file:emacs-plugins.org][Emacs
+Plugins]] out there, and it is very easy and comfortable to extend the
+editor by my own writing some lisp. The elisp is tightly bounded with
+emacs editor functionalities, so there's a dedicated page for th [[file:emacs-lisp.org][Emacs
+Part of Elisp]].  Although elisp is a good start point of lisp, it is
+not general purpose, and can only run inside emacs. Another lisp
+flavor, [[file:common-lisp.org][Common Lisp]] is more serious and practical lisp, the StumpWM is
 written in it.  [[file:clojure.org][Clojure]] arise recently and the authors are advertising
-it a lot.  Yes, Emacs is a full-fledged opearting system. Reading news
-using [[file:gnus.org][Gnus]]. BTW use [[file:mailman.org][Mailman]] to set up a mailing list server.
+it a lot.  Many big player reside inside emacs, like the new reader
+[[file:gnus.org][Gnus]].
 
-* Working on Projects
+* Programming
 A project typically contains three parts: the main program and a bunch
 of scripts to automate things, as well as documentation. For a
 project, I use C family.  C family is the most fundamental
@@ -59,27 +64,19 @@ to learn serious compilers. C comes with [[file:c-lib.org][C standard library]].
 tightly related to Unix features, for example [[file:signal.org][Signal Handling]] for
 C. [[file:cpp.org][C++]] is the language that achieve a good balance between performance
 and morden features. It even continues to offer many fancy
-features. It comes with [[file:stl.org][Standard Template Library(STL)]], [[file:cpp-lib.org][C++ Libraries]].
-Third party libraries includes [[file:boost.org][Boost]], [[file:pugixml.org][Pugixml]], [[file:google-test.org][Google Test]]. Debugging
-using [[file:gdb.org][GDB]], of course: [[file:c-debug.org][C debugging techniques]].
+features. C++ has a lot of libraries.  [[file:stl.org][Standard Template Library(STL)]]
+defines containers and its algorithms.  The most functionalities not
+specified in the standard librareis can often be found in [[file:boost.org][Boost]].  Some
+[[file:cpp-lib.org][3rd-party C++ Libraries]] that is small enough to put into one page.
+[[file:pugixml.org][Pugixml]] is Data processing libraries for xml.  Use [[file:google-test.org][Google Test]] for
+unit testing.  Debugging using [[file:gdb.org][GDB]], of course. Here are some [[file:c-debug.org][C
+debugging techniques]].
 
-The second part, scripting, the old unix utilities are always helpful
-and fast [[file:awk.org][awk]], [[file:sed.org][sed]], [[file:./shell.org][shell]], [[file:shell-utils.org][shell utilities]].  [[file:regex.org][Regular Expression]] is very
-important in almost all unix scripting tasks. I found [[file:python.org][python]] now is
-pretty easy to use, although I'm stronly against using the stupid
-indent as part of syntax. [[file:python-std-lib.org][python standard libraries]], [[file:python-3rd-lib.org][python 3rd party
-libraries]].  [[file:r.org][R]] is not a regular scripting language, but domain specific
-to do Data analysis.
-
-The 3rd part, Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide
-the ultimate way to create academic figures.  [[file:markdown.org][markdown]] is not
-recommanded from me. Instead I use [[file:org.org][Org Mode]] extensively.  [[file:doxygen.org][Doxygen]]
-generates good documents and [[file:uml.org][UML]] figures using [[file:dot.org][Graphviz/Dot]].
-
-* Dark Corners
-The area of compiler is interesting and pretty hard.  [[file:compiler.org][compiler]],
-[[file:compiler-impl.org][compiler implementation]], [[file:llvm.org][LLVM]], [[file:clang.org][Clang]],, [[file:gcov.org][gcov]], [[file:gprof.org][gprof]] [[file:make.org][make]], [[file:cmake.org][cmake]],
-[[file:autoconf.org][autoconf]]
+The area of [[file:compiler.org][compiler]] is interesting and pretty hard.  Some misc staff
+for real-world [[file:compiler-impl.org][compiler implementation]].  [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]] makes
+the ecosystem of compilation.  Profiling of you code by [[file:gcov.org][gcov]],
+[[file:gprof.org][gprof]]. When building compiler tools for [[file:program-analysis.org][Program Analysis]], [[file:llvm.org][LLVM]] and
+[[file:clang.org][Clang]] toolchain can make it pretty easy.
 
 Faminilar with [[file:design-pattern.org][Design Pattern]] when coding, and this can be learned
 best by doing refactoring. BTW refactoring is /THE/ most important
@@ -90,36 +87,29 @@ code? Those who says refactoring is not important may simply because
 they have never written serious code to be useful or big enough to
 require a refactoring. In other word, TOY programs.
 
+Scripting. [[file:./shell.org][shell]] concept and all [[file:shell-utils.org][shell utilities]] is
+specified in POSIX standard.  [[file:awk.org][awk]] and [[file:sed.org][sed]] can make really elegent
+scripts for simple tasks.  [[file:regex.org][Regular Expression]] is very important in
+almost all unix scripting tasks. Moving to some more modern ones, I
+found [[file:python.org][python]] now is pretty easy to use thanks to the pretty complete
+[[file:python-std-lib.org][python standard libraries]] and it [[file:python-3rd-lib.org][python 3rd party libraries]], although
+I'm stronly against using the stupid indent as part of syntax.  [[file:r.org][R]] is
+very good at processing data, runs natively inside emacs.
+
+* Writing
+The 3rd part, Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide
+the ultimate way to create academic figures.  [[file:markdown.org][markdown]] is not
+recommanded from me. Instead I use [[file:org.org][Org Mode]] extensively.  [[file:doxygen.org][Doxygen]]
+generates good documents and [[file:uml.org][UML]] figures using [[file:dot.org][Graphviz/Dot]].
+
 * Misc
-Web development is boring. [[file:js.org][js]]. Other small things: [[file:xpath.org][XPath]],
-[[file:csv.org][CSV]]. [[file:hungarian.org][Hungarian notation]], [[file:assembly.org][assembly]], [[file:sql.org][SQL]], [[file:git.org][Git]], [[file:java.org][Java]]. [[file:ascii.org][ASCII]]
+I got some of the notes from computation theory class.  [[file:math/511/np.org][NP]], [[file:math/511/np-problems.org][NP
+problems]], [[file:math/531/NPC.org][NPC]], [[file:math/511/approximation.org][Approximation]], [[file:math/511/lp.org][Linear Programming]], [[file:math/531/tm.org][Turing Machine]],
+[[file:math/531/decidability.org][Decidability]]. And some from AI class too: [[file:search-alg.org][Search algorithm]], [[file:name-alg.org][Name
+Algorithm]], [[file:machine-learning.org][Machine Learning]], [[file:ai.org][Artificial Intelligence]]
 
+I do some [[file:leetcode.org][Leetcode]] ocationally to keep a sense of fast implementation
+of algorithm, but not much. Some related posts [[file:alg-string.org][String algorithms]],
+[[file:palindrome.org][Palindrome]], [[file:data-structure.org][data structure]], [[file:data-structure-old.org][old data structure page]], [[file:oj.org][algorithm in
+practice]].
 
-
------
-
-* Algorithm
-  - OJ: [[file:leetcode.org][Leetcode]], [[file:alg-string.org][String algorithms]], [[file:palindrome.org][Palindrome]], [[file:data-structure.org][data structure]], [[file:data-structure-old.org][old data structure page]], [[file:oj.org][algorithm in practice]].
-  - Computation Theory: [[file:math/511/np.org][NP]], [[file:math/511/np-problems.org][NP problems]], [[file:math/531/NPC.org][NPC]], [[file:math/511/approximation.org][Approximation]], [[file:math/511/lp.org][Linear Programming]], [[file:math/531/tm.org][Turing Machine]], [[file:math/531/decidability.org][Decidability]].
-  - AI: [[file:search-alg.org][Search algorithm]], [[file:name-alg.org][Name Algorithm]], [[file:machine-learning.org][Machine Learning]], [[file:ai.org][Artificial Intelligence]]
-  - Other: [[file:math-fund.org][Fundamental of math]]
-
-* Random Staff
-  - [[file:program-analysis.org][Program Analysis]]
-  - [[http://www.stroustrup.com/][Bjarne Stroustrup]] invented C++!
-  - His close friend [[http://www.stepanovpapers.com/][Alexander A. Stepanov]], the author of STL.
-  - [[https://github.com/isocpp/CppCoreGuidelines][CppCoreGuidelines]]
-  - [[http://cppcon.org/][CppCon]].
-  - [[http://www.aosabook.org/][these wonderful aosabook books]]?
-* Misc
-  - [[file:chrome.org][chrome extension]]
-  - [[file:vpn.org][VPN]]
-  - [[file:mac.org][Mac]]
-  - Windows has [[file:autohotkey.org][AutoHotKey]]
-  - [[file:supercollider.org][SuperCollider]] is a server and a language for music synthesizing.
-  - [[file:overtone.org][Overtone]] offers a /clojure/ wrapper and emacs environment for the SuperCollider backend.
-  - [[file:poem.org][Poems]] I recite.
-  - [[file:golf.org][Golf]]
-  - [[file:guitar.org][Guitar]]
-
-There's always a [[file:tmp.org][tmp]] buffer, a [[file:backup.org][BackUp]], and an [[file:other.org][other]] page.

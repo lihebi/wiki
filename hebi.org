@@ -1,5 +1,34 @@
 #+TITLE: Hebi
 
+* A temp of wiki page
+
+
+There's always a [[file:tmp.org][tmp]] buffer, a [[file:backup.org][BackUp]], and an [[file:other.org][other]] page.
+** Life
+- [[file:poem.org][Poems]] 
+- [[file:golf.org][Golf]]
+- [[file:guitar.org][Guitar]]
+
+** Technique
+- [[file:mailman.org][Mailman]]
+- [[file:js.org][js]]
+- [[file:xpath.org][XPath]]
+- [[file:csv.org][CSV]]
+- [[file:hungarian.org][Hungarian notation]]
+- [[file:assembly.org][assembly]]
+- [[file:sql.org][SQL]]
+- [[file:git.org][Git]]
+- [[file:java.org][Java]]
+- [[file:ascii.org][ASCII]]
+- [[file:math-fund.org][Fundamental of math]]
+
+** APP
+- [[file:chrome.org][chrome extension]].
+- [[file:vpn.org][VPN]]
+- [[file:mac.org][Mac]]
+- Windows has [[file:autohotkey.org][AutoHotKey]]
+
+* Weight
 The bar is 45lb.
 
 | day              | squat (lb) | Bench |  Row | OH Press | Dead lift | weight | Running (mile) |
