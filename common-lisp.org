@@ -1,220 +1,22 @@
 #+TITLE: Common Lisp
 
-* Installation
-** quicklisp
-#+BEGIN_SRC lisp
-;; sbcl --load /path/to/quicklisp.lisp
-(load "/path/to/quicklisp.lisp")
-(quicklisp-quickstart:install)
+Common Lisp the language:
+http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/html/cltl/cltl2.html
 
-;; setting up
-(load "~/quicklisp/setup.lisp")
-;; load quicklisp when you start lisp
-(ql:add-to-init-file)
-
-;; install/remove a software
-(ql:quickload "clx-truetype")
-(ql:uninstall "clx-truetype")
-
-;; query installed packages
-(ql:system-apropos "substring")
-
-;; updating all packages
-(ql:update-all-dists)
-;; update quicklisp itself
-(ql:update-client)
-#+END_SRC
-
-- (ql:quickload "name") :: load a system
-- (ql:system-apropos "term") :: search
-
-
-
-A list of packages used:
-- clx-truetype :: for stumpwm ttf-font
-- zpng :: for stumpwm screenshot
-** packages
-- =cl-quicklisp=
-
-
-
-** org babel
-first, start =M-x slime=, then you can evaluate this:
-
-#+name: hello-world
-#+header: :var message="Hello World!"
-#+begin_src lisp
-  (princ message)
-#+end_src
-
-** Slime
-- slime (emacs IDE)
-- sbcl ("lisp" executer)
-- cl-quicklisp (package manager)
-
-In emacs: start slime
-#+BEGIN_EXAMPLE
-CL-USER> (load "/path/to/quicklisp.lisp")
-CL-USER> ;; follow screen command to install
-CL-USER> (load "~/quicklisp/setup.lisp") ;; load it
-
-CL-USER> (ql:add-to-init-file) ;; add to sbcl's init file
-
-CL-USER> (ql:quickload "clx-truetype") ;; download this package. Packages will be put into "~/quicklisp/xxx/dist"
-
-CL-USER> (ql:update-all-dists) ;; update
-CL-USER> (ql:update-client) ;; update quicklisp itself
-#+END_EXAMPLE
-
-The staff added into =.sbclrc=:
-#+BEGIN_EXAMPLE
-  ;;; The following lines added by ql:add-to-init-file:
-  #-quicklisp
-  (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
-  (user-homedir-pathname))))
-  (when (probe-file quicklisp-init)
-  (load quicklisp-init)))
-#+END_EXAMPLE
-
-*** Commands
-
-| command   | description             |
-|-----------+-------------------------|
-| C-c C-d d | slime-describe-symbol   |
-| C-c C-d f | slime-describe-function |
-| M-TAB     | slime-complete-symbol   |
-
-In a buffer of mode =lisp=, =C-c C-c= will evaluate the =defun= around cursor.
-=C-c C-z= will switch to the =slime= buffer.
-
-
-* Reference
-Common Lisp the language: http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/html/cltl/cltl2.html
-
-** Truth, falsehood, equality
-- =nil= is false, everything else is true
-- =nil= is both an atom and a list. =()= is exactly the same as =nil=
-
-- =EQ= tests for object identity. Two objects are =EQ= if they're identical.
-  It CANNOT compare numbers and characters, which gives undefined behavior.
-- =EQL= is similar to =EQ= except that it guarantees the same numeric or character value is equal. =(eql 1 1)= is =t=.
-- =EQ= is more efficient than =EQL= because it does not need to check whether it is numeric or character.
-  But =EQL= has less trouble to understand .. so use =EQL= when possible.
-- =EQUAL= is looser than =EQL=. It consider strings equivalent if they contain the same characters.
-- =EQUALP= is even looser. For example, it consider two strings are equal case-insensitively. NEVER use this.
-** Function
-#+BEGIN_SRC lisp
-  (defun name (a b
-               &optional op1 (op2 def-value) (op3 def-value op3-supplied-p)
-               &rest rests
-               &key k1 (k2 def-value k2-supplied-p) ((:kkkkk3 k3) def-value k3-supplied-p))
-    (body-forms))
-#+END_SRC
-
-First required arguments are consumed, then the optional arguments, then the rest, finally the keyword arguments.
-optional arguments can have default values (which defaults to nil), and a variable to indicate whether it is supplied.
-The rests is a list.
-keyword arguments are the same as optional arguments, except it must be supplied by keyword.
-It can be rebound to a simpler name to be used in the body.
-
-Never mix (optional, key).
-You can mix rest and key, but the behavior is, after matching all required and optional, everything are bound to rest.
-Then appropriate ones are ALSO bound to keyword arguments.
-
-The return value of function is typically the last expression.
-But you can explicit return from a function by using =RETURN-FROM SYMBOL body= special form.
-Symbol is the function name to return, and it is not evaluted.
-You must provide the function in order to return, which makes it not frequently used.
-
-The function object can be obtained by ='#=.
-One can apply the object in two ways:
-- =FUNCALL= :: the first is the function object, the rests are arguments
-- =APPLY= :: the first is the function object, then a list of arguments.
-  The list can be looser, e.g. some arguments, as long as the last one is a list.
-
-** Variable
-The symbol is a reference of the object.
-Assigning to the symbol will create another reference to another object.
-But, if the object is mutable, then assign to the reference will change the object.
-
-Function parameters are reference.
-So if the object is mutable, then assigning to the parameter will change the referenced object.
-
-Global variable can be defined by =defvar= and =defparameter=. Naming convention is put =*= surrounds it.
-
-#+BEGIN_EXAMPLE
-defparameter *varname* init-value "Optional document string"
-defvar *varname* optional-init-value "optional document string"
-#+END_EXAMPLE
-
-The difference (Prefer =defvar=):
-- =defparameter= will always assign the initial value
-- =defvar= will do so only if the variable is not defined;
-  =defvar= can also be used without initial value, the variable will be unbound.
-
-Although the global variable can be referred at any place, the binding is still quite lexical regarding to the binding form.
-E.g, the let binding can rebind the global variable, and everything before the return of let form sees this binding.
-After the return, the binding fall back to the previous binding.
-This is good because when you want to temporary change the =*standard-output*= to a file,
-you don't need to have to remember to change it back.
-
-This also means, assign to global variable only modify the specific binding, while the binding on the stack does not change.
-Lisp did this by looking up the name of variable: if it is declared by =defvar= or =defparameter=,
-it will creates dynamic binding.
-
-=defconstant +name+ init-value "optional document string"= is used to declare constant. Use =+= surrounds it.
-It is possible to redefine the constant using =defconstant= again, but the behavior is undefined.
-E.g. the code refer to it might need to be reevaluated to see the update.
-So, do NOT redefine a constant, otherwise it is not a constant, use =defparameter= instead.
-
-Assigning a value to a binding is:
-1. change the binding only, do not change other hidden bindings for this symbol
-2. do not change the value object the binding refers to
-
-The general assignment operator is =setf (place value)+=.
-When assigning a binding, it will call =setq= (but don't call =setq= directly!), and returns the newly assigned value.
-In the document, a /SEFTable/ thing is suitable to be a =setf= /place/.
-
-To make the code more concise, some "f-family" are invented.
-- =(incf x)= :: =(setf x (+ x 1))=
-- =(decf x)= ::
-- =(incf x 10)= ::
-
-here =incf= and =decf= modifies the argument, so they are called /modify macros/.
-Other /modify macros/:
-- =push=, =pop=, =pushnew=
-- =rotatef=, =shiftf=
-  - =(roratef a b)= is equal to =(let ((tmp a)) (setf a b b tmp) nil)=
-  - =(shiftf a b 10)= shifts all the values left, equals to =(let ((tmp a)) (setf a b b 10) tmp)=
-
-** Control Structure
-*** Conditional
-- =(if condition then-form [else-form])=
-- =(progn forms*)=
-- =(when cond forms*)=
-- =(unless cond forms*)=
-- =(cond (test-1 form*) (test-2 form*))=:
-  The test predicates are evaluated one by one until one to =t=, then evaluate the body form, and return the last.
-  To have a default, put a =t= as the last condition.
-
-*** Looping
-- =(dolist (var list-form) body-form*)=
-- =(dotimes (var count-form) body-form*)=: from 0 to the value of count-form-1, inclusively
-- =(do (var-def*) (end-test-form result-form*) statements*)= where the var-def is =(var init-form step-form)=
-  - =(do ((i 0 (1+ i)))   ((> i 4))     (print i))
-
-** Types
-*** numbers
+* Type
+Common Lisp is strong typed, but the type is associated with objects,
+not variables.
+** numbers
 - =#b010101=
 - =#xaf08=
 rounding:
-- =floor= :: toward negative infinity
-- =ceiling= :: toward positive infinity
-- =truncate= :: toward 0
-- =round= :: to nearest integer
+- =floor=: toward negative infinity
+- =ceiling=: toward positive infinity
+- =truncate=: toward 0
+- =round=: to nearest integer
 modulus
-- =mod= :: modular
-- =rem= :: remainder
+- =mod=: modular
+- =rem=: remainder
 min,max
 - =min=
 - =max=
@@ -226,7 +28,9 @@ predicates
 - =oddp=
 - ~/=~
 
-*** characters
+** Character
+A character object can be notated by writing =#\c= where c is any
+standard character.
 
 | numeric analog | case-sensitive | case-insensitive | string case sens | string case insens |
 |----------------+----------------+------------------+------------------+--------------------|
@@ -234,47 +38,566 @@ predicates
 | ~/=~           | ~char/=~       | =CHAR-NOT-EQUAL= | ~string/=~       | =string-not-equal= |
 | ~<~            | ~char<~        | =CHAR-LESSP=     | ~string<~        | =string-lessp=     |
 
-** Destructive
-There are two types of destructive functions:
-- /for-side-effect/: typically use =setf=
-- /recycling operation/
+** Boolean
+- =nil= is false, everything else is true
+- =nil= is both an atom and a list. =()= is exactly the same as =nil=
 
-The recycling operations are typically those with =n= as prefix.
-80 percent of the use cases are =PUSH/NREVERSE= and =SETF/DELETE=.
+** Symbols
+ In addition to letters and numbers, the following characters can also
+ be considered to be alphabet:
 
+ #+BEGIN_EXAMPLE
+ + - * / @ $ % ^ & _ = < > ~ .
+ #+END_EXAMPLE
+
+ But some conventions apply:
+ - =+global-constant+=
+ - =*global-variable*=
+
+ The following characters are also alphabet, not used by common lisp
+ standard, but reserved for some purpose:
+ #+BEGIN_EXAMPLE
+ ? ! [ ] { }
+ #+END_EXAMPLE
+
+ Finally, lisp is case-insensitive. The program will be converted to
+ upper case when stored in computer.
+
+*** TODO Property list
+ A symbol has such a list.
+ - get
+ - remprop
+ - symbol-plist
+ - getf
+ - remf
+ - get-properties
+
+** Sequence
+ Sequence contains both lists and vectors. Here are the common
+ operations that shares between them because they operate on ordered
+ sets of elements.
+
+*** Simple Sequence Functions
+ - elt
+ - subseq
+ - copy-seq
+ - length
+ - reverse
+ - nreverse
+ - make-sequence
+
+*** Mapping
+ - concatenate
+ - map
+ - map-into
+ - some
+ - every
+ - notany
+ - notevery
+ - reduce
+
+*** Modifying Seq
+ - fill
+ - replace
+ - remove
+ - remove-if
+ - remove-if-not
+ - delete
+ - delete-if
+ - delete-if-not
+ - remove-duplicates
+ - delete-duplicates
+ - substitute
+ - substitute-if
+ - substitute-if-not
+ - nsubstitute
+ - nsubstitute-if
+ - nsubstitute-if-not
+
+*** Searching
+ - find
+ - find-if
+ - find-if-not
+ - position
+ - position-if
+ - position-if-not
+ - count
+ - count-if
+ - count-if-not
+ - mismatch
+ - search
+
+*** Sorting & Merging
+ - sort
+ - stable-sort
+ - merge
+
+** List
+*** cons
+- car
+- cdr
+- caar, ..., cdddr: all combinations, up to 4-level deep
+- cons
+- tree-equal
+*** lists
+- endp: predicate to check the end of a list
+- list-length
+- nth
+- first, second, ..., tenth
+- rest
+- nthcdr
+- last
+- list
+- list*
+- make-list
+- append
+- copy-list
+- copy-alist
+- copy-tree: copy only copies the outer-most level of a list. Use
+  copy-tree to copy all levels of a list.
+- revappend
+- nconc
+- nreconc
+- push: *macro*
+- pushnew
+- pop: *macro*
+- butlast
+- nbutlast
+- ldiff
+*** alteration of list structure
+Change the car or cdr of an existing cons. It is destructive.
+- rplaca
+- rplacd
+*** substitution
+- subst
+- subst-if
+- subst-if-not
+- nsubst
+- nsubst-if
+- nsubst-if-not
+- sublis
+- nsublis
+*** Set
+- member
+- member-if
+- member-if-not
+- tailp
+- adjoin
+- union
+- nunion
+- intersection
+- nintersection
+- set-difference
+- nset-difference
+- set-exclusive-or
+- nset-exclusive-or
+- subsetp
+*** Association Lists
+- acons
+- pairlis
+- assoc
+- assoc-if
+- assoc-if-not
+- rassoc
+- rassoc-if
+- rassoc-if-not
+
+
+** Hash Table
+This is a map.
+
+- make-hash-table
+- hash-table-p
+- gethash
+- remhash: remove hash entry
+- maphash
+- clrhash
+- hash-table-count
+- with-hash-table-iterator
+- hash-table-rehash-size
+- hash-table-rehash-threshold
+- hash-table-size
+- hash-table-test
+
+** Array
+Array can be general array, holding arbitrary object types; it can
+also be a specialized array that hold a given type. One dimentional
+arrays are called vectors. Vectors holding arbitrary objects are
+/general vectors/, while the ones holding type =string-char= are
+called /strings/, holding type =bit= are called /bit-vectors/.
+*** Creation
+- make-array
+- array-rank-limit: *constant*
+- array-dimension-limit: *constant*
+- array-total-size-limit: *constant*
+- vector
+
+*** Access
+- aref
+- svref
+*** Information
+- array-element-type
+- array-rank
+- array-dimension
+- array-dimensions
+- array-total-size
+- array-in-bounds-p
+- array-row-major-index
+- row-major-aref
+- adjustable-array-p
+*** bit-array
+- bit
+- sbit
+- bit-and
+- bit-ior
+- bit-xor
+- bit-eqv
+- bit-nand
+- bit-nor
+- bit-andc1
+- bit-andc2
+- bit-orc1
+- bit-orc2
+- bit-not
+*** Fill
+The /fill pointer/ is a non-negative integer no larger than the total
+number of elements in the vector (array-dimension). It is the number
+of filled-in elements in the vector.
+- array-has-fill-pointer
+- fill-pointer
+- vector-push
+- vector-push-extend
+- vector-pop
+*** Change dimension
+- adjust-array
+
+
+
+
+** String
+A string is a specialized vector (one-dimensional array) whose
+elements are characters.
+*** Access
+- char
+- schar
+*** Comparision
+- string=
+- string-equal
+- string<
+- string>
+- string<=
+- string>=
+- string/=
+- string-lessp
+- string-greaterp
+- string-not-greaterp
+- string-not-lessp
+- string-not-equal
+*** String Construction and Manipulation
+- make-string
+- string-trim
+- string-left-trim
+- string-right-trim
+- string-upcase
+- string-downcase
+- string-capitalize
+- nstring-upcase
+- nstring-downcase
+- nstring-capitalize
+- string
+
+** Structure
+*** defstruct
+- MACRO defstruct
+- [ ] automatically generated constructor function. =defstruct foo=
+  will also define =make-foo=
+
+* Concepts
+** Form
+Forms are the building block of lisp program. There're three kinds of
+forms:
+- self-evaluating forms: numbers, nil, :key
+- symbols: variables
+- lists
+  - special forms
+  - macro calls
+  - function calls
+** TODO Scope and Extent
+ Although the global variable can be referred at any place, the binding
+ is still quite lexical regarding to the binding form.  E.g, the let
+ binding can rebind the global variable, and everything before the
+ return of let form sees this binding.  After the return, the binding
+ fall back to the previous binding.  This is good because when you want
+ to temporary change the =*standard-output*= to a file, you don't need
+ to have to remember to change it back.
+
+ This also means, assign to global variable only modify the specific
+ binding, while the binding on the stack does not change.  Lisp did
+ this by looking up the name of variable: if it is declared by =defvar=
+ or =defparameter=, it will creates dynamic binding.
+
+ The symbol is a reference of the object.  Assigning to the symbol will
+ create another reference to another object.  But, if the object is
+ mutable, then assign to the reference will change the object.
+ Function parameters are reference.  So if the object is mutable, then
+ assigning to the parameter will change the referenced object.
+
+** Variable
+*** Creation
+ #+BEGIN_SRC lisp
+ (defparameter *varname* init-value "Optional document string")
+ (defvar *varname* optional-init-value "optional document string")
+ (defconstant +name+ init-value "optional document string")
+ #+END_SRC
+
+ Global variable can be defined by =defvar= and =defparameter=. Naming
+ convention is put =*= surrounds it.  The difference (Prefer =defvar=):
+ - =defparameter= will always assign the initial value
+ - =defvar= will do so only if the variable is not defined; =defvar=
+   can also be used without initial value, the variable will be
+   unbound.
+
+ =defconstant= is used to declare constant. Use =+= surrounds it.  It
+ is possible to redefine the constant using =defconstant= again, but
+ the behavior is undefined.  E.g. the code refer to it might need to be
+ reevaluated to see the update.  So, do NOT redefine a constant,
+ otherwise it is not a constant, use =defparameter= instead.
+
+*** Assignment
+ Assigning a value to a binding is:
+ 1. change the binding only, do not change other hidden bindings for
+    this symbol
+ 2. do not change the value object the binding refers to
+
+ The general assignment operator is =setf (place value)+=.  When
+ assigning a binding, it will call =setq= (but don't call =setq=
+ directly!), and returns the newly assigned value.  In the document, a
+ /SEFTable/ thing is suitable to be a =setf= /place/.  Always use
+ =setf= instead of =setq=.  This is more general. This includes
+ /variables, array locations, list elements, hash table entries,
+ structure fields, and object slots/.
+
+ To make the code more concise, some "f-family" are invented.
+ - =(incf x)= :: =(setf x (+ x 1))=
+ - =(decf x)= ::
+ - =(incf x 10)= ::
+
+ here =incf= and =decf= modifies the argument, so they are called
+ /modify macros/.  Other /modify macros/:
+ - =push=, =pop=, =pushnew=
+ - =rotatef=, =shiftf=
+   - =(roratef a b)= is equal to =(let ((tmp a)) (setf a b b tmp) nil)=
+   - =(shiftf a b 10)= shifts all the values left, equals to =(let ((tmp a)) (setf a b b 10) tmp)=
+
+*** Destructive
+ There are two types of destructive functions:
+ - /for-side-effect/: typically use =setf=
+ - /recycling operation/
+
+ The recycling operations are typically those with =n= as prefix.  80
+ percent of the use cases are =PUSH/NREVERSE= and =SETF/DELETE=.
+
+ #+BEGIN_SRC lisp
+ (defun upto (max)
+   (let ((result nil))
+     (dotimes (i max)
+       (push i result))
+     (nreverse result)))
+ #+END_SRC
+
+ #+BEGIN_SRC lisp
+ (setf foo (delete nil foo))
+ #+END_SRC
+
+ =sort= is also destructive, so use it on a copy of the list. Be sure
+ to assign it back to the variable.
+
+ #+BEGIN_SRC lisp
+ (defparameter *list* (list 4 3 2 1))
+ (sort *list* #'<) ;; (1 2 3 4)
+ *list* ;; (4)
+ ;; so shoud use:
+ (setf *list* (sort *list* #'<))
+ #+END_SRC
+
+** TODO Predicate
+*** Type predicate
+ #+BEGIN_SRC lisp
+ (typep obj type)
+ (subtypep type1 type2)
+ #+END_SRC
+
+*** Specific data type predicate:
+ General
+ #+BEGIN_SRC lisp
+ (null obj)
+ (symbolp obj)
+ (atom obj)
+ (functionp obj)
+ #+END_SRC
+
+ Numbers:
+ #+BEGIN_SRC lisp
+ (numberp obj)
+ (integerp obj)
+ (rationalp obj)
+ (flotp obj)
+ (realp obj)
+ (complexp obj)
+ #+END_SRC
+
+ List
+ #+BEGIN_SRC lisp
+ (consp obj)
+ (listp obj)
+ (bit-vector-p obj)
+ (vectorp obj)
+ (simple-vector-p obj)
+ (simple-bit-vector-p obj)
+ (arrayp obj)
+
+ (characterp obj)
+ (stringp obj)
+ (simple-string-p obj)
+ #+END_SRC
+
+ String
+ #+BEGIN_SRC lisp
+ #+END_SRC
+
+*** equality
+
+ - =EQ= tests for object identity. Two objects are =EQ= if they're
+   identical.  It CANNOT compare numbers and characters, which gives
+   undefined behavior.
+ - =EQL= is similar to =EQ= except that it guarantees the same numeric
+   or character value is equal. =(eql 1 1)= is =t=.
+ - =EQ= is more efficient than =EQL= because it does not need to check
+   whether it is numeric or character.  But =EQL= has less trouble to
+   understand .. so use =EQL= when possible.
+ - =EQUAL= is looser than =EQL=. It consider strings equivalent if they
+   contain the same characters.
+ - =EQUALP= is even looser. For example, it consider two strings are
+   equal case-insensitively. NEVER use this.
+
+** Function
+ #+BEGIN_SRC lisp
+   (defun name (a b
+                &optional op1 (op2 def-value) (op3 def-value op3-supplied-p)
+                &rest rests
+                &key k1 (k2 def-value k2-supplied-p) ((:kkkkk3 k3) def-value k3-supplied-p))
+     (body-forms))
+ #+END_SRC
+
+ - /Order of consumption/: First required arguments are consumed, then
+   the optional arguments, then the rest, finally the keyword
+   arguments.
+ - /optional arguments/: can have default values (which defaults to
+   nil), and a variable to indicate whether it is supplied.
+ - /rests/: a list.
+ - /keyword arguments/: are the same as optional arguments, except it
+   must be supplied by keyword. It can be rebound to a simpler name to
+   be used in the body.
+ - /Mixture/: Never mix (optional, key).  You can mix rest and key, but the
+   behavior is, after matching all required and optional, everything
+   are bound to rest.  Then appropriate ones are ALSO bound to keyword
+   arguments.
+
+ The return value of function is typically the last expression.  But
+ you can explicit return from a function by using =RETURN-FROM SYMBOL
+ body= special form.  Symbol is the function name to return, and it is
+ not evaluted.  You must provide the function in order to return, which
+ makes it not frequently used.  
+
+ The function object can be obtained by =#'=.  One can apply the object
+ in two ways:
+ - =FUNCALL= :: the first is the function object, the rests are
+                arguments
+ - =APPLY= :: the first is the function object, then a list of
+              arguments.  The list can be looser, e.g. some arguments,
+              as long as the last one is a list.
+
+*** TODO Multiple Values
+ If return multiple values, use =values= instead of a list; if return
+ no values, use =(values)=
+
+ - values
+ - multiple-values-limit
+ - values-list
+ - multiple-value-list
+ - multiple-value-call
+ - multiple-value-prog1
+ - multiple-value-bind
+ - multiple-value-setq
+ - nth-value
+
+** TODO Macro
+- defmacro
+
+
+* Control Structure
+** Sequential
+- progn
+- prog1
+- prog2
+
+** Conditional
 #+BEGIN_SRC lisp
-(defun upto (max)
-  (let ((result nil))
-    (dotimes (i max)
-      (push i result))
-    (nreverse result)))
+(if condition then-form [else-form])
+(progn forms*)
+(when cond forms*)
+(unless cond forms*)
+(cond (test-1 form*) (test-2 form*))
 #+END_SRC
 
+=cond= corresponds to switch statement in C. The test predicates are
+evaluated one by one until one to =t=, then evaluate the body form,
+and return the last.  To have a default, put a =t= as the last
+condition.
+
+Lisp programmers often use the functions and and or to implement
+simple conditional evaluation. For example,
+
 #+BEGIN_SRC lisp
-(setf foo (delete nil foo))
+  ;; use
+  (and x (setf y t))
+  ;; instead of
+  (when x
+    (setf y t))
+  ;; use
+  (or x (setf y t))
+  ;; instead of
+  (unless x
+    (setf y t))
 #+END_SRC
 
-=sort= is also destructive, so use it on a copy of the list. Be sure to assign it back to the variable.
 
+** Iteration
 #+BEGIN_SRC lisp
-(defparameter *list* (list 4 3 2 1))
-(sort *list* #'<) ;; (1 2 3 4)
-*list* ;; (4)
-;; so shoud use:
-(setf *list* (sort *list* #'<))
+(dolist (var list-form) body-form*)
+(dotimes (var count-form) body-form*)
+(do (var-def*) (end-test-form result-form*) statements*)
 #+END_SRC
 
-* Style Guide
-Reference: http://people.ace.ed.ac.uk/staff/medward2/class/moz/cm/doc/contrib/lispstyle.html
+=dotimes= from 0 to the value of count-form-1, inclusively In =do=,
+the var-def is =(var init-form step-form)=. For example:
+#+BEGIN_SRC lisp
+(do ((i 0 (1+ i))) ((> i 4)) (print i))
+#+END_SRC
 
-- if return multiple values, use =values= instead of a list; if return no values, use =(values)=
-- =+global-constant+=
-- =*global-variable*=
-- use =setf= instead of =setq=.
-  This is more general. This includes /variables, array locations, list elements, hash table entries, structure fields, and object slots/.
-- Remember that append copies its arguments.
-  Avoid using append inside a loop to add elements to the back of a list.
-  Use the collect clause in loop, or push elements onto a list and then nreverse the list to return the original ordering.
+*** TODO Mapping
+- mapcar
+- maplist
+- mapc
+- mapl
+- mapcan
+- mapcon
+
+*** Append to a list
+Remember that append copies its arguments.  Avoid using append
+inside a loop to add elements to the back of a list.  Use the
+collect clause in loop, or push elements onto a list and then
+nreverse the list to return the original ordering.
 
 Bad:
 #+BEGIN_SRC lisp
@@ -295,266 +618,721 @@ Best:
   (loop for x in list collect x)
 #+END_SRC
 
-- Remember that copy only copies the outer-most level of a list. Use copy-tree to copy all levels of a list.
-Lisp programmers often use the functions and and or to implement simple conditional evaluation. For example,
+** Loop Facility
+/Loop keywords/ are not true common lisp keywords. They are symbols
+recognized only by /Loop Facility/. If you do not use any loop
+keywords, the loop simply runs forever.
 
-#+BEGIN_SRC lisp
-  ;; use
-  (and x (setf y t))
-  ;; instead of
-  (when x
-    (setf y t))
-  ;; use
-  (or x (setf y t))
-  ;; instead of
-  (unless x
-    (setf y t))
-#+END_SRC
+loop is a macro, and expansion produces an implicit block named =nil=,
+and it accepts three basic part in its tagbody:
+- loop prologue: execute before iteration begin
+- loop body: execute during each iteration
+- loop epilogue: execute after iteration termination
 
-* Practical Common Lisp
-http://www.gigamonkeys.com/book/
-** CD database
-#+BEGIN_SRC lisp
-  ;; (HEBI: hello world, testing environment)
-  (defun hello-world ()
-    (format t "Hello, world!"))
+All variables are initialized in the loop prologue.
 
-  ;; this function makes the cd
-  (defun make-cd (title artist rating ripped)
-    ;; (HEBI: the list created is a property list. The :key is the key, and followed by the value)
-    (list :title title :artist artist :rating rating :ripped ripped))
+*** Loop Clauses
+Inside the loop is the loop clauses.
 
-  ;; make a cd record
-  (make-cd "Roses" "Kathy Mattea" 7 t)
+Variable initialization and stepping
+- for
+- as
+- with
+- repeat
 
-  ;; (HEBI: the *xx* is the convention for a global variable)
-  (defvar *db* nil)
+Value accumulation
+- collect
+- append
+- nconc
+- sum
+- count
+- minimize
+- maximize
 
-  ;; (HEBI: The push will push the cd onto the global *db*)
-  (defun add-record (cd) (push cd *db*))
+Termination conditions
+- loop-finish
+- for
+- as
+- repeat
+- while
+- until
+- always
+- never
+- thereis
 
+Unconditional execution
+- do
+- return
 
+Conditional execution
+- if
+- when
+- unless
+- else
+- end
 
-  ;; add some records to the database
-  (add-record (make-cd "Roses" "Kathy Mattea" 7 t))
-  (add-record (make-cd "Fly" "Dixie Chicks" 8 t))
-  (add-record (make-cd "Home" "Dixie Chicks" 9 t))
+Miscellaneous
+- named
+- initially
+- finally
+*** Loop Syntax
+#+BEGIN_EXAMPLE
+loop ::= (loop [named name] {variables}* {main}*)
+variables ::= with | initial-final | for-as | repeat
+main ::= unconditional | accumulation | conditional | termination | initial-final
+initial-final ::= initially | finally
+#+END_EXAMPLE
 
+- A loop must have at least one clause.
+- loop prologue
+  - automatic variable initializations prescribed by variable clauses
+  - initially
+- loop epilogue
+  - finally
+  - implicit return value from accumulation clause or an end-test clause
 
-  (defun dump-db ()
-    ;; (HEBI: dolist)
-    (dolist (cd *db*)
-      ;; (HEBI: format)
-      ;; the first is the output stream, with t as standard output
-      ;; The ~a directive is the aesthetic directive; it means to consume one argument and output it in a human-readable form
-      ;; It will work for both keyword and value
-      ;; ~t is for tabulating. ~10t means emit enough spaces to move to the tenth column
-      ;; ~{ and ~} will make format: 1. require the next argument to be a list 2. consume the elements of the list for each ~a inside them
-      ;; ~% emit a new line
-      (format t "~{~a:~10t~a~%~}~%" cd)))
+*** Iteration Control (for, as, repeat)
+for and as are exctly the same.
 
-  ;; (HEBI: note: the above function can use format to iterate the whole *db* list)
-  (defun dump-db-2 ()
-    (format t "~{~{~a:~10t~a~%~}~%~}" *db*))
+Multiple these control can be used. They will occur sequentially: they
+will not nest.
 
+#+BEGIN_EXAMPLE
+for var
+  [{from | downfrom | upfrom} expr1]
+  [{to | downto | upto | below | above} expr2]
+  [by expr3]
+#+END_EXAMPLE
+- from: default to 0 when increment
+- by: the step, must be positive integer, default to 1
+- +downfrom, upfrom+, downto, upto: control the direction of increment
+  or decrease.
+- below, above: similar to upto, downto, but do not include the
+  target.
 
-  (defun prompt-read (prompt)
-    ;; the *query-io* is a global variable that contains the input stream connected to the terminal
-    (format *query-io* "~a: " prompt)
-    ;; (HEBI: flush)
-    (force-output *query-io*)
-    ;; read-line will read the string without the trailing newline
-    (read-line *query-io*))
+#+BEGIN_EXAMPLE
+for var in expr1 [by step-fun]
+#+END_EXAMPLE
+- it is meant to iterate the list. Bound to element in each iteration
+- At the end of each iteration, the step-fun is executed on the list
+  to produce a successor list. default to =cdr=.
 
-  (defun prompt-for-cd ()
-    (make-cd
-     ;; read a string
-     (prompt-read "Title")
-     (prompt-read "Artist")
-     ;; (HEBI: parse the string to int)
-     ;; if nil, the parse-integer will emit error. :junk-allowed t will make it silent
-     ;; the surrounding "or" will make a default value of 0 instead of nil
-     (or (parse-integer (prompt-read "Rating") :junk-allowed t) 0)
-     ;; (HEBI: y-or-n-p) is a builtin function. It is very robust, in the sense that it will reopen the prompt if answer is not yY or nN.
-     (y-or-n-p "Ripped [y/n]: ")))
+#+BEGIN_EXAMPLE
+for var on expr1 [by step-fun]
+#+END_EXAMPLE
+- same as in-by, but var is bound to the entire list each time
 
-  (defun add-cds ()
-    (loop (add-record (prompt-for-cd))
-       ;; this loop will end if the another query is answered as n
-       (if (not (y-or-n-p "Another? [y/n]: ")) (return))))
+#+BEGIN_EXAMPLE
+for var = expr1 [then expr2]
+#+END_EXAMPLE
+- var is set to expr1 on first iteration
+- var is set to expr2 on second and subsequent iterations.
+  If no expr2, expr1 is still used.
 
-  (defun save-db (filename)
-    ;; (HEBI: open the file and store the stream) as variable "out"
-    ;; filename is the filename string
-    ;; direction defaults to :input, so if want output, need to specify
-    ;; if-exists, overwrite it
-    (with-open-file (out filename
-                         :direction :output
-                         :if-exists :supersede)
-      ;; this is used to ensures that certain variables that affect the behavior of print are set to their standard values.
-      ;; be sure to use the same macro when reading the data back
-      (with-standard-io-syntax
-        ;; (HEBI: directly print the *db* to the stream)
-        ;; lisp will print the object out in the form that it can be read back
-        (print *db* out))))
+#+BEGIN_EXAMPLE
+for var across vector
+#+END_EXAMPLE
+- bind to each element. The only difference is now using vector
+  instead of a list.
 
-  ;; now you can save it
-  (save-db "~/my-cds.db")
+#+BEGIN_EXAMPLE
+for var being
+  {each | the}
+  {hash-key | hash-keys | hash-value | hash-values}
+  {in | of}
+  hash-table
+  [using ({hash-value | hash-key} other-var)]
+#+END_EXAMPLE
+- it seems that each and the is the same. Just to make it easy to read:
+  - use each for hash-key and hash-value
+  - use the for hash-keys and hash-values
+- in and of are also the same
+- hash-key and hash-value controls whether to bind key or value to var
+- using will bind the other part, i.e. value if hash-key and key if
+  hash-value, to another variable for access
 
-  ;; load the db back
-  (defun load-db (filename)
-    (with-open-file (in filename)
-      (with-standard-io-syntax
-        ;; use read to (HEBI: read everything from the stream in)
-        ;; use (HEBI: setf) to set result of the read to the *db* variable
-        (setf *db* (read in)))))
+#+BEGIN_EXAMPLE
+for var being
+  {each | the}
+  {symbol | present-symbol | external-symbol | symbols | present-symbols | external-symbols}
+  {in | of}
+  package
+#+END_EXAMPLE
 
-  ;; query
-  (defun select-by-artist (artist)
-    ;; make a copy of *db* by removing if not the predicate, and return that copy
-    (remove-if-not
-     ;; (HEBI: getf can get the value of a plist by the key)
-     ;; #' is the quote for function
-     #'(lambda (cd) (equal (getf cd :artist) artist))
-     ,*db*))
+In package.
 
-  (defun select (selector-fn)
-    (remove-if-not selector-fn *db*))
+#+BEGIN_EXAMPLE
+repeat expr
+#+END_EXAMPLE
 
-  (defun artist-selector (artist)
-    #'(lambda (cd) (equal (getf cd :artist) artist)))
+repeat the body (expr) times.
 
-  ;; use this by:
-  (select (artist-selector "Dixie Chicks"))
+*** End Test Control (always, never, thereis, until, while)
+always, never, thereis change the return value, so
+- it will skip finally clauses.
+- NEVER use it with collect, etc.
 
+The clauses:
+- while expr
+- until expr: equal to while (not expr)
+- always expr: terminate if expr evaluates to nil. Return nil if
+  so. Otherwise return t.
+- never expr: terminate if expr ever evalutes to non-nil. Return nil
+  if so, otherwise return t
+- thereis expr: Same as never, but it return that expr.
+- loop-finish: terminate iteration and return any accumulated result
 
-  ;; keyword argument, can be called by (func :key value)
-  ;; default value using (var default)
-  ;; (var default var-p) var-p is used to check whether the argument is supplied or not
-  (defun where (&key title artist rating (ripped nil ripped-p))
-    #'(lambda (cd)
-        (and
-         (if title    (equal (getf cd :title)  title)  t)
-         (if artist   (equal (getf cd :artist) artist) t)
-         (if rating   (equal (getf cd :rating) rating) t)
-         (if ripped-p (equal (getf cd :ripped) ripped) t))))
+*** Value Accumulation
+- multiple accumulation can be used if they operate the same type,
+  e.g. collect and append operate on list. The result will be
+  combined, i.e. they operate on the same list.
+- If into is not provided, all the operations operate on a default
+  hidden variable.
+- If into is provided, the variable is as-if initialized in =with=
+  clause.
+  - will not have a default value to return
+  - the variables are visible in finally clause
+- Only one value can be returned, but you can return multiple objects
+  using =values=.
 
-  ;; use by:
-  (select (where :rating 10 :ripped nil))
-
-  (defun update (selector-fn &key title artist rating (ripped nil ripped-p))
-    (setf *db*
-          ;; (HEBI: mapcar) apply the function to each element of the list, and return the list of results
-          (mapcar
-           #'(lambda (row)
-               (when (funcall selector-fn row)
-                 ;; this (setf (getf) xx) staff is magic. setf has nothing to do with getf
-                 (if title    (setf (getf row :title) title))
-                 (if artist   (setf (getf row :artist) artist))
-                 (if rating   (setf (getf row :rating) rating))
-                 (if ripped-p (setf (getf row :ripped) ripped)))
-               row) *db*)))
-
-  ;; this can be called:
-  (update (where :artist "Dixie Chicks") :rating 11)
-
-  (defun delete-rows (selector-fn)
-    (setf *db* (remove-if selector-fn *db*)))
-
-  ;; OK, refactoring time
-  ;; Problems for where:
-  ;; the if ... checking inside "and" is almosts the same, that's duplicate code
-  ;; for the querys that do not have other fields, we don't want to check those fields, to avoid overhead
-
-  ;; The solution is the MACRO, the code generator of lisp
-
-  ;;; (HEBI: Macros, all kinds of quoting)
-  (defun make-comparison-expr (field value)
-    ;; ' will leave the expression unevaluated.
-    ;; ` will do the same thing, and it can do one more: can evaluate part of it
-    ;; , before a subexpression will evalute that
-    `(equal (getf cd ,field) ,value))
-
-  (defun make-comparisons-list (fields)
-    (loop while fields
-       ;; using loop facility, make comparison expr for all the fields
-       ;; pop will pop the first of the list
-       collecting (make-comparison-expr (pop fields) (pop fields))))
-
-  ;; wrap comparison expr into and clause
-  (defmacro where (&rest clauses)
-    ;; ,@() will evaluate the subexpression, and splice the resulting list into the surrounding list
-    `#'(lambda (cd) (and ,@(make-comparisons-list clauses))))
-
-  ;; this can check what this macro expanded to
-  (macroexpand-1 '(where :title "Give Us a Break" :ripped t))
-
-  ;; Final test:
-  (select (where :title "Give Us a Break" :ripped t))
-#+END_SRC
-
-
-** Unit Test Framework
+Clauses: all of them have =xxx expr [into var]= format
+- collect expr [into var]
+- collecting expr [into var]: same as collect
+- append
+- appending
+- nconc
+- nconcing
+- count
+- counting
+- sum
+- summing
+- maximize
+- maximizing
+- minimize
+- minimizing
+*** TODO Variable Initialization
+*** TODO Conditional Execution
+*** TODO Unconditional Execution
+*** TODO Data Types
+*** TODO Destructure
 
 
-#+BEGIN_SRC lisp
-  ;; the design goal of a unit test framework:
-
-  ;; - easy to add new test
-  ;; - easy to run tests
-  ;; - easy to track down test failures
 
 
-  ;; (HEBI: report test name)
-  (defmacro deftest (name parameters &body body)
-    "Define a test function. Within a test function we can call
-     other test functions or use 'check' to run individual test
-     cases."
-    `(defun ,name ,parameters
-       ;; (HEBI: hierarchy test name report)
-      (let ((*test-name* (append *test-name* (list ',name))))
-        ,@body)))
+* System Interface
+** TODO Package
+ This is used to solve name conflict.
+
+ - =*package*=
+ - make-package
+ - in-package
+ - find-package
+ - package-name
+ - package-nicknames
+ - rename-package
+ - package-use-list
+ - package-used-by-list
+ - package-shadowing-symbols
+ - list-all-packages
+ - delete-package
+ - intern
+ - find-symbol
+ - unintern
+ - export
+ - unexport
+ - import
+ - shadowing-import
+ - shadow
+ - use-package
+ - unuse-package
+ - defpackage
+ - find-all-symbols
+ - do-symbols
+ - do-external-symbols
+ - do-all-symbols
+ - with-package-iterator
+
+*** Modules
+ A module is a subsystem. It consists of one or more packages. It may
+ be loaded from one or more files.
+ - =*modules*=
+ - provide
+ - require
+
+** TODO Stream
+Some global variables are used by many functions. Conventionally the
+suffix -input and -output means the input and output stream
+respectively, while -io represents streams with bidirectional stream.
+- =*standard-input*=
+- =*standard-output*=
+- =*error-output*=
+- =*query-io*=
+- =*debug-io*=
+- =*terminal-io*=
+- =*trace-output*=
+*** Create Stream
+- make-synonym-stream
+- make-broadcase-stream
+- make-concatenated-stream
+- make-two-way-stream
+- make-echo-stream
+- make-string-input-stream
+- make-string-output-stream
+- get-output-stream-string
+- with-open-stream
+- with-input-from-string
+- with-output-to-string
+
+*** Operation
+- streamp
+- open-stream-p
+- input-stream-p
+- output-stream-p
+- stream-element-type
+- close
+- broadcase-stream-streams
+- concatenated-stream-streams
+- echo-stream-input-stream
+- echo-stream-output-stream
+- synonym-stream-symbol
+- two-way-stream-input-stream
+- two-way-stream-output-stream
+- interactive-stream-p
+- stream-external-format
+
+** Input/Output
+These input/output operations perform on streams.
+*** Input
+Input stream defaults to =*standard-input*=.
+- read
+- read-preserving-whitespace
+- read-delimited-list
+- read-line
+- read-char
+- unread-char
+- peek-char
+- listen
+- read-char-no-hang
+- clear-input
+- read-from-string
+- parse-integer
+- read-byte
+*** Output
+- write
+- prin1
+- print
+- pprint
+- princ
+- write-to-string
+- prin1-to-string
+- princ-to-string
+- write-char
+- write-string
+- write-line
+- terpri
+- fresh-line
+- finish-ouptut
+- force-output
+- clear-output
+- print-unreadable-object
+- write-byte
+**** TODO Format
+- [ ] format
+*** Query
+- y-or-n-p
+- yes-or-no-p
+
+** File System
+*** File Names
+There's a type called /pathname/. It always has 6 components.
+- host
+- device
+- directory
+- name
+- type
+- version
+
+Extended Wildcards
+- wild-pathname-p
+- pathname-match-p
+- translate-pathname
+
+Functions
+- pathname
+- truename
+- parse-namestring
+- merge-pathnames
+- make-pathname
+- pathnamep
+- pathname-host
+- pathname-device
+- pathname-directory
+- pathname-name
+- pathname-type
+- pathname-version
+- namestring
+- file-namestring
+- directory-namestring
+- host-namestring
+- enough-namestring
+- user-homedir-pathname
+
+*** Open and Close
+- open
+- MACRO with-open-file
+
+*** File Operation
+- rename-file
+- delete-file
+- probe-file
+- file-write-data
+- file-author
+- file-position
+- file-length
+- file-string-length
+- directory: Examining directory.
+
+*** Other
+- load: Load a common lisp file and evaluate the forms.
 
 
-  (defmacro with-gensyms ((&rest names) &body body)
-    ;; gensym generate a unique symbol name that the reader has never seen
-    ;; the reason to use such unique name is to avoid leaking of information
-    `(let ,(loop for n in names collect `(,n (gensym)))
-       ,@body))
 
-  (defvar *test-name* nil)
+* Common Lisp Object System
 
+* Appendix
+** Installation
+*** quicklisp
+ #+BEGIN_SRC lisp
+ ;; sbcl --load /path/to/quicklisp.lisp
+ (load "/path/to/quicklisp.lisp")
+ (quicklisp-quickstart:install)
 
-  (defmacro combine-results (&body forms)
-    "Combine the results (as booleans) of evaluating 'forms' in order."
-    (with-gensyms (result)
-      `(let ((,result t))
-        ,@(loop for f in forms collect `(unless ,f (setf ,result nil)))
-        ,result)))
+ ;; setting up
+ (load "~/quicklisp/setup.lisp")
+ ;; load quicklisp when you start lisp
+ (ql:add-to-init-file)
 
-  ;; this will generate
-  ;; (let ((result t))
-  ;;   (unless (foo) (setf result nil))
-  ;;   (unless (bar) (setf result nil))
-  ;;   (unless (baz) (setf result nil))
-  ;;   result)
+ ;; install/remove a software
+ (ql:quickload "clx-truetype")
+ (ql:uninstall "clx-truetype")
 
-  (defun report-result (result form)
-    "Report the results of a single test case. Called by 'check'."
-    (format t "~:[FAIL~;pass~] ... ~a: ~a~%" result *test-name* form)
-    result)
+ ;; query installed packages
+ (ql:system-apropos "substring")
 
+ ;; updating all packages
+ (ql:update-all-dists)
+ ;; update quicklisp itself
+ (ql:update-client)
+ #+END_SRC
 
-  (defmacro check (&body forms)
-    "Run each expression in 'forms' as a test case."
-    `(combine-results
-      ,@(loop for f in forms collect `(report-result ,f ',f))))
+ - (ql:quickload "name") :: load a system
+ - (ql:system-apropos "term") :: search
 
 
-  ;; usage example:
-  (deftest test-+ ()
-    (check
-      (= (+ 1 2) 3)
-      (= (+ 1 2 3) 6)
-      (= (+ -1 -3) -4)))
-#+END_SRC
+
+ A list of packages used:
+ - clx-truetype :: for stumpwm ttf-font
+ - zpng :: for stumpwm screenshot
+*** packages
+ - =cl-quicklisp=
+
+
+
+*** org babel
+ first, start =M-x slime=, then you can evaluate this:
+
+ #+name: hello-world
+ #+header: :var message="Hello World!"
+ #+begin_src lisp
+   (princ message)
+ #+end_src
+
+*** Slime
+ - slime (emacs IDE)
+ - sbcl ("lisp" executer)
+ - cl-quicklisp (package manager)
+
+ In emacs: start slime
+ #+BEGIN_EXAMPLE
+ CL-USER> (load "/path/to/quicklisp.lisp")
+ CL-USER> ;; follow screen command to install
+ CL-USER> (load "~/quicklisp/setup.lisp") ;; load it
+
+ CL-USER> (ql:add-to-init-file) ;; add to sbcl's init file
+
+ CL-USER> (ql:quickload "clx-truetype") ;; download this package. Packages will be put into "~/quicklisp/xxx/dist"
+
+ CL-USER> (ql:update-all-dists) ;; update
+ CL-USER> (ql:update-client) ;; update quicklisp itself
+ #+END_EXAMPLE
+
+ The staff added into =.sbclrc=:
+ #+BEGIN_EXAMPLE
+   ;;; The following lines added by ql:add-to-init-file:
+   #-quicklisp
+   (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
+   (user-homedir-pathname))))
+   (when (probe-file quicklisp-init)
+   (load quicklisp-init)))
+ #+END_EXAMPLE
+
+**** Commands
+
+ | command   | description             |
+ |-----------+-------------------------|
+ | C-c C-d d | slime-describe-symbol   |
+ | C-c C-d f | slime-describe-function |
+ | M-TAB     | slime-complete-symbol   |
+
+ In a buffer of mode =lisp=, =C-c C-c= will evaluate the =defun= around cursor.
+ =C-c C-z= will switch to the =slime= buffer.
+
+
+
+** Practical Common Lisp
+ http://www.gigamonkeys.com/book/
+*** CD database
+ #+BEGIN_SRC lisp
+   ;; (HEBI: hello world, testing environment)
+   (defun hello-world ()
+     (format t "Hello, world!"))
+
+   ;; this function makes the cd
+   (defun make-cd (title artist rating ripped)
+     ;; (HEBI: the list created is a property list. The :key is the key, and followed by the value)
+     (list :title title :artist artist :rating rating :ripped ripped))
+
+   ;; make a cd record
+   (make-cd "Roses" "Kathy Mattea" 7 t)
+
+   ;; (HEBI: the *xx* is the convention for a global variable)
+   (defvar *db* nil)
+
+   ;; (HEBI: The push will push the cd onto the global *db*)
+   (defun add-record (cd) (push cd *db*))
+
+
+
+   ;; add some records to the database
+   (add-record (make-cd "Roses" "Kathy Mattea" 7 t))
+   (add-record (make-cd "Fly" "Dixie Chicks" 8 t))
+   (add-record (make-cd "Home" "Dixie Chicks" 9 t))
+
+
+   (defun dump-db ()
+     ;; (HEBI: dolist)
+     (dolist (cd *db*)
+       ;; (HEBI: format)
+       ;; the first is the output stream, with t as standard output
+       ;; The ~a directive is the aesthetic directive; it means to consume one argument and output it in a human-readable form
+       ;; It will work for both keyword and value
+       ;; ~t is for tabulating. ~10t means emit enough spaces to move to the tenth column
+       ;; ~{ and ~} will make format: 1. require the next argument to be a list 2. consume the elements of the list for each ~a inside them
+       ;; ~% emit a new line
+       (format t "~{~a:~10t~a~%~}~%" cd)))
+
+   ;; (HEBI: note: the above function can use format to iterate the whole *db* list)
+   (defun dump-db-2 ()
+     (format t "~{~{~a:~10t~a~%~}~%~}" *db*))
+
+
+   (defun prompt-read (prompt)
+     ;; the *query-io* is a global variable that contains the input stream connected to the terminal
+     (format *query-io* "~a: " prompt)
+     ;; (HEBI: flush)
+     (force-output *query-io*)
+     ;; read-line will read the string without the trailing newline
+     (read-line *query-io*))
+
+   (defun prompt-for-cd ()
+     (make-cd
+      ;; read a string
+      (prompt-read "Title")
+      (prompt-read "Artist")
+      ;; (HEBI: parse the string to int)
+      ;; if nil, the parse-integer will emit error. :junk-allowed t will make it silent
+      ;; the surrounding "or" will make a default value of 0 instead of nil
+      (or (parse-integer (prompt-read "Rating") :junk-allowed t) 0)
+      ;; (HEBI: y-or-n-p) is a builtin function. It is very robust, in the sense that it will reopen the prompt if answer is not yY or nN.
+      (y-or-n-p "Ripped [y/n]: ")))
+
+   (defun add-cds ()
+     (loop (add-record (prompt-for-cd))
+        ;; this loop will end if the another query is answered as n
+        (if (not (y-or-n-p "Another? [y/n]: ")) (return))))
+
+   (defun save-db (filename)
+     ;; (HEBI: open the file and store the stream) as variable "out"
+     ;; filename is the filename string
+     ;; direction defaults to :input, so if want output, need to specify
+     ;; if-exists, overwrite it
+     (with-open-file (out filename
+                          :direction :output
+                          :if-exists :supersede)
+       ;; this is used to ensures that certain variables that affect the behavior of print are set to their standard values.
+       ;; be sure to use the same macro when reading the data back
+       (with-standard-io-syntax
+         ;; (HEBI: directly print the *db* to the stream)
+         ;; lisp will print the object out in the form that it can be read back
+         (print *db* out))))
+
+   ;; now you can save it
+   (save-db "~/my-cds.db")
+
+   ;; load the db back
+   (defun load-db (filename)
+     (with-open-file (in filename)
+       (with-standard-io-syntax
+         ;; use read to (HEBI: read everything from the stream in)
+         ;; use (HEBI: setf) to set result of the read to the *db* variable
+         (setf *db* (read in)))))
+
+   ;; query
+   (defun select-by-artist (artist)
+     ;; make a copy of *db* by removing if not the predicate, and return that copy
+     (remove-if-not
+      ;; (HEBI: getf can get the value of a plist by the key)
+      ;; #' is the quote for function
+      #'(lambda (cd) (equal (getf cd :artist) artist))
+      ,*db*))
+
+   (defun select (selector-fn)
+     (remove-if-not selector-fn *db*))
+
+   (defun artist-selector (artist)
+     #'(lambda (cd) (equal (getf cd :artist) artist)))
+
+   ;; use this by:
+   (select (artist-selector "Dixie Chicks"))
+
+
+   ;; keyword argument, can be called by (func :key value)
+   ;; default value using (var default)
+   ;; (var default var-p) var-p is used to check whether the argument is supplied or not
+   (defun where (&key title artist rating (ripped nil ripped-p))
+     #'(lambda (cd)
+         (and
+          (if title    (equal (getf cd :title)  title)  t)
+          (if artist   (equal (getf cd :artist) artist) t)
+          (if rating   (equal (getf cd :rating) rating) t)
+          (if ripped-p (equal (getf cd :ripped) ripped) t))))
+
+   ;; use by:
+   (select (where :rating 10 :ripped nil))
+
+   (defun update (selector-fn &key title artist rating (ripped nil ripped-p))
+     (setf *db*
+           ;; (HEBI: mapcar) apply the function to each element of the list, and return the list of results
+           (mapcar
+            #'(lambda (row)
+                (when (funcall selector-fn row)
+                  ;; this (setf (getf) xx) staff is magic. setf has nothing to do with getf
+                  (if title    (setf (getf row :title) title))
+                  (if artist   (setf (getf row :artist) artist))
+                  (if rating   (setf (getf row :rating) rating))
+                  (if ripped-p (setf (getf row :ripped) ripped)))
+                row) *db*)))
+
+   ;; this can be called:
+   (update (where :artist "Dixie Chicks") :rating 11)
+
+   (defun delete-rows (selector-fn)
+     (setf *db* (remove-if selector-fn *db*)))
+
+   ;; OK, refactoring time
+   ;; Problems for where:
+   ;; the if ... checking inside "and" is almosts the same, that's duplicate code
+   ;; for the querys that do not have other fields, we don't want to check those fields, to avoid overhead
+
+   ;; The solution is the MACRO, the code generator of lisp
+
+   ;;; (HEBI: Macros, all kinds of quoting)
+   (defun make-comparison-expr (field value)
+     ;; ' will leave the expression unevaluated.
+     ;; ` will do the same thing, and it can do one more: can evaluate part of it
+     ;; , before a subexpression will evalute that
+     `(equal (getf cd ,field) ,value))
+
+   (defun make-comparisons-list (fields)
+     (loop while fields
+        ;; using loop facility, make comparison expr for all the fields
+        ;; pop will pop the first of the list
+        collecting (make-comparison-expr (pop fields) (pop fields))))
+
+   ;; wrap comparison expr into and clause
+   (defmacro where (&rest clauses)
+     ;; ,@() will evaluate the subexpression, and splice the resulting list into the surrounding list
+     `#'(lambda (cd) (and ,@(make-comparisons-list clauses))))
+
+   ;; this can check what this macro expanded to
+   (macroexpand-1 '(where :title "Give Us a Break" :ripped t))
+
+   ;; Final test:
+   (select (where :title "Give Us a Break" :ripped t))
+ #+END_SRC
+
+
+*** Unit Test Framework
+
+
+ #+BEGIN_SRC lisp
+   ;; the design goal of a unit test framework:
+
+   ;; - easy to add new test
+   ;; - easy to run tests
+   ;; - easy to track down test failures
+
+
+   ;; (HEBI: report test name)
+   (defmacro deftest (name parameters &body body)
+     "Define a test function. Within a test function we can call
+      other test functions or use 'check' to run individual test
+      cases."
+     `(defun ,name ,parameters
+        ;; (HEBI: hierarchy test name report)
+       (let ((*test-name* (append *test-name* (list ',name))))
+         ,@body)))
+
+
+   (defmacro with-gensyms ((&rest names) &body body)
+     ;; gensym generate a unique symbol name that the reader has never seen
+     ;; the reason to use such unique name is to avoid leaking of information
+     `(let ,(loop for n in names collect `(,n (gensym)))
+        ,@body))
+
+   (defvar *test-name* nil)
+
+
+   (defmacro combine-results (&body forms)
+     "Combine the results (as booleans) of evaluating 'forms' in order."
+     (with-gensyms (result)
+       `(let ((,result t))
+         ,@(loop for f in forms collect `(unless ,f (setf ,result nil)))
+         ,result)))
+
+   ;; this will generate
+   ;; (let ((result t))
+   ;;   (unless (foo) (setf result nil))
+   ;;   (unless (bar) (setf result nil))
+   ;;   (unless (baz) (setf result nil))
+   ;;   result)
+
+   (defun report-result (result form)
+     "Report the results of a single test case. Called by 'check'."
+     (format t "~:[FAIL~;pass~] ... ~a: ~a~%" result *test-name* form)
+     result)
+
+
+   (defmacro check (&body forms)
+     "Run each expression in 'forms' as a test case."
+     `(combine-results
+       ,@(loop for f in forms collect `(report-result ,f ',f))))
+
+
+   ;; usage example:
+   (deftest test-+ ()
+     (check
+       (= (+ 1 2) 3)
+       (= (+ 1 2 3) 6)
+       (= (+ -1 -3) -4)))
+ #+END_SRC
