@@ -1321,8 +1321,58 @@ Functions
 - with-slots
 
 
-* TODO ASDF (Another System Definition Facility)
+* ASDF (Another System Definition Facility)
+https://common-lisp.net/project/asdf/asdf.html
+** Load ASDF
+ASDF should come along with lisp implementations.
 
+- =(require "asdf")=
+- =(asdf:asdf-version)= to check whether it is loaded, what's the version
+
+Alternatively, you can load the specific file by =(load "/path/to/asdf.lisp")=
+
+The default load path is 
+- =~/common-lisp/=
+- =~/.local/share/common-lisp/source/=
+
+However, quicklisp should already configured the load path.
+
+** Load System
+- =(require "asdf")=
+- put package somewhere so that ASDF can find it
+  - =~/common-lisp/=
+  - =~/.local/share/common-lisp/source/=
+- load by =(asdf:load-system "my-system")=
+
+Some functions:
+- load-system
+- compile-system
+- test-system
+- make
+- require-system
+
+** Build System
+- =(require "asdf")=
+- put your code into a new directory called =my-system/= inside the findable path:
+  - =~/common-lisp/=
+  - =~/.local/share/common-lisp/source/=
+- In the directory, create a new file =my-system.asd= and specify dependencies
+- load by =(asdf:load-system "my-system")=
+
+The system is specified using =defsystem= syntax. An example
+(hello-lisp.asd):
+#+BEGIN_SRC lisp
+  ;; Usual Lisp comments are allowed here
+  (defsystem "hello-lisp"
+      :description "hello-lisp: a sample Lisp system."
+      :version "0.0.1"
+      :author "Joe User <joe@example.com>"
+      :licence "Public Domain"
+      :depends-on ("optima.ppcre" "command-line-arguments")
+      :components ((:file "packages")
+                   (:file "macros" :depends-on ("packages"))
+                   (:file "hello" :depends-on ("macros"))))
+#+END_SRC
 
 * Appendix
 ** Installation
