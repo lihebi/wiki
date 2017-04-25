@@ -1,5 +1,7 @@
 #+TITLE: Hebi's Personal Wiki
 
+- [[file:proceedings.org][proceedings]]
+
 A human needs to learn so so many things through his life. He can
 master something at some period of time, but never think he can be
 expert after a month not touching it. What happen next is looking into
