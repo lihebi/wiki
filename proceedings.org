@@ -1,5 +1,12 @@
 #+TITLE: Proceedings
 
+* Most Recent
+This section contains most recent proceedings that is not yet present
+in ACM library.
+
+- [[http://icse2017.gatech.edu/?q=research-track][ICSE 17]]
+- FSE 17
+
 * Programming Analysis
 ** [[http://dl.acm.org/event.cfm?id=RE228][ICSE]]
 International Conference on Software Engineering

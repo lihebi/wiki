@@ -81,13 +81,14 @@ the ecosystem of compilation.  Profiling of you code by [[file:gcov.org][gcov]],
 [[file:clang.org][Clang]] toolchain can make it pretty easy.
 
 Faminilar with [[file:design-pattern.org][Design Pattern]] when coding, and this can be learned
-best by doing refactoring. BTW refactoring is /THE/ most important
-thing to do no matter whatever the project is, even academic
-projects. If you can rewrite the sentence 10 times in your academic
-paper (I do this too), why you don't give the same priority to your
-code? Those who says refactoring is not important may simply because
-they have never written serious code to be useful or big enough to
-require a refactoring. In other word, TOY programs.
+best by doing refactoring. 
+# BTW refactoring is /THE/ most important
+# thing to do no matter whatever the project is, even academic
+# projects. If you can rewrite the sentence 10 times in your academic
+# paper (I do this too), why you don't give the same priority to your
+# code? Those who says refactoring is not important may simply because
+# they have never written serious code to be useful or big enough to
+# require a refactoring. In other word, TOY programs.
 
 Scripting. [[file:./shell.org][shell]] concept and all [[file:shell-utils.org][shell utilities]] is
 specified in POSIX standard.  [[file:awk.org][awk]] and [[file:sed.org][sed]] can make really elegent
