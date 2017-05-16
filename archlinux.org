@@ -177,6 +177,7 @@ systemctl enable dhcpcd
 - rapidjson
 - ruby
 - markdown
+- dosfstools: for mkfs.vfat, used for raspberry pi
 
 *** For Helium
 - zeromq
