@@ -92,7 +92,28 @@ European Software Engineering Conference / Foundations of Software Engineering
 - [[http://dl.acm.org/citation.cfm?id=503209][ESEC/FSE-9]]
 - [[http://dl.acm.org/citation.cfm?id=318773][ESEC/FSE-7]]
 - [[http://dl.acm.org/citation.cfm?id=267895][ESEC '97/FSE-5]]
-	       
+
+** [[http://dl.acm.org/event.cfm?id=RE222][ISSTA]]
+International Symposium on Software Testing and Analysis
+
+- [[http://dl.acm.org/citation.cfm?id=2931037][ISSTA 2016]]
+- [[http://dl.acm.org/citation.cfm?id=2771783][ISSTA 2015]]
+- [[http://dl.acm.org/citation.cfm?id=2610384][ISSTA 2014]]
+- [[http://dl.acm.org/citation.cfm?id=2483760][ISSTA 2013]]
+- [[http://dl.acm.org/citation.cfm?id=2338965][ISSTA 2012]]
+- [[http://dl.acm.org/citation.cfm?id=2001420][ISSTA '11]]
+- [[http://dl.acm.org/citation.cfm?id=1831708][ISSTA '10]]
+- [[http://dl.acm.org/citation.cfm?id=1572272][ISSTA '09]]
+- [[http://dl.acm.org/citation.cfm?id=1390630][ISSTA '08]]
+- [[http://dl.acm.org/citation.cfm?id=1273463][ISSTA '07]]
+- [[http://dl.acm.org/citation.cfm?id=1146238][ISSTA '06]]
+- [[http://dl.acm.org/citation.cfm?id=1007512][ISSTA '04]]
+- [[http://dl.acm.org/citation.cfm?id=566172][ISSTA '02]]
+- [[http://dl.acm.org/citation.cfm?id=347324][ISSTA '00]]
+- [[http://dl.acm.org/citation.cfm?id=271771][ISSTA '98]]
+- [[http://dl.acm.org/citation.cfm?id=229000][ISSTA '96]]
+- [[http://dl.acm.org/citation.cfm?id=186258][ISSTA '94]]
+- [[http://dl.acm.org/citation.cfm?id=154183][ISSTA '93]]
 
 ** [[http://dl.acm.org/event.cfm?id=RE200][PLDI]]
 Programming Language Design and Implementation
