@@ -126,6 +126,15 @@ endwhile(condition)
 - function()
 - endfunction()
 
+* Variables
+Set by ~cmake -DXXX=1~
+
+- =CMAKE_INSTALL_PREFIX=: where to install. Default to =/usr/local=
+- =CMAKE_BUILD_TYPE=: possible values: empty, Debug, Release, RelWithDebInfo, MinSizeRel
+
+
+
+
 * Trouble Shooting
 
 When using =find_package(PythonInterp 2.7 REQUIRED)=, it keeps find the 3.6 version.
