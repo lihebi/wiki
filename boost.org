@@ -361,3 +361,25 @@ if (fs::is_directory(p)) {
     }
   }
 #+END_SRC
+
+* Algorithm
+** string
+Header: =<boost/algorithm/string/trim.hpp>=
+
+Left:
+- =trim_left(seq)=: modify in place, all spaces
+- =trim_left_if(seq, pred)=
+- =trim_left_copy=: return a copy
+- =trim_left_copy_if=
+
+Right:
+- =trim_right_copy_if=
+- =trim_right_copy=
+- =trim_right_if=
+- =trim_right=
+
+Both:
+- =trim_copy_if=
+- =trim_copy=
+- =trim_if=
+- =trim=
