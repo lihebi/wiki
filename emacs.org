@@ -146,12 +146,15 @@ Other
 -*- mode: Lisp; fill-column: 75; comment-column: 50; -*-=
    #+END_EXAMPLE
 
-   =mode= defines the major mode for this file, while unlimited numbers of variables follows, separated by =;=
-   Emacs looks for local variable specifications in the second line if the first line specifies an interpreter, e.g. /shebang/.
+   =mode= defines the major mode for this file, while unlimited
+   numbers of variables follows, separated by =;= Emacs looks for
+   local variable specifications in the second line if the first line
+   specifies an interpreter, e.g. /shebang/.
 
-   A second way to specify file local variable is to have a "local variables list" near the end of the file
-   (no more than 3000 characters from the end of the file).
-   The =Local Variables:= and =End:= will be matched literally.
+   A second way to specify file local variable is to have a "local
+   variables list" near the end of the file (no more than 3000
+   characters from the end of the file).  The =Local Variables:= and
+   =End:= will be matched literally.
 
    #+BEGIN_EXAMPLE
 This     /* Local Variables:  */
@@ -159,6 +162,9 @@ Is       /* mode: c           */
 Garbage  /* comment-column: 0 */
 Data     /* End:              */
    #+END_EXAMPLE
+
+You can also interactively add by =add-file-local-variable=, reload
+the variable by =revert-buffer=
 
 ** Directory Local Variable
    Put =.dir-locals.el= at the root directory, and it will be in effect for all the files under that directory, recursively.
