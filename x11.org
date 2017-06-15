@@ -149,6 +149,7 @@ When you need to run something, just =M-x != and call =xterm=.
 
 
 * Trouble shooting
+** xinit
 
 On Debian, when I =dist-upgrade= Debian 8 Jessie to 9 Stretch,
 the =startx= stop working.
@@ -164,6 +165,8 @@ The trick is you need:
 #+BEGIN_EXAMPLE
 chomd u+s /usr/bin/xinit
 #+END_EXAMPLE
+** Multi screen, stumpwm detect as one
+Install =xdpyinfo=. It is used to detect the heads.
 
 * Nvidia Driver
 
@@ -212,3 +215,4 @@ xinput # show a list of devices
 xinput list-props <ID> # list of properties
 xinput set-prop <deviceID> <propID> <value>
 #+END_EXAMPLE
+
