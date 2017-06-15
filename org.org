@@ -196,6 +196,18 @@ These blocks can utilize the horizontal space.
 #+TBLFM: $4=$2*100/$3
 #+TBLFM: $4=(round $4)
 #+end_example
+* Image
+#+BEGIN_QUOTE
+[[./image.jpg]]
+#+END_QUOTE
+- org-toggle-inline-image
+- org-display-inline-image
+- org-redisplay-inline-image
+- org-remove-inline-image
+
+The width is defined by =org-image-actual-width=
+- t: actual width
+- 300: 300px
 
 * org-ref
 *** Commands
