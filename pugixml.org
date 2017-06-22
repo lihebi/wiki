@@ -249,6 +249,13 @@ example:
 while (node.remove_child("tool"));
 #+end_src
 
+more examples:
+
+#+BEGIN_SRC cpp
+node.append_attribute("type").set_value("1");
+node.append_child(pugi::node_pcdata).set_value("Content");
+#+END_SRC
+
 ** clone
 node:
 
