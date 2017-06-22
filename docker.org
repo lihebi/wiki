@@ -36,6 +36,11 @@ and reference it.
                  is not set when running a container, you have to
                  commit it, and run it again to assign a port or
                  another port.
+  - -v /volumn :: create a mount at /volumn
+  - -v /local/dir:/mnt :: mount local dir to the /mnt in
+       container. The default is read-write mode, if you want read
+       only, do this: =-v /local/dir:/mnt:ro=. The local dir must be
+       ABSOLUTE path.
 - docker exec <ID> echo "hello" :: run some command with arguments on the already run container <ID>
   - ID can be the UUID or container name
   - you can use -it as well, e.g. docker exec -it <ID> /bin/bash
@@ -78,8 +83,41 @@ RUN apt-get -y update & apt-get install -y libarchive-dev libcurl4-openssl-dev
 RUN wget http://131.123.42.38/lmcrs/beta/srcML-Ubuntu14.04-64.deb srcml.deb
 RUN dpkg -i srcml.deb
 #+END_EXAMPLE
+
+** Commands
+- FROM: a base image
+- ADD: =ADD <src> .. <dst>= The difference from copy:
+  - ADD allows src to be url
+  - ADD will decompress an archive
+- COPY: =COPY <src> .. <dst>= all srcs on the local machine will be
+  copied to dst in the image. The src can use wildcards. The src
+  cannot be out of the current build directory, e.g. =..= is not
+  valid.
+- USER: =USER daemon= The USER instruction sets the user name or UID
+  to use when running the image and for any RUN, CMD and ENTRYPOINT
+  instructions that follow it in the Dockerfile.
+- WORKDIR: The WORKDIR instruction sets the working directory for any
+  RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow it in
+  the Dockerfile
+  - if it does not exist, it will be created
+  - it can be used multiple times, if it is relative, it is relative
+    to the previous WORKDIR
+
+
+
 * TODO Docker hub
 When pushing and pulling, what exactly happens?
+
+* Tricks
+Stop all containers
+#+BEGIN_QUOTE
+docker stop $(docker ps -a -q)
+#+END_QUOTE
+
+Remove all containers (will not remove non-stopped ones, but give errors)
+#+BEGIN_QUOTE
+docker rm $(docker ps -a -q)
+#+END_QUOTE
 
 
 * Trouble Shooting
