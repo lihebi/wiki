@@ -52,7 +52,7 @@ Part of Elisp]].  Although elisp is a good start point of lisp, it is
 not general purpose, and can only run inside emacs. Another lisp
 flavor, [[file:common-lisp.org][Common Lisp]] is more serious and practical lisp, the StumpWM is
 written in it.  [[file:clojure.org][Clojure]] arise recently and the authors are advertising
-it a lot.  Many big player reside inside emacs, like the new reader
+it a lot. Many big player reside inside emacs, like the new reader
 [[file:gnus.org][Gnus]].
 
 * Programming
