@@ -44,6 +44,10 @@ executable. So use the release build:
 #+BEGIN_EXAMPLE
 cmake -G Ninja .. -DLLVM_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
 #+END_EXAMPLE
+
+Variables:
+- DLLVM_ENABLE_RTTI=ON: support RTTI
+
 * try the llvm toolchain
 
 - ~clang --help~
