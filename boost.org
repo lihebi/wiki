@@ -383,3 +383,135 @@ Both:
 - =trim_copy=
 - =trim_if=
 - =trim=
+
+
+* Graph
+** adjacency_list
+
+*** Member Functions
+- =adjacency_list(...)=
+- =void clear()=
+- =void swap(adjacency_list& x)=
+
+*** Non-member functions
+**** Access
+- =vertices=: 
+#+BEGIN_SRC cpp
+std::pair<vertex_iterator, vertex_iterator> vertices(const adjacency_list& g)
+#+END_SRC
+- =edges=: 
+#+BEGIN_SRC cpp
+std::pair<edge_iterator, edge_iterator> edges(const adjacency_list& g)
+#+END_SRC
+- =adjacent_vertices=: 
+#+BEGIN_SRC cpp
+std::pair<adjacency_iterator, adjacency_iterator> adjacent_vertices(vertex_descriptor u, const adjacency_list& g)
+#+END_SRC
+- =inv_adjacent_vertices=: 
+#+BEGIN_SRC cpp
+std::pair<inv_adjacency_iterator, inv_adjacency_iterator> inv_adjacent_vertices(vertex_descriptor u, const adjacency_list& g)
+#+END_SRC
+- =out_edges=: 
+#+BEGIN_SRC cpp
+std::pair<out_edge_iterator, out_edge_iterator> out_edges(vertex_descriptor u, const adjacency_list& g)
+#+END_SRC
+- =in_edges=: 
+#+BEGIN_SRC cpp
+std::pair<in_edge_iterator, in_edge_iterator> in_edges(vertex_descriptor v, const adjacency_list& g)
+#+END_SRC
+- =source=: 
+#+BEGIN_SRC cpp
+vertex_descriptor source(edge_descriptor e, const adjacency_list& g)
+#+END_SRC
+- =target=: 
+#+BEGIN_SRC cpp
+vertex_descriptor target(edge_descriptor e, const adjacency_list& g)
+#+END_SRC
+- =out_degree=: 
+#+BEGIN_SRC cpp
+degree_size_type out_degree(vertex_descriptor u, const adjacency_list& g)
+#+END_SRC
+- =in_degree=: 
+#+BEGIN_SRC cpp
+degree_size_type in_degree(vertex_descriptor u, const adjacency_list& g)
+#+END_SRC
+- =num_vertices=: 
+#+BEGIN_SRC cpp
+vertices_size_type num_vertices(const adjacency_list& g)
+#+END_SRC
+- =num_edges=: 
+#+BEGIN_SRC cpp
+edges_size_type num_edges(const adjacency_list& g)
+#+END_SRC
+- =vertex=: 
+#+BEGIN_SRC cpp
+vertex_descriptor vertex(vertices_size_type n, const adjacency_list& g)
+#+END_SRC
+- =edge=: 
+#+BEGIN_SRC cpp
+std::pair<edge_descriptor, bool> edge(vertex_descriptor u, vertex_descriptor v, const adjacency_list& g)
+#+END_SRC
+- =edge_range=: 
+#+BEGIN_SRC cpp
+std::pair<out_edge_iterator, out_edge_iterator> edge_range(vertex_descriptor u, vertex_descriptor v, const adjacency_list& g)
+#+END_SRC
+           
+
+**** Modification
+- =add_edge=: 
+#+BEGIN_SRC cpp
+std::pair<edge_descriptor, bool> add_edge(vertex_descriptor u, vertex_descriptor v, adjacency_list& g)
+#+END_SRC
+
+- =add_edge=: 
+#+BEGIN_SRC cpp
+std::pair<edge_descriptor, bool> add_edge(vertex_descriptor u, vertex_descriptor v, const EdgeProperties& p, adjacency_list& g)
+#+END_SRC
+- =remove_edge=: 
+#+BEGIN_SRC cpp
+void remove_edge(vertex_descriptor u, vertex_descriptor v, adjacency_list& g)
+#+END_SRC
+- =remove_edge=: 
+#+BEGIN_SRC cpp
+void remove_edge(edge_descriptor e, adjacency_list& g)
+#+END_SRC
+- =remove_edge=: 
+#+BEGIN_SRC cpp
+void remove_edge(out_edge_iterator iter, adjacency_list& g)
+#+END_SRC
+- =remove_out_edge_if=: 
+#+BEGIN_SRC cpp
+template <class Predicate> void remove_out_edge_if(vertex_descriptor u, Predicate predicate, adjacency_list& g)
+#+END_SRC
+- =remove_in_edge_if=: 
+#+BEGIN_SRC cpp
+template <class Predicate> void remove_in_edge_if(vertex_descriptor v, Predicate predicate, adjacency_list& g)
+#+END_SRC
+- =remove_edge_if=: 
+#+BEGIN_SRC cpp
+template <class Predicate> void remove_edge_if(Predicate predicate, adjacency_list& g)
+#+END_SRC
+- =add_vertex=: 
+#+BEGIN_SRC cpp
+vertex_descriptor add_vertex(adjacency_list& g)
+#+END_SRC
+- =add_vertex=: 
+#+BEGIN_SRC cpp
+vertex_descriptor add_vertex(const VertexProperties& p, adjacency_list& g)
+#+END_SRC
+- =clear_vertex=: 
+#+BEGIN_SRC cpp
+void clear_vertex(vertex_descriptor u, adjacency_list& g)
+#+END_SRC
+- =clear_out_edges=: 
+#+BEGIN_SRC cpp
+void clear_out_edges(vertex_descriptor u, adjacency_list& g)
+#+END_SRC
+- =clear_in_edges=: 
+#+BEGIN_SRC cpp
+void clear_in_edges(vertex_descriptor u, adjacency_list& g)
+#+END_SRC
+- =remove_vertex=: 
+#+BEGIN_SRC cpp
+void remove_vertex(vertex_descriptor u, adjacency_list& g)
+#+END_SRC
