@@ -76,6 +76,19 @@ When downloading a playlist, you can make the template to number the files
 youtube-dl -o "%(playlist_index)s-%(title)s.%(ext)s" <playlist_link>
 #+END_EXAMPLE
 
+** VNC
+I use tigervnc because it seems to be fast.
+
+- vncpasswd: set the password
+- vncserver&: start the server.
+  - It is started in :1 by default, so connect it with
+    =vncviewer <ip>:1=
+  - On mac, the docker bridge network does not work, so you cannot
+    connect to the contianer by IP addr. In this case, map the
+    port 5901. 5900+N is the default VNC port.
+  - vncserver -kill :1 will kill the vncserver
+  - vncserver :2 will open :2
+
 
 * Prompt
   * prompt($PS1-4)
