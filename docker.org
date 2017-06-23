@@ -63,6 +63,8 @@ In the folder containing Dockerfile, run to build the image:
 docker build -t my-ubuntu .
 #+END_EXAMPLE
 
+use --no-cache to avoid using cache
+
 - docker history <image> :: show which layers are used to create <image>
 
 
