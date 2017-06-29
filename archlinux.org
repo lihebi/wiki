@@ -235,7 +235,8 @@ Typical usage:
 - Ss :: search package
 - Qi :: show description of a package
 
---noconfirm :: use in script
+- --noconfirm :: use in script
+- --needed :: do not install the installed again
 
 * AUR
 Have to search through its web interface. Find the git download link
