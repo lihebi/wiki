@@ -88,6 +88,7 @@ RUN dpkg -i srcml.deb
 
 ** Commands
 - FROM: a base image
+- ENV key=value
 - ADD: =ADD <src> .. <dst>= The difference from copy:
   - ADD allows src to be url
   - ADD will decompress an archive
@@ -104,11 +105,18 @@ RUN dpkg -i srcml.deb
   - if it does not exist, it will be created
   - it can be used multiple times, if it is relative, it is relative
     to the previous WORKDIR
+- ENTRYPOINT ["executable", "param1", "param2"]: configure the
+  container to be run as an executable.
 
 
 
 * TODO Docker hub
 When pushing and pulling, what exactly happens?
+
+#+BEGIN_EXAMPLE
+docker tag local-image lihebi/my-image
+docker push lihebi/my-image
+#+END_EXAMPLE
 
 * Tricks
 Stop all containers
