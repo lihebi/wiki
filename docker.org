@@ -67,6 +67,35 @@ use --no-cache to avoid using cache
 
 - docker history <image> :: show which layers are used to create <image>
 
+** Docker stop
+docker stop will send SIGTERM to the app, then wait for it to stop. The default wait time is 10 seconds. You can change this by
+#+BEGIN_EXAMPLE
+docker stop -t 1 <container-ID>
+#+END_EXAMPLE
+This will change the timeout to be 1 second.
+
+The reason for a container to resist stopping may be it ignores the
+SIGTERM request. Python did this, so for a python program, you should
+handle this signal yourself:
+#+BEGIN_SRC python
+  import sys
+  import signal
+
+  def handler(signum, frame):
+      sys.exit(1)
+
+  def main():
+      signal.signal(signal.SIGTERM, hanlder)
+      # your app
+#+END_SRC
+
+
+Next thing is the entry point and commands. If you use shell form, it
+is started by sh -c, and shell will not pass the signal to the app
+either. So change it to json form.
+
+Finally, =docker stop= tries to terminate the app gracefully by
+sending SIGTERM, you can choose to force kill using =docker kill=
 
 * Remove sudo
 #+BEGIN_EXAMPLE
