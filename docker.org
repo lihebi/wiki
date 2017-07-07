@@ -22,6 +22,101 @@ Re-launch a stopped container can be done by =docker start
 You can assign a name to the container so that you can better remember
 and reference it.
 
+* Compose
+It is installed seperately with docker.
+
+It must be run inside the folder containing =docker-compose.yml=
+
+Commands
+- docker-compose up: up the service. It will not exit. Use C-c to exit
+  and the =docker-compose down= command will be sent.
+  - The second time you up the compose, it will not up, but update
+    current. If all current are up to date, nothing will happen.
+- docker-compose up -d: up the service and exit. You need to shutdown
+  it maually
+- docker-compose down: shutdown the services
+
+A sample compose file:
+#+BEGIN_SRC yaml
+version: '2'
+services:
+  srcml-server-container:
+    image: "lihebi/srcml-server"
+  helium:
+    image: "lihebi/arch-helium"
+    tty: true
+    volumes:
+      - data:/data
+  benchmark-downloader:
+    # this is used to download benchmarks to the shared volume
+    image: "lihebi/benchmark-downloader"
+    tty: true
+    volumes:
+      - data:/data
+volumes:
+  # create a volume with default
+  data:
+#+END_SRC
+
+** service
+A service is a container. Setting tty to true to prevent it from
+stopping. That is the same effect when you pass =-t= to =docker run=.
+
+The containers can be seen by docker ps, with names prefixed and
+suffixed by =compose_XXX_1=
+
+Change to the container will not preserve after the compose down. The
+containers will be deleted. Next up will create new containers.
+
+** TODO volumes
+Under any volume, if =external= option is set to =true=, docker
+compose will find it outside, and signal error if it does not exist.
+
+** TODO network
+Once the compose is up, docker create a bridge network called
+=compose_default=. All services (containers) are attached to that.
+
+* Network
+- docker network ls
+- docker network inspect <network-name>
+
+* Volume
+A volume must be locally available if you create a =local= volume.
+** Create Volume
+You can create a volume like this:
+#+BEGIN_EXAMPLE
+docker volume create hello
+#+END_EXAMPLE
+
+Volumes can also be created upon creating a container.
+
+** Mount volume to a container
+You have to mount at the time you create the container. You cannot
+remount anything to it without commiting it to an image and create
+again. 
+
+#+BEGIN_EXAMPLE
+docker run -v /mnt <image>
+docker run -v my-named-vol:/mnt <image>
+docker run -v /absolute/path/to/host/local/path:/mnt/in/container <image>
+#+END_EXAMPLE
+
+If only inner path is provided, the volume will still be created, but
+with a long named directory under =/var/lib/docker/volumes=.
+
+** Manipulate Volume
+The volumes will never be automatically deleted, even if the container is deleted.
+
+*** TODO Will it be updated or not?
+
+#+BEGIN_EXAMPLE
+docker volume inspect <volume-full-name>
+docker volume ls
+docker volume prune # remove all unused volumes
+#+END_EXAMPLE
+
+
+
 * General operations
 
 - docker images :: list images
