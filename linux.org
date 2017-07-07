@@ -12,6 +12,17 @@ One of the situation I encountered is the =xsession-errors= file is more than 40
 - Debian Wiki: https://wiki.debian.org/
 - FreeBSD: https://www.freebsd.org/
 
+* Network
+To resolve a name to IP address, you can add it into
+=/etc/hosts=. E.g. at the end of the file, add:
+
+#+BEGIN_EXAMPLE
+172.18.0.2 srcml-server-container
+#+END_EXAMPLE
+
+The scenario to use this is that host system cannot resolve the name
+of container to the specific IP. I have to specify it manually.
+
 * Trouble Shooting
 ** Cannot su root
 When su cannot change to root, run
