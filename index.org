@@ -72,7 +72,8 @@ specified in the standard librareis can often be found in [[file:boost.org][Boos
 [[file:cpp-lib.org][3rd-party C++ Libraries]] that is small enough to put into one page.
 [[file:pugixml.org][Pugixml]] is Data processing libraries for xml.  Use [[file:google-test.org][Google Test]] for
 unit testing.  Debugging using [[file:gdb.org][GDB]], of course. Here are some [[file:c-debug.org][C
-debugging techniques]]. [[file:unix.org][Unix Programming]] Interface.
+debugging techniques]]. [[file:unix.org][Unix Programming]] Interface. For system
+programming, a recent alternative to C is [[file:rust.org][Rust]].
 
 The area of [[file:compiler.org][compiler]] is interesting and pretty hard.  Some misc staff
 for real-world [[file:compiler-impl.org][compiler implementation]].  [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]] makes
