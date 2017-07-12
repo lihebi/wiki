@@ -6,3 +6,16 @@ tmux new -s helium
 # attach, and the target is "helium"
 tmux a -t helium
 #+END_SRC
+
+
+Some default commands (all after prefix key):
+- !: break the current pane into another window
+- =:=: prompt command
+- q: briefly display pane index (1,2,etc)
+
+
+Commands
+- select-layout even-horizontal: balance window horizontally
+- last-window: jump to last active window
+- new-window
+- detach
