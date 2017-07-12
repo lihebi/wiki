@@ -99,6 +99,12 @@ mplayer by =mplayer -af scaletempo=.
 To stretch the images to full screen, pass the =-zoom= option when
 starting.
 
+** unzip
+- =-q=: quiet
+- =-d folder=: output to that folder
+
+Cannot rename the content, must mv after extraction.
+
 ** youtube-dl
 When downloading a playlist, you can make the template to number the files
 #+BEGIN_EXAMPLE
