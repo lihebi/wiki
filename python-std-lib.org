@@ -111,6 +111,10 @@ Other
 - open(name, mode): return an object of file type.
   - r,w,a,b; + for read and write
 
+* Printing
+- pprint.pprint(object, stream=None): pretty print
+- 'string {0}, {hello}'.format('yes', hello=2)
+
 * File System
 ** os.path
 If parameter is not listed, it means a single path.
