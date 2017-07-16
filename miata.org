@@ -1,4 +1,6 @@
 #+TITLE: Miata
+* General Info
+- Weight: 2943 lb
 
 * Electrical System
 Before doing anything related to electrical system, disconnect the
