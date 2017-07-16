@@ -116,4 +116,3 @@ I do some [[file:leetcode.org][Leetcode]] ocationally to keep a sense of fast im
 of algorithm, but not much. Some related posts [[file:alg-string.org][String algorithms]],
 [[file:palindrome.org][Palindrome]], [[file:data-structure.org][data structure]], [[file:data-structure-old.org][old data structure page]], [[file:oj.org][algorithm in
 practice]].
-

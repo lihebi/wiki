@@ -8,7 +8,7 @@ There's always a [[file:tmp.org][tmp]] buffer, a [[file:backup.org][BackUp]], an
 - [[file:poem.org][Poems]] 
 - [[file:golf.org][Golf]]
 - [[file:guitar.org][Guitar]]
-
+- [[file:miata.org][Miata]]
 ** Technique
 - [[file:mailman.org][Mailman]]
 - [[file:js.org][js]]

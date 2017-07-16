@@ -1,0 +1,168 @@
+#+TITLE: Miata
+
+* Electrical System
+Before doing anything related to electrical system, disconnect the
+negative battery cable.
+
+* Jacking Positions
+
+- Front: center of the crossmember
+- Rear: center of the differential
+
+Stand Position: both side of the vehicle, on side sills.
+
+* Engine Oil
+- drain plug tightening torque: 30-41 N.m
+- capacity
+  - oil replacement: 3.6L
+  - oil and oil filter replacement: 3.8L
+  - total (dry engine): 4.0L
+* Coolant
+- drain plug tightening torque: 0.7-1.1 N.m
+- capacity: 1.0L
+- step
+  - drain the coolant in the reservoir
+  - remove radiator cap and radiator drain plug
+  - drain coolant
+  - flush the cooling system with water until all traces of color are gone
+  - leave the system until drain completely
+  - tighten the radiator drain plug
+  - pour coolant into radiator up to the coolant filler port
+  - fill coolant into reservoir up to the FULL mark
+  - install radiator cap
+  - start and warm up engine
+  - after warmming up, run at 2500rpm for 5min
+* Spark Plug
+- tightening torque: 15-22 N.m
+* Wheel and Tire
+- Temporary spare tire
+  - 60 psi
+  - tread life: 3000 miles
+- Front: 195/50 R15 26 psi
+- Rear: 205/45 R16 26 psi
+- lug nut tightening torque: 89-117 N.m
+* Differential Oil
+- Inspection
+  - remove filler plug
+  - verify that the oil is at the brim of the plug hole
+- filler plug tightening torque: 40-53 N.m
+- drain plug tightening torque: 40-53 N.m
+- Replace
+  - remove fillter plug and drain plug
+  - drain
+  - install drain plug and a new washer
+  - add oil to the brim of the plug hole
+  - install filler plug
+* Brake
+** Brake Fluid
+Brake fluid will damage paint.
+
+Brake should be bled whenever a brake line is disconnected.
+
+- If the disconnection is master cylinder, Start at the brake caliper
+  or wheel cylinder farthest from the brake master cylinder, and move
+  to the next farthest.
+- If not master cylinder, start from the closest to the disconnection
+  point.
+
+*** Brake fluid air bleeding
+  - jack up vehicle
+  - remove bleeder cap, attach a vinyl tube to the bleeder screw
+  - place the other end of tube to a brake fluid-filled container
+  - the first person depress the brake pedal several times, then hold it in depressed position
+  - the second person loosen the bleeder screw, drain out the fluid and closes the screw
+  - repeat the first-second person steps until no air bubbles. The
+    reservoir should be kept about 3/4 full during the process.
+  - tightening torque: 5.9-8.8 N.m
+
+*** brake fluid replacement
+There is no such instruction in the manual. However, searching the internet gives me a rough idea
+- suck all the fluid in the reservoir with a turkey baster
+- wipe it
+- add new fluid
+- air bleeding
+
+** Disk
+- front disk pad thickness 1.0mm min. look through the caliper
+  inspection hole and verify the remaining thickness of the pad.
+- front disk plate thickness 18.0mm min
+- rear disk pad thickness 1.0mm min
+- rear disk plate thickness 8.0mm min
+* Clutch
+If any clutch pipe has been disconnected, add brake fluid and bleed
+the clutch.
+
+- bleeder screw tightening torque: 5.9-8.8 N.m
+- clutch fluid replacement
+  - drain the fluid from the reservoir
+  - remove bleeder cap from the clutch release cylinder and attach a
+    vinyl hose to the bleeder screw
+  - insert the other end of the vinyl hose into a clear container
+  - loosen the bleeder screw
+  - with another person slowly pumping the clutch pedal, drain the
+    fluid from the clutch system, repeat until all fluid is drained
+  - tighten the bleeder screw
+  - fill the reservoir to MAX
+  - bleed the air from the clutch
+- clutch fluid air bleeding
+  - remove bleeder cap from the clutch release cylinder and attach a
+    vinyl hose to the bleeder screw
+  - place the other end to a clear container
+  - pump clutch pedal several times
+  - with the clutch pedal depressed, loosen the bleeder screw, then
+    close it.
+  - repeat last two steps until clean fluid is seen
+  - tighten the bleeder screw.
+* Transmission
+- check
+  - remove check plug at the driver side of the transmission
+  - verify that the oil is at the brim of the check plug hole
+  - apply sealant and install
+- check plug tightening torque: 25-39 N.m
+- drain plug tightening torque: 40-58 N.m
+- Transmission Oil Replacement
+  - remove drain plug and check plug
+  - drain the oil
+  - install drain plug with new washer
+  - add oil to check plug hole to the brim
+  - apply sealant to check plug and install
+- shift lever turret
+  - pump out the old fluid and fill in the new one. use the same oil
+    as transmission fluid. Capacity: 80-95cc.
+  - apply grease to the shift lever component
+  - apply sealant to the contact surfaces of the shift lever component
+    and the change control case.
+- other references
+  - http://www.blueridgemiataclub.org/technical/transmissiondifferential-oil-change-basics/
+  - https://www.miata.net/garage/trans/everything.html
+* Power Steering
+If any power steering fluid line has been disconnected, add ATF M-III
+or equivalent (e.g. Dexron II), bleed the fluid line.
+
+- Air Bleeding
+  - inspect fluid level
+  - turn the steering wheel fully to the left and right several times
+    with the engine not running
+  - inspect fluid level. If it has dropped, add fluid
+  - repeat steps 2 to 3 until the fluid level stablizes.
+  - start the engine and let it idle
+  - turn the steering wheel fully to the left and right several times
+  - verify that the fluid is not foamy and that the fluid level has
+    not dropped.
+  - repeat last two steps
+- There is no section for flush it. I think
+  - from the reservoir, pump out old fluid as much as I can
+  - add new ones
+  - do air bleeding
+* Glosory
+- gasket: 垫圈
+- bolt: 螺栓
+- nut: 螺母
+- brim: 边缘
+- washer: 垫圈
+- caliper: 卡钳
+- fuse: 保险丝
+- hose: 软管
+- shaft: 轴
+- grease: 油脂
+- turret: 炮塔,角楼
