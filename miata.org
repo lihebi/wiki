@@ -17,6 +17,9 @@ Stand Position: both side of the vehicle, on side sills.
   - oil replacement: 3.6L
   - oil and oil filter replacement: 3.8L
   - total (dry engine): 4.0L
+- replace every 3000 - 4000 miles
+- use 10W-30
+
 * Coolant
 - drain plug tightening torque: 0.7-1.1 N.m
 - capacity: 1.0L
@@ -32,6 +35,19 @@ Stand Position: both side of the vehicle, on side sills.
   - install radiator cap
   - start and warm up engine
   - after warmming up, run at 2500rpm for 5min
+
+Change every 24 month or 30,000 miles
+
+Mixture
+- above -16C: antifreeze 35% + water
+- above -26C: antifreeze 45% + water
+- above -40C: antifreeze 55% + water
+
+Inspect
+- inspect when cool
+- full in radiator
+- between FULL and LOW in reservoir
+
 * Spark Plug
 - tightening torque: 15-22 N.m
 * Wheel and Tire
@@ -41,6 +57,8 @@ Stand Position: both side of the vehicle, on side sills.
 - Front: 195/50 R15 26 psi
 - Rear: 205/45 R16 26 psi
 - lug nut tightening torque: 89-117 N.m
+- tire rotation: every 6000-8000 miles
+- Alignment: every 15,000 miles
 * Differential Oil
 - Inspection
   - remove filler plug
@@ -53,9 +71,15 @@ Stand Position: both side of the vehicle, on side sills.
   - install drain plug and a new washer
   - add oil to the brim of the plug hole
   - install filler plug
+
+- replace every 48 month or 60,000 miles
+- use SAE 90, 1 quat
+
 * Brake
 ** Brake Fluid
 Brake fluid will damage paint.
+
+- use DOT-3
 
 Brake should be bled whenever a brake line is disconnected.
 
@@ -91,6 +115,8 @@ There is no such instruction in the manual. However, searching the internet give
 * Clutch
 If any clutch pipe has been disconnected, add brake fluid and bleed
 the clutch.
+
+- use DOT-3
 
 - bleeder screw tightening torque: 5.9-8.8 N.m
 - clutch fluid replacement
@@ -135,6 +161,10 @@ the clutch.
 - other references
   - http://www.blueridgemiataclub.org/technical/transmissiondifferential-oil-change-basics/
   - https://www.miata.net/garage/trans/everything.html
+
+- replace every 48 month or 60,000 miles
+- use SAE 75W-90 GL-4, 2.1 quats
+
 * Power Steering
 If any power steering fluid line has been disconnected, add ATF M-III
 or equivalent (e.g. Dexron II), bleed the fluid line.
@@ -166,3 +196,12 @@ or equivalent (e.g. Dexron II), bleed the fluid line.
 - shaft: 轴
 - grease: 油脂
 - turret: 炮塔,角楼
+
+* Other
+** TODO Fuel Filters
+https://www.miata.net/garage/FuelFilterChange/index.html
+** Other Maintenance schedule
+- Air filter: every 15,000 miles
+- Wiper: every 15,000 miles
+- Spark plug: every 15,000 miles
+- Timing Belt (and front crankshaft seal): every 60,000 miles
