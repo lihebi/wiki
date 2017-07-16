@@ -223,6 +223,158 @@ FileID getMainFileID () const; // this file being processed
 const FileEntry *getFileEntryForID (FileID FID) const;
 #+END_SRC
 
+
+* Create AST
+** General APIs
+- clang::tooling::ClangTool
+#+BEGIN_SRC C++
+  ClangTool::ClangTool(const CompilationDatabase &Compilations, 
+                       ArrayRef< std::string > SourcePaths);
+  ClangTool::run (ToolAction *Action);
+  // directly build ASTs
+  ClangTool::buildASTs(std::vector<std::unique_ptr<ASTUnit> > &ASTs);
+#+END_SRC
+
+- clang::tooling::CompilationDatabase
+- clang::tooling::JSONCompilationDatabase
+#+BEGIN_SRC C++
+  static CompilationDatabase::loadFromDirectory(StringRef BuildDirectory);
+  class JSONCompilationDatabase : public CompilationDatabase {};
+  static JSONCompilationDatabase::loadFromFile(StringRef FilePath);
+#+END_SRC
+
+- clang::tooling functions
+  - runToolOnCode
+  - runToolOnCodeWithArgs
+  - buildASTFromCode
+  - buildASTFromCodeWithArgs
+#+BEGIN_SRC C++
+  using namespace clang::tooling;
+  bool runToolOnCode(clang::FrontendAction *ToolAction,
+                     const Twine &Code,
+                     const Twine &FileName="input.cc");
+  bool runToolOnCodeWithArgs(clang::FrontendAction *ToolAction,
+                             const Twine &Code,
+                             const std::vector<std::string> &Args,
+                             const Twine &FileName="input.cc");
+  std::unique_ptr<ASTUnit>
+  buildASTFromCode(const Twine &Code,
+                   const Twine &FileName="input.cc");
+  std::unique_ptr<ASTUnit>
+  buildASTFromCodeWithArgs(const Twine &Code,
+                           const std::vector<std::string> &Args,
+                           const Twine &FileName="input.cc");
+#+END_SRC
+
+- clang::ASTUnit
+#+BEGIN_SRC C++
+ASTContext &ASTunit::getASTContext();
+#+END_SRC
+
+- clang::ASTContext
+#+BEGIN_SRC C++
+TranslationUnitDecl *ASTContext::getTranslationUnitDecl();
+#+END_SRC
+
+** AST APIs
+*** clang::TranslationUnitDecl
+It is inherited from Decl and DeclContext. DeclContext is interesting.
+
+clang::DeclContext
+#+BEGIN_SRC C++
+decl_range decls();
+decl_iterator decls_begin();
+decl_iterator decls_end()
+#+END_SRC
+
+This should provide all information to get the children nodes.
+#+BEGIN_SRC C++
+  class clang::DeclContext::decl_iterator {
+  public:
+    typedef Decl* value_type;
+    typedef const value_type& reference;
+    reference operator*() const;
+    value_type operator->() const;
+    decl_iterator& operator++();
+    decl_iterator operator++(int);
+    friend operator==(decl_iterator x, decl_iterator y);
+    friend operator!=(decl_iterator x, decl_iterator y);
+  };
+
+  typedef llvm::iterator_range<decl_iterator> clang::DeclContext::decl_range;
+
+  // OK, now the reference of llvm::iterator_range
+  class llvm::iterator_range<IteratorT> {
+  public:
+    IteratorT begin() const;
+    IteratorT end() const;
+  };
+#+END_SRC
+
+
+** Using Compilation Database
+Using compilation database can make sure clang uses the right
+flags. This is usually the include path, but also some flags like
+-std=c99.
+
+In order to get the compilation database file (compile_commands.json):
+- for cmake project, runs cmake with
+  ~-DCMAKE_EXPORT_COMPILE_COMMANDS=ON~ will do the job
+- for non-cmake project, use [[https://github.com/rizsotto/Bear][Bear]]. It runs the ordinary build and
+  intercept the =exec= calls issued by the build tools. The command to
+  run is =bear make= instead of =make=
+
+Thus, for all the projects, it is possible to get the compilation
+database as long as:
+- cmake is able to finish success (no missing dependencies)
+- make can finish
+
+As an example, to use the data base, invoke clang tooling by:
+
+#+BEGIN_SRC C++
+  CompilationDatabase *db = CompilationDatabase::loadFromDirectory("/path/to/build");
+  // or use the child class
+  JSONCompilationDatabase *json_db = JSONCompilationDatabase::loadFromFile("/path/to/compile_commands.json");
+  // directly use
+  ClangTool tool(*db, ["a.c", "b.c"]);
+  // or use the command line arguments
+  // usage: exe -p /path/to/build a.c b.c
+  static cl::OptionCategory MyToolCategory("my-tool options");
+  CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
+  ClangTool tool(OptionsParser.getCompilations(),
+                 OptionsParser.getSourcePathList());
+#+END_SRC
+** From Code String
+Of cource using the database will introduce overhead to obtain the
+database. We may only care about the header path
+- running runToolOnCode will use -fsyntax-only
+- system header files: I don't think libTooling default will use them,
+  so be sure to use
+- local headers: get all the folders, and add -Ixxx flags
+
+The =runToolOnCode= can do this. It accepts a =FrontendAction=, and
+typically calls a =RecursiveASTVisitor=.  Instead of =runToolOnCode=,
+there's also a =buildASTFromCode= family:
+
+** Other
+Unused features of clang::tooling
+
+#+BEGIN_SRC C++
+  using namespace clang::tooling;
+  class Range;
+  class Replacement;
+  class Replacements;
+#+END_SRC
+
+
+Not belong to clang::tooling:
+#+BEGIN_SRC C++
+class clang::RecursiveASTVisitor;
+#+END_SRC
+
+
+
+
 * Reference
 
 - A article as tutorial:
