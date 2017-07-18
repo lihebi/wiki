@@ -49,15 +49,25 @@
 - clang::tooling::Replacement
 - clang::tooling::Replacements
 
-* AST
-** General
-*** clang::ASTUnit
+* Compiler
+** CompilerInstance
+
+* General
+** clang::ASTUnit
 #+BEGIN_SRC C++
 ASTContext &ASTunit::getASTContext();
 #+END_SRC
 
-*** clang::ASTContext
-*** clang::SourceManager
+** clang::ASTContext
+#+BEGIN_SRC C++
+SourceManager &getSourceManager();
+const LangOptions &getLangOpts();
+TranslationUnitDecl *getTranslationUnitDecl();
+DiagnosticsEngine &getDiagnostics();
+FullSourceLoc getFullLoc(SourceLocation loc);
+#+END_SRC
+
+** clang::SourceManager
 #+BEGIN_SRC C++
 FileID getMainFileID();
 FileEntry *getFileEntryForID(FileID FID);
@@ -77,14 +87,8 @@ bool isWrittenInMainFile(SourceLocation loc);
 StringRef getName();
 #+END_SRC
 
-#+BEGIN_SRC C++
-SourceManager &ASTContext::getSourceManager();
-TranslationUnitDecl *ASTContext::getTranslationUnitDecl();
-DiagnosticsEngine &ASTContext::getDiagnostics();
-FullSourceLoc ASTContext::getFullLoc(SourceLocation loc);
-#+END_SRC
 
-*** Location
+** Location
 - clang::SourceRange
 #+BEGIN_SRC C++
 SourceLocation getBegin();
@@ -108,8 +112,7 @@ unsigned getColumnNumber();
 FileEntry *getFileEntry();
 #+END_SRC
 
-** AST Node
-*** clang::Decl
+* clang::Decl
 #+BEGIN_SRC C++
 SourceLocation getLocStart();
 SourceLocation getLocEnd();
@@ -117,23 +120,20 @@ SourceLocation getLocation();
 Kind getKind();
 DeclContext *getDeclContext();
 #+END_SRC
-*** clang::NamedDecl
-#+BEGIN_SRC C++
-IdentifierInfo *getIdentifier();
-StringRef getName();
-std::string getNameAsString();
-#+END_SRC
 
-*** clang::TranslationUnitDecl
-It is inherited from Decl and DeclContext. DeclContext is interesting.
-
-clang::DeclContext
+** clang::DeclContext
+All classes inherited from it:
+- clang::BlockDecl
+- clang::FunctionDecl
+- clang::TagDecl
+  - clang::EnumDecl
+  - clang::RecordDecl
+- clang::TranslationUnitDecl
 #+BEGIN_SRC C++
 decl_range decls();
 decl_iterator decls_begin();
 decl_iterator decls_end()
 #+END_SRC
-
 This should provide all information to get the children nodes.
 #+BEGIN_SRC C++
   class clang::DeclContext::decl_iterator {
@@ -158,14 +158,111 @@ This should provide all information to get the children nodes.
   };
 #+END_SRC
 
-*** clang::FunctionDecl
-- parent classes
-  - clang::Decl
-  - clang::NamedDecl
-  - clang::ValueDecl
-  - clang::DeclaratorDecl
-  - clang::DeclContext
+** clang::TranslationUnitDecl
+It is also inherited from DeclContext.
 
+** clang::BlockDecl
+Like a unamed FunctionDecl. Also inherited from DeclContext.
+
+#+BEGIN_SRC C++
+ArrayRef<ParmVarDecl*> parameters();
+param_iterator param_begin();
+param_iterator param_end();
+#+END_SRC
+** clang::NamedDecl
+#+BEGIN_SRC C++
+IdentifierInfo *getIdentifier();
+StringRef getName();
+std::string getNameAsString();
+#+END_SRC
+
+*** clang::LabelDecl
+#+BEGIN_SRC C++
+LabelStmt *getStmt();
+SourceRange getSourceRange();
+#+END_SRC
+*** clang::TypeDecl
+No interesting methods.
+
+**** clang::TypeDecl -> clang::TypedefNameDecl -> clang::TypedefDecl
+No interesting methods
+**** clang::TypeDecl -> clang::TagDecl
+- struct
+- union
+- class
+- enum
+#+BEGIN_SRC C++
+typedef TagTypeKind TagKind;
+enum TagTypeKind {
+  TTK_Struct,
+  TTK_Interface,
+  TTK_Union,
+  TTK_Class,
+  TTK_Enum
+};
+SourceRange getBraceRange();
+SourceLocation getInnerLocStart();
+SourceLocation getOuterLocStart();
+SourceRange getSourceRange();
+bool isThisDeclarationADefinition();
+TagDecl *getDefinition();
+StringRef getKindName();
+TagKind getTagKind();
+bool isStruct();
+bool isInterface();
+bool isClass();
+bool isUnion();
+bool isEnum();
+#+END_SRC
+**** clang::TypeDecl -> clang::TagDecl -> clang::EnumDecl
+#+BEGIN_SRC C++
+enumerator_range enumerators();
+enumerator_iterator enumerator_begin();
+enumerator_iterator enumerator_end();
+#+END_SRC
+**** clang::TypeDecl -> clang::TagDecl -> clang::RecordDecl
+- struct
+- union
+- class
+#+BEGIN_SRC C++
+field_range fields();
+field_iterator field_begin();
+field_iterator field_end();
+bool field_empty();
+
+#+END_SRC
+*** clang::ValueDecl
+Declaration of either
+- a variable
+- a function
+- an enum constant
+
+#+BEGIN_SRC C++
+QualType getType();
+#+END_SRC
+
+- clang::EnumConstantDecl : clang::ValueDecl
+
+An instance of this object exists for each enum constant that is defined
+#+BEGIN_SRC C++
+Expr* getInitExpr();
+const llvm::APSInt &getInitVal();
+SourceRange getSourceRange();
+#+END_SRC
+
+*** clang::ValueDecl -> clang::DeclaratorDecl
+#+BEGIN_SRC C++
+TypeSourceInfo *getTypeSourceInfo();
+SourceLocation getInnerLocStart();
+SourceLocation getOuterLocStart();
+SourceRange getSourceRange();
+SourceLocation getLocStart();
+NestedNameSpecifier *getQualifier();
+SourceLocation getTypeSpecStartLoc();
+#+END_SRC
+
+*** clang::ValueDecl -> clang::DeclaratorDecl -> clang::FunctionDecl
+- Also inherit from =clang::DeclContext=
 #+BEGIN_SRC C++
 SourceRange getSourceRange();
 FunctionDecl *getDefinition();
@@ -179,7 +276,334 @@ size_t param_size();
 ParmVarDecl *getParamDecl(unsigned i);
 QualType getReturnType();
 #+END_SRC
+
+*** clang::ValueDecl -> clang::DeclaratorDecl -> clang::FieldDecl
+#+BEGIN_SRC C++
+unsigned getFieldIndex();
+bool isBitField();
+bool hasInClassinitializer();
+Expr *getInClassInitializer();
+RecordDecl* getParent();
+SourceRange getSourceRange();
+#+END_SRC
+*** clang::ValueDecl -> clang::DeclaratorDecl -> clang::VarDecl
+Represent a variable declaration or definition.
+
+#+BEGIN_SRC C++
+SourceRange getSourceRange();
+StorageClass getStorageClass();
+bool isStaticLocal();
+bool hasExternalStorage();
+bool hasGlobalStorage();
+bool isLocalVarDecl();
+bool isLocalVarDeclOrParm();
+bool isFunctionOrMethodVarDecl();
+DefinitionKind isThisDeclarationADefinition();
+VarDecl *getDefinition();
+bool isFileVarDecl();
+const Expr *getAnyInitializer();
+bool hasInit();
+Expr *getInit();
+#+END_SRC
+
+- clang::ParmVarDecl : clang::VarDecl
+#+BEGIN_SRC C++
+SourceRange getSourceRange();
+unsigned getFunctionScopeIndex();
+bool hasDefaultArg();
+Expr *getDefaultArg();
+SourceRange getDefaultArgRange();
+#+END_SRC
+
+
+* clang::Stmt
+
+#+BEGIN_SRC C++
+SourceRange getSourceRange();
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+void dump();
+void dumpColor();
+void dumpPretty(ASTContext &Context);
+void viewAST(); // via graphviz
+child_range children();
+child_iterator child_begin();
+child_iterator child_end();
+#+END_SRC
+
+All subclasses has
+#+BEGIN_SRC C++
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+child_range children();
+#+END_SRC
+
+** Single
+*** clang::BreakStmt
+#+BEGIN_SRC C++
+SourceLocation getBreakLoc();
+#+END_SRC
+*** clang::ReturnStmt
+#+BEGIN_SRC C++
+SourceLocation getContinueLoc();
+Expr *getRetValue();
+#+END_SRC
+*** clang::ContinueStmt
+#+BEGIN_SRC C++
+SourceLocation getContinueLoc();
+#+END_SRC
+
+** Conditional
+*** clang::IfStmt
+#+BEGIN_SRC C++
+Stmt *getInit();
+Expr *getCond();
+Stmt *getThen();
+Stmt *getElse();
+
+SourceLocation getIfLoc();
+SourceLocation getElseLoc();
+#+END_SRC
+*** clang::SwitchCase
+Has two subclasses
+- clang::CaseStmt
+- clang::DefaultStmt
+
+#+BEGIN_SRC C++
+SwitchCase *getNextSwitchCase();
+SourceLocation getKeywordLoc();
+SourceLocation getColonLoc();
+Stmt *getSubStmt(); // ??
+#+END_SRC
+
+CaseStmt
+#+BEGIN_SRC C++
+SourceLocation getCaseLoc();
+SourceLocation getEllipsisLoc(); // ??
+SourceLocation getColonLoc();
+
+Expr *getLHS();
+Expr *getRHS();
+Stmt *getSubStmt();
+Expr *getLHS();
+Expr *getRHS();
+Stmt *getSubStmt();
+#+END_SRC
+
+DefaultStmt
+#+BEGIN_SRC C++
+Stmt *getSubStmt();
+SourceLocation getDefaultLoc();
+SourceLocation getColonLoc();
+#+END_SRC
+
+*** clang::SwitchStmt
+#+BEGIN_SRC C++
+VarDecl *getConditionVariable();
+DeclStmt *getConditionVariableDeclStmt();
+Stmt *getInit();
+Expr *getCond();
+Stmt *getBody();
+SwitchCase *getSwitchCaseList();
+
+SourceLocation getSwitchLoc();
+#+END_SRC
+*** clang::LabelStmt
+#+BEGIN_SRC C++
+LabelDecl *getDecl();
+const char *getName();
+Stmt *getSubStmt();
+#+END_SRC
+*** clang::GotoStmt
+#+BEGIN_SRC C++
+LabelDecl *getLabel();
+SourceLocation getGotoLoc();
+SourceLocation getLabelLoc();
+#+END_SRC
+** loop
+*** clang::DoStmt
+#+BEGIN_SRC C++
+Expr *getCond();
+Stmt *getBody();
+SourceLocation getDoLoc();
+SourceLocation getWhileLoc();
+// why no LParen??
+SourceLocation getRParenLoc();
+#+END_SRC
+*** clang::ForStmt
+#+BEGIN_SRC C++
+VarDecl *getConditionVariable();
+const DeclStmt *getConditionVariableDeclStmt();
+
+Stmt *getInit();
+Expr *getCond();
+Expr *getInc();
+
+Stmt *getBody();
+
+SourceLocation getForLoc();
+SourceLocation getRParenLoc();
+SourceLocation getLParenLoc();
+#+END_SRC
+*** clang::WhileStmt
+
+#+BEGIN_SRC C++
+VarDecl *getConditionVariable();
+const DeclStmt *getConditionVariableDeclStmt();
+
+Expr *getCond();
+Stmt *getBody();
+SourceLocation getWhileLoc();
+#+END_SRC
+** Other
+*** clang::CompoundStmt
+#+BEGIN_SRC C++
+bool body_empty();
+unsigned size();
+body_range body();
+body_iterator body_begin();
+body_iterator body_end();
+Stmt *body_front();
+Stmt *body_back();
+reverse_body_iterator body_rbegin();
+reverse_body_iterator body_rend();
+
+SourceLocation getLBracLoc();
+SourceLocation getRBracLoc();
+#+END_SRC
+*** clang::DeclStmt
+This is adapter class for mixing declarations with statements and
+expressions.
+
+#+BEGIN_SRC C++
+bool isSingleDecl();
+Decl *getSingleDecl();
+decl_range decls();
+decl_iterator decl_begin();
+decl_iterator decl_end();
+reverse_decl_iterator decl_rbegin();
+reverse_decl_iterator decl_rend();
+#+END_SRC
+*** TODO clang::Expr
+This is a big topic. In a seperate outline.
+
+It is a subclass of Stmt, this allows an expression to be
+transparently used in any place a Stmt is required.
+
+
+* clang::Expr
+** TODO how to convert expr to source code string
+
+#+BEGIN_SRC C++
+SourceLocation getExprLoc();
+bool isLValue();
+bool isXValue();
+bool isGLValue();
+
+ExprValueKind getValueKind();
+bool isIntegerConstantExpr(const ASTContext &ctx);
+#+END_SRC
+
+
+** clang::CallExpr
+#+BEGIN_SRC C++
+Expr *getCallee();
+Decl *getCalleeDecl();
+FunctionDecl *getDirectCallee();
+unsigned getNumArgs();
+Expr **getArgs();
+Expr *getArg(unsigned Arg);
+
+arg_range arguments();
+arg_iterator arg_begin();
+arg_iterator arg_end();
+
+unsigned getNumCommas();
+unsigned getBuiltinCallee();
+
+QualType getCallReturnType(const ASTContext &Ctx);
+SourceLocation getRParenLoc();
+#+END_SRC
+** clang::BinaryOperator
+#+BEGIN_SRC C++
+SourceLocation getExprLoc();
+SourceLocation getOperatorLoc();
+Opcode getOpcode();
+Expr *getLHS();
+Expr *getRHS();
+
+StringRef getOpcodeStr();
+
+bool isAdditiveOp();
+bool isShiftOp();
+bool isBitwiseOp();
+bool isRelationalOp();
+bool isEqualityOp();
+bool isComparisonOp();
+bool isLogicalOp();
+bool isAssignmentOp();
+bool isCompoundAssignmentOp();
+bool isShiftAssignOp();
+#+END_SRC
+** clang::CastExpr
+** clang::ChooseExpr
+** clang::CompoundLiteralExpr
+** clang::GNUNullExpr
+** clang::MemberExpr
+** clang::LambdaExpr
+** clang::IntegerLiteral
+** clang::ImplicitValueInitExpr
+** clang::InitListExpr
+** clang::ParenExpr
+** clang::ParenListExpr
+** clang::StmtExpr
+This is the GNU Statement Expression extension: =({int X=4;X;})=. Not
+very useful for me.
+** clang::StringLiteral
+** clang::TypoExpr
+** clang::UnaryOperator
+
 * Topics
+** TODO Clang AST to source code
+
+*** clang::Rewriter
+
+#+BEGIN_SRC C++
+#include "clang/Rewrite/Core/Rewriter.h"
+
+SourceManager &getSourceMgr();
+void setSourceMgr(SourceManager &SM, const LangOptions &LO);
+
+int getRangeSize(SourceRange range);
+std::string getRewrittenText(SourceRange range);
+
+bool InsertText(SourceLocation loc, StringRef str, bool InsertAfter=true, bool indentNewLines=false);
+bool InsertTextAfter(SourceLocation loc, StringRef str);
+bool InsertTextAfterToken(SourceLocation loc, StringRef str);
+bool InsertTextBefore(SourceLocation loc, StringRef str);
+
+bool RemoveText(SourceLocation start, unsigned length);
+bool RemoveText(SourceRange range);
+
+bool ReplaceText(SourceLocation start, unsigned OrigLength, StringRef NewStr);
+bool ReplaceText(SourceRange range, StringRef NewStr);
+bool ReplaceText(SourceRange range, SourceRange replacementRange);
+
+bool IncreaseIndentation(SourceRange range, SourceLocation parentIndent);
+
+RewriteBuffer &getEditBuffer(FileID FID);
+const RewriteBuffer *getRewriteBufferFor(FileID FID) const;
+
+buffer_iterator buffer_begin();
+buffer_iterator buffer_end();
+bool overwriteChangedFiles();
+#+END_SRC
+
+Usage example
+#+BEGIN_SRC C++
+Rewriter rewriter;
+rewriter.setSourceMgr(source_manager, )
+#+END_SRC
 ** Create AST
 *** Using Compilation Database
 Using compilation database can make sure clang uses the right
