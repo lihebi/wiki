@@ -1,6 +1,17 @@
 #+TITLE: Clang
 
+* Note from LLVM
 
+When doing casting, don't use C++ =static_cast= or
+=dynamic_cast=. Instead, use the following:
+- isa<>: check and return bool
+- cast<>: this is checked cast from base class to derived. will
+  trigger assertion failure if the instance is not class.
+- dyn_cast<>: this is checking cast, will return nullptr on failure
+
+These functions also have one under clang namespace.
+
+The type inside the cast should NOT be the pointer.
 
 * clang::tooling
 ** clang::tooling::ClangTool
@@ -382,9 +393,6 @@ SourceLocation getCaseLoc();
 SourceLocation getEllipsisLoc(); // ??
 SourceLocation getColonLoc();
 
-Expr *getLHS();
-Expr *getRHS();
-Stmt *getSubStmt();
 Expr *getLHS();
 Expr *getRHS();
 Stmt *getSubStmt();
