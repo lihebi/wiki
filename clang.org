@@ -123,6 +123,70 @@ unsigned getColumnNumber();
 FileEntry *getFileEntry();
 #+END_SRC
 
+
+
+* clang::Type
+The raw type will be whatever appeared in the source code. If a type
+is a typedef to another type (may be pointer), then the "type" will
+not record the pointer information.
+
+** canonical type
+Every instance of type has a canonical type pointer.
+- If the type is a simple primitive type, the pointer points to itself
+- If any part of the type has typedef, the pointer will point to a
+  type instance that is equivalent to it but without typedefs. You can
+  check whether two types are the same by comparing this pointer.
+
+You should not use isa/cast/dyn_cast on types
+(e.g. =isa<PointerType>(expr->getType())=). The reason is it is not
+canonical. So use help functions instead:
+=expr->getType()->isPointerType()=.
+
+** QualType
+The type and its qualifiers (const, volatile, restrict) are
+seperate. That is the QualType. It is designed to be small and
+pass-by-value. It is essentially a pair of (Type*, bits) where the
+bits stores the qualifiers.
+
+This helps making only one type for each kind, e.g. int, const int,
+volatile const int.
+
+#+BEGIN_SRC C++
+const Type* getTypePtr() const;
+const Type& operator*() const;
+const Type* operator->() const;
+
+SplitQualType split() const;
+class SplitQualType {
+public:
+  const Type *Ty;
+  Qualifiers Quals;
+};
+
+bool isCanonical();
+QualType getCanonicalType() const;
+bool isNull();
+
+bool isConstQualified();
+bool isVolatileQualified();
+bool isRestrictQualified();
+bool hasLocalQualifiers();
+bool hasQualifiers();
+
+Qualifiers getQualifiers();
+
+QualType withConst();
+QualType withVolatile();
+QualType withRestrict();
+
+void dump();
+std::string getAsString();
+
+static std::string getAsString(SplitQualType split);
+static std::string getAsString(const Type *ty, Qualifiers qs);
+#+END_SRC
+
+
 * clang::Decl
 #+BEGIN_SRC C++
 SourceLocation getLocStart();
