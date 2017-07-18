@@ -47,12 +47,3 @@ pre {
 }
 
 
-a {
-  color: #d33682;
-  text-decoration: underline;
-}
-
-a:hover {
-  color: #eee;
-  background-color: #d33682;
-}
