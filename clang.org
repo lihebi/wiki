@@ -259,9 +259,13 @@ SourceRange getSourceRange();
 *** clang::TypeDecl
 No interesting methods.
 
-**** clang::TypeDecl -> clang::TypedefNameDecl -> clang::TypedefDecl
-No interesting methods
-**** clang::TypeDecl -> clang::TagDecl
+- clang::TypeDecl
+  - clang::TypedefNameDecl
+    - clang::TypedefDecl: No interesting methods
+  - clang::TagDecl
+    - clang::EnumDecl
+    - clang::RecordDecl
+**** TagDecl
 - struct
 - union
 - class
@@ -289,13 +293,13 @@ bool isClass();
 bool isUnion();
 bool isEnum();
 #+END_SRC
-**** clang::TypeDecl -> clang::TagDecl -> clang::EnumDecl
+**** clang::EnumDecl
 #+BEGIN_SRC C++
 enumerator_range enumerators();
 enumerator_iterator enumerator_begin();
 enumerator_iterator enumerator_end();
 #+END_SRC
-**** clang::TypeDecl -> clang::TagDecl -> clang::RecordDecl
+**** clang::RecordDecl
 - struct
 - union
 - class
@@ -316,16 +320,23 @@ Declaration of either
 QualType getType();
 #+END_SRC
 
-- clang::EnumConstantDecl : clang::ValueDecl
+- clang::ValueDecl
+  - clang::EnumConstantDecl: 
+  - clang::DeclaratorDecl
+    - clang::FunctionDecl
+    - clang::FieldDecl
+    - clang::VarDecl
 
-An instance of this object exists for each enum constant that is defined
+**** clang::EnumConstantDecl
+An instance of this object exists for each enum constant that is
+defined.
 #+BEGIN_SRC C++
 Expr* getInitExpr();
 const llvm::APSInt &getInitVal();
 SourceRange getSourceRange();
 #+END_SRC
 
-*** clang::ValueDecl -> clang::DeclaratorDecl
+**** clang::DeclaratorDecl
 #+BEGIN_SRC C++
 TypeSourceInfo *getTypeSourceInfo();
 SourceLocation getInnerLocStart();
@@ -336,7 +347,7 @@ NestedNameSpecifier *getQualifier();
 SourceLocation getTypeSpecStartLoc();
 #+END_SRC
 
-*** clang::ValueDecl -> clang::DeclaratorDecl -> clang::FunctionDecl
+**** clang::FunctionDecl
 - Also inherit from =clang::DeclContext=
 #+BEGIN_SRC C++
 SourceRange getSourceRange();
@@ -365,7 +376,7 @@ SourceLocation getLocStart();
 SourceLocation getLocEnd();
 #+END_SRC
 
-*** clang::ValueDecl -> clang::DeclaratorDecl -> clang::FieldDecl
+**** clang::FieldDecl
 #+BEGIN_SRC C++
 unsigned getFieldIndex();
 bool isBitField();
@@ -374,7 +385,7 @@ Expr *getInClassInitializer();
 RecordDecl* getParent();
 SourceRange getSourceRange();
 #+END_SRC
-*** clang::ValueDecl -> clang::DeclaratorDecl -> clang::VarDecl
+**** clang::VarDecl
 Represent a variable declaration or definition.
 
 #+BEGIN_SRC C++
