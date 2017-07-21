@@ -340,6 +340,9 @@ SourceLocation getTypeSpecStartLoc();
 - Also inherit from =clang::DeclContext=
 #+BEGIN_SRC C++
 SourceRange getSourceRange();
+SourceRange getReturnTypeSourceRange();
+DeclarationNameInfo getNameInfo();
+
 FunctionDecl *getDefinition();
 Stmt *getBody();
 bool isMain();
@@ -350,6 +353,16 @@ param_iterator param_end();
 size_t param_size();
 ParmVarDecl *getParamDecl(unsigned i);
 QualType getReturnType();
+#+END_SRC
+
+DeclarationNameInfo
+#+BEGIN_SRC C++
+DeclarationName getName();
+SourceLocation getBeginLoc();
+SourceLocation getEndLoc();
+SourceRange getSourceRange()
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
 #+END_SRC
 
 *** clang::ValueDecl -> clang::DeclaratorDecl -> clang::FieldDecl
@@ -420,7 +433,7 @@ SourceLocation getBreakLoc();
 #+END_SRC
 *** clang::ReturnStmt
 #+BEGIN_SRC C++
-SourceLocation getContinueLoc();
+SourceLocation getReturnLoc();
 Expr *getRetValue();
 #+END_SRC
 *** clang::ContinueStmt
