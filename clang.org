@@ -62,8 +62,99 @@ The type inside the cast should NOT be the pointer.
 
 * Compiler
 ** CompilerInstance
+#+BEGIN_SRC C++
+// high level invocation
+bool ExecuteAction(FrontendAction &act);
+bool hasInvocation();
+CompilerInvocation& getInvocation();
+void setInvocation(std::shared_ptr<CompilerInvocation> value);
+
+// options
+DiagnosticOptions& getDiagnosticOpts();
+FrontendOptions& getFrontendOpts();
+HeaderSearchOptions& getHeaderSearchOpts();
+LangOptions& getLangOpts();
+PreprocessorOptions& getPreprocessorOpts();
+
+// diagnoatic
+bool hasDiagnostics();
+DiagnosticsEngine& getDiagnostics();
+void setDiagnostics(DiagnosticsEngine *value);
+
+// managers
+bool hasFileManager();
+FileManager& getFileManager();
+void setFileManager(FileManager *value);
+bool hasSourceManager();
+SourceManager& getSourceManager();
+void setSourceManager(SourceManager *value);
+
+bool hasPreprocessor();
+Preprocessor& getPreprocessor();
+void setPreprocessor(std::shared_ptr<Preprocessor> value);
+
+bool hasASTContext();
+ASTContext& getASTContext();
+
+bool hasASTConsumer();
+ASTConsumer& getASTConsumer();
+
+// construction
+void createDiagnostics();
+void createFileManager();
+void createSourceManager(FileManager &FileMgr);
+void createPreprocessor(TranslationUnitKind TUKind);
+#+END_SRC
+
+** Preprocessor
+#+BEGIN_SRC C++
+DiagnosticEngine &getDiagnostics();
+FileManager& getFileManager();
+SourceManager& getSourceManager();
+IdentifierTable& getIdentifierTable();
+
+// macros
+bool isMacroDefined(StringRef id);
+bool isMacroDefined(const IdentifierInfo *ii);
+MacroDefinition getMacroDefinition(const IdentifierInfo *ii);
+MacroInfo *getMacroInfo(const IdentifierInfo *ii);
+macro_iterator macro_begin(bool IncludeExternalMacros=true);
+macro_iterator macro_end(bool IncludeExternalMacros=true);
+
+typedef MacroMap::const_iterator macor_iterator;
+typedef llvm::DenseMap<const IdentifierInfo *, MacroState> MacroMap;
+#+END_SRC
+
+*** MacroDefinition
+#+BEGIN_SRC C++
+MacroInfo *getMacroInfo();
+#+END_SRC
+
+*** MacroInfo
+#+BEGIN_SRC C++
+// this does not include the "#define"
+SourceLocation getDefinitionLoc();
+SourceLocation getDefinitionEndLoc();
+
+bool isFunctionLike();
+bool isObjectLike();
+bool isC99Varargs();
+bool isGNUVarargs();
+bool isVariadic();
+bool isBuiltinMacro();
+#+END_SRC
+
+The builtin cannot distinguish most of the "builtin" macros. So in
+order to detect user defined macros, get the source manager, and check
+isWrittenInMainFile (/not/ isInMainFile) for the source location.
 
 * General
+** IdentifierInfo
+#+BEGIN_SRC C++
+StringRef getName();
+bool hasMacroDefinition();
+#+END_SRC
+
 ** clang::ASTUnit
 #+BEGIN_SRC C++
 ASTContext &ASTunit::getASTContext();
@@ -356,6 +447,8 @@ DeclarationNameInfo getNameInfo();
 
 FunctionDecl *getDefinition();
 Stmt *getBody();
+// even if it is only a declaration, the body is still available
+bool isThisDeclarationADefinition();
 bool isMain();
 ArrayRef<ParmVarDecl*> parameters();
 bool param_empty();
@@ -579,6 +672,9 @@ decl_iterator decl_begin();
 decl_iterator decl_end();
 reverse_decl_iterator decl_rbegin();
 reverse_decl_iterator decl_rend();
+
+typedef DeclGroupRef::iterator clang::DeclStmt::decl_iterator;
+typedef Decl** clang::DeclGroupRef::iterator;
 #+END_SRC
 *** TODO clang::Expr
 This is a big topic. In a seperate outline.
@@ -791,6 +887,27 @@ SourceLocation getLocStart();
 SourceLocation getLocEnd();
 #+END_SRC
 
+** clang::ConditionalOperator
+- clang::Expr
+  - clang::AbstractConditionalOperator
+    - clang::ConditionalOperator
+    - clang::BinaryConditionalOperator (not interesting)
+
+This is ?: ternary operator.
+
+#+BEGIN_SRC C++
+Expr *getCond();
+Expr *getTrueExpr();
+Expr *getFalseExpr();
+
+// don't know what this is
+Expr *getLHS();
+Expr *getRHS();
+
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+#+END_SRC
+
 ** Other Not Interesting Ones
 *** clang::LambdaExpr
 *** clang::IntegerLiteral
@@ -804,7 +921,7 @@ very useful for me.
 *** clang::TypoExpr
 
 * Topics
-** TODO Clang AST to source code
+** Clang AST to source code
 
 *** clang::Rewriter
 
