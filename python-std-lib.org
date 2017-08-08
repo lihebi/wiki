@@ -107,6 +107,7 @@ Other
 - range(stop): [0,stop)
 - range(start, stop, step=1)
 - sorted(iterable, cmp, key, reverse=False)
+  - key=lambda x: x[1]
 - type(obj): get the type of obj
 - open(name, mode): return an object of file type.
   - r,w,a,b; + for read and write
