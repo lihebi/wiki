@@ -63,10 +63,10 @@ Inspect
 - Alignment: every 15,000 miles
 * Differential Oil
 - Inspection
-  - remove filler plug
+  - remove filler plug (23mm)
   - verify that the oil is at the brim of the plug hole
 - filler plug tightening torque: 40-53 N.m
-- drain plug tightening torque: 40-53 N.m
+- drain plug (24mm) tightening torque: 40-53 N.m
 - Replace
   - remove fillter plug and drain plug
   - drain
@@ -99,7 +99,7 @@ Brake should be bled whenever a brake line is disconnected.
   - the second person loosen the bleeder screw, drain out the fluid and closes the screw
   - repeat the first-second person steps until no air bubbles. The
     reservoir should be kept about 3/4 full during the process.
-  - tightening torque: 5.9-8.8 N.m
+  - tightening torque (8mm): 5.9-8.8 N.m
 
 *** brake fluid replacement
 There is no such instruction in the manual. However, searching the internet gives me a rough idea
@@ -146,8 +146,8 @@ the clutch.
   - remove check plug at the driver side of the transmission
   - verify that the oil is at the brim of the check plug hole
   - apply sealant and install
-- check plug tightening torque: 25-39 N.m
-- drain plug tightening torque: 40-58 N.m
+- check plug (24mm?) tightening torque: 25-39 N.m
+- drain plug (22mm?) tightening torque: 40-58 N.m
 - Transmission Oil Replacement
   - remove drain plug and check plug
   - drain the oil
