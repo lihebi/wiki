@@ -149,7 +149,7 @@ read -p "please input: " a b c
    - =exp && exp= :: and
    - =exp || exp= :: or
 
-*** bash conditional expression
+*** bash conditional expression (*only work with double brackets*)
 
     | expr                | meaning                         |
     |---------------------+---------------------------------|

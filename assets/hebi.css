@@ -1,6 +1,12 @@
+a {
+    text-decoration: underline;
+}
 a:visited {
-    /* color: red; */
-    color: darkblue;
+    color: brown;
+}
+a:hover {
+    color: white;
+    background-color: black;
 }
 
 code {

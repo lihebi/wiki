@@ -12,8 +12,62 @@ document better. I simply want to read a well sectioned document containing all 
 
 Suspend the interest for clojure for now.
 
-The [[file:clojure-other.org][old clojure page]]
+- The [[file:clojure-other.org][old clojure page]]
+- the [[file:clojure-tools.org][tools]] for clojure
 
+- https://clojure.github.io/ is the API reference, in alphabet order
+
+
+* clojure.core
+- =*in*=
+- =*out*=
+- =*err*=
+
+- assert
+
+
+** Namespace
+Namespaces are maps that map name to var. Namespace is seperated by
+dot, similar to java. The recommended format: =org.lib.funcgroup=.
+
+- =clojure.core/ns=: [name docstring? attr-map? references*]
+  - set =*ns*= to name
+  - references are same as calling them, except arguments are not quoted
+    - (:refer-clojure ...)
+    - (:require ...)
+    - (:use ...)
+    - (:import ...)
+    - (:load ...)
+    - (:gen-class)
+
+- =require [& args]=: The scope will be available, the functions under
+  them can be called using the scope.
+  - load libs, skip already loaded.
+  - do not usually use directly, use in =ns= instead
+  - args can be a single symbol, or with options. It recognizes options
+    - =:as sym=: as a symbol. e.g. =(require [clojure.walk :as walk])=
+    - =:refer sym-list=: the list of symbols inside the lib can be
+      called without the scope. The list can be =:all=
+- =refer [ns-sym &filters]=: refer to all public vars of ns into
+  current namespace. Filters:
+  - :exclude list-of-symbols
+  - :only list-of-symbols
+  - :rename map-of-fromsymbol-tosymbol
+- =refer-clojure [& filters]=: same as (refer 'clojure-core
+  <filters>). clojure-core is refered by default, so this is typically
+  used with exclude filter.
+- =use [& args]=: do not use after clojure 1.4. Use =require= with
+  =:refer= instead
+  1. require
+  2. refer the lib's namespace
+- =import [& import-symbols-or-lists]=: as import a java classes and
+  make them usable in their short name in clojure
+  - since we have the rest sign =&=, the arguments are not inside a
+    list, but as multiple arguments for import
+  - as the argument name indicates, it can be symbol or list
+    - symbol: is the full java class, e.g. =java.util.Date=
+    - list: to save some typing, if importing multiple classes from
+      same namespace: =[java.util.concurrent Executors TimeUnit]=
 
 * Type
 ** Number

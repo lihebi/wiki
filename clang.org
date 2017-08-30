@@ -1,6 +1,1220 @@
 #+TITLE: Clang
 
-* Invoking
+* Note from LLVM
+
+When doing casting, don't use C++ =static_cast= or
+=dynamic_cast=. Instead, use the following:
+- isa<>: check and return bool
+- cast<>: this is checked cast from base class to derived. will
+  trigger assertion failure if the instance is not class.
+- dyn_cast<>: this is checking cast, will return nullptr on failure
+
+These functions also have one under clang namespace.
+
+The type inside the cast should NOT be the pointer.
+
+* clang::tooling
+** clang::tooling::ClangTool
+#+BEGIN_SRC C++
+  ClangTool::ClangTool(const CompilationDatabase &Compilations, 
+                       ArrayRef< std::string > SourcePaths);
+  ClangTool::run (ToolAction *Action);
+  // directly build ASTs
+  ClangTool::buildASTs(std::vector<std::unique_ptr<ASTUnit> > &ASTs);
+#+END_SRC
+
+** clang::tooling::CompilationDatabase
+- clang::tooling::CompilationDatabase
+- clang::tooling::JSONCompilationDatabase
+#+BEGIN_SRC C++
+  static CompilationDatabase::loadFromDirectory(StringRef BuildDirectory);
+  class JSONCompilationDatabase : public CompilationDatabase {};
+  static JSONCompilationDatabase::loadFromFile(StringRef FilePath);
+#+END_SRC
+
+** clang::tooling::runToolOnCode
+- runToolOnCode
+- runToolOnCodeWithArgs
+- buildASTFromCode
+- buildASTFromCodeWithArgs
+#+BEGIN_SRC C++
+  using namespace clang::tooling;
+  bool runToolOnCode(clang::FrontendAction *ToolAction,
+                     const Twine &Code,
+                     const Twine &FileName="input.cc");
+  bool runToolOnCodeWithArgs(clang::FrontendAction *ToolAction,
+                             const Twine &Code,
+                             const std::vector<std::string> &Args,
+                             const Twine &FileName="input.cc");
+  std::unique_ptr<ASTUnit>
+  buildASTFromCode(const Twine &Code,
+                   const Twine &FileName="input.cc");
+  std::unique_ptr<ASTUnit>
+  buildASTFromCodeWithArgs(const Twine &Code,
+                           const std::vector<std::string> &Args,
+                           const Twine &FileName="input.cc");
+#+END_SRC
+
+** TODO clang::tooling::Range
+** TODO clang::tooling::Replacement
+- clang::tooling::Replacement
+- clang::tooling::Replacements
+
+* Compiler
+** CompilerInstance
+#+BEGIN_SRC C++
+// high level invocation
+bool ExecuteAction(FrontendAction &act);
+bool hasInvocation();
+CompilerInvocation& getInvocation();
+void setInvocation(std::shared_ptr<CompilerInvocation> value);
+
+// options
+DiagnosticOptions& getDiagnosticOpts();
+FrontendOptions& getFrontendOpts();
+HeaderSearchOptions& getHeaderSearchOpts();
+LangOptions& getLangOpts();
+PreprocessorOptions& getPreprocessorOpts();
+
+// diagnoatic
+bool hasDiagnostics();
+DiagnosticsEngine& getDiagnostics();
+void setDiagnostics(DiagnosticsEngine *value);
+
+// managers
+bool hasFileManager();
+FileManager& getFileManager();
+void setFileManager(FileManager *value);
+bool hasSourceManager();
+SourceManager& getSourceManager();
+void setSourceManager(SourceManager *value);
+
+bool hasPreprocessor();
+Preprocessor& getPreprocessor();
+void setPreprocessor(std::shared_ptr<Preprocessor> value);
+
+bool hasASTContext();
+ASTContext& getASTContext();
+
+bool hasASTConsumer();
+ASTConsumer& getASTConsumer();
+
+// construction
+void createDiagnostics();
+void createFileManager();
+void createSourceManager(FileManager &FileMgr);
+void createPreprocessor(TranslationUnitKind TUKind);
+#+END_SRC
+
+** Preprocessor
+#+BEGIN_SRC C++
+DiagnosticEngine &getDiagnostics();
+FileManager& getFileManager();
+SourceManager& getSourceManager();
+IdentifierTable& getIdentifierTable();
+
+// macros
+bool isMacroDefined(StringRef id);
+bool isMacroDefined(const IdentifierInfo *ii);
+MacroDefinition getMacroDefinition(const IdentifierInfo *ii);
+MacroInfo *getMacroInfo(const IdentifierInfo *ii);
+macro_iterator macro_begin(bool IncludeExternalMacros=true);
+macro_iterator macro_end(bool IncludeExternalMacros=true);
+
+typedef MacroMap::const_iterator macor_iterator;
+typedef llvm::DenseMap<const IdentifierInfo *, MacroState> MacroMap;
+#+END_SRC
+
+*** MacroDefinition
+#+BEGIN_SRC C++
+MacroInfo *getMacroInfo();
+#+END_SRC
+
+*** MacroInfo
+#+BEGIN_SRC C++
+// this does not include the "#define"
+SourceLocation getDefinitionLoc();
+SourceLocation getDefinitionEndLoc();
+
+bool isFunctionLike();
+bool isObjectLike();
+bool isC99Varargs();
+bool isGNUVarargs();
+bool isVariadic();
+bool isBuiltinMacro();
+#+END_SRC
+
+The builtin cannot distinguish most of the "builtin" macros. So in
+order to detect user defined macros, get the source manager, and check
+isWrittenInMainFile (/not/ isInMainFile) for the source location.
+
+* General
+** IdentifierInfo
+#+BEGIN_SRC C++
+StringRef getName();
+bool hasMacroDefinition();
+#+END_SRC
+
+** clang::ASTUnit
+#+BEGIN_SRC C++
+ASTContext &ASTunit::getASTContext();
+#+END_SRC
+
+** clang::ASTContext
+#+BEGIN_SRC C++
+SourceManager &getSourceManager();
+const LangOptions &getLangOpts();
+TranslationUnitDecl *getTranslationUnitDecl();
+DiagnosticsEngine &getDiagnostics();
+FullSourceLoc getFullLoc(SourceLocation loc);
+#+END_SRC
+
+** clang::SourceManager
+#+BEGIN_SRC C++
+FileID getMainFileID();
+FileEntry *getFileEntryForID(FileID FID);
+SourceLocation getSpellingLoc(SourceLocation loc);
+std::pair<FileID, unsigned> getDecomposedLoc(SourceLocation loc);
+std::pair<FileID, unsigned> getDecomposedSpellingLoc(SourceLocation loc);
+std::pair<FileID, unsigned> getDecomposedIncludedLoc(FileID FID);
+bool isInMainFile(SourceLocation loc);
+// PresumedLoc
+bool isInFileID(SourceLocation loc, FileID FID);
+// SpellingLoc
+bool isWrittenInMainFile(SourceLocation loc);
+#+END_SRC
+
+- clang::FileEntry
+#+BEGIN_SRC C++
+StringRef getName();
+#+END_SRC
+
+
+** Location
+- clang::SourceRange
+#+BEGIN_SRC C++
+SourceLocation getBegin();
+SourceLocation getEnd();
+bool operator==(const SourceRange &X);
+bool operator!=(const SourceRange &X);
+#+END_SRC
+- clang::SourceLocation: no interesting member functions. Use
+  =SourceManager= to decode it. But typically we are not going to use
+  =SourceManager=, instead, use =ASTContext= to decode it into
+  =FullSourceLoc=.
+
+- clang::FullSourceLoc : public clang::SourceLocation
+#+BEGIN_SRC C++
+bool hasManager();
+SourceManager& getManager();
+unsigned getSpellingLineNumber();
+unsigned getSpellingColumnNumber();
+unsigned getLineNumber();
+unsigned getColumnNumber();
+FileEntry *getFileEntry();
+#+END_SRC
+
+
+
+* clang::Type
+The raw type will be whatever appeared in the source code. If a type
+is a typedef to another type (may be pointer), then the "type" will
+not record the pointer information.
+
+** canonical type
+Every instance of type has a canonical type pointer.
+- If the type is a simple primitive type, the pointer points to itself
+- If any part of the type has typedef, the pointer will point to a
+  type instance that is equivalent to it but without typedefs. You can
+  check whether two types are the same by comparing this pointer.
+
+You should not use isa/cast/dyn_cast on types
+(e.g. =isa<PointerType>(expr->getType())=). The reason is it is not
+canonical. So use help functions instead:
+=expr->getType()->isPointerType()=.
+
+** QualType
+The type and its qualifiers (const, volatile, restrict) are
+seperate. That is the QualType. It is designed to be small and
+pass-by-value. It is essentially a pair of (Type*, bits) where the
+bits stores the qualifiers.
+
+This helps making only one type for each kind, e.g. int, const int,
+volatile const int.
+
+#+BEGIN_SRC C++
+const Type* getTypePtr() const;
+const Type& operator*() const;
+const Type* operator->() const;
+
+SplitQualType split() const;
+class SplitQualType {
+public:
+  const Type *Ty;
+  Qualifiers Quals;
+};
+
+bool isCanonical();
+QualType getCanonicalType() const;
+bool isNull();
+
+bool isConstQualified();
+bool isVolatileQualified();
+bool isRestrictQualified();
+bool hasLocalQualifiers();
+bool hasQualifiers();
+
+Qualifiers getQualifiers();
+
+QualType withConst();
+QualType withVolatile();
+QualType withRestrict();
+
+void dump();
+std::string getAsString();
+
+static std::string getAsString(SplitQualType split);
+static std::string getAsString(const Type *ty, Qualifiers qs);
+#+END_SRC
+
+
+* clang::Decl
+#+BEGIN_SRC C++
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+SourceLocation getLocation();
+Kind getKind();
+DeclContext *getDeclContext();
+#+END_SRC
+
+** clang::DeclContext
+All classes inherited from it:
+- clang::BlockDecl
+- clang::FunctionDecl
+- clang::TagDecl
+  - clang::EnumDecl
+  - clang::RecordDecl
+- clang::TranslationUnitDecl
+#+BEGIN_SRC C++
+decl_range decls();
+decl_iterator decls_begin();
+decl_iterator decls_end()
+#+END_SRC
+This should provide all information to get the children nodes.
+#+BEGIN_SRC C++
+  class clang::DeclContext::decl_iterator {
+  public:
+    typedef Decl* value_type;
+    typedef const value_type& reference;
+    reference operator*() const;
+    value_type operator->() const;
+    decl_iterator& operator++();
+    decl_iterator operator++(int);
+    friend operator==(decl_iterator x, decl_iterator y);
+    friend operator!=(decl_iterator x, decl_iterator y);
+  };
+
+  typedef llvm::iterator_range<decl_iterator> clang::DeclContext::decl_range;
+
+  // OK, now the reference of llvm::iterator_range
+  class llvm::iterator_range<IteratorT> {
+  public:
+    IteratorT begin() const;
+    IteratorT end() const;
+  };
+#+END_SRC
+
+** clang::TranslationUnitDecl
+It is also inherited from DeclContext.
+
+** clang::BlockDecl
+Like a unamed FunctionDecl. Also inherited from DeclContext.
+
+#+BEGIN_SRC C++
+ArrayRef<ParmVarDecl*> parameters();
+param_iterator param_begin();
+param_iterator param_end();
+#+END_SRC
+** clang::NamedDecl
+#+BEGIN_SRC C++
+IdentifierInfo *getIdentifier();
+StringRef getName();
+std::string getNameAsString();
+#+END_SRC
+
+*** clang::LabelDecl
+#+BEGIN_SRC C++
+LabelStmt *getStmt();
+SourceRange getSourceRange();
+#+END_SRC
+*** clang::TypeDecl
+No interesting methods.
+
+- clang::TypeDecl
+  - clang::TypedefNameDecl
+    - clang::TypedefDecl: No interesting methods
+  - clang::TagDecl
+    - clang::EnumDecl
+    - clang::RecordDecl
+**** TagDecl
+- struct
+- union
+- class
+- enum
+#+BEGIN_SRC C++
+typedef TagTypeKind TagKind;
+enum TagTypeKind {
+  TTK_Struct,
+  TTK_Interface,
+  TTK_Union,
+  TTK_Class,
+  TTK_Enum
+};
+SourceRange getBraceRange();
+SourceLocation getInnerLocStart();
+SourceLocation getOuterLocStart();
+SourceRange getSourceRange();
+bool isThisDeclarationADefinition();
+TagDecl *getDefinition();
+StringRef getKindName();
+TagKind getTagKind();
+bool isStruct();
+bool isInterface();
+bool isClass();
+bool isUnion();
+bool isEnum();
+#+END_SRC
+**** clang::EnumDecl
+#+BEGIN_SRC C++
+enumerator_range enumerators();
+enumerator_iterator enumerator_begin();
+enumerator_iterator enumerator_end();
+#+END_SRC
+**** clang::RecordDecl
+- struct
+- union
+- class
+#+BEGIN_SRC C++
+field_range fields();
+field_iterator field_begin();
+field_iterator field_end();
+bool field_empty();
+
+#+END_SRC
+*** clang::ValueDecl
+Declaration of either
+- a variable
+- a function
+- an enum constant
+
+#+BEGIN_SRC C++
+QualType getType();
+#+END_SRC
+
+- clang::ValueDecl
+  - clang::EnumConstantDecl: 
+  - clang::DeclaratorDecl
+    - clang::FunctionDecl
+    - clang::FieldDecl
+    - clang::VarDecl
+
+**** clang::EnumConstantDecl
+An instance of this object exists for each enum constant that is
+defined.
+#+BEGIN_SRC C++
+Expr* getInitExpr();
+const llvm::APSInt &getInitVal();
+SourceRange getSourceRange();
+#+END_SRC
+
+**** clang::DeclaratorDecl
+#+BEGIN_SRC C++
+TypeSourceInfo *getTypeSourceInfo();
+SourceLocation getInnerLocStart();
+SourceLocation getOuterLocStart();
+SourceRange getSourceRange();
+SourceLocation getLocStart();
+NestedNameSpecifier *getQualifier();
+SourceLocation getTypeSpecStartLoc();
+#+END_SRC
+
+**** clang::FunctionDecl
+- Also inherit from =clang::DeclContext=
+#+BEGIN_SRC C++
+SourceRange getSourceRange();
+SourceRange getReturnTypeSourceRange();
+DeclarationNameInfo getNameInfo();
+
+FunctionDecl *getDefinition();
+Stmt *getBody();
+// even if it is only a declaration, the body is still available
+bool isThisDeclarationADefinition();
+bool isMain();
+ArrayRef<ParmVarDecl*> parameters();
+bool param_empty();
+param_iterator param_begin();
+param_iterator param_end();
+size_t param_size();
+ParmVarDecl *getParamDecl(unsigned i);
+QualType getReturnType();
+#+END_SRC
+
+DeclarationNameInfo
+#+BEGIN_SRC C++
+DeclarationName getName();
+SourceLocation getBeginLoc();
+SourceLocation getEndLoc();
+SourceRange getSourceRange()
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+#+END_SRC
+
+**** clang::FieldDecl
+#+BEGIN_SRC C++
+unsigned getFieldIndex();
+bool isBitField();
+bool hasInClassinitializer();
+Expr *getInClassInitializer();
+RecordDecl* getParent();
+SourceRange getSourceRange();
+#+END_SRC
+**** clang::VarDecl
+Represent a variable declaration or definition.
+
+#+BEGIN_SRC C++
+SourceRange getSourceRange();
+StorageClass getStorageClass();
+bool isStaticLocal();
+bool hasExternalStorage();
+bool hasGlobalStorage();
+bool isLocalVarDecl();
+bool isLocalVarDeclOrParm();
+bool isFunctionOrMethodVarDecl();
+DefinitionKind isThisDeclarationADefinition();
+VarDecl *getDefinition();
+bool isFileVarDecl();
+const Expr *getAnyInitializer();
+bool hasInit();
+Expr *getInit();
+#+END_SRC
+
+- clang::ParmVarDecl : clang::VarDecl
+#+BEGIN_SRC C++
+SourceRange getSourceRange();
+unsigned getFunctionScopeIndex();
+bool hasDefaultArg();
+Expr *getDefaultArg();
+SourceRange getDefaultArgRange();
+#+END_SRC
+
+
+* clang::Stmt
+
+#+BEGIN_SRC C++
+SourceRange getSourceRange();
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+void dump();
+void dumpColor();
+void dumpPretty(ASTContext &Context);
+void viewAST(); // via graphviz
+child_range children();
+child_iterator child_begin();
+child_iterator child_end();
+#+END_SRC
+
+All subclasses has
+#+BEGIN_SRC C++
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+child_range children();
+#+END_SRC
+
+** Single
+*** clang::BreakStmt
+#+BEGIN_SRC C++
+SourceLocation getBreakLoc();
+#+END_SRC
+*** clang::ReturnStmt
+#+BEGIN_SRC C++
+SourceLocation getReturnLoc();
+Expr *getRetValue();
+#+END_SRC
+*** clang::ContinueStmt
+#+BEGIN_SRC C++
+SourceLocation getContinueLoc();
+#+END_SRC
+
+** Conditional
+*** clang::IfStmt
+#+BEGIN_SRC C++
+Stmt *getInit();
+Expr *getCond();
+Stmt *getThen();
+Stmt *getElse();
+
+SourceLocation getIfLoc();
+SourceLocation getElseLoc();
+#+END_SRC
+*** clang::SwitchCase
+Has two subclasses
+- clang::CaseStmt
+- clang::DefaultStmt
+
+#+BEGIN_SRC C++
+SwitchCase *getNextSwitchCase();
+SourceLocation getKeywordLoc();
+SourceLocation getColonLoc();
+Stmt *getSubStmt(); // ??
+#+END_SRC
+
+CaseStmt
+#+BEGIN_SRC C++
+SourceLocation getCaseLoc();
+SourceLocation getEllipsisLoc(); // ??
+SourceLocation getColonLoc();
+
+Expr *getLHS();
+Expr *getRHS();
+Stmt *getSubStmt();
+#+END_SRC
+
+DefaultStmt
+#+BEGIN_SRC C++
+Stmt *getSubStmt();
+SourceLocation getDefaultLoc();
+SourceLocation getColonLoc();
+#+END_SRC
+
+*** clang::SwitchStmt
+#+BEGIN_SRC C++
+VarDecl *getConditionVariable();
+DeclStmt *getConditionVariableDeclStmt();
+Stmt *getInit();
+Expr *getCond();
+Stmt *getBody();
+SwitchCase *getSwitchCaseList();
+
+SourceLocation getSwitchLoc();
+#+END_SRC
+*** clang::LabelStmt
+#+BEGIN_SRC C++
+LabelDecl *getDecl();
+const char *getName();
+Stmt *getSubStmt();
+#+END_SRC
+*** clang::GotoStmt
+#+BEGIN_SRC C++
+LabelDecl *getLabel();
+SourceLocation getGotoLoc();
+SourceLocation getLabelLoc();
+#+END_SRC
+** loop
+*** clang::DoStmt
+#+BEGIN_SRC C++
+Expr *getCond();
+Stmt *getBody();
+SourceLocation getDoLoc();
+SourceLocation getWhileLoc();
+// why no LParen??
+SourceLocation getRParenLoc();
+#+END_SRC
+*** clang::ForStmt
+#+BEGIN_SRC C++
+VarDecl *getConditionVariable();
+const DeclStmt *getConditionVariableDeclStmt();
+
+Stmt *getInit();
+Expr *getCond();
+Expr *getInc();
+
+Stmt *getBody();
+
+SourceLocation getForLoc();
+SourceLocation getRParenLoc();
+SourceLocation getLParenLoc();
+#+END_SRC
+*** clang::WhileStmt
+
+#+BEGIN_SRC C++
+VarDecl *getConditionVariable();
+const DeclStmt *getConditionVariableDeclStmt();
+
+Expr *getCond();
+Stmt *getBody();
+SourceLocation getWhileLoc();
+#+END_SRC
+** Other
+*** clang::CompoundStmt
+#+BEGIN_SRC C++
+bool body_empty();
+unsigned size();
+body_range body();
+body_iterator body_begin();
+body_iterator body_end();
+Stmt *body_front();
+Stmt *body_back();
+reverse_body_iterator body_rbegin();
+reverse_body_iterator body_rend();
+
+SourceLocation getLBracLoc();
+SourceLocation getRBracLoc();
+#+END_SRC
+*** clang::DeclStmt
+This is adapter class for mixing declarations with statements and
+expressions.
+
+#+BEGIN_SRC C++
+bool isSingleDecl();
+Decl *getSingleDecl();
+decl_range decls();
+decl_iterator decl_begin();
+decl_iterator decl_end();
+reverse_decl_iterator decl_rbegin();
+reverse_decl_iterator decl_rend();
+
+typedef DeclGroupRef::iterator clang::DeclStmt::decl_iterator;
+typedef Decl** clang::DeclGroupRef::iterator;
+#+END_SRC
+*** TODO clang::Expr
+This is a big topic. In a seperate outline.
+
+It is a subclass of Stmt, this allows an expression to be
+transparently used in any place a Stmt is required.
+
+
+* clang::Expr
+
+#+BEGIN_SRC C++
+SourceLocation getExprLoc();
+bool isLValue();
+bool isXValue();
+bool isGLValue();
+
+ExprValueKind getValueKind();
+bool isIntegerConstantExpr(const ASTContext &ctx);
+#+END_SRC
+
+** General Tips
+Got an expr, how to get the variables inside it, and refer to the
+- type
+- where defined
+
+Some examples
+- b>0
+  - BinaryOperator
+    - ImplicitCastExpr
+      - DeclRefExpr ParmVar (Var) b
+    - IntegerLiteral
+- a=b+c
+  - BinaryOperator =
+    - DeclRefExpr Var a
+    - BinaryOperator +
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var b
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var c
+- a+=b*c
+  - CompoundAssignOperator +=
+    - DeclRefExpr Var a
+    - BinaryOperator
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var b
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var c
+- a++
+  - UnaryOperator ++
+    - DeclRefExpr Var a
+- foo(a,b)
+  - CallExpr
+    - ImplicitCastExpr FunctionToPointerDecay
+      - DeclRefExpr Function 'foo'
+    - ImplicitCastExpr
+      - DeclRefExpr a
+- a=foo() + bar()
+  - BinaryOperator =
+    - DeclRefExpr a
+    - BinaryOperator +
+      - CallExpr
+        - ImplicitCastExpr
+          - DeclRefExpr Function bar
+      - CallExpr
+        - ImplicitCastExpr
+          - DeclRefExpr Function bar
+- a=b*(b+c)
+  - BinaryOperator =
+    - ImplicitCastExpr
+      - DeclRefExpr b
+    - ParenExpr
+      - BinaryOperator +
+        - ImplicitCastExpr DeclRefExpr
+        - ImplicitCastExpr DeclRefExpr
+- a.mem
+  - ImplicitCastExpr L2R
+    - MemberExpr .mem
+      - DeclRefExpr Var x "struct A"
+- p->mem
+  - ImplicitCastExpr L2R
+    - MemberExpr ->mem
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var px "struct A *"
+** clang::CallExpr
+#+BEGIN_SRC C++
+Expr *getCallee();
+Decl *getCalleeDecl();
+FunctionDecl *getDirectCallee();
+unsigned getNumArgs();
+Expr **getArgs();
+Expr *getArg(unsigned Arg);
+
+arg_range arguments();
+arg_iterator arg_begin();
+arg_iterator arg_end();
+
+unsigned getNumCommas();
+unsigned getBuiltinCallee();
+
+QualType getCallReturnType(const ASTContext &Ctx);
+SourceLocation getRParenLoc();
+#+END_SRC
+** clang::BinaryOperator
+#+BEGIN_SRC C++
+SourceLocation getExprLoc();
+SourceLocation getOperatorLoc();
+Opcode getOpcode();
+Expr *getLHS();
+Expr *getRHS();
+
+StringRef getOpcodeStr();
+
+bool isAdditiveOp();
+bool isShiftOp();
+bool isBitwiseOp();
+bool isRelationalOp();
+bool isEqualityOp();
+bool isComparisonOp();
+bool isLogicalOp();
+bool isAssignmentOp();
+bool isCompoundAssignmentOp();
+bool isShiftAssignOp();
+#+END_SRC
+
+*** clang::CompoundAssignOperator
+Like ~+=~, ~-=~, etc. Don't have interesting methods though.
+
+** clang::CastExpr
+It has two children class
+- clang::ExplicitCastExpr
+- clang::ImplicitCastExpr
+
+ImplicitCastExpr appears very often because it represent many type of
+cast. For example
+- call a function needs to use the cast FunctionToPointerDecay
+- use a value in the righ hand side will need the cast LValueToRValue
+
+The methods of the children classes are not interesting at all. So it
+is convenient to use these methods:
+
+#+BEGIN_SRC C++
+CastKind getCastKind();
+const char *getCastKindName();
+Expr *getSubExpr();
+Expr *getSubExprAsWritten();
+#+END_SRC
+
+** clang::ParenExpr
+This is a paren expr. It does not include the condition of a if-stmt, etc.
+
+#+BEGIN_SRC C++
+Expr *getSubExpr();
+
+SourceLocation getLParen();
+SourceLocation getRParen();
+
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+#+END_SRC
+
+** clang::MemberExpr
+This is the member access operator (. and ->). It is for struct and
+union members.
+
+#+BEGIN_SRC C++
+Expr *getBase();
+// get the member declaration to which this expression refers
+ValueDecl *getMemberDecl();
+
+DeclarationNameInfo getMemberNameInfo();
+SourceLocation getOperatorLoc();
+bool isArrow();
+SourceLocation getMemberLoc();
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+SourceLocation getExprLoc();
+#+END_SRC
+
+
+** clang::UnaryOperator
+except sizeof and alignof, but include
+- postinc/postdec and various extensions
+#+BEGIN_SRC C++
+Opcode getOpcode();
+Expr *getSubExpr();
+SourceLocation getOperatorLoc();
+bool isPrefix();
+bool isPostfix();
+bool isIncrementOp();
+bool isDecrementOp();
+bool isIncrementDecrementOp();
+bool isArithmeticOp();
+
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+SourceLocation getExprLoc();
+
+static bool isPostfix(Opcode Op);
+static StringRef getopcodeStr(Opcode Op);
+#+END_SRC
+
+** clang::DeclRefExpr
+A reference to a declared variable, function, enum, etc.
+
+#+BEGIN_SRC C++
+ValueDecl *getDecl();
+DeclarationNameInfo getNameInfo();
+SourceLocation getLocation();
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+#+END_SRC
+
+** clang::ConditionalOperator
+- clang::Expr
+  - clang::AbstractConditionalOperator
+    - clang::ConditionalOperator
+    - clang::BinaryConditionalOperator (not interesting)
+
+This is ?: ternary operator.
+
+#+BEGIN_SRC C++
+Expr *getCond();
+Expr *getTrueExpr();
+Expr *getFalseExpr();
+
+// don't know what this is
+Expr *getLHS();
+Expr *getRHS();
+
+SourceLocation getLocStart();
+SourceLocation getLocEnd();
+#+END_SRC
+
+** Other Not Interesting Ones
+*** clang::LambdaExpr
+*** clang::IntegerLiteral
+*** clang::ImplicitValueInitExpr
+*** clang::InitListExpr (C++)
+*** clang::ParenListExpr
+*** clang::StmtExpr
+This is the GNU Statement Expression extension: =({int X=4;X;})=. Not
+very useful for me.
+*** clang::StringLiteral
+*** clang::TypoExpr
+
+* Topics
+** Clang AST to source code
+
+*** clang::Rewriter
+
+#+BEGIN_SRC C++
+#include "clang/Rewrite/Core/Rewriter.h"
+
+SourceManager &getSourceMgr();
+void setSourceMgr(SourceManager &SM, const LangOptions &LO);
+
+int getRangeSize(SourceRange range);
+std::string getRewrittenText(SourceRange range);
+
+bool InsertText(SourceLocation loc, StringRef str, bool InsertAfter=true, bool indentNewLines=false);
+bool InsertTextAfter(SourceLocation loc, StringRef str);
+bool InsertTextAfterToken(SourceLocation loc, StringRef str);
+bool InsertTextBefore(SourceLocation loc, StringRef str);
+
+bool RemoveText(SourceLocation start, unsigned length);
+bool RemoveText(SourceRange range);
+
+bool ReplaceText(SourceLocation start, unsigned OrigLength, StringRef NewStr);
+bool ReplaceText(SourceRange range, StringRef NewStr);
+bool ReplaceText(SourceRange range, SourceRange replacementRange);
+
+bool IncreaseIndentation(SourceRange range, SourceLocation parentIndent);
+
+RewriteBuffer &getEditBuffer(FileID FID);
+const RewriteBuffer *getRewriteBufferFor(FileID FID) const;
+
+buffer_iterator buffer_begin();
+buffer_iterator buffer_end();
+bool overwriteChangedFiles();
+#+END_SRC
+
+Usage example
+#+BEGIN_SRC C++
+Rewriter rewriter;
+rewriter.setSourceMgr(source_manager, )
+#+END_SRC
+** Create AST
+*** Using Compilation Database
+Using compilation database can make sure clang uses the right
+flags. This is usually the include path, but also some flags like
+-std=c99.
+
+In order to get the compilation database file (compile_commands.json):
+- for cmake project, runs cmake with
+  ~-DCMAKE_EXPORT_COMPILE_COMMANDS=ON~ will do the job
+- for non-cmake project, use [[https://github.com/rizsotto/Bear][Bear]]. It runs the ordinary build and
+  intercept the =exec= calls issued by the build tools. The command to
+  run is =bear make= instead of =make=
+
+Thus, for all the projects, it is possible to get the compilation
+database as long as:
+- cmake is able to finish success (no missing dependencies)
+- make can finish
+
+As an example, to use the data base, invoke clang tooling by:
+
+#+BEGIN_SRC C++
+  CompilationDatabase *db = CompilationDatabase::loadFromDirectory("/path/to/build");
+  // or use the child class
+  JSONCompilationDatabase *json_db = JSONCompilationDatabase::loadFromFile("/path/to/compile_commands.json");
+  // directly use
+  ClangTool tool(*db, ["a.c", "b.c"]);
+  // or use the command line arguments
+  // usage: exe -p /path/to/build a.c b.c
+  static cl::OptionCategory MyToolCategory("my-tool options");
+  CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
+  ClangTool tool(OptionsParser.getCompilations(),
+                 OptionsParser.getSourcePathList());
+#+END_SRC
+*** From Code String
+Of cource using the database will introduce overhead to obtain the
+database. We may only care about the header path
+- running runToolOnCode will use -fsyntax-only
+- system header files: I don't think libTooling default will use them,
+  so be sure to use
+- local headers: get all the folders, and add -Ixxx flags
+
+The =runToolOnCode= can do this. It accepts a =FrontendAction=, and
+typically calls a =RecursiveASTVisitor=.  Instead of =runToolOnCode=,
+there's also a =buildASTFromCode= family:
+
+** LibTooling
+
+*** Project Setup
+
+**** Main File
+ First of all, get the =CMakeLists.txt= setup:
+
+ The first line:
+ #+BEGIN_SRC cmake
+ cmake_minimum_required(VERSION 3.0)
+ #+END_SRC
+
+ Setting directory to =lib= and =bin=
+
+ #+BEGIN_SRC cmake
+ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+ #+END_SRC
+
+ Other setup
+ #+BEGIN_SRC cmake
+ SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+ #+END_SRC
+
+ Thread library:
+
+ #+BEGIN_SRC cmake
+ find_package (Threads)
+ link_libraries(${CMAKE_THREAD_LIBS_INIT})
+ #+END_SRC
+
+ LLVM library configuration:
+ #+BEGIN_SRC cmake
+ find_package(LLVM REQUIRED CONFIG)
+ message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+ message(STATUS "Using LLVMCOnfig.cmake in: ${LLVM_DIR}")
+ add_definitions(${LLVM_DEFINITIONS})
+ include_directories(${LLVM_INCLUDE_DIRS})
+ set(LLVM_LINK_COMPONENTS support)
+ #+END_SRC
+
+ Clang library setup
+ #+BEGIN_SRC cmake
+ find_package(Clang REQUIRED CONFIG)
+ #+END_SRC
+
+ Trouble shooting setup
+ #+BEGIN_SRC cmake
+ # Otherwise error: undefined reference to typeinfo for xxx
+ add_compile_options(-fno-rtti)
+ #+END_SRC
+
+ link library
+ #+BEGIN_SRC cmake
+ link_libraries(clang clangTooling clangFrontend clangFrontendTool)
+ link_libraries(libclang gtest)
+ #+END_SRC
+
+ Add sub-directories
+ #+BEGIN_SRC cmake
+ enable_testing()
+ add_subdirectory (src)
+ add_subdirectory (test)
+ #+END_SRC
+
+**** Sub-directory files
+ =src/CMakeLists.txt= to add libraries, executables
+
+ #+BEGIN_SRC cmake
+ add_library (Sqr sqr.cpp sqr.h)
+ add_executable (demo main.cpp)
+ target_link_libraries (demo Sqr)
+
+ add_executable(ast ast.cpp)
+ add_executable(token token.cpp)
+ add_executable(rewriter rewriter.cpp)
+ #+END_SRC
+
+ =test/CMakeLists.txt=
+
+ The only requirement is to have =enable_testing= before =add_test=. The
+ command can be in =src= level list if no test source files.
+
+ #+BEGIN_SRC cmake
+ add_test(NAME toktest COMMAND hetok ../test/a.c)
+ add_test(NAME MyTest COMMAND Test)
+ #+END_SRC
+
+*** Header files
+ Some representative header files:
+
+ #+BEGIN_SRC cpp
+ #include "clang/AST/ASTConsumer.h"
+ #include "clang/AST/RecursiveASTVisitor.h"
+ #include "clang/Frontend/CompilerInstance.h"
+ #include "clang/Frontend/FrontendAction.h"
+ #include "clang/Tooling/Tooling.h"
+ #include "clang/Frontend/FrontendActions.h"
+ #include "llvm/Support/CommandLine.h"
+ #include "clang/Tooling/CommonOptionsParser.h"
+ #+END_SRC
+
+*** Entry Point
+ The entry point is creating the =tooling::ClangTool= class.  Just pass
+ =argc/v= into it. The command line option =--= at the end to invoke the
+ tool will not trying to find compilation database.
+
+ #+BEGIN_SRC cpp
+   int main(int argc, const char **argv) {
+     CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
+     ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
+     Tool.run(newFrontendActionFactory<MyAction>().get());
+   }
+ #+END_SRC
+
+ The Tool would run on some "action". This is our main logic. The
+ action derives from =ASTFrontendAction=, and override the
+ =CreateASTConsumer= class.
+
+ #+BEGIN_SRC cpp
+   class MyAction : public clang::ASTFrontendAction {
+   public:
+     virtual std::unique_ptr<clang::ASTConsumer>
+     CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile) {
+       return std::unique_ptr<clang::ASTConsumer>
+         (new MyConsumer(&Compiler.getASTContext()));
+     }
+   };
+ #+END_SRC
+
+ The Consumer would derive from =ASTConsumer= and override
+ =HandleTranslationUnit=. This function is called when the whole
+ translation unit is parsed. This provides the entry point of the AST
+ by the top most /decl/ by =Context.getTranslationUnitDecl()=.
+
+ The visitor will automatically call =WalkUpFromXXX(x)= to recursively
+ visit child nodes of x returning false of TraverseXXX or =WalkUpFromXXX=
+ will terminate the traversal. By default this will be a pre-order
+ traversal. Calling a method to change to post-order.
+
+ #+BEGIN_SRC cpp
+   class MyConsumer : public clang::ASTConsumer {
+   public:
+     explicit MyConsumer(ASTContext *Context)
+       : Visitor(Context) {}
+     virtual void HandleTranslationUnit(clang::ASTContext &Context) {
+       Visitor.TraverseDecl(Context.getTranslationUnitDecl());
+     }
+   private:
+     MyVisitor Visitor;
+   };
+ #+END_SRC
+
+ The visitor itself implement what to do with each AST node. Override
+ the list of =VisitXXX= method for each type of AST node.
+
+ #+BEGIN_SRC cpp
+   class TokenVisitor
+     : public RecursiveASTVisitor<TokenVisitor> {
+   public:
+     explicit TokenVisitor(ASTContext *Context)
+       : Context(Context) {}
+     bool VisitCXXRecordDecl(CXXRecordDecl *Declaration) {}
+     bool VisitFunctionDecl(FunctionDecl *func_decl) {}
+   private:
+     ASTContext *Context;
+   };
+ #+END_SRC
+
+
+*** Location
+ - Decl::getLocStart -> =SourceLocation= loc
+ - context->getFullLoc(loc) -> FullSourceLoc full
+ - full.getSpellingLinenumber
+
+*** APIs
+ =Decl=
+
+ #+BEGIN_SRC cpp
+ SourceLocation getLocStart ();
+ SourceLocation getLocEnd ();
+ virtual SourceRange getSourceRange ();
+ #+END_SRC
+
+ =ASTContext=
+
+ #+BEGIN_SRC cpp
+ FullSourceLoc getFullLoc (SourceLocation Loc) const
+ SourceManager& getSourceManager ()
+ #+END_SRC
+
+ =FullSourceLoc=
+
+ #+BEGIN_SRC cpp
+ unsigned getSpellingLineNumber (bool *Invalid=nullptr) const
+ unsigned getSpellingColumnNumber (bool *Invalid=nullptr) const
+ FileID 	getFileID () const
+ #+END_SRC
+
+ =SourceManager=
+
+ #+BEGIN_SRC cpp
+ FileManager& getFileManager () const;
+ FileID getMainFileID () const; // this file being processed
+ const FileEntry *getFileEntryForID (FileID FID) const;
+ #+END_SRC
+
+** Use As Command
 
 - =-ast-dump= :: dump ast
 - =-ast-dump-filter= :: filter to only dump part of the AST
@@ -12,216 +1226,6 @@ clang -emit-ast a.c
 clang-check -ast-list lib/parser.cpp | grep AddValue
 clang-check a.cc -ast-dump -ast-dump-filter=StdStringA --
 #+END_EXAMPLE
-
-
-
-* LibTooling
-
-** Project Setup
-
-*** Main File
-First of all, get the =CMakeLists.txt= setup:
-
-The first line:
-#+BEGIN_SRC cmake
-cmake_minimum_required(VERSION 3.0)
-#+END_SRC
-
-Setting directory to =lib= and =bin=
-
-#+BEGIN_SRC cmake
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-#+END_SRC
-
-Other setup
-#+BEGIN_SRC cmake
-SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-#+END_SRC
-
-Thread library:
-
-#+BEGIN_SRC cmake
-find_package (Threads)
-link_libraries(${CMAKE_THREAD_LIBS_INIT})
-#+END_SRC
-
-LLVM library configuration:
-#+BEGIN_SRC cmake
-find_package(LLVM REQUIRED CONFIG)
-message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-message(STATUS "Using LLVMCOnfig.cmake in: ${LLVM_DIR}")
-add_definitions(${LLVM_DEFINITIONS})
-include_directories(${LLVM_INCLUDE_DIRS})
-set(LLVM_LINK_COMPONENTS support)
-#+END_SRC
-
-Clang library setup
-#+BEGIN_SRC cmake
-find_package(Clang REQUIRED CONFIG)
-#+END_SRC
-
-Trouble shooting setup
-#+BEGIN_SRC cmake
-# Otherwise error: undefined reference to typeinfo for xxx
-add_compile_options(-fno-rtti)
-#+END_SRC
-
-link library
-#+BEGIN_SRC cmake
-link_libraries(clang clangTooling clangFrontend clangFrontendTool)
-link_libraries(libclang gtest)
-#+END_SRC
-
-Add sub-directories
-#+BEGIN_SRC cmake
-enable_testing()
-add_subdirectory (src)
-add_subdirectory (test)
-#+END_SRC
-
-*** Sub-directory files
-=src/CMakeLists.txt= to add libraries, executables
-
-#+BEGIN_SRC cmake
-add_library (Sqr sqr.cpp sqr.h)
-add_executable (demo main.cpp)
-target_link_libraries (demo Sqr)
-
-add_executable(ast ast.cpp)
-add_executable(token token.cpp)
-add_executable(rewriter rewriter.cpp)
-#+END_SRC
-
-=test/CMakeLists.txt=
-
-The only requirement is to have =enable_testing= before =add_test=. The
-command can be in =src= level list if no test source files.
-
-#+BEGIN_SRC cmake
-add_test(NAME toktest COMMAND hetok ../test/a.c)
-add_test(NAME MyTest COMMAND Test)
-#+END_SRC
-
-** Header files
-Some representative header files:
-
-#+BEGIN_SRC cpp
-#include "clang/AST/ASTConsumer.h"
-#include "clang/AST/RecursiveASTVisitor.h"
-#include "clang/Frontend/CompilerInstance.h"
-#include "clang/Frontend/FrontendAction.h"
-#include "clang/Tooling/Tooling.h"
-#include "clang/Frontend/FrontendActions.h"
-#include "llvm/Support/CommandLine.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-#+END_SRC
-
-** Entry Point
-The entry point is creating the =tooling::ClangTool= class.  Just pass
-=argc/v= into it. The command line option =--= at the end to invoke the
-tool will not trying to find compilation database.
-
-#+BEGIN_SRC cpp
-  int main(int argc, const char **argv) {
-    CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
-    ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
-    Tool.run(newFrontendActionFactory<MyAction>().get());
-  }
-#+END_SRC
-
-The Tool would run on some "action". This is our main logic. The
-action derives from =ASTFrontendAction=, and override the
-=CreateASTConsumer= class.
-
-#+BEGIN_SRC cpp
-  class MyAction : public clang::ASTFrontendAction {
-  public:
-    virtual std::unique_ptr<clang::ASTConsumer>
-    CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile) {
-      return std::unique_ptr<clang::ASTConsumer>
-        (new MyConsumer(&Compiler.getASTContext()));
-    }
-  };
-#+END_SRC
-
-The Consumer would derive from =ASTConsumer= and override
-=HandleTranslationUnit=. This function is called when the whole
-translation unit is parsed. This provides the entry point of the AST
-by the top most /decl/ by =Context.getTranslationUnitDecl()=.
-
-The visitor will automatically call =WalkUpFromXXX(x)= to recursively
-visit child nodes of x returning false of TraverseXXX or =WalkUpFromXXX=
-will terminate the traversal. By default this will be a pre-order
-traversal. Calling a method to change to post-order.
-
-#+BEGIN_SRC cpp
-  class MyConsumer : public clang::ASTConsumer {
-  public:
-    explicit MyConsumer(ASTContext *Context)
-      : Visitor(Context) {}
-    virtual void HandleTranslationUnit(clang::ASTContext &Context) {
-      Visitor.TraverseDecl(Context.getTranslationUnitDecl());
-    }
-  private:
-    MyVisitor Visitor;
-  };
-#+END_SRC
-
-The visitor itself implement what to do with each AST node. Override
-the list of =VisitXXX= method for each type of AST node.
-
-#+BEGIN_SRC cpp
-  class TokenVisitor
-    : public RecursiveASTVisitor<TokenVisitor> {
-  public:
-    explicit TokenVisitor(ASTContext *Context)
-      : Context(Context) {}
-    bool VisitCXXRecordDecl(CXXRecordDecl *Declaration) {}
-    bool VisitFunctionDecl(FunctionDecl *func_decl) {}
-  private:
-    ASTContext *Context;
-  };
-#+END_SRC
-
-
-** Location
-- Decl::getLocStart -> =SourceLocation= loc
-- context->getFullLoc(loc) -> FullSourceLoc full
-- full.getSpellingLinenumber
-
-** APIs
-=Decl=
-
-#+BEGIN_SRC cpp
-SourceLocation getLocStart ();
-SourceLocation getLocEnd ();
-virtual SourceRange getSourceRange ();
-#+END_SRC
-
-=ASTContext=
-
-#+BEGIN_SRC cpp
-FullSourceLoc getFullLoc (SourceLocation Loc) const
-SourceManager& getSourceManager ()
-#+END_SRC
-
-=FullSourceLoc=
-
-#+BEGIN_SRC cpp
-unsigned getSpellingLineNumber (bool *Invalid=nullptr) const
-unsigned getSpellingColumnNumber (bool *Invalid=nullptr) const
-FileID 	getFileID () const
-#+END_SRC
-
-=SourceManager=
-
-#+BEGIN_SRC cpp
-FileManager& getFileManager () const;
-FileID getMainFileID () const; // this file being processed
-const FileEntry *getFileEntryForID (FileID FID) const;
-#+END_SRC
 
 * Reference
 

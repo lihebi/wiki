@@ -258,6 +258,20 @@ see [[file:tikz.org][tikz]]
 - dashuline :: dash
 - dotuline :: dot
 
+** TODO pdfcomment
+** todonotes
+#+BEGIN_SRC latex
+% use the package
+\usepackage[textsize=footnotesize, color=green!0]{todonotes}
+% HACK: set length so that the paper can have better width for margin
+\setlength{\marginparwidth}{1.5cm}
+
+\todo[fancyline]{Here's a comment in the margin}
+\todo[noline]{comment}
+\todo[inline]{inline comment}
+#+END_SRC
+
+
 * Bibliography
 cite link (need to load a package like =hyperref= or =url=)
 

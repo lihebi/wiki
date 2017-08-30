@@ -196,8 +196,23 @@ standard character.
  - make-sequence
 
 *** Mapping
- - concatenate
- - map
+ - concatenate: ~concatenate result-type &rest sequences => result-sequence~
+
+This is used for concatenate not only strings, but also lists, etc.
+#+BEGIN_SRC lisp
+(concatenate 'string "hello" "world")
+(concatenate 'list )
+#+END_SRC
+
+ - map: ~map result-type function &rest sequences+ => result~
+The map also needs a type as first argument. =nil= means no return, then map will return nil.
+
+#+BEGIN_SRC lisp
+  (map 'list '1+ '(2 3))
+  (map nil (lambda (x) (1+ x))
+       '(2 3))
+#+END_SRC
+
  - map-into
  - some
  - every

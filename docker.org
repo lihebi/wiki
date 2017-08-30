@@ -22,6 +22,101 @@ Re-launch a stopped container can be done by =docker start
 You can assign a name to the container so that you can better remember
 and reference it.
 
+* Compose
+It is installed seperately with docker.
+
+It must be run inside the folder containing =docker-compose.yml=
+
+Commands
+- docker-compose up: up the service. It will not exit. Use C-c to exit
+  and the =docker-compose down= command will be sent.
+  - The second time you up the compose, it will not up, but update
+    current. If all current are up to date, nothing will happen.
+- docker-compose up -d: up the service and exit. You need to shutdown
+  it maually
+- docker-compose down: shutdown the services
+
+A sample compose file:
+#+BEGIN_SRC yaml
+version: '2'
+services:
+  srcml-server-container:
+    image: "lihebi/srcml-server"
+  helium:
+    image: "lihebi/arch-helium"
+    tty: true
+    volumes:
+      - data:/data
+  benchmark-downloader:
+    # this is used to download benchmarks to the shared volume
+    image: "lihebi/benchmark-downloader"
+    tty: true
+    volumes:
+      - data:/data
+volumes:
+  # create a volume with default
+  data:
+#+END_SRC
+
+** service
+A service is a container. Setting tty to true to prevent it from
+stopping. That is the same effect when you pass =-t= to =docker run=.
+
+The containers can be seen by docker ps, with names prefixed and
+suffixed by =compose_XXX_1=
+
+Change to the container will not preserve after the compose down. The
+containers will be deleted. Next up will create new containers.
+
+** TODO volumes
+Under any volume, if =external= option is set to =true=, docker
+compose will find it outside, and signal error if it does not exist.
+
+** TODO network
+Once the compose is up, docker create a bridge network called
+=compose_default=. All services (containers) are attached to that.
+
+* Network
+- docker network ls
+- docker network inspect <network-name>
+
+* Volume
+A volume must be locally available if you create a =local= volume.
+** Create Volume
+You can create a volume like this:
+#+BEGIN_EXAMPLE
+docker volume create hello
+#+END_EXAMPLE
+
+Volumes can also be created upon creating a container.
+
+** Mount volume to a container
+You have to mount at the time you create the container. You cannot
+remount anything to it without commiting it to an image and create
+again. 
+
+#+BEGIN_EXAMPLE
+docker run -v /mnt <image>
+docker run -v my-named-vol:/mnt <image>
+docker run -v /absolute/path/to/host/local/path:/mnt/in/container <image>
+#+END_EXAMPLE
+
+If only inner path is provided, the volume will still be created, but
+with a long named directory under =/var/lib/docker/volumes=.
+
+** Manipulate Volume
+The volumes will never be automatically deleted, even if the container is deleted.
+
+*** TODO Will it be updated or not?
+
+#+BEGIN_EXAMPLE
+docker volume inspect <volume-full-name>
+docker volume ls
+docker volume prune # remove all unused volumes
+#+END_EXAMPLE
+
+
+
 * General operations
 
 - docker images :: list images
@@ -36,6 +131,11 @@ and reference it.
                  is not set when running a container, you have to
                  commit it, and run it again to assign a port or
                  another port.
+  - -v /volumn :: create a mount at /volumn
+  - -v /local/dir:/mnt :: mount local dir to the /mnt in
+       container. The default is read-write mode, if you want read
+       only, do this: =-v /local/dir:/mnt:ro=. The local dir must be
+       ABSOLUTE path.
 - docker exec <ID> echo "hello" :: run some command with arguments on the already run container <ID>
   - ID can be the UUID or container name
   - you can use -it as well, e.g. docker exec -it <ID> /bin/bash
@@ -58,8 +158,39 @@ In the folder containing Dockerfile, run to build the image:
 docker build -t my-ubuntu .
 #+END_EXAMPLE
 
+use --no-cache to avoid using cache
+
 - docker history <image> :: show which layers are used to create <image>
 
+** Docker stop
+docker stop will send SIGTERM to the app, then wait for it to stop. The default wait time is 10 seconds. You can change this by
+#+BEGIN_EXAMPLE
+docker stop -t 1 <container-ID>
+#+END_EXAMPLE
+This will change the timeout to be 1 second.
+
+The reason for a container to resist stopping may be it ignores the
+SIGTERM request. Python did this, so for a python program, you should
+handle this signal yourself:
+#+BEGIN_SRC python
+  import sys
+  import signal
+
+  def handler(signum, frame):
+      sys.exit(1)
+
+  def main():
+      signal.signal(signal.SIGTERM, hanlder)
+      # your app
+#+END_SRC
+
+
+Next thing is the entry point and commands. If you use shell form, it
+is started by sh -c, and shell will not pass the signal to the app
+either. So change it to json form.
+
+Finally, =docker stop= tries to terminate the app gracefully by
+sending SIGTERM, you can choose to force kill using =docker kill=
 
 * Remove sudo
 #+BEGIN_EXAMPLE
@@ -78,8 +209,49 @@ RUN apt-get -y update & apt-get install -y libarchive-dev libcurl4-openssl-dev
 RUN wget http://131.123.42.38/lmcrs/beta/srcML-Ubuntu14.04-64.deb srcml.deb
 RUN dpkg -i srcml.deb
 #+END_EXAMPLE
+
+** Commands
+- FROM: a base image
+- ENV key=value
+- ADD: =ADD <src> .. <dst>= The difference from copy:
+  - ADD allows src to be url
+  - ADD will decompress an archive
+- COPY: =COPY <src> .. <dst>= all srcs on the local machine will be
+  copied to dst in the image. The src can use wildcards. The src
+  cannot be out of the current build directory, e.g. =..= is not
+  valid.
+- USER: =USER daemon= The USER instruction sets the user name or UID
+  to use when running the image and for any RUN, CMD and ENTRYPOINT
+  instructions that follow it in the Dockerfile.
+- WORKDIR: The WORKDIR instruction sets the working directory for any
+  RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow it in
+  the Dockerfile
+  - if it does not exist, it will be created
+  - it can be used multiple times, if it is relative, it is relative
+    to the previous WORKDIR
+- ENTRYPOINT ["executable", "param1", "param2"]: configure the
+  container to be run as an executable.
+
+
+
 * TODO Docker hub
 When pushing and pulling, what exactly happens?
+
+#+BEGIN_EXAMPLE
+docker tag local-image lihebi/my-image
+docker push lihebi/my-image
+#+END_EXAMPLE
+
+* Tricks
+Stop all containers
+#+BEGIN_QUOTE
+docker stop $(docker ps -a -q)
+#+END_QUOTE
+
+Remove all containers (will not remove non-stopped ones, but give errors)
+#+BEGIN_QUOTE
+docker rm $(docker ps -a -q)
+#+END_QUOTE
 
 
 * Trouble Shooting

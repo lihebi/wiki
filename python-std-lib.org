@@ -107,14 +107,20 @@ Other
 - range(stop): [0,stop)
 - range(start, stop, step=1)
 - sorted(iterable, cmp, key, reverse=False)
+  - key=lambda x: x[1]
 - type(obj): get the type of obj
 - open(name, mode): return an object of file type.
   - r,w,a,b; + for read and write
+
+* Printing
+- pprint.pprint(object, stream=None): pretty print
+- 'string {0}, {hello}'.format('yes', hello=2)
 
 * File System
 ** os.path
 If parameter is not listed, it means a single path.
 
+- =exists=: GOOD. check whether a path exists
 - =split=: return a pair (head, tail). tail is the last component,
   without slash. If path ends with slash, tail is empty
   - =basename=: the tail of the split output
@@ -123,7 +129,6 @@ If parameter is not listed, it means a single path.
 - =abspath=: from relative to absolute
   path. normpath(join(os.getcwd(), path))
 - =commonprefix(list)=: return the longest path prefix
-- =exists=
 - =expanduser=: replace the initial component of ~ by the users directory.
 - =getsize=: in bytes
 - =isabs=: predicate for absolute
@@ -137,30 +142,32 @@ If parameter is not listed, it means a single path.
 ** TODO tempfile
 
 * os
-Env
+** Env
 - os.environ['HOME']
 - os.getenv(name)
 - os.putenv(name, value)
 - os.unsetenv(name)
 
-Filesystem
+** Filesystem
 - os.getcwd(): current working directory
 - os.chdir(path): change cwd
 - os.mkdir(path)
-- os.listdir(path='.'): list all in this dir
-- os.makedirs(path)
-- os.remove(path): remove a file
-- os.removedirs(path): foo/bar/aaa will try to remove aaa, than bar, then foo. Don't use!
-- os.rmdir(): remove an empty dir
+- ~os.listdir(path='.')~: list all in this dir. E.g. ~for item in os.listdir('/path'): print (item)~
+- =os.makedirs(path)=: GOOD this is the way to go the make directories
+- ~os.remove(path)~: remove a file
+- ~os.rmdir()~: remove an empty dir.
+- os.removedirs(path): foo/bar/aaa will try to remove aaa, than bar,
+  then foo. Don't use! To recursively remove all contents, use
+  =shutil.rmtree=
 - os.rename(src, dst)
 - os.renames(old, new)
 - os.rmdir(path): only work if dir is empty
 - os.tempnam(): a reasonable absolute name for creating temporary file
   - seems to be vulnerable
 - os.walk(top, topdown=True): for each directory including top itself,
-  it yields 3-tuple (dirpath, dirnames, filenames)
+  it yields 3-tuple (dirpath, dirnames, filenames). E.g. ~for root,dirs,files in os.walk('/path'): for f in files: print (f);~
 
-shutil
+** shutil
 - copy(src,dst)
 - copytree(src, dst): recursive
 - rmtree(path): rm -r
@@ -168,7 +175,7 @@ shutil
 
 popen family is deprecated. Use subprocess.
 
-Process
+** Process
 - os.abort()
 - os.execl(path, arg0, arg1, ...)
 - os.execle(path, arg0, arg1, ..., env)
@@ -260,7 +267,40 @@ Methods:
 
 class time.struct_time: returned by gmtime(), localtime() and strptime()
 
-* TODO argparse
+* argparse
+#+BEGIN_SRC python
+  import argparse
+  parser = argparse.ArgumentParser(descripton='Description here')
+
+  parser.add_argument(...)
+  parser.add_argument(...)
+
+  args = parser.parse_args()
+#+END_SRC
+
+add_argument(name[, action][, nargs])
+
+- =name=: can be either. In either case, the name of variable will be args.foo
+  - a name, e.g. foo
+  - a list of options, e.g. ('-f', '--foo')
+- =action=
+  - =store=: store what is supplied by the command line
+  - =store_const=: no need to supply a value in command line, will store
+    the const argument (see below)
+  - =store_true=, store_false: special case for store_const
+  - =append=: append multiple options into a list
+- =const=: hold values not read from command line, but from program. Use
+  with store_const
+- =default=: the value can be omited from command line, and take this
+  default value
+- =type=: the default type is string, can be int, float, etc, without quotes
+- =choices=: this is a list of possible values to choose from
+- =required=: True or False, indicate whether there must be this option
+- =help=: the help message to be displayed
+- =dest=: the dest can be automatic. It can be the name of the first
+  argument, or the name of the --foo. So don't need to set it
+  manually. The name is added as an attributes to the returned args
+  object.
 
 * Concurrent
 
