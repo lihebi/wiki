@@ -1,5 +1,6 @@
 #+TITLE: Create Live USB
 
+
 * Software
 - unetbootin
 
@@ -28,3 +29,53 @@ sudo /Applications/Install\ OS\ X\ Mavericks.app/Contents/Resources/createinstal
 --applicationpath /Applications/InstallXXX.app \
 --nointeraction
 #+END_EXAMPLE
+
+
+* Install Arch Linux on Macbook
+** UPDATE
+Stopped because I want to buy DPT-RP1 for paper reading. That thing
+does not work on Linux. I'm going to use the VNC through docker
+solution.
+** Reinstall OS X
+Although I can download image and burn to disk, I found the internet
+recovery is convenient.
+
+When booting, hold Cmd-Option-R, then erase the disk, and reinstall
+the latest Mac OS.
+
+| key                | desc                                                   |
+|--------------------+--------------------------------------------------------|
+| cmd-R              | reinstall the latest OS that was installed on this mac |
+| option-cmd-R       | upgrade to latest OS for this mac                      |
+| shift-option-cmd-R | reinstall the OS that comes with the mac               |
+
+** Partition
+It is recommanded to keep archlinux with OS X, because only OS X can
+install firmware updata, adjust start up sound, etc.
+
+Partition the disk on OS X.
+- run Disk Utility
+- select the drive, click partition
+- add new partition by pressing +. The partition will be reformated in
+  Arch, so type does not matter.
+
+Inside arch, run cgdisk, and delete the partition. When creating the
+first partition, add 128MiB gab by typing +128M when cgdisk asks for
+it.
+
+For simplicity, creating one partition is fine. The swap partition can
+be replaced by a swap file. Also I prefer to use LVM.
+
+*** Install rEFInd
+Download and run refind-install. The SIP must be disabled first. To do that:
+
+reboot and hold Cmd-R to enter recovery mode. Then open terminal from utility menu and type
+#+BEGIN_EXAMPLE
+csrutil disable
+#+END_EXAMPLE
+
+Reboot. To enable it, follow the same process with command:
+#+BEGIN_EXAMPLE
+csrutil enable
+#+END_EXAMPLE
+
