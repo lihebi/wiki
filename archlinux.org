@@ -214,6 +214,16 @@ run
 
 * Trouble shooting
 - After booting stumpwm, sbcl cannot be executed.
+** auto expansion error for latex font
+when compiling latex using acmart template, auto expansion error is reported.
+
+Solution:
+#+BEGIN_EXAMPLE
+mktexlsr # texhash
+updmap-sys
+#+END_EXAMPLE
+
+Reference: https://github.com/borisveytsman/acmart/issues/95
 
 * Pacman
 Option
