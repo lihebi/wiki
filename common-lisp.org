@@ -1,256 +1,202 @@
 #+TITLE: Common Lisp
 
 
-
-
 * List
-The function =cons= builds lists. If second argument is a list, it add
-the first one onto the list. This is called "consing onto the
+The function =cons= builds lists. If second argument is a list, it
+adds the first one onto the list. This is called "consing onto the
 list". =cons= returns a newly allocated cons. Thus allocating memory
-from the heap is sometimes generally known as /consing/.
+from the heap is sometimes generally known as /consing/. =list= can
+also be used to create a list.  =append= connect several list to
+become one.  A /proper list/ is either =nil=, or a cons whose =cdr= is
+a proper list. This definition is recursive. Improper list is shown in
+/dotted notation/, and is called a /dotted list/.
 
-The =car= of a list is the first element, the =cdr= is everything
-after the first. Common lisp also provides =caar=, =cdddr=, all the
-combinations up to 4-level.
 
-When using =cons=, the pointers are constructed in the list, thus
-lists might share components. Sometimes you have to make a copy of a
-list to avoid chaning other lists. There are two functions to make
-copies: =copy-list= and =copy-tree=. =copy-list= recursive calls on
-the cdr of the list, thus it is not deep copy. On the contrary,
-=copy-tree= recurs on both =car= and =cdr=, thus copy entire list.
+A family of functions is used to access elements of the list. The
+=car= of a list is the first element, the =cdr= is everything after
+the first. Common lisp also provides =caar=, =cdddr=, all the
+combinations up to 4-level.  List has some special function to handle.
+=nth= and =nthcdr= is used to access element.  =first=, =second=, ...,
+=tenth= can retrieve corresponding element. =last=, =butlast=, and
+=rest= are also intuitive. =nbutlast= is the destructive version of
+=butlast=.
 
-Similarly, =tree-equal= can be used to test the equality of the whole
-tree.
+To modify the structure of a list, =substitute= replace elements in a
+sequence, it does not go into deeper tree. The function =subst= will
+replaces elements in tree, deeply.  Such form that recursing down both
+car and cdr is said to be /doubly recursive/.  =subst-if= and
+=subst-if-not= provides the conditional substitution.  Their
+destructive versions are available for efficiency =nsubst=,
+=nsubst-if=, =nsubst-if-not=.
 
-List has some special function to handle.  =nth= and =nthcdr= is used
-to access element.  =first=, =second=, ..., =tenth= can retrieve
-corresponding element. =last= and =rest= are also intuitive.
 
-=list= can be used to create a list.
-=list-length= returns the length.
 
-=push= and =pop= are macros, and are defined using =setf=. =pushnew=
-is a variant of =push= that uses =adjoin= instead of =cons=.
+There are also some functions to access list properties.
+=list-length= returns the length. =endp= is a predicate to check the
+end of a list
 
-A /proper list/ is either =nil=, or a cons whose =cdr= is a proper
- list. This definition is recursive. Improper list is shown in /dotted
- notation/, and is called a /dotted list/.
+List can be used to represent different data structures.  
+1. It can simulate a stack. =push= and =pop= are macros, and are
+   defined using =setf=. =pushnew= is a variant of =push= that uses
+   =adjoin= instead of =cons=.
+2. List can form a tree. When using =cons=, the pointers are
+   constructed in the list, thus lists might share
+   components. Sometimes you have to make a copy of a list to avoid
+   chaning other lists. There are two functions to make copies:
+   =copy-list= and =copy-tree=. =copy-list= recursive calls on the cdr
+   of the list, thus it is not deep copy. On the contrary, =copy-tree=
+   recurs on both =car= and =cdr=, thus copy entire list.  Similarly,
+   =tree-equal= can be used to test the equality of the whole tree.
+3. List can also simulate a set. You can tell the member via =member=,
+   =member-if=, =member-if-not=. Set operations include =adjoin=,
+   =union=, =intersection=, =set-difference=, =set-exclusive-or= and
+   their destructive counterparts =nunion=, =nintersection=,
+   =nset-difference=, =nset-exclusive-or=.  You can predict subset
+   with =subsetp= and tail with =tailp=.
+4. Finally, /Association Lists/ are maps. This is often called
+   /assoc-list/ or /alist/, representing mapping.  =parilis= is used
+   to create a =alist= from lists of keys and values. Add new key
+   value pairs onto the alist with =acons=. Use =assoc= to retrieve
+   the value, and use =setf= to set the value.  The condition version
+   of =assoc= are =assoc-if= and =assoc-if-not=.  Lisp allows not only
+   map from car to cdr, but also cdr to car with =rassoc=,
+   =rassoc-if=, =rassoc-if-not=. Use =copy-alist= to copy the alist.
 
-** lists
-- endp: predicate to check the end of a list
-- append
-- copy-alist
-- revappend
-- nconc
-- nreconc
-- butlast
-- nbutlast
-- ldiff
-** alteration of list structure
-Change the car or cdr of an existing cons. It is destructive.
-- rplaca
-- rplacd
-** substitution
-=substitute= replace elements in a sequence, it does not go into
-deeper tree. The function subst= will replaces elements in tree,
-deeply.
 
-Such form that recursing down both car and cdr is said to be /doubly
-recursive/.
+Mapping is very powerful. The most frequently used is =mapcar=. It
+takes a function and some lists. Each time, it takes one element from
+the lists out as arguments to the function, until some list runs out,
+and finally return the results in a list.  =maplist= takes the same
+arguments and does the same thing, but everytime apply function on the
+cdrs of the lists.
 
-- subst-if
-- subst-if-not
-- nsubst
-- nsubst-if
-- nsubst-if-not
-- sublis
-- nsublis
-** Set
-- member
-- member-if
-- member-if-not
-- tailp
-- adjoin
-- union
-- nunion
-- intersection
-- nintersection
-- set-difference
-- nset-difference
-- set-exclusive-or
-- nset-exclusive-or
-- subsetp
-** Association Lists
-This is often called /assoc-list/ or /alist/, representing mapping.
-Use =assoc= to retrieve the value, and use =setf= to set the value.
+# - mapc
+# - mapl
+# - mapcan
+# - mapcon
 
-- acons
-- pairlis
-- 
-- assoc-if
-- assoc-if-not
-- rassoc
-- rassoc-if
-- rassoc-if-not
+# - revappend
+# - nconc
+# - nreconc
+# - ldiff
+
+
+# - sublis
+# - nsublis
+
+
 
 * Sequence
-Sequence contains both lists and vectors. Here are the common
-operations that shares between them because they operate on ordered
-sets of elements.
+Sequence contains both lists and vectors. To tell what kind of
+sequence it is, one can use =consp=, =listp=, =bit-vector-p=,
+=vectorp=, =simple-vector-p=, =simple-bit-vector-p=, =arrayp=.
+You can use =length= to get the length of a list. 
 
-=length= is general to get the length of a list. =subseq= get the
+Accessing the element of a sequence with =elt=. =subseq= get the
 subsequence in =[begin,end)= with index starting from 0.
 
-There are =sort= and =stable-sort=, but they are destrictuve, so if in
-doubt, pass a copy.
+In modifying a list, =reverse= and =nreverse= reverses the list.
+=remove=, =remove-if=, =remove-if-not= remove from a sequence while
+the destructive version named =delete= =delete-if= =delete-if-not=.
+=remove-duplicates= and =delete-duplicates= make sure no same element
+in the sequence.  =substitute=, =substitute-if=, =substitute-if-not=
+replace within the sequence, does not go deeper.  =nsubstitute=
+=nsubstitute-if= =nsubstitute-if-not= are destructive.  There are
+=sort= and =stable-sort=, but they are destrictuve, so if in doubt,
+pass a copy.  =concatenate= (reqiures type) is used for concatenate
+many sequences into one. =merge= (requires type) destructively merge
+two sequence. If both of them are sorted, the result is also sorted.
 
+It is possible to search inside a sequence. =find= and =position=
+returns the element and index of the first match, respectively.  Their
+predicate versions are =find-if=, =find-if-not= and =position-if=,
+=position-if-not=.  =count=, =count-if=, =count-if-not= returns the
+count. One can also =search= a sequence in another.
 
-** Predicates
-- consp
-- listp
-- bit-vector-p
-- vectorp
-- simple-vector-p
-- simple-bit-vector-p
-- arrayp
+=map= (requires return type) maps a function to a sequence. The map
+also needs a type as first argument. =nil= means no return, then map
+will return nil. =map-into= does not require a type, but the first
+argument is a sequence that will be destructed.  Kind of a mapping,
+but =every=, =notany= and =some=, =notevery= are *predicates* to test
+on a sequence. =reduce= differs from =map= in that it always utilize
+the previous result in the next computation.
 
-** Simple Sequence Functions
-- elt
-- subseq
-- copy-seq
-- length
-- reverse
-- nreverse
-- make-sequence
-
-** Modifying Seq
-- fill
-- replace
-- remove
-- remove-if
-- remove-if-not
-- delete
-- delete-if
-- delete-if-not
-- remove-duplicates
-- delete-duplicates
-- substitute
-- substitute-if
-- substitute-if-not
-- nsubstitute
-- nsubstitute-if
-- nsubstitute-if-not
-
-** Searching
-- find
-- find-if
-- find-if-not
-- position
-- position-if
-- position-if-not
-- count
-- count-if
-- count-if-not
-- mismatch
-- search
-
-** Sorting & Merging
-- merge
+# - copy-seq
+# - length
+# - make-sequence
+# - fill
+# - replace
 
 * String
 A string is a specialized vector (one-dimensional array) whose
-elements are characters.
+elements are characters.  A character object can be notated by writing
+=#\c= where c is any standard character.
 
 To access the characters, instead of =aref=, you can use =char= which
 is faster.
 
-Some predicates
-- characterp
-- stringp
-- simple-string-p
+# - characterp
+# - stringp
+# - simple-string-p
 
-** Character
-A character object can be notated by writing =#\c= where c is any
-standard character.
+In comparision, while numeric value uses ~=~, ~/=~ and ~<~, characters
+have case sensitive (~char=~, ~char/=~, ~char<~) and insensitive
+versions (=char-equal=, =char-not-equal=, =char-lessp=). Strings also
+have case sensitive (~string=~, ~string/=~, ~string<~) and insensitive
+versions (=string-equal=, =string-not-equal=, =string-lessp=). This is
+actually a family of functions: =string-greaterp=,
+=string-not-greaterp=, =string-not-lessp=.
 
-| numeric analog | case-sensitive | case-insensitive | string case sens | string case insens |
-|----------------+----------------+------------------+------------------+--------------------|
-| ~=~            | ~char=~        | =CHAR-EQUAL=     | ~string=~        | =string-equal=     |
-| ~/=~           | ~char/=~       | =CHAR-NOT-EQUAL= | ~string/=~       | =string-not-equal= |
-| ~<~            | ~char<~        | =CHAR-LESSP=     | ~string<~        | =string-lessp=     |
+You can construct a string by =make-string= with size, or convert from
+another type to string via =string=. Trimming a string is handled by
+=string-trim=, =string-left-trim=, =string-right-trim=.  Case
+conversion can be done by =string-upcase=, =string-downcase=,
+=string-capitalize= and their destructive versions =nstring-upcase=,
+=nstring-downcase=, =nstring-capitalize=.
 
-Other comparision includes =string-lessp=, =string-greaterp=,
-=string-not-greaterp=, =string-not-lessp=, =string-not-equal=.
-
-** String Construction and Manipulation
-- make-string
-- string-trim
-- string-left-trim
-- string-right-trim
-- string-upcase
-- string-downcase
-- string-capitalize
-- nstring-upcase
-- nstring-downcase
-- nstring-capitalize
-- string
 
 * Array
 Array can be general array, holding arbitrary object types; it can
-also be a specialized array that hold a given type. 
+also be a specialized array that hold a given type, which increase the
+efficiency.  One dimentional arrays are called vectors. Vectors
+holding arbitrary objects are /general vectors/.  An array can be
+created by =make-array=.
 
-One dimentional arrays are called vectors. Vectors holding arbitrary
-objects are /general vectors/, while the ones holding type
-=string-char= are called /strings/, holding type =bit= are called
-/bit-vectors/.
+=aref= is used to access the element of an array. To replace
+elements, we use =setf= with =aref=.  For vector, you might want to
+use =svref=, where =sv= means "simple vector", to access elements
+faster.
 
-An array can be created by =make-array=. =aref= is used to access the
-element of an array. To replace elements, we use =setf= with =aref=.
-For vector, you might want to use =svref=, where =sv= means "simple
-vector", to access elements faster.
+# - array-rank-limit: *constant*
+# - array-dimension-limit: *constant*
+# - array-total-size-limit: *constant*
+# - vector
 
-** Creation
-- array-rank-limit: *constant*
-- array-dimension-limit: *constant*
-- array-total-size-limit: *constant*
-- vector
+# - array-element-type
+# - array-rank
+# - array-dimension
+# - array-dimensions
+# - array-total-size
+# - array-in-bounds-p
+# - array-row-major-index
+# - row-major-aref
+# - adjustable-array-p
 
-** Information
-- array-element-type
-- array-rank
-- array-dimension
-- array-dimensions
-- array-total-size
-- array-in-bounds-p
-- array-row-major-index
-- row-major-aref
-- adjustable-array-p
-** bit-array
-- bit
-- sbit
-- bit-and
-- bit-ior
-- bit-xor
-- bit-eqv
-- bit-nand
-- bit-nor
-- bit-andc1
-- bit-andc2
-- bit-orc1
-- bit-orc2
-- bit-not
-** Fill
-The /fill pointer/ is a non-negative integer no larger than the total
-number of elements in the vector (array-dimension). It is the number
-of filled-in elements in the vector.
-- array-has-fill-pointer
-- fill-pointer
-- vector-push
-- vector-push-extend
-- vector-pop
-** Change dimension
-- adjust-array
+Array holding type =bit= are called /bit-vectors/. Bit operations are
+supported via =bit=, =sbit=, =bit-and=, =bit-ior=, =bit-xor=,
+=bit-eqv=, =bit-nand=, =bit-nor=, =bit-andc1=, =bit-andc2=,
+=bit-orc1=, =bit-orc2=, =bit-not=
+
+# The /fill pointer/ is a non-negative integer no larger than the total
+# number of elements in the vector (array-dimension). It is the number
+# of filled-in elements in the vector.
+# - array-has-fill-pointer
+# - fill-pointer
+# - vector-push
+# - vector-push-extend
+# - vector-pop
+
+# - adjust-array
 
 * Structure
 Macro =(defstruct point x y)= will also define =make-point=,
@@ -271,239 +217,77 @@ To iterate through a hash table, use =maphash=.
 # - hash-table-rehash-threshold
 # - hash-table-size
 # - hash-table-test
-* Symbols
-In addition to letters and numbers, the following characters can also
-be considered to be alphabet:
+* Symbols & Variables
+Lisp is case-insensitive. The program will be converted to upper case
+when stored in computer.  Symbol names can be, in addition to letters
+and numbers, the following characters can also be considered to be
+alphabet: ~+ - * / @ $ % ^ & _ = < > ~ .~ Conventionaly we write
+=+global-constant+= and =*global-variable*=.
 
-#+BEGIN_EXAMPLE
-+ - * / @ $ % ^ & _ = < > ~ .
-#+END_EXAMPLE
+# The following characters are also alphabet, not used by common lisp
+# standard, but reserved for some purpose:
+# #+BEGIN_EXAMPLE
+# ? ! [ ] { }
+# #+END_EXAMPLE
 
-But some conventions apply:
-- =+global-constant+=
-- =*global-variable*=
+A symbol has a /Property List/. It can be retrieved by =symbol-plist=. 
 
-The following characters are also alphabet, not used by common lisp
-standard, but reserved for some purpose:
-#+BEGIN_EXAMPLE
-? ! [ ] { }
-#+END_EXAMPLE
+# - get
+# - remprop
+# - getf
+# - remf
+# - get-properties
 
-Finally, lisp is case-insensitive. The program will be converted to
-upper case when stored in computer.
+Global variable can be defined by =defvar= and =defparameter=. Naming
+convention is put =*= surrounds it.  The difference (Prefer =defvar=):
+- =defparameter= will always assign the initial value
+- =defvar= will do so only if the variable is not defined; =defvar=
+  can also be used without initial value, the variable will be
+  unbound.
 
-** Property list
-A symbol has such a list.
-- get
-- remprop
-- symbol-plist
-- getf
-- remf
-- get-properties
+=defconstant= is used to declare constant. Use =+= surrounds it.  It
+is possible to redefine the constant using =defconstant= again, but
+the behavior is undefined.  E.g. the code refer to it might need to be
+reevaluated to see the update.  So, do NOT redefine a constant,
+otherwise it is not a constant, use =defparameter= instead.
 
-* Mapping
-The most frequently used is =mapcar=. It takes a function and some
-lists. Each time, it takes one element from the lists out as arguments
-to the function, until some list runs out, and finally return the
-results in a list.
+Local variables have lexical binding, global variables have dynamic
+binding. Under lexical scope, a symbol refers to the variable where
+the symbol appears. With dynamic scope, a variable is looked up where
+the function is called, not where it is defined. To cause a local
+variable to have dynamic scope, we =declare= it to be =special=
+(=(declare (special x))=).
 
-=maplist= takes the same arguments and does the same thing, but
-everytime apply function on the cdrs of the lists.
+# Although the global variable can be referred at any place, the binding
+# is still quite lexical regarding to the binding form.  E.g, the let
+# binding can rebind the global variable, and everything before the
+# return of let form sees this binding.  After the return, the binding
+# fall back to the previous binding.  This is good because when you want
+# to temporary change the =*standard-output*= to a file, you don't need
+# to have to remember to change it back.
 
-- mapc
-- mapl
-- mapcan
-- mapcon
+# This also means, assign to global variable only modify the specific
+# binding, while the binding on the stack does not change.  Lisp did
+# this by looking up the name of variable: if it is declared by =defvar=
+# or =defparameter=, it will creates dynamic binding.
 
-=concatenate= has the signature ~concatenate result-type &rest
-sequences => result-sequence~.  This is used for concatenate not only
-strings, but also lists, etc.
-#+BEGIN_SRC lisp
-(concatenate 'string "hello" "world")
-(concatenate 'list )
-#+END_SRC
-
-=map= maps a function to a sequence. ~map result-type function &rest
-sequences+ => result~ The map also needs a type as first
-argument. =nil= means no return, then map will return nil.
-
-#+BEGIN_SRC lisp
-  (map 'list '1+ '(2 3))
-  (map nil (lambda (x) (1+ x))
-       '(2 3))
-#+END_SRC
-
-=every= and =some= are predicates to test on a sequence.
-
- - map-into
- - notany
- - notevery
- - reduce
-
-* Type
-Common Lisp is strong typed, but the type is associated with objects,
-not variables. This approach is called /manifest typing/. Though type
-declarations are completely optional, you might want to do this for
-efficiency.
-
-=nil= is false, everything else is true =nil= is both an atom and a
-list. =()= is exactly the same as =nil=
-
-In Common Lisp, the types form a hierarchy. An object always has ore
-than one type. The type =t= is the super type of all types, so
-everything is of type =t=. For example, a number 13 is of type
-=fixnum=, =integer=, =rational=, =real=, =number=, =atom=, =t=.
-
-Function =typep= (=(typep obj type)=) tests whether an object is of a type.
-=(subtypep type1 type2)= tests the type hierarchy.
-
-** Numbers
-Numbers can use read form, e.g. =#b010101=, =#xaf08=. Predicates such
-as =numberp=, =integerp=, =rationalp=, =floatp=, =realp=, =complexp=
-can test the type of an object. For numbers, =zerop=, =plusp=,
-=minusp=, =oddp=, =evenp= can tests the property.
-
-Number comparison can be ~<~, ~>~, ~<=~, ~>=~, ~=~.  These are same as
-using the operator sequencially on the operands. ~/=~ works
-pairwise. =max= and =min= get the maximum and minimum one.
-
-=(1+ x)= same as =(+ x 1)=.  =incf= and =decf= are destructive.  =gcd=
-greatest common divisor, =lcm= least common multiple.
-
-
-*** Other
-- exp
-- expt
-- log
-- sqrt
-- isqrt
-- abs
-- phase
-- signum
-- sin, cos, tan
-- cis
-- asin, acos, atan
-- CONSTANT pi
-- sinh, cosh, tanh, asinh, acosh, atanh
-
-*** Type Conversion
-- float
-- rational
-- rationalize
-- numerator
-- denominator
-- floor: toward negative infinity
-- ceiling: toward positive infinity
-- truncate: toward 0
-- round: to nearest integer
-- mod
-- rem
-- ffloor
-- fceiling
-- ftruncate
-- fround
-- decode-float
-- scale-float
-- float-radix
-- float-sign
-- float-digits
-- float-precision
-- integer-decode-float
-- complex
-- realpart
-- imagpart
-
-*** Logical Operations
-- logior
-- logxor: exclusive or
-- logand
-- logeqv
-- lognand
-- lognor
-- logandc1
-- logandc2
-- logorc1
-- logorc2
-- boole
-- lognot
-- logtest
-- logbitp
-- ash
-- logcount
-- integer-length
-*** Byte
-- byte
-- byte-size
-- byte-position
-- ldb
-- ldb-test
-- mask-field
-- dpb
-- deposit-field
-
-*** Random Numbers
-- random
-- =*random-state*=
-- make-random-state
-- random-state-p
-
-
-* Program Structure
-** Form
-Forms are the building block of lisp program. There're three kinds of
-forms:
-- self-evaluating forms: numbers, nil, :key
-- symbols: variables
-- lists
-  - special forms
-  - macro calls
-  - function calls
-** Scope and Extent
- Although the global variable can be referred at any place, the binding
- is still quite lexical regarding to the binding form.  E.g, the let
- binding can rebind the global variable, and everything before the
- return of let form sees this binding.  After the return, the binding
- fall back to the previous binding.  This is good because when you want
- to temporary change the =*standard-output*= to a file, you don't need
- to have to remember to change it back.
-
- This also means, assign to global variable only modify the specific
- binding, while the binding on the stack does not change.  Lisp did
- this by looking up the name of variable: if it is declared by =defvar=
- or =defparameter=, it will creates dynamic binding.
-
- The symbol is a reference of the object.  Assigning to the symbol will
- create another reference to another object.  But, if the object is
- mutable, then assign to the reference will change the object.
- Function parameters are reference.  So if the object is mutable, then
- assigning to the parameter will change the referenced object.
-
-** Variable
-*** Creation
- #+BEGIN_SRC lisp
- (defparameter *varname* init-value "Optional document string")
- (defvar *varname* optional-init-value "optional document string")
- (defconstant +name+ init-value "optional document string")
- #+END_SRC
-
- Global variable can be defined by =defvar= and =defparameter=. Naming
- convention is put =*= surrounds it.  The difference (Prefer =defvar=):
- - =defparameter= will always assign the initial value
- - =defvar= will do so only if the variable is not defined; =defvar=
-   can also be used without initial value, the variable will be
-   unbound.
-
- =defconstant= is used to declare constant. Use =+= surrounds it.  It
- is possible to redefine the constant using =defconstant= again, but
- the behavior is undefined.  E.g. the code refer to it might need to be
- reevaluated to see the update.  So, do NOT redefine a constant,
- otherwise it is not a constant, use =defparameter= instead.
-
-*** Assignment
  Assigning a value to a binding is:
  1. change the binding only, do not change other hidden bindings for
     this symbol
  2. do not change the value object the binding refers to
+
+The symbol is a reference of the object.  Assigning to the symbol will
+create another reference to another object.  But, if the object is
+mutable, then assign to the reference will change the object.
+Function parameters are reference.  So if the object is mutable, then
+assigning to the parameter will change the referenced object.
+
+
+ # #+BEGIN_SRC lisp
+ # (defparameter *varname* init-value "Optional document string")
+ # (defvar *varname* optional-init-value "optional document string")
+ # (defconstant +name+ init-value "optional document string")
+ # #+END_SRC
 
  The general assignment operator is =setf (place value)+=.  When
  assigning a binding, it will call =setq= (but don't call =setq=
@@ -525,7 +309,6 @@ forms:
    - =(roratef a b)= is equal to =(let ((tmp a)) (setf a b b tmp) nil)=
    - =(shiftf a b 10)= shifts all the values left, equals to =(let ((tmp a)) (setf a b b 10) tmp)=
 
-*** Destructive
  There are two types of destructive functions:
  - /for-side-effect/: typically use =setf=
  - /recycling operation/
@@ -556,7 +339,6 @@ forms:
  (setf *list* (sort *list* #'<))
  #+END_SRC
 
-
 ** Equality
 The reason Lisp has no pointer is that every value is conceptually a
 pointer. For efficiency, Lisp will sometime choose to use some
@@ -577,15 +359,96 @@ that. This will introduce difference when testing equility.
  - =EQUALP= is even looser. For example, it consider two strings are
    equal case-insensitively. NEVER use this.
 
-** Function
-*** Defun and Lambda Expression
+* Type
+Common Lisp is strong typed, but the type is associated with objects,
+not variables. This approach is called /manifest typing/. Though type
+declarations are completely optional, you might want to do this for
+efficiency.
+
+=nil= is false, everything else is true =nil= is both an atom and a
+list. =()= is exactly the same as =nil=
+
+In Common Lisp, the types form a hierarchy. An object always has more
+than one type. The type =t= is the super type of all types, so
+everything is of type =t=. For example, a number 13 is of type
+=fixnum=, =integer=, =rational=, =real=, =number=, =atom=, =t=.
+
+Function =typep= (=(typep obj type)=) tests whether an object is of a type.
+=(subtypep type1 type2)= tests the type hierarchy.
+
+* Numbers
+Numbers can use read form, e.g. =#b010101=, =#xaf08=. Predicates such
+as =numberp=, =integerp=, =rationalp=, =floatp=, =realp=, =complexp=
+can test the type of an object. For numbers, =zerop=, =plusp=,
+=minusp=, =oddp=, =evenp= can tests the property.
+
+Number comparison can be ~<~, ~>~, ~<=~, ~>=~, ~=~.  These are same as
+using the operator sequencially on the operands. ~/=~ works
+pairwise. =max= and =min= get the maximum and minimum one.
+
+=(1+ x)= same as =(+ x 1)=.  =incf= and =decf= are destructive.  =gcd=
+greatest common divisor, =lcm= least common multiple.
+
+Scientific computations are supported. =exp= computes exponential with
+$e$ while =expt= computes general exponential. =log= computes log to
+$e$ if the second parameter is omitted. =sqrt= is a special case of
+=expt= with =1/2= as the power.  
+
+The function of type name is used to do convertion, including =float=,
+=rational=. Some types of number have two parts. For ratio,
+=numerator= and =denominator= get the two parts. Break number into two
+parts can be done by several pairs of functions: =signum= and =abs=
+(sign and value), =mod= and =rem=, =realpart= and =imagpart= for
+=complex=.
+
+Rounding can be done with =floor= (toward negative infinity),
+=ceiling= (toward positive infinity), =truncate= (toward 0), and
+=round= (to nearest integer).  Float version is also available:
+=ffloor=, =fceiling=, =ftruncate=, =fround=.
+
+Logical operations are available as well.  =logior=, =logxor=,
+=logand=, =logeqv=, =lognand=, =lognor=, =logandc1=, =logandc2=,
+=logorc1=, =logorc2=, =lognot= Besides, =boole= seems to be a more
+general function that accept many operations that cover all above.
+
+=random= create random numbers.
+# *** Byte
+# - byte
+# - byte-size
+# - byte-position
+# - ldb
+# - ldb-test
+# - mask-field
+# - dpb
+# - deposit-field
+
+# *** Random Numbers
+# - =*random-state*=
+# - make-random-state
+# - random-state-p
+
+
+* Function
+The predicate =fboundp= tells whether there's a function with a given
+symbol name. =symbol-function= can retrieve the function object with
+the symbol. The document of a globally defined function can be
+retrieved by calling =documentation=. The function's read format is
+called /sharp-quote/, the special form =function= takes a function
+name and return the function object.  The function object can be
+obtained by =#'=.
+
+** Defun and Lambda Expression
 =defun= is a macro.
  #+BEGIN_SRC lisp
-   (defun name (a b
-                &optional op1 (op2 def-value) (op3 def-value op3-supplied-p)
-                &rest rests
-                &key k1 (k2 def-value k2-supplied-p) ((:kkkkk3 k3) def-value k3-supplied-p))
-     (body-forms))
+     (defun name (a b
+                  &optional op1
+                    (op2 def-value)
+                    (op3 def-value op3-supplied-p)
+                  &rest rests
+                  &key k1
+                    (k2 def-value k2-supplied-p)
+                    ((:kkkkk3 k3) def-value k3-supplied-p))
+       (body-forms))
  #+END_SRC
 
 lambda expression shares the same structures.
@@ -595,165 +458,50 @@ lambda expression shares the same structures.
     (body))
 #+END_SRC
 
- - /Order of consumption/: First required arguments are consumed, then
-   the optional arguments, then the rest, finally the keyword
-   arguments.
- - /optional arguments/: can have default values (which defaults to
-   nil), and a variable to indicate whether it is supplied.
- - /rests/: a list.
- - /keyword arguments/: are the same as optional arguments, except it
-   must be supplied by keyword. It can be rebound to a simpler name to
-   be used in the body.
- - /Mixture/: Never mix (optional, key).  You can mix rest and key, but the
-   behavior is, after matching all required and optional, everything
-   are bound to rest.  Then appropriate ones are ALSO bound to keyword
-   arguments.
+When calling a function, order of consumption matters. First required
+arguments are consumed, then the optional arguments, then the rest,
+finally the keyword arguments. Optional arguments can have default
+values (which defaults to nil), and a variable to indicate whether it
+is supplied. Keyword arguments are the same as optional arguments,
+except it must be supplied by keyword. It can be rebound to a simpler
+name to be used in the body. Finally, never mix (optional, key).  You
+can mix rest and key, but the behavior is, after matching all required
+and optional, everything are bound to rest.  Then appropriate ones are
+ALSO bound to keyword arguments.
 
- The return value of function is typically the last expression.  But
- you can explicit return from a function by using =RETURN-FROM SYMBOL
- body= special form.  Symbol is the function name to return, and it is
- not evaluted.  You must provide the function in order to return, which
- makes it not frequently used.  
+The return value of function is typically the last expression.  But
+you can explicit return from a function by using =RETURN-FROM SYMBOL
+body= special form.  Symbol is the function name to return, and it is
+not evaluted.  You must provide the function in order to return, which
+makes it not frequently used.  If return multiple values, use =values=
+instead of a list; if return no values, use
+=(values)=. =multiple-value-bind= can be used to decouple the
+values. You can pass on multiple values as arguments to a second
+function using =multiple-value-call=.
 
- The function object can be obtained by =#'=.  One can apply the object
- in two ways:
- - =FUNCALL= :: the first is the function object, the rests are
-                arguments
- - =APPLY= :: the first is the function object, then a list of
-              arguments.  The list can be looser, e.g. some arguments,
-              as long as the last one is a list.
-
-The function's read format is called /sharp-quote/, the special form
-=function= takes a function name and return the function object.
+One can apply the object in two ways: =funcall= and =apply=. They
+differ in that =funcall= accepts the arguments, while in =apply= the
+arguments must be a list. The list can be looser, e.g. some arguments,
+as long as the last one is a list.
 
 In eailier lisp, functions were represented internally as lists. The
 only way to tell a function from an ordinary list was to check if the
 first element was the symbol =lambda=. Common lisp represent function
 differently, so =lambda= is no longer necessary.
 
-*** Multiple Values
- If return multiple values, use =values= instead of a list; if return
- no values, use =(values)=
 
- - values
- - multiple-values-limit
- - values-list
- - multiple-value-list
- - multiple-value-call
- - multiple-value-prog1
- - multiple-value-bind
- - multiple-value-setq
- - nth-value
+# - multiple-values-limit
+# - values-list
+# - multiple-value-list
+# - multiple-value-prog1
+# - multiple-value-setq
+# - nth-value
 
-** Macro
-*** Definition
-#+BEGIN_EXAMPLE
-defmacro name lambda-list [[ {declaration}* | doc-string ]] {form}*
-#+END_EXAMPLE
+* Macro
+=macroexpand-1= can be used to check
+the expension.
 
-lambda-list is parameter list.
-
-*** Macro Expansion
-- macroexpand
-- macroexpand-1
-
-** Exception
-*** Error
-- error
-- cerror
-- warn
-- =*break-on-warnings*=
-- break
-- check-type
-- assert
-- etypecase
-- ctypecase
-- ecase
-- ccase
-*** Condition
-**** TODO Concepts
-**** Signaling
-- error
-- warn
-- cerror
-- signal
-- =*break-on-signals*=
-
-Assertions
-- check-type
-- assert
-
-Exhaustive Case Analysis
-- etypecase
-- ctypecase
-- ecase
-- ccase
-
-**** Handling Conditions
-- hanlder-case
-- ignore-errors
-- handler-bind
-**** Defining Conditions
-- define-condition
-- make-condition
-**** Restart
-- with-simple-restart
-- restart-case
-- restart-bind
-- with-condition-restarts
-- compute-restarts
-- restart-name
-- find-restart
-- invoke-restart
-- invoke-restart-interactively
-
-Restart functions
-- abort
-- continue
-- muffle-warning
-- store-value
-- use-value
-**** Debugging
-- break
-- invoke-debugger
-**** Condition Types
-- TYPE restart
-- TYPE condition
-- TYPE warning
-- TYPE serious-condition
-- TYPE error
-- TYPE simple-condition
-- TYPE simple-warning
-- TYPE simple-error
-  - simple-condition-format-string
-  - simple-condition-format-arguments
-- TYPE storage-condition
-- TYPE type-error
-  - type-error-datum
-  - type-error-expected-type
-- TYPE simple-type-error
-- TYPE program-error
-- TYPE control-error
-- TYPE package-error
-  - package-error-package
-- TYPE stream-error
-  - stream-error-stream
-- TYPE end-of-file
-- TYPE file-error
-  - file-error-pathname
-- TYPE cell-error
-  - cell-error-name
-- TYPE unbound-variable
-- TYPE undefined-function
-- TYPE arithmetic-error
-  - arithmetic-error-operation
-  - arithmetic-error-operands
-- TYPE division-by-zero
-- TYPE floating-point-overflow
-- TYPE floating-point-underflow
-
-
-** Evaluator
+* Evaluation
 - eval form: evaluate form in the current dynamic environment and a null lexical environment
 - evalhook
 - applyhook
@@ -765,6 +513,112 @@ evaluation.
 
 Integers and strings both evaluate to themselves. =nil= evaluates to
 itself as well.
+
+* Exception
+
+A =catch= expression takes a tag, which can be any kind of object,
+followed by a body of expressions. A =throw= with the corresponding
+tag will cause =catch= to return immediately.  If there's no pending
+catch with the right tag, the =throw= causes an error.
+
+Calling =error= interrupt the execution, and transfer the control to
+the lisp error handler.
+
+# ** Error
+# - error
+# - cerror
+# - warn
+# - =*break-on-warnings*=
+# - break
+# - check-type
+# - assert
+# - etypecase
+# - ctypecase
+# - ecase
+# - ccase
+# ** Condition
+# *** TODO Concepts
+# *** Signaling
+# - error
+# - warn
+# - cerror
+# - signal
+# - =*break-on-signals*=
+
+# Assertions
+# - check-type
+# - assert
+
+# Exhaustive Case Analysis
+# - etypecase
+# - ctypecase
+# - ecase
+# - ccase
+
+# *** Handling Conditions
+# - hanlder-case
+# - ignore-errors
+# - handler-bind
+# *** Defining Conditions
+# - define-condition
+# - make-condition
+# *** Restart
+# - with-simple-restart
+# - restart-case
+# - restart-bind
+# - with-condition-restarts
+# - compute-restarts
+# - restart-name
+# - find-restart
+# - invoke-restart
+# - invoke-restart-interactively
+
+# Restart functions
+# - abort
+# - continue
+# - muffle-warning
+# - store-value
+# - use-value
+# *** Debugging
+# - break
+# - invoke-debugger
+# *** Condition Types
+# - TYPE restart
+# - TYPE condition
+# - TYPE warning
+# - TYPE serious-condition
+# - TYPE error
+# - TYPE simple-condition
+# - TYPE simple-warning
+# - TYPE simple-error
+#   - simple-condition-format-string
+#   - simple-condition-format-arguments
+# - TYPE storage-condition
+# - TYPE type-error
+#   - type-error-datum
+#   - type-error-expected-type
+# - TYPE simple-type-error
+# - TYPE program-error
+# - TYPE control-error
+# - TYPE package-error
+#   - package-error-package
+# - TYPE stream-error
+#   - stream-error-stream
+# - TYPE end-of-file
+# - TYPE file-error
+#   - file-error-pathname
+# - TYPE cell-error
+#   - cell-error-name
+# - TYPE unbound-variable
+# - TYPE undefined-function
+# - TYPE arithmetic-error
+#   - arithmetic-error-operation
+#   - arithmetic-error-operands
+# - TYPE division-by-zero
+# - TYPE floating-point-overflow
+# - TYPE floating-point-underflow
+
+
 
 * Control Structure
 ** Sequential
@@ -842,7 +696,7 @@ Best:
   (loop for x in list collect x)
 #+END_SRC
 
-** Loop Facility
+* Loop Facility
 /Loop keywords/ are not true common lisp keywords. They are symbols
 recognized only by /Loop Facility/. If you do not use any loop
 keywords, the loop simply runs forever.
@@ -855,7 +709,7 @@ and it accepts three basic part in its tagbody:
 
 All variables are initialized in the loop prologue.
 
-*** Loop Clauses
+** Loop Clauses
 Inside the loop is the loop clauses.
 
 Variable initialization and stepping
@@ -899,7 +753,7 @@ Miscellaneous
 - named
 - initially
 - finally
-*** Loop Syntax
+** Loop Syntax
 #+BEGIN_EXAMPLE
 loop ::= (loop [named name] {variables}* {main}*)
 variables ::= with | initial-final | for-as | repeat
@@ -915,7 +769,7 @@ initial-final ::= initially | finally
   - finally
   - implicit return value from accumulation clause or an end-test clause
 
-*** Iteration Control (for, as, repeat)
+** Iteration Control (for, as, repeat)
 for and as are exctly the same.
 
 Multiple these control can be used. They will occur sequentially: they
@@ -991,7 +845,7 @@ repeat expr
 
 repeat the body (expr) times.
 
-*** End Test Control (always, never, thereis, until, while)
+** End Test Control (always, never, thereis, until, while)
 always, never, thereis change the return value, so
 - it will skip finally clauses.
 - NEVER use it with collect, etc.
@@ -1006,7 +860,7 @@ The clauses:
 - thereis expr: Same as never, but it return that expr.
 - loop-finish: terminate iteration and return any accumulated result
 
-*** Value Accumulation
+** Value Accumulation
 - multiple accumulation can be used if they operate the same type,
   e.g. collect and append operate on list. The result will be
   combined, i.e. they operate on the same list.
@@ -1034,14 +888,14 @@ Clauses: all of them have =xxx expr [into var]= format
 - maximizing
 - minimize
 - minimizing
-*** Variable Initialization (with)
+** Variable Initialization (with)
 #+BEGIN_EXAMPLE
 with var [= expr] {and var [= expr]}*
 #+END_EXAMPLE
 - if no =expr, it is initialized to appropriate default value
 - by default with initialize variable sequentially
 - using loop keyword =and= can make the initialization in parallel
-*** Conditional Execution (if, when, unless)
+** Conditional Execution (if, when, unless)
 They all have the same signature:
 #+BEGIN_EXAMPLE
 if expr clause {and clause}*
@@ -1058,17 +912,17 @@ if expr clause {and clause}*
 - =end= marks the end of the clause. If not specified, the next loop
   keyword marks the end. This is useful in compound clauses.
 
-*** Unconditional Execution (do, return)
+** Unconditional Execution (do, return)
 - do {expr}*: execute sequentially
 - doing {expr}*
 - return expr: equivalent to =do {return expr}=
-*** Misc (named, initially, finally)
+** Misc (named, initially, finally)
 - named: name a loop so that we can use return-from
 - initially, finally: expressions to be evaluated before and after
   loop body. There can be multiple these clauses, all of them will be
   collected into one place inside =progn= in the order they present.
 - =return=, =always=, =never=, =thereis= can bypass finally
-*** Destructure
+** Destructure
 bind result to a list of variables. This can be used in =for= and
 =with=.
 - If variable list is shorter, the rest values are discarded
@@ -1079,237 +933,229 @@ bind result to a list of variables. This can be used in =for= and
 
 
 
-* System Interface
-** Package
- This is used to solve name conflict.
 
- - =*package*=
- - make-package
- - in-package
- - find-package
- - package-name
- - package-nicknames
- - rename-package
- - package-use-list
- - package-used-by-list
- - package-shadowing-symbols
- - list-all-packages
- - delete-package
- - intern
- - find-symbol
- - unintern
- - export
- - unexport
- - import
- - shadowing-import
- - shadow
- - use-package
- - unuse-package
- - defpackage
- - find-all-symbols
- - do-symbols
- - do-external-symbols
- - do-all-symbols
- - with-package-iterator
+* Input/Output
+These input/output operations perform on streams.  Streams are lisp
+objects representing sources and destinations of characters. 
 
-*** Modules
- A module is a subsystem. It consists of one or more packages. It may
- be loaded from one or more files.
- - =*modules*=
- - provide
- - require
+By default, input is read from the stream =*standard-input*=, output
+is written to =*standard-output*=.  Conventionally the suffix =-input=
+and =-output= means the input and output stream respectively, while
+=-io= represents streams with bidirectional stream.  Similar variables
+include =*error-output*=, =*query-io*=, =*debug-io*=, =*terminal-io*=,
+=*trace-output*=.
 
-** Stream
-Some global variables are used by many functions. Conventionally the
-suffix -input and -output means the input and output stream
-respectively, while -io represents streams with bidirectional stream.
-- =*standard-input*=
-- =*standard-output*=
-- =*error-output*=
-- =*query-io*=
-- =*debug-io*=
-- =*terminal-io*=
-- =*trace-output*=
-*** Create Stream
-- make-synonym-stream
-- make-broadcase-stream
-- make-concatenated-stream
-- make-two-way-stream
-- make-echo-stream
-- make-string-input-stream
-- make-string-output-stream
-- get-output-stream-string
-- with-open-stream
-- with-input-from-string
-- with-output-to-string
+=read= is a complete lisp parser. When inputing a number, it parses
+and returns the number, instead of a string. =read= reads up to an
+expression. =read-line= read until a newline. =read-from-string= read
+an expression from a string. All of these are defined on the primitive
+=read-char= which reads a single character. =peek-char= read the
+character without removing it from the stream. You can also unread a
+char by =unread-char=. =parse-integer= is often used if you want to
+get the integer.
 
-*** Operation
-- streamp
-- open-stream-p
-- input-stream-p
-- output-stream-p
-- stream-element-type
-- close
-- broadcase-stream-streams
-- concatenated-stream-streams
-- echo-stream-input-stream
-- echo-stream-output-stream
-- synonym-stream-symbol
-- two-way-stream-input-stream
-- two-way-stream-output-stream
-- interactive-stream-p
-- stream-external-format
-
-** Input/Output
-These input/output operations perform on streams.
-
-*** Input
-Input stream defaults to =*standard-input*=.
-
-=read= is a complete lisp parser. When inputing a number, it parses and
-returns the number, instead of a string.
-
-- read
-- read-preserving-whitespace
-- read-delimited-list
-- read-line
-- read-char
-- unread-char
-- peek-char
-- listen
-- read-char-no-hang
-- clear-input
-- read-from-string
-- parse-integer
-- read-byte
-*** Output
-- write
-- prin1
-- print
-- pprint
-- princ
-- write-to-string
-- prin1-to-string
-- princ-to-string
-- write-char
-- write-string
-- write-line
-- terpri
-- fresh-line
-- finish-ouptut
-- force-output
-- clear-output
-- print-unreadable-object
-- write-byte
-**** Format
-#+BEGIN_EXAMPLE
-format destination control-string &rest arguments
-#+END_EXAMPLE
-Format output the control-string except that a tilde introduces a
-/directive/. Most directives use one or more elements of arguments. If
-no more arguments, signal an error. But it is ok is more arguments are
-provided and unprocessed.
-
-If the destination is nil, a string is created as the output and get
+=prin1= generates output for programs (with double quotes), while
+=princ= generates for human. =terpri= prints a newline.  =pprint=
+prints with indention. =format= output the control-string except that
+a tilde introduces a /directive/. Most directives use one or more
+elements of arguments. If no more arguments, signal an error. But it
+is ok is more arguments are provided and unprocessed.  If the
+destination is nil, a string is created as the output and get
 returned. Otherwise format returns nil.
 
 A format directive is determined by one single character. It can take
 optional prefix. The prefix can be separated using : or @ or
 both. Parameters are separated by comma, and they can be ommited to
 take the default value. What kind of parameters are accepted is
-determined by the directive character.
-#+BEGIN_EXAMPLE
-~[[first-param]{,[second-param]}*]
- [:@]
- <char>
-#+END_EXAMPLE
+determined by the directive character.  The most commonly used
+directive is =~A= which is a place holder for a value printed by
+=princ=. =~%= outputs a newline. =~F= outputs a float number.
+# #+BEGIN_EXAMPLE
+# ~[[first-param]{,[second-param]}*]
+#  [:@]
+#  <char>
+# #+END_EXAMPLE
 
-Here are the list of all directive characters
-- A: Ascii. This is the most commonly used place holder.
-- S: S-expression
-- D: Decimal
-- B: Binary
-- O: octal
-- X: hexadecimal
-- R: Radix
-- P: Plural
-- C: Character
-- F: fixed format floating point
-- E: Exponential floating point
-- G: general floating point
-- $: dollars floating point
-- %: #\Newline
-- &: refresh line. unless at the beginning of a line,output a line.
-- |: page separator
-- ~: output a tilde
-- <newline>: ignore the newline and any following whitespace
-- T: tabulate
-- *: ignore next argument
-- ?: indirection
-- _: conditional newline
-- W: wite
-- I: indent
+# Here are the list of all directive characters
+# - A: Ascii. This is the most commonly used place holder.
+# - S: S-expression
+# - D: Decimal
+# - B: Binary
+# - O: octal
+# - X: hexadecimal
+# - R: Radix
+# - P: Plural
+# - C: Character
+# - F: fixed format floating point
+# - E: Exponential floating point
+# - G: general floating point
+# - $: dollars floating point
+# - %: #\Newline
+# - &: refresh line. unless at the beginning of a line,output a line.
+# - |: page separator
+# - ~: output a tilde
+# - <newline>: ignore the newline and any following whitespace
+# - T: tabulate
+# - *: ignore next argument
+# - ?: indirection
+# - _: conditional newline
+# - W: wite
+# - I: indent
 
-There are several more complicated ones not recorded here, I believe
-I'll not easily use them.
+# There are several more complicated ones not recorded here, I believe
+# I'll not easily use them.
 
 
-*** Query
-- y-or-n-p
-- yes-or-no-p
+A pathname is a portable way to specifying a file. A pathname has 6
+components: host, device, directory, name, type, and version.
 
-** File System
-*** File Names
-There's a type called /pathname/. It always has 6 components.
-- host
-- device
-- directory
-- name
-- type
-- version
+Open a file as stream by =open=. It has some keyword arguments to
+modify its behavior. =:direction= keywords takes =:input=, =:output=
+or =:io=. =:if-exists= takes =:supersede=. We typically use =setf= to
+store the stream returned by =open=. The steam is closed by =close=.
+=with-open-file= is often more convenient, we don't need to remember
+to close.
 
-Extended Wildcards
-- wild-pathname-p
-- pathname-match-p
-- translate-pathname
+In case you only have a string, it is convenient to use
+=with-input-from-string= and =with-output-to-string=.
 
-Functions
-- pathname
-- truename
-- parse-namestring
-- merge-pathnames
-- make-pathname
-- pathnamep
-- pathname-host
-- pathname-device
-- pathname-directory
-- pathname-name
-- pathname-type
-- pathname-version
-- namestring
-- file-namestring
-- directory-namestring
-- host-namestring
-- enough-namestring
-- user-homedir-pathname
+# Extended Wildcards
+# - wild-pathname-p
+# - pathname-match-p
+# - translate-pathname
 
-*** Open and Close
-- open
-- MACRO with-open-file
+# Functions
+# - pathname
+# - truename
+# - parse-namestring
+# - merge-pathnames
+# - make-pathname
+# - pathnamep
+# - pathname-host
+# - pathname-device
+# - pathname-directory
+# - pathname-name
+# - pathname-type
+# - pathname-version
+# - namestring
+# - file-namestring
+# - directory-namestring
+# - host-namestring
+# - enough-namestring
+# - user-homedir-pathname
 
-*** File Operation
-- rename-file
-- delete-file
-- probe-file
-- file-write-data
-- file-author
-- file-position
-- file-length
-- file-string-length
-- directory: Examining directory.
 
-*** Other
-- load: Load a common lisp file and evaluate the forms.
+# *** File Operation
+# - rename-file
+# - delete-file
+# - probe-file
+# - file-write-data
+# - file-author
+# - file-position
+# - file-length
+# - file-string-length
+# - directory: Examining directory.
+
+# *** Other
+# - load: Load a common lisp file and evaluate the forms.
+
+
+# - make-synonym-stream
+# - make-broadcase-stream
+# - make-concatenated-stream
+# - make-two-way-stream
+# - make-echo-stream
+# - make-string-input-stream
+# - make-string-output-stream
+# - get-output-stream-string
+# - with-open-stream
+
+# *** Operation
+# - streamp
+# - open-stream-p
+# - input-stream-p
+# - output-stream-p
+# - stream-element-type
+# - broadcase-stream-streams
+# - concatenated-stream-streams
+# - echo-stream-input-stream
+# - echo-stream-output-stream
+# - synonym-stream-symbol
+# - two-way-stream-input-stream
+# - two-way-stream-output-stream
+# - interactive-stream-p
+# - stream-external-format
+
+
+# ** Input
+# - read-preserving-whitespace
+# - read-delimited-list
+# - listen
+# - read-char-no-hang
+# - clear-input
+# - read-from-string
+# - read-byte
+
+
+# ** Output
+# - write
+# - print
+# - write-to-string
+# - prin1-to-string
+# - princ-to-string
+# - write-char
+# - write-string
+# - write-line
+# - fresh-line
+# - finish-ouptut
+# - force-output
+# - clear-output
+# - print-unreadable-object
+# - write-byte
+
+# - y-or-n-p
+# - yes-or-no-p
+
+
+* Package
+This is used to solve name conflict.
+
+- =*package*=
+- make-package
+- in-package
+- find-package
+- package-name
+- package-nicknames
+- rename-package
+- package-use-list
+- package-used-by-list
+- package-shadowing-symbols
+- list-all-packages
+- delete-package
+- intern
+- find-symbol
+- unintern
+- export
+- unexport
+- import
+- shadowing-import
+- shadow
+- use-package
+- unuse-package
+- defpackage
+- find-all-symbols
+- do-symbols
+- do-external-symbols
+- do-all-symbols
+- with-package-iterator
+
+** Modules
+A module is a subsystem. It consists of one or more packages. It may
+be loaded from one or more files.
+- =*modules*=
+- provide
+- require
+
 
 
 
