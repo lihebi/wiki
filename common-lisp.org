@@ -1,54 +1,375 @@
 #+TITLE: Common Lisp
 
-Common Lisp the language:
-http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/html/cltl/cltl2.html
+
+
+
+* List
+The function =cons= builds lists. If second argument is a list, it add
+the first one onto the list. This is called "consing onto the
+list". =cons= returns a newly allocated cons. Thus allocating memory
+from the heap is sometimes generally known as /consing/.
+
+The =car= of a list is the first element, the =cdr= is everything
+after the first. Common lisp also provides =caar=, =cdddr=, all the
+combinations up to 4-level.
+
+When using =cons=, the pointers are constructed in the list, thus
+lists might share components. Sometimes you have to make a copy of a
+list to avoid chaning other lists. There are two functions to make
+copies: =copy-list= and =copy-tree=. =copy-list= recursive calls on
+the cdr of the list, thus it is not deep copy. On the contrary,
+=copy-tree= recurs on both =car= and =cdr=, thus copy entire list.
+
+Similarly, =tree-equal= can be used to test the equality of the whole
+tree.
+
+List has some special function to handle.  =nth= and =nthcdr= is used
+to access element.  =first=, =second=, ..., =tenth= can retrieve
+corresponding element. =last= and =rest= are also intuitive.
+
+=list= can be used to create a list.
+=list-length= returns the length.
+
+=push= and =pop= are macros, and are defined using =setf=. =pushnew=
+is a variant of =push= that uses =adjoin= instead of =cons=.
+
+A /proper list/ is either =nil=, or a cons whose =cdr= is a proper
+ list. This definition is recursive. Improper list is shown in /dotted
+ notation/, and is called a /dotted list/.
+
+** lists
+- endp: predicate to check the end of a list
+- append
+- copy-alist
+- revappend
+- nconc
+- nreconc
+- butlast
+- nbutlast
+- ldiff
+** alteration of list structure
+Change the car or cdr of an existing cons. It is destructive.
+- rplaca
+- rplacd
+** substitution
+=substitute= replace elements in a sequence, it does not go into
+deeper tree. The function subst= will replaces elements in tree,
+deeply.
+
+Such form that recursing down both car and cdr is said to be /doubly
+recursive/.
+
+- subst-if
+- subst-if-not
+- nsubst
+- nsubst-if
+- nsubst-if-not
+- sublis
+- nsublis
+** Set
+- member
+- member-if
+- member-if-not
+- tailp
+- adjoin
+- union
+- nunion
+- intersection
+- nintersection
+- set-difference
+- nset-difference
+- set-exclusive-or
+- nset-exclusive-or
+- subsetp
+** Association Lists
+This is often called /assoc-list/ or /alist/, representing mapping.
+Use =assoc= to retrieve the value, and use =setf= to set the value.
+
+- acons
+- pairlis
+- 
+- assoc-if
+- assoc-if-not
+- rassoc
+- rassoc-if
+- rassoc-if-not
+
+* Sequence
+Sequence contains both lists and vectors. Here are the common
+operations that shares between them because they operate on ordered
+sets of elements.
+
+=length= is general to get the length of a list. =subseq= get the
+subsequence in =[begin,end)= with index starting from 0.
+
+There are =sort= and =stable-sort=, but they are destrictuve, so if in
+doubt, pass a copy.
+
+
+** Predicates
+- consp
+- listp
+- bit-vector-p
+- vectorp
+- simple-vector-p
+- simple-bit-vector-p
+- arrayp
+
+** Simple Sequence Functions
+- elt
+- subseq
+- copy-seq
+- length
+- reverse
+- nreverse
+- make-sequence
+
+** Modifying Seq
+- fill
+- replace
+- remove
+- remove-if
+- remove-if-not
+- delete
+- delete-if
+- delete-if-not
+- remove-duplicates
+- delete-duplicates
+- substitute
+- substitute-if
+- substitute-if-not
+- nsubstitute
+- nsubstitute-if
+- nsubstitute-if-not
+
+** Searching
+- find
+- find-if
+- find-if-not
+- position
+- position-if
+- position-if-not
+- count
+- count-if
+- count-if-not
+- mismatch
+- search
+
+** Sorting & Merging
+- merge
+
+* String
+A string is a specialized vector (one-dimensional array) whose
+elements are characters.
+
+To access the characters, instead of =aref=, you can use =char= which
+is faster.
+
+Some predicates
+- characterp
+- stringp
+- simple-string-p
+
+** Character
+A character object can be notated by writing =#\c= where c is any
+standard character.
+
+| numeric analog | case-sensitive | case-insensitive | string case sens | string case insens |
+|----------------+----------------+------------------+------------------+--------------------|
+| ~=~            | ~char=~        | =CHAR-EQUAL=     | ~string=~        | =string-equal=     |
+| ~/=~           | ~char/=~       | =CHAR-NOT-EQUAL= | ~string/=~       | =string-not-equal= |
+| ~<~            | ~char<~        | =CHAR-LESSP=     | ~string<~        | =string-lessp=     |
+
+Other comparision includes =string-lessp=, =string-greaterp=,
+=string-not-greaterp=, =string-not-lessp=, =string-not-equal=.
+
+** String Construction and Manipulation
+- make-string
+- string-trim
+- string-left-trim
+- string-right-trim
+- string-upcase
+- string-downcase
+- string-capitalize
+- nstring-upcase
+- nstring-downcase
+- nstring-capitalize
+- string
+
+* Array
+Array can be general array, holding arbitrary object types; it can
+also be a specialized array that hold a given type. 
+
+One dimentional arrays are called vectors. Vectors holding arbitrary
+objects are /general vectors/, while the ones holding type
+=string-char= are called /strings/, holding type =bit= are called
+/bit-vectors/.
+
+An array can be created by =make-array=. =aref= is used to access the
+element of an array. To replace elements, we use =setf= with =aref=.
+For vector, you might want to use =svref=, where =sv= means "simple
+vector", to access elements faster.
+
+** Creation
+- array-rank-limit: *constant*
+- array-dimension-limit: *constant*
+- array-total-size-limit: *constant*
+- vector
+
+** Information
+- array-element-type
+- array-rank
+- array-dimension
+- array-dimensions
+- array-total-size
+- array-in-bounds-p
+- array-row-major-index
+- row-major-aref
+- adjustable-array-p
+** bit-array
+- bit
+- sbit
+- bit-and
+- bit-ior
+- bit-xor
+- bit-eqv
+- bit-nand
+- bit-nor
+- bit-andc1
+- bit-andc2
+- bit-orc1
+- bit-orc2
+- bit-not
+** Fill
+The /fill pointer/ is a non-negative integer no larger than the total
+number of elements in the vector (array-dimension). It is the number
+of filled-in elements in the vector.
+- array-has-fill-pointer
+- fill-pointer
+- vector-push
+- vector-push-extend
+- vector-pop
+** Change dimension
+- adjust-array
+
+* Structure
+Macro =(defstruct point x y)= will also define =make-point=,
+=point-p=, =copy-point=, =point-x=, =point-y=. The read format is =#S=.
+
+* Hash Table
+This is a map. =make-hash-table= creates a hash-table, and =gethash=
+retrieve from the table. Use =setf= together with =gethash= can set
+the hash. To remove an object from hash table, use =remhash=.
+
+To iterate through a hash table, use =maphash=.
+
+# - hash-table-p
+# - clrhash
+# - hash-table-count
+# - with-hash-table-iterator
+# - hash-table-rehash-size
+# - hash-table-rehash-threshold
+# - hash-table-size
+# - hash-table-test
+* Symbols
+In addition to letters and numbers, the following characters can also
+be considered to be alphabet:
+
+#+BEGIN_EXAMPLE
++ - * / @ $ % ^ & _ = < > ~ .
+#+END_EXAMPLE
+
+But some conventions apply:
+- =+global-constant+=
+- =*global-variable*=
+
+The following characters are also alphabet, not used by common lisp
+standard, but reserved for some purpose:
+#+BEGIN_EXAMPLE
+? ! [ ] { }
+#+END_EXAMPLE
+
+Finally, lisp is case-insensitive. The program will be converted to
+upper case when stored in computer.
+
+** Property list
+A symbol has such a list.
+- get
+- remprop
+- symbol-plist
+- getf
+- remf
+- get-properties
+
+* Mapping
+The most frequently used is =mapcar=. It takes a function and some
+lists. Each time, it takes one element from the lists out as arguments
+to the function, until some list runs out, and finally return the
+results in a list.
+
+=maplist= takes the same arguments and does the same thing, but
+everytime apply function on the cdrs of the lists.
+
+- mapc
+- mapl
+- mapcan
+- mapcon
+
+=concatenate= has the signature ~concatenate result-type &rest
+sequences => result-sequence~.  This is used for concatenate not only
+strings, but also lists, etc.
+#+BEGIN_SRC lisp
+(concatenate 'string "hello" "world")
+(concatenate 'list )
+#+END_SRC
+
+=map= maps a function to a sequence. ~map result-type function &rest
+sequences+ => result~ The map also needs a type as first
+argument. =nil= means no return, then map will return nil.
+
+#+BEGIN_SRC lisp
+  (map 'list '1+ '(2 3))
+  (map nil (lambda (x) (1+ x))
+       '(2 3))
+#+END_SRC
+
+=every= and =some= are predicates to test on a sequence.
+
+ - map-into
+ - notany
+ - notevery
+ - reduce
 
 * Type
 Common Lisp is strong typed, but the type is associated with objects,
-not variables.
+not variables. This approach is called /manifest typing/. Though type
+declarations are completely optional, you might want to do this for
+efficiency.
 
-Type predicate
- #+BEGIN_SRC lisp
- (typep obj type)
- (subtypep type1 type2)
- #+END_SRC
+=nil= is false, everything else is true =nil= is both an atom and a
+list. =()= is exactly the same as =nil=
+
+In Common Lisp, the types form a hierarchy. An object always has ore
+than one type. The type =t= is the super type of all types, so
+everything is of type =t=. For example, a number 13 is of type
+=fixnum=, =integer=, =rational=, =real=, =number=, =atom=, =t=.
+
+Function =typep= (=(typep obj type)=) tests whether an object is of a type.
+=(subtypep type1 type2)= tests the type hierarchy.
 
 ** Numbers
-Representation:
-- =#b010101=
-- =#xaf08=
-*** Predicates
-Group 1:
-- numberp
-- integerp
-- rationalp
-- floatp
-- realp
-- complexp
+Numbers can use read form, e.g. =#b010101=, =#xaf08=. Predicates such
+as =numberp=, =integerp=, =rationalp=, =floatp=, =realp=, =complexp=
+can test the type of an object. For numbers, =zerop=, =plusp=,
+=minusp=, =oddp=, =evenp= can tests the property.
 
-Group 2:
-- zerop
-- plusp
-- minusp
-- oddp
-- evenp
+Number comparison can be ~<~, ~>~, ~<=~, ~>=~, ~=~.  These are same as
+using the operator sequencially on the operands. ~/=~ works
+pairwise. =max= and =min= get the maximum and minimum one.
 
-*** Comparison
-These operators are functions, they takes multiple numbers.
-- =
-- /=: all numbers are different
-- <, >, <=, >=: increasing, decreasing, etc
-- max
-- min
+=(1+ x)= same as =(+ x 1)=.  =incf= and =decf= are destructive.  =gcd=
+greatest common divisor, =lcm= least common multiple.
 
-*** Arithmetic
-- +, -, *, /
-- 1+, 1-: (1+ x) same as (+ x 1)
-- incf place
-- decf place
-- conjugate
-- gcd: greatest common divisor
-- lcm: least common multiple
 
 *** Other
 - exp
@@ -126,321 +447,6 @@ These operators are functions, they takes multiple numbers.
 - make-random-state
 - random-state-p
 
-
-
-** Character
-A character object can be notated by writing =#\c= where c is any
-standard character.
-
-| numeric analog | case-sensitive | case-insensitive | string case sens | string case insens |
-|----------------+----------------+------------------+------------------+--------------------|
-| ~=~            | ~char=~        | =CHAR-EQUAL=     | ~string=~        | =string-equal=     |
-| ~/=~           | ~char/=~       | =CHAR-NOT-EQUAL= | ~string/=~       | =string-not-equal= |
-| ~<~            | ~char<~        | =CHAR-LESSP=     | ~string<~        | =string-lessp=     |
-
-** Boolean
-- =nil= is false, everything else is true
-- =nil= is both an atom and a list. =()= is exactly the same as =nil=
-
-** Symbols
- In addition to letters and numbers, the following characters can also
- be considered to be alphabet:
-
- #+BEGIN_EXAMPLE
- + - * / @ $ % ^ & _ = < > ~ .
- #+END_EXAMPLE
-
- But some conventions apply:
- - =+global-constant+=
- - =*global-variable*=
-
- The following characters are also alphabet, not used by common lisp
- standard, but reserved for some purpose:
- #+BEGIN_EXAMPLE
- ? ! [ ] { }
- #+END_EXAMPLE
-
- Finally, lisp is case-insensitive. The program will be converted to
- upper case when stored in computer.
-
-*** Property list
- A symbol has such a list.
- - get
- - remprop
- - symbol-plist
- - getf
- - remf
- - get-properties
-
-** Sequence
- Sequence contains both lists and vectors. Here are the common
- operations that shares between them because they operate on ordered
- sets of elements.
-
-*** Predicates
-- consp
-- listp
-- bit-vector-p
-- vectorp
-- simple-vector-p
-- simple-bit-vector-p
-- arrayp
-
-*** Simple Sequence Functions
- - elt
- - subseq
- - copy-seq
- - length
- - reverse
- - nreverse
- - make-sequence
-
-*** Mapping
- - concatenate: ~concatenate result-type &rest sequences => result-sequence~
-
-This is used for concatenate not only strings, but also lists, etc.
-#+BEGIN_SRC lisp
-(concatenate 'string "hello" "world")
-(concatenate 'list )
-#+END_SRC
-
- - map: ~map result-type function &rest sequences+ => result~
-The map also needs a type as first argument. =nil= means no return, then map will return nil.
-
-#+BEGIN_SRC lisp
-  (map 'list '1+ '(2 3))
-  (map nil (lambda (x) (1+ x))
-       '(2 3))
-#+END_SRC
-
- - map-into
- - some
- - every
- - notany
- - notevery
- - reduce
-
-*** Modifying Seq
- - fill
- - replace
- - remove
- - remove-if
- - remove-if-not
- - delete
- - delete-if
- - delete-if-not
- - remove-duplicates
- - delete-duplicates
- - substitute
- - substitute-if
- - substitute-if-not
- - nsubstitute
- - nsubstitute-if
- - nsubstitute-if-not
-
-*** Searching
- - find
- - find-if
- - find-if-not
- - position
- - position-if
- - position-if-not
- - count
- - count-if
- - count-if-not
- - mismatch
- - search
-
-*** Sorting & Merging
- - sort
- - stable-sort
- - merge
-
-** List
-*** cons
-- car
-- cdr
-- caar, ..., cdddr: all combinations, up to 4-level deep
-- cons
-- tree-equal
-*** lists
-- endp: predicate to check the end of a list
-- list-length
-- nth
-- first, second, ..., tenth
-- rest
-- nthcdr
-- last
-- list
-- list*
-- make-list
-- append
-- copy-list
-- copy-alist
-- copy-tree: copy only copies the outer-most level of a list. Use
-  copy-tree to copy all levels of a list.
-- revappend
-- nconc
-- nreconc
-- push: *macro*
-- pushnew
-- pop: *macro*
-- butlast
-- nbutlast
-- ldiff
-*** alteration of list structure
-Change the car or cdr of an existing cons. It is destructive.
-- rplaca
-- rplacd
-*** substitution
-- subst
-- subst-if
-- subst-if-not
-- nsubst
-- nsubst-if
-- nsubst-if-not
-- sublis
-- nsublis
-*** Set
-- member
-- member-if
-- member-if-not
-- tailp
-- adjoin
-- union
-- nunion
-- intersection
-- nintersection
-- set-difference
-- nset-difference
-- set-exclusive-or
-- nset-exclusive-or
-- subsetp
-*** Association Lists
-- acons
-- pairlis
-- assoc
-- assoc-if
-- assoc-if-not
-- rassoc
-- rassoc-if
-- rassoc-if-not
-
-
-** Hash Table
-This is a map.
-
-- make-hash-table
-- hash-table-p
-- gethash
-- remhash: remove hash entry
-- maphash
-- clrhash
-- hash-table-count
-- with-hash-table-iterator
-- hash-table-rehash-size
-- hash-table-rehash-threshold
-- hash-table-size
-- hash-table-test
-
-** Array
-Array can be general array, holding arbitrary object types; it can
-also be a specialized array that hold a given type. One dimentional
-arrays are called vectors. Vectors holding arbitrary objects are
-/general vectors/, while the ones holding type =string-char= are
-called /strings/, holding type =bit= are called /bit-vectors/.
-*** Creation
-- make-array
-- array-rank-limit: *constant*
-- array-dimension-limit: *constant*
-- array-total-size-limit: *constant*
-- vector
-
-*** Access
-- aref
-- svref
-*** Information
-- array-element-type
-- array-rank
-- array-dimension
-- array-dimensions
-- array-total-size
-- array-in-bounds-p
-- array-row-major-index
-- row-major-aref
-- adjustable-array-p
-*** bit-array
-- bit
-- sbit
-- bit-and
-- bit-ior
-- bit-xor
-- bit-eqv
-- bit-nand
-- bit-nor
-- bit-andc1
-- bit-andc2
-- bit-orc1
-- bit-orc2
-- bit-not
-*** Fill
-The /fill pointer/ is a non-negative integer no larger than the total
-number of elements in the vector (array-dimension). It is the number
-of filled-in elements in the vector.
-- array-has-fill-pointer
-- fill-pointer
-- vector-push
-- vector-push-extend
-- vector-pop
-*** Change dimension
-- adjust-array
-
-
-
-
-** String
-A string is a specialized vector (one-dimensional array) whose
-elements are characters.
-
-Some predicates
-- characterp
-- stringp
-- simple-string-p
-
-*** Access
-- char
-- schar
-*** Comparision
-- string=
-- string-equal
-- string<
-- string>
-- string<=
-- string>=
-- string/=
-- string-lessp
-- string-greaterp
-- string-not-greaterp
-- string-not-lessp
-- string-not-equal
-*** String Construction and Manipulation
-- make-string
-- string-trim
-- string-left-trim
-- string-right-trim
-- string-upcase
-- string-downcase
-- string-capitalize
-- nstring-upcase
-- nstring-downcase
-- nstring-capitalize
-- string
-
-** Structure
-*** defstruct
-- MACRO defstruct
-- [ ] automatically generated constructor function. =defstruct foo=
-  will also define =make-foo=
 
 * Program Structure
 ** Form
@@ -552,17 +558,22 @@ forms:
 
 
 ** Equality
+The reason Lisp has no pointer is that every value is conceptually a
+pointer. For efficiency, Lisp will sometime choose to use some
+intermediate representation instead of a pointer. E.g. a small integer
+takes no more space than a pointer, Lisp implementation might just use
+that. This will introduce difference when testing equility.
 
  - =EQ= tests for object identity. Two objects are =EQ= if they're
-   identical.  It CANNOT compare numbers and characters, which gives
-   undefined behavior.
+   identical (same object).  It CANNOT compare numbers and characters,
+   which gives undefined behavior.
  - =EQL= is similar to =EQ= except that it guarantees the same numeric
    or character value is equal. =(eql 1 1)= is =t=.
  - =EQ= is more efficient than =EQL= because it does not need to check
    whether it is numeric or character.  But =EQL= has less trouble to
    understand .. so use =EQL= when possible.
- - =EQUAL= is looser than =EQL=. It consider strings equivalent if they
-   contain the same characters.
+ - =EQUAL= is looser than =EQL=. It consider objects to be the same as
+   long as they prints the same.
  - =EQUALP= is even looser. For example, it consider two strings are
    equal case-insensitively. NEVER use this.
 
@@ -611,6 +622,14 @@ lambda expression shares the same structures.
  - =APPLY= :: the first is the function object, then a list of
               arguments.  The list can be looser, e.g. some arguments,
               as long as the last one is a list.
+
+The function's read format is called /sharp-quote/, the special form
+=function= takes a function name and return the function object.
+
+In eailier lisp, functions were represented internally as lists. The
+only way to tell a function from an ordinary list was to check if the
+first element was the symbol =lambda=. Common lisp represent function
+differently, so =lambda= is no longer necessary.
 
 *** Multiple Values
  If return multiple values, use =values= instead of a list; if return
@@ -739,6 +758,14 @@ Restart functions
 - evalhook
 - applyhook
 
+The =quote= operator is a /special operator/, meaning that it has a
+distinct evaluation rule of its own: do nothing. =(quote (+ 3 5))= is
+same as ='(+ 3 5)=. It is a way of pretecting expressions from
+evaluation.
+
+Integers and strings both evaluate to themselves. =nil= evaluates to
+itself as well.
+
 * Control Structure
 ** Sequential
 - progn
@@ -789,13 +816,6 @@ the var-def is =(var init-form step-form)=. For example:
 (do ((i 0 (1+ i))) ((> i 4)) (print i))
 #+END_SRC
 
-*** Mapping
-- mapcar
-- maplist
-- mapc
-- mapl
-- mapcan
-- mapcon
 
 *** Append to a list
 Remember that append copies its arguments.  Avoid using append
@@ -1142,8 +1162,13 @@ respectively, while -io represents streams with bidirectional stream.
 
 ** Input/Output
 These input/output operations perform on streams.
+
 *** Input
 Input stream defaults to =*standard-input*=.
+
+=read= is a complete lisp parser. When inputing a number, it parses and
+returns the number, instead of a string.
+
 - read
 - read-preserving-whitespace
 - read-delimited-list
@@ -1200,7 +1225,7 @@ determined by the directive character.
 #+END_EXAMPLE
 
 Here are the list of all directive characters
-- A: Ascii
+- A: Ascii. This is the most commonly used place holder.
 - S: S-expression
 - D: Decimal
 - B: Binary
