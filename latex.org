@@ -24,6 +24,7 @@ kpsewhich sig-alternate-05-2015.cls
                    =\theta= (\theta) =\phi= (\phi) =\varphi= (\varphi) =\xi=
                    (\xi) =\mu= (\mu) =\pi= (\pi) =\rho= (\rho) =\sigma=
                    (\sigma) =\epsilon= (\epsilon) =\partial= (\partial)
+                   =\ell= (\ell)
    - spacing :: =\quad= (\quad) =\qquad= (\qquad)
    - logic :: =\cup= (\cup) =\bigcup= (\bigcup) =\cap= (\cap) =\vee=
               (\vee) =\wedge= (\wedge) =\in= (\in) =\notin= (\notin)
