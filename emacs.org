@@ -82,6 +82,17 @@ When replace-string, use =C-q C-j= to represent newline.
   - =C-x C-e=: evaluate
   - =C-u C-x C-e=: evaluate and insert result
 
+* Remote
+Use =tramp= can easily work with remote machine. It is shipped with
+Emacs. To use it, simply =C-x C-f= and enter =/user@host:=, Emacs will
+prompt password. =user@= is optional. Do not use fancy shell prompt,
+otherwise tramp might hang. You can also enter =/su::= to edit as
+root for local files.
+
+You can use =helm= no problem, and you can also enter the remote
+shell.
+
+
 
 * Moving
 Defun movement:
