@@ -327,6 +327,34 @@ This will not be in effect after reboot. To automatically swap it on, in =/etc/f
 #+BEGIN_EXAMPLE
 /path/to/extraswap none swap sw 0 0
 #+END_EXAMPLE
+** Back Up & Syncing
+*** rsync
+This commnad is used to sync from source to destination. It does not
+perform double way transfer. It decides a change if either of these happens:
+- size change
+- last-modified time
+
+rsync [options] src dst
+
+Available options
+- =-v=: verbose
+- =-h=: human readable message
+- =-z=: compress
+- =-r=: recursively
+- =-a=: archive mode: preserve symblic links, file permissions, timestamps
+- =-e ssh=: use ssh
+- =--progress=: show progress
+- =--include <regex>=
+- =--exclude <regex>=
+- =--delete=: DANGEROUS if dst has more than src, delete those on dst
+- ~--max-size='200k'~: set the size limit for each file
+- =--dry-run=: dry run
+
+Commonly used options: =vhzra= =dry-run=
+
+Remember to use =a= option, otherwise the dst will always have newer
+(thus different) timestamp, and you will do the copy all the time.
+
 
 * Drivers
 I was installing drivers for my RX470 on Debian strench. The good news
