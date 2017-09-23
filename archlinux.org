@@ -5,6 +5,9 @@ ArchLinux has the most up-to-date binary software.
 You can back up configuration by:
 - https://github.com/CyberShadow/aconfmgr
 
+* TMP
+install =vlc= in order to use EMMS
+
 
 * Installation
 
