@@ -124,6 +124,45 @@ I use tigervnc because it seems to be fast.
   - vncserver -kill :1 will kill the vncserver
   - vncserver :2 will open :2
 
+** mpd
+music play daemon
+
+To start:
+#+BEGIN_EXAMPLE
+mkdir -p ~/.config/mpd
+cp /usr/share/doc/mpd/mpdconf.example ~/.config/mpd/mpd.conf
+mkdir ~/.mpd/playlists
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE conf
+# Required files
+db_file            "~/.mpd/database"
+log_file           "~/.mpd/log"
+
+# Optional
+music_directory    "~/music"
+playlist_directory "~/.mpd/playlists"
+pid_file           "~/.mpd/pid"
+state_file         "~/.mpd/state"
+sticker_file       "~/.mpd/sticker.sql"
+
+# uncomment pulse audio section
+audio_output {
+	type		"pulse"
+	name		"My Pulse Output"
+}
+#+END_EXAMPLE
+
+Start mpd by:
+#+BEGIN_EXAMPLE
+systemctl --user start mpd
+systemctl --user enable mpd
+#+END_EXAMPLE
+
+*** Clients
+- gmpc
+- stumpwm contrib mpd
+
 
 * Prompt
   * prompt($PS1-4)
