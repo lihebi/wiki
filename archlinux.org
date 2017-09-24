@@ -6,7 +6,8 @@ You can back up configuration by:
 - https://github.com/CyberShadow/aconfmgr
 
 * TMP
-install =vlc= in order to use EMMS
+- install =vlc= in order to use EMMS
+- =mpd= and =mpc= for music playing
 
 
 * Installation
