@@ -124,6 +124,45 @@ I use tigervnc because it seems to be fast.
   - vncserver -kill :1 will kill the vncserver
   - vncserver :2 will open :2
 
+** mpd
+music play daemon
+
+To start:
+#+BEGIN_EXAMPLE
+mkdir -p ~/.config/mpd
+cp /usr/share/doc/mpd/mpdconf.example ~/.config/mpd/mpd.conf
+mkdir ~/.mpd/playlists
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE conf
+# Required files
+db_file            "~/.mpd/database"
+log_file           "~/.mpd/log"
+
+# Optional
+music_directory    "~/music"
+playlist_directory "~/.mpd/playlists"
+pid_file           "~/.mpd/pid"
+state_file         "~/.mpd/state"
+sticker_file       "~/.mpd/sticker.sql"
+
+# uncomment pulse audio section
+audio_output {
+	type		"pulse"
+	name		"My Pulse Output"
+}
+#+END_EXAMPLE
+
+Start mpd by:
+#+BEGIN_EXAMPLE
+systemctl --user start mpd
+systemctl --user enable mpd
+#+END_EXAMPLE
+
+*** Clients
+- gmpc
+- stumpwm contrib mpd
+
 
 * Prompt
   * prompt($PS1-4)
@@ -327,6 +366,34 @@ This will not be in effect after reboot. To automatically swap it on, in =/etc/f
 #+BEGIN_EXAMPLE
 /path/to/extraswap none swap sw 0 0
 #+END_EXAMPLE
+** Back Up & Syncing
+*** rsync
+This commnad is used to sync from source to destination. It does not
+perform double way transfer. It decides a change if either of these happens:
+- size change
+- last-modified time
+
+rsync [options] src dst
+
+Available options
+- =-v=: verbose
+- =-h=: human readable message
+- =-z=: compress
+- =-r=: recursively
+- =-a=: archive mode: preserve symblic links, file permissions, timestamps
+- =-e ssh=: use ssh
+- =--progress=: show progress
+- =--include <regex>=
+- =--exclude <regex>=
+- =--delete=: DANGEROUS if dst has more than src, delete those on dst
+- ~--max-size='200k'~: set the size limit for each file
+- =--dry-run=: dry run
+
+Commonly used options: =vhzra= =dry-run=
+
+Remember to use =a= option, otherwise the dst will always have newer
+(thus different) timestamp, and you will do the copy all the time.
+
 
 * Drivers
 I was installing drivers for my RX470 on Debian strench. The good news

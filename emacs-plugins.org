@@ -150,3 +150,88 @@ To sum up:
 - q :: quit
 
 
+* EMMS
+** Add files into playlist
+- emms-add-file
+- emms-add-directory
+- emms-add-directory-tree (recursive)
+- emms-add-playlist (m3u)
+- emms-add-find: use regexp with find
+
+** Interactive control in playlist mode
+- emms-start
+- emms-stop (s)
+- emms-next (n)
+- emms-previous
+- emms-shuffle
+- emms-pause (P)
+- emms-random (r): go to a randomly selected track in the playlist
+- emms-sort
+- emms-show (f): show the current track in minibuffer
+- emms-seek-forward (>)
+- emms-seek-backward (<)
+- emms-playlist-mode-center-current (c): center the current song
+- emms-playlist-mode-play-smart (RET): play the song under cursor
+- emms-playlist-mode-bury-buffer (q): bury buffer
+- emms-playlist-mode-clear (C)
+
+In playlist mode, you can kill and yank as normal, use =C-j= to insert
+newline.
+
+In addition to the default playlist, we also have the markable
+playlist. The =emms-mark-mode= and =emms-mark-mode-disable= can switch
+between them. In the mark mode, you can:
+- emms-mark-forward (m)
+- emms-mark-unmark-all (U)
+- emms-mark-toggle (t)
+- emms-mark-unmark-forward (u)
+- emms-mark-regexp (% m)
+
+When tracks are marked, you can
+- emms-mark-delete-marked-tracks (D)
+- emms-mark-kill-marked-tracks (K): like D, but put into kill ring, so
+  we can yank it back
+- emms-mark-copy-marked-tracks: just kill, ready for yank
+
+
+Play Property
+- =emms-repeat-playlist=: variable, non-nil means repeat the playlist
+- =emms-toggle-repeat-playlist=: change =emms-repeat-playlist=
+- =emms-toggle-random-playlist=: random
+
+Play list
+- =emms-playlist-new=
+- =emms-playlist-save= (C-x C-s): just use m3u format
+
+** Edit the tags:
+- emms-tag-editor-edit (E): need to have software support. E.g
+  =mp3info=
+- emms-tag-editor-rename-format: this variable controls how to
+  generate file name from meta data, nice!
+- emms-tag-editor-rename: this function perform file renaming
+  according to above format
+
+** Smart Browser
+=emms-smart-browse= to enter the smart browsing page.
+*** TODO when I start emacs, it can find all the music, how did it remember?
+
+In browser, you can update by relist the browser
+- emms-browse-by-artist (b 1)
+- emms-browse-by-album
+- emms-browse-by-genre
+- emms-browse-by-year
+
+Interact:
+- emms-browser-add-tracks (RET)
+- emms-browser-add-tracks-and-play (C-j)
+- emms-browser-toggle-subitems (SPC): toggle subitems
+- emms-browser-collapse-all (1)
+- 2: expand one level
+- 3: expand two levels
+- 4: expand three levels
+- emms-browser-clear-playlist (C): also clear the playlist, but use capital
+- E: expand everything
+- d: visit the current directory
+- r: jump to a random track
+- /: search
+

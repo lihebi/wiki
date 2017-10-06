@@ -60,13 +60,24 @@ Partition the disk on OS X.
   Arch, so type does not matter.
 
 Inside arch, run cgdisk, and delete the partition. When creating the
-first partition, add 128MiB gab by typing +128M when cgdisk asks for
+first partition, add 128MiB gab by typing +128M when =cgdisk= asks for
 it.
 
 For simplicity, creating one partition is fine. The swap partition can
-be replaced by a swap file. Also I prefer to use LVM.
+be replaced by a swap file. Do not use LVM because
+- hard to set up right
+- need to load a module when booting, otherwise the =/dev/mapper/...=
+  address is not resolved.
+
+The mac EFI partition can be directly used. Thus you only need to
+create one partition for the root system. Mount the EFI partition and
+chroot will be just fine. The grub bootloader in arch will add files
+to the EFI partition, so next time you start your computer, arch will
+be default. Pressing =option= while booting can enter macOS.
 
 *** Install rEFInd
+rEFInd is used to give options to boot to macOS or linux.
+
 Download and run refind-install. The SIP must be disabled first. To do that:
 
 reboot and hold Cmd-R to enter recovery mode. Then open terminal from utility menu and type
@@ -79,3 +90,19 @@ Reboot. To enable it, follow the same process with command:
 csrutil enable
 #+END_EXAMPLE
 
+*** Wifi
+The wifi chipset of my 2013 late macbook pro is BCM4360. It is
+supported by =broadcam-wl= or =broadcam-wl-dksm= driver. The former is
+in AUR, need to recompile each time kernel is updated, thus do not use
+it. The later one is from official repo, and will get updated
+automatically.
+
+Load the module by =modprobe wl=.
+
+I'm using =wicd-client= to manage the wifi. You need the following packages:
+- =wpa_suppliant=
+- =wicd=
+- =wicd-gtk=
+
+Run =wicd-client= to configure (no need root). Make sure =dhcpcd= is
+NOT active, they conflict with each other.
