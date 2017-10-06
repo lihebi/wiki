@@ -3,6 +3,83 @@
 Common Lisp the language:
 http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/html/cltl/cltl2.html
 
+* Emacs Support
+** lisp-mode
+- indent-sexp (C-M-q)
+- kill-sexp (C-M-k)
+- mark-sexp (C-M-@)
+- transpose-sexps (C-M-t): point must be between the two sexp. After
+  transpose, point will be after the two sexps
+
+** TODO eldoc
+
+** TODO slime-mode
+This is minor mode. All the commands are prefixed with slime
+
+Evaluation commands:
+- C-M-x: Evaluate top-level from containing point.
+- C-x C-e: Evaluate sexp before point.
+- C-c C-p: Evaluate sexp before point, pretty-print result.
+
+Documentation commands:
+- C-c C-d C-d: Describe symbol.
+- C-c C-d C-a: Apropos search.
+- C-c M-d: Disassemble a function.
+
+Finding definitions:
+- M-.: Edit the definition of the function called at point.
+- M-,: Pop the definition stack to go back from a definition.
+** paredit
+I'm going to use this instead of newer and seemingly fancier
+smartparens.
+
+It is strict, tries to keep the balance. That means, if you put a =;=
+in between a sexp, the closing parenthesis will be put to the next
+line.  Delete does not work on a double quotes or parenthesis, but
+instead work your point into it.
+
+Killing
+- paredit-kill (C-k): kill inside the sexp
+- paredit-backward-delete (DEL)
+- paredit-forward-kill-word (M-d)
+- paredit-backward-kill-word (M-DEL)
+
+Movement
+- paredit-forward (C-M-f)
+- paredit-backward (C-M-b)
+- paredit-backward-up (C-M-u)
+- paredit-forward-down (C-M-d)
+- paredit-backward-down (C-M-p): not so useful
+- paredit-forward-up (C-M-n): not so useful
+
+Depth-changing
+- paredit-wrap-round (=M-(=): wrap parenthesis arount the sexp *after*
+  point
+- paredit-splice-sexp (M-s): splice the current sexp the point *in*,
+  into the outer sexp
+- paredit-splice-sexp-killing-backward (M-<up>):
+  1. kill backward until the beginning of current sexp
+  2. splice current sexp
+- paredit-splice-sexp-killing-forward (M-<down>)
+- paredit-raise-sexp (M-r): raise the sexp *after* point and *replace*
+  the outer sexp
+- paredit-convolute-sexp (M-?):
+  1. kill the sexp before point
+  2. splice the sexp
+  3. wrap the outer sexp prefixed with the killed sexp
+
+slurp and barf
+- paredit-forward-slurp-sexp (=C-)=): add next into current sexp
+- paredit-backward-slurp-sexp (=C-(=)
+- paredit-forward-barf-sexp (=C-}=): move the last in current sexp outside
+- paredit-backward-barf-sexp (=C-{=)
+
+Split and join
+- paredit-split-sexp (M-S): split () or string
+- paredit-join-sexps (M-J): join
+
+
+
 * Type
 Common Lisp is strong typed, but the type is associated with objects,
 not variables.
