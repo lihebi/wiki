@@ -9,24 +9,32 @@
 - transpose-sexps (C-M-t): point must be between the two sexp. After
   transpose, point will be after the two sexps
 
+** lisp go-to-def
+- xref-find-definitions (M-.)
+- xref-pop-marker-stack (M-,)
+
+These are supported via general progmodes
 ** TODO eldoc
 
 ** TODO slime-mode
 This is minor mode. All the commands are prefixed with slime
 
 Evaluation commands:
-- C-M-x: Evaluate top-level from containing point.
-- C-x C-e: Evaluate sexp before point.
-- C-c C-p: Evaluate sexp before point, pretty-print result.
+- slime-eval-defun (C-M-x): Evaluate top-level from containing point.
+- slime-eval-last-expression (C-x C-e): Evaluate sexp before point.
+- slime-pprint-eval-last-expression (C-c C-p): Evaluate sexp before
+  point, pretty-print result.
 
 Documentation commands:
-- C-c C-d C-d: Describe symbol.
-- C-c C-d C-a: Apropos search.
-- C-c M-d: Disassemble a function.
+- slime-describe-symbol (C-c C-d C-d): Describe symbol.
+- slime-autodoc-manually (C-c C-d C-a): Apropos search.
+- slime-disassemble-symbol (C-c M-d): Disassemble a function.
 
 Finding definitions:
-- M-.: Edit the definition of the function called at point.
-- M-,: Pop the definition stack to go back from a definition.
+- slime-edit-definition (M-.): Edit the definition of the function
+  called at point.
+- slime-pop-find-definition-stack (M-,): Pop the definition stack to
+  go back from a definition.
 ** paredit
 I'm going to use this instead of newer and seemingly fancier
 smartparens.
@@ -78,10 +86,6 @@ Split and join
 
 
 
-* Type
-Common Lisp is strong typed, but the type is associated with objects,
-not variables.
-
 * List
 The function =cons= builds lists. If second argument is a list, it
 adds the first one onto the list. This is called "consing onto the
@@ -102,13 +106,7 @@ combinations up to 4-level.  List has some special function to handle.
 =rest= are also intuitive. =nbutlast= is the destructive version of
 =butlast=.
 
-To modify the structure of a list, =substitute= replace elements in a
-sequence, it does not go into deeper tree. The function =subst= will
-replaces elements in tree, deeply.  Such form that recursing down both
-car and cdr is said to be /doubly recursive/.  =subst-if= and
-=subst-if-not= provides the conditional substitution.  Their
-destructive versions are available for efficiency =nsubst=,
-=nsubst-if=, =nsubst-if-not=.
+
 
 
 
@@ -123,34 +121,71 @@ List can be used to represent different data structures.
 2. List can form a tree. When using =cons=, the pointers are
    constructed in the list, thus lists might share
    components. Sometimes you have to make a copy of a list to avoid
-   chaning other lists. There are two functions to make copies:
-   =copy-list= and =copy-tree=. =copy-list= recursive calls on the cdr
-   of the list, thus it is not deep copy. On the contrary, =copy-tree=
-   recurs on both =car= and =cdr=, thus copy entire list.  Similarly,
-   =tree-equal= can be used to test the equality of the whole tree.
-3. List can also simulate a set. You can tell the member via =member=,
-   =member-if=, =member-if-not=. Set operations include =adjoin=,
-   =union=, =intersection=, =set-difference=, =set-exclusive-or= and
-   their destructive counterparts =nunion=, =nintersection=,
+   chaning other lists. 
+   - There are two functions to make copies: =copy-list= and
+     =copy-tree=. =copy-list= recursive calls on the cdr of the list,
+     thus it is not deep copy. On the contrary, =copy-tree= recurs on
+     both =car= and =cdr=, thus copy entire list.  Similarly,
+     =tree-equal= can be used to test the equality of the whole tree.
+   - To modify the structure of a list, =substitute= replace elements
+     in a sequence, it does not go into deeper tree. The function
+     =subst= will replaces elements in tree, deeply.  Such form that
+     recursing down both car and cdr is said to be /doubly recursive/.
+     =subst-if= and =subst-if-not= provides the conditional
+     substitution.  Their destructive versions are available for
+     efficiency =nsubst=, =nsubst-if=, =nsubst-if-not=.
+3. List can also simulate a set. You can add an item to a set (a list)
+   by =adjoin=. It will cons the item onto the list if it is not in
+   the set. You can tell the member via =member=, =member-if=,
+   =member-if-not=. Set operations include =adjoin=, =union=,
+   =intersection=, =set-difference=, =set-exclusive-or= and their
+   destructive counterparts =nunion=, =nintersection=,
    =nset-difference=, =nset-exclusive-or=.  You can predict subset
    with =subsetp= and tail with =tailp=.
 4. Finally, /Association Lists/ are maps. This is often called
-   /assoc-list/ or /alist/, representing mapping.  =parilis= is used
-   to create a =alist= from lists of keys and values. Add new key
-   value pairs onto the alist with =acons=. Use =assoc= to retrieve
-   the value, and use =setf= to set the value.  The condition version
-   of =assoc= are =assoc-if= and =assoc-if-not=.  Lisp allows not only
-   map from car to cdr, but also cdr to car with =rassoc=,
-   =rassoc-if=, =rassoc-if-not=. Use =copy-alist= to copy the alist.
-
+   /assoc-list/ or /alist/, representing mapping. It is only used for
+   small maps, because it is not efficient. The alist is just list of
+   cons cells whose car is key, cdr is value. Apart from build the
+   list of cons cells, =parilis= can be used to create a =alist= from
+   lists of keys and values. Add new key value pairs onto the alist
+   with =acons=. Use =assoc= to retrieve the first *cons cell* with
+   the key, and =nil= if not found. Use =setf= with =assoc= to set the
+   value.  The condition version of =assoc= are =assoc-if= and
+   =assoc-if-not=.  Lisp allows not only map from car to cdr, but also
+   cdr to car with =rassoc=, =rassoc-if=, =rassoc-if-not=. Use
+   =copy-alist= to copy the alist.
+5. The /Property list/ (plist for short) is similar to alist, but
+   structured differently. It is a flat list, with keys and values
+   intersect each other. E.g. =(A 1 B 2)=. It is less flexible than
+   the alist, and you can only use =getf= with a key to get the
+   value. =getf= and =setf= can be used together to set the value. Use
+   =remf= to remove a key value pair from the plist. You can also
+   retrieve multiple key-values by =get-properties=.
+   - The special thing about plist is that, each symbol has a
+     plist. It can be retrieved by =symbol-plist=, but this is rarely
+     used because the whole plist is not often the focus. What you
+     need is =get= that directly get the key of the plist of the
+     symbol. In other words, =(get 'symbol 'key)= equals to =(getf
+     (symbol-plist 'symbol) 'key)=. =remprop= is a similar function to
+     =remf=.
 
 Mapping is very powerful. The most frequently used is =mapcar=. It
 takes a function and some lists. Each time, it takes one element from
 the lists out as arguments to the function, until some list runs out,
 and finally return the results in a list.  =maplist= takes the same
 arguments and does the same thing, but everytime apply function on the
-cdrs of the lists.
+cdrs of the lists. Other map functions include =mapcan=, =mapcon=,
+=mapc=, =mapl=.
 
+One last trick, the =destructuring-bind= can be used to bind
+variables. It cna be used to bind into tree structures.
+
+
+#+BEGIN_SRC lisp
+(destructuring-bind (x y z) (list 1 2 3))
+(destructuring-bind (x y z) (list 1 (list 2 20) 3)) ; y = (2 20)
+(destructuring-bind (x (y1 y2) z) (list 1 (list 2 20) 3)) ; y1=2
+#+END_SRC
 # - mapc
 # - mapl
 # - mapcan
@@ -240,8 +275,22 @@ conversion can be done by =string-upcase=, =string-downcase=,
 Array can be general array, holding arbitrary object types; it can
 also be a specialized array that hold a given type, which increase the
 efficiency.  One dimentional arrays are called vectors. Vectors
-holding arbitrary objects are /general vectors/.  An array can be
-created by =make-array=.
+holding arbitrary objects are /general vectors/.
+
+There are two kinds of array: fixed and resizable. An array can be
+created by =make-array=. Since vector is more often used, you can
+simply use =vector= to create a one-dimension array. When you make an
+array, you specify the size, making a fixed size array. For resizable,
+there're two ways. First, you can give a =:fill-pointer= when making
+the array. For example =(make-array 5 :fill-pointer 0)= makes an
+*empty* array of *capacity* 5. This array can be used in =vector-push=
+and =vector-pop= who operates on the :fill-pointer. However, this
+seems resizable, but the capacity is at most 5. The second way to make
+the real resizable array is to give =:adjustable t= option wehn making
+it. Instead of using =vector-push=, you use =vector-push-extend= to
+operate on it so that it can take care of the capacity. The arrays are
+all general array that can hold different data types, you can create
+an array suitable for one type by giving =:element-type= option.
 
 =aref= is used to access the element of an array. To replace
 elements, we use =setf= with =aref=.  For vector, you might want to
@@ -284,11 +333,18 @@ Macro =(defstruct point x y)= will also define =make-point=,
 =point-p=, =copy-point=, =point-x=, =point-y=. The read format is =#S=.
 
 * Hash Table
-This is a map. =make-hash-table= creates a hash-table, and =gethash=
-retrieve from the table. Use =setf= together with =gethash= can set
-the hash. To remove an object from hash table, use =remhash=.
+This is a map. =make-hash-table= creates a hash-table. The test
+predicate =:test= for keys can be one of =eq= =eql= =equal= =equalp=
+with =eql= as default.
 
-To iterate through a hash table, use =maphash=.
+=gethash= retrieve from the table. It returns multiple values, with
+first be the value of the key or nil if no such key. The second value
+present whether the key is present.  Use =setf= together with
+=gethash= can set the hash.
+
+To remove an object from hash table, use =remhash=. You can also clear
+the table by =clrhash=.  To iterate through a hash table, use
+=maphash=.
 
 # - hash-table-p
 # - clrhash
@@ -579,8 +635,31 @@ differently, so =lambda= is no longer necessary.
 # - nth-value
 
 * Macro
-=macroexpand-1= can be used to check
-the expension.
+Macro is designed to abstract away common syntactic patterns.
+
+=macroexpand-1= can be used to check the expension in one level.
+
+When designing macros, there are three kinds of leaks of
+implementation details that you need avoid.
+- multiple evaluation of parameters
+  - You must evaluate each param once, because that is the intuition
+    of user of the macro.
+  - to fix it, evaluate it ones and bind to a variable
+- order of evaluating parameters
+  - you need to make sure the order of evaluation of parameters is
+    from left to right. Again this to follow the intuition of user.
+- variable scope
+  - use GENSYM to create name to use. For example the code below, the
+    name is generated at expanding time, and =,name= is used whenever
+    you want to use the variable.
+
+#+BEGIN_SRC lisp
+  (defmacro mymac (param)
+    (let ((name (gensym)))
+      `(let ((,name ,param))
+         ,name)))
+#+END_SRC
+
 
 * Evaluation
 - eval form: evaluate form in the current dynamic environment and a null lexical environment
