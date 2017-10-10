@@ -94,7 +94,8 @@ from the heap is sometimes generally known as /consing/. =list= can
 also be used to create a list.  =append= connect several list to
 become one.  A /proper list/ is either =nil=, or a cons whose =cdr= is
 a proper list. This definition is recursive. Improper list is shown in
-/dotted notation/, and is called a /dotted list/.
+/dotted notation/, and is called a /dotted list/. The predicate =null=
+is specifically test /empty list/.
 
 
 A family of functions is used to access elements of the list. The
