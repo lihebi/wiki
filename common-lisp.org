@@ -663,7 +663,8 @@ implementation details that you need avoid.
 
 
 * Evaluation
-- eval form: evaluate form in the current dynamic environment and a null lexical environment
+- eval form: evaluate form in the current dynamic environment and a
+  null lexical environment
 - evalhook
 - applyhook
 
@@ -673,7 +674,52 @@ same as ='(+ 3 5)=. It is a way of pretecting expressions from
 evaluation.
 
 Integers and strings both evaluate to themselves. =nil= evaluates to
-itself as well.
+itself as well. Empty list () is exactly =nil=, thus is also
+self-evaluated.
+
+There are 25 special operators
+- block
+- catch
+- compiler-let
+- declare
+- eval-when
+- flet
+- function
+- go
+- if
+- labels
+- let
+- let*
+- macrolet
+- multiple-value-call
+- multiple-value-prog1
+- progn
+- progv
+- quote
+- return-from
+- setq
+- tagbody
+- the
+- throw
+- unwind-protect
+
+When compile a file, it evaluates all top level forms in the file. If
+the top level is =eval-when=, things can be controled. =eval-when=
+accepts three different situations, namely =:compile-toplevel=,
+=:load-toplevel=, =:execute=. You can specify multiple of them, thus
+can make the top level evaluates at compile time, load time, or both.
+
+There's probably only one eval-when is useful, that is use ALL of
+them:
+#+BEGIN_EXAMPLE
+(EVAL-WHEN
+ (:COMPILE-TOPLEVEL :LOAD-TOPLEVEL :EXECUTE)
+ ...)
+#+END_EXAMPLE
+
+should wrap things that need be available in the compilation
+environment as well as the target environment. E.g. a defined function
+that is used in defmacro.
 
 * Exception
 
