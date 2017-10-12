@@ -57,3 +57,68 @@ docker logs l2tp-ipsec-vpn-server
 docker exec -it l2tp-ipsec-vpn-server ipsec status
 #+END_EXAMPLE
 
+
+* OpenVPN
+
+** Server Setup
+https://github.com/kylemanna/docker-openvpn
+It is very interesting to use docker this way.
+
+The persisit is the storage, which is mounted on /etc/openvpn, serving
+as the configuration.  Each time, create a new docker container
+mounting the same storage. Each step write to the configuration.
+
+#+BEGIN_EXAMPLE
+OVPN_DATA="ovpn-data-example"
+docker volume create --name $OVPN_DATA
+docker run -v $OVPN_DATA:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://VPN.SERVERNAME.COM
+docker run -v $OVPN_DATA:/etc/openvpn --rm -it kylemanna/openvpn ovpn_initpki
+#+END_EXAMPLE
+
+It is easy to run the server itself. This time use -d option to make
+it a daemon.
+#+BEGIN_EXAMPLE
+docker run -v $OVPN_DATA:/etc/openvpn -d -p 1194:1194/udp --cap-add=NET_ADMIN kylemanna/openvpn
+#+END_EXAMPLE
+
+It is also easy to create certificate on-the-go. For that, create new
+container to create and retrieve the certificate.
+
+#+BEGIN_EXAMPLE
+docker run -v $OVPN_DATA:/etc/openvpn --rm -it kylemanna/openvpn easyrsa build-client-full CLIENTNAME nopass
+docker run -v $OVPN_DATA:/etc/openvpn --rm kylemanna/openvpn ovpn_getclient CLIENTNAME > CLIENTNAME.ovpn
+#+END_EXAMPLE
+
+** Client Setup
+On arch, copy hebi.ovpn to /etc/openvpn/client/hebi.conf. Then the
+service openvpn-client@hebi will be available for systemd. On ubuntu,
+the path is /etc/openvpn/hebi.conf, with service openvpn@hebi.
+Start the service will forward traffic.
+
+It is likely that you can connect, can ping any IP address, but cannot
+resolve names. You can even use =drill @8.8.8.8 google.com= to resolve
+the name on the way.
+
+The trick is to push resolv conf of local machine to remote. First
+install =openresolv= and (aur) =openvpn-update-resolv-conf=. Add the
+following to the end of hebi.conf file:
+
+#+BEGIN_EXAMPLE
+script-security 2
+up /etc/openvpn/update-resolv-conf
+down /etc/openvpn/update-resolv-conf
+#+END_EXAMPLE
+
+For ubuntu the openvpn package already contains the file. Just modify
+the conf file.
+
+*** TODO IPv6
+Note that the IPv4 address is changed, but the IPv6 is not changed,
+when I didn't use IPv6 on digital ocean.
+
+
+
+
+
+* music
+rutracker.org
