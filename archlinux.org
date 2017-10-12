@@ -9,6 +9,11 @@ You can back up configuration by:
 - install =vlc= in order to use EMMS
 - =mpd= and =mpc= for music playing
 
+** Install on Digital ocean droplet
+Although digital ocean didn't provide a default arch distribution, you
+can easilly convert debian to arch.
+
+https://github.com/gh2o/digitalocean-debian-to-arch
 
 * Installation
 
