@@ -48,7 +48,7 @@ choice thanks a lot to the [[file:elisp.org][Emacs Lisp]] language. There're ton
 Plugins]] out there, and it is very easy and comfortable to extend the
 editor by my own writing some lisp. The elisp is tightly bounded with
 emacs editor functionalities, so there's a dedicated page for th [[file:elisp-emacs.org][Emacs
-Part of Elisp]].  Although elisp is a good start point of lisp, it is
+Part of Elisp]].  Although elisp is a good start point of [[file:lisp.org][lisp]], it is
 not general purpose, and can only run inside emacs. Another lisp
 flavor, [[file:common-lisp.org][Common Lisp]] is more serious and practical lisp, the StumpWM is
 written in it.  [[file:clojure.org][Clojure]] arise recently and the authors are advertising

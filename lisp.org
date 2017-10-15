@@ -1,0 +1,10 @@
+#+TITLE: Lisp Index Page
+
+This is the lisp index page, containing general staff for lisp.
+
+* Lisp-1 vs. Lisp-2
+
+http://www.nhplace.com/kent/Papers/Technical-Issues.html
+
+Lisp-1 has seperate namespace for functions and variables, while
+Lisp-2 only have one universal namespace.
