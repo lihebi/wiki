@@ -147,6 +147,20 @@ Gadgets & 13
 
 
 
+* Beamer
+#+BEGIN_EXAMPLE
+#+AUTHOR: Hebi Li
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [presentation]
+#+BEAMER-FRAME-LEVEL: 2
+#+BEAMER_THEME: Madrid
+#+OPTIONS: H:2 toc:nil num:t author:t
+#+LATEX_HEADER: \lstset{numbers=none,frame=shadowbox, basicstyle=\scriptsize, breaklines=true, basewidth={0.45em,0.3em}, stringstyle=\ttfamily}
+#+END_EXAMPLE
+
+Themes
+- Madrid
+- CambridgeUS
 
 * Packages
 ** titlesec
