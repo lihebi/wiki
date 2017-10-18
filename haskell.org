@@ -1,0 +1,7 @@
+#+TITLE: Haskell
+
+* TODO Learn Haskell
+
+** TODO Typeclasses of Haskell comparing to C++
+http://www.michaelburge.us/2017/10/15/haskell-typeclasses-vs-cpp-classes.html
+

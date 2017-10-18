@@ -1,0 +1,34 @@
+#+TITLE: Racket
+
+* Trouble shooting
+
+** racket cannot find browsers
+Browsers are declared in sendurl.rkt, with
+
+#+BEGIN_SRC racket
+  (define all-unix-browsers
+    '(
+      firefox
+      google-chrome
+      galeon
+      opera
+      mozilla
+      konqueror
+      ;; ...
+      ))
+#+END_SRC
+
+chromium is not in the list, thus
+#+BEGIN_SRC racket
+(require net/sendurl)
+unix-browser-list ;; empty
+(send-url "google.com") ;; error
+#+END_SRC
+
+The trick is to create a soft link for chromium named "google-chrome".
+Also, the default is using firefox ... So I need to make sure firefox
+is uninstalled. Is there a better way to configure browser??
+
+The =racket-doc= will use the local racket document to search, thus in
+order for it to work, install =racket-doc= package.
+
