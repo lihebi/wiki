@@ -32,3 +32,31 @@ is uninstalled. Is there a better way to configure browser??
 The =racket-doc= will use the local racket document to search, thus in
 order for it to work, install =racket-doc= package.
 
+
+
+* Logger
+
+#+BEGIN_SRC racket
+  (define lg (make-logger))
+  (define rc (make-log-receiver lg 'debug))
+  (current-logger lg)
+  (void
+   (thread
+    (lambda () (let loop ()
+                 (print (sync rc))
+                 (loop)))))
+  (log-error "error")
+  (log-fatal "fatal")
+  (log-debug "just a debug")
+#+END_SRC
+
+#+BEGIN_SRC racket
+  (require racket/logging)
+  (let ([my-log (open-output-string)])
+    (with-logging-to-port my-log
+      (lambda ()
+        (log-warning "Warning World!")
+        (+ 2 2))
+      'warning)
+    (get-output-string my-log))
+#+END_SRC
