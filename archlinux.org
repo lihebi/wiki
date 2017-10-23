@@ -257,6 +257,13 @@ Typical usage:
 - --noconfirm :: use in script
 - --needed :: do not install the installed again
 
+Pacman will store all previously downloaded packages. So when you find
+your /var/cache/pacman so big, consider clean them up using:
+
+#+BEGIN_EXAMPLE
+paccache -rk 1
+#+END_EXAMPLE
+
 * AUR
 Have to search through its web interface. Find the git download link
 and clone it. It is pullable.
