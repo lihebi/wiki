@@ -10,7 +10,7 @@ http://www.greghendershott.com/2015/07/keyword-structs-revisited.html
 #+END_SRC
 * TODO Haskell
 
-* TODO Pattern Matching (racket/match)
+* Pattern Matching (racket/match)
 The syntax:
 
 #+BEGIN_SRC racket
@@ -52,11 +52,124 @@ Pattern can be
   against the entire value. =or= is also available but not that
   useful.
 
-* TODO Macros
+* Macros
 Matthias Felleisen boils down macros into three main categories:
 1. Binding form
 2. Change order of evaluation
 3. Make DSLs
+
+Different from common lisp where you have compile time and runtime,
+racket has the concept called /level/. The level 0 is roughly runtime,
+and level 1 is compile time. But there're also level -1 and level 2,
+3, ..., thus it is more general. But typically the first two levels
+are used.
+
+Everything boils down to =define-syntax= and =syntax-case=.
+=define-syntax= is nothing fancy. It just define a binding, same as
+define, but the binding is in effect at level 1. Thus actually we
+typically still define it as a lambda expression, thus it has the
+shorthand to write argument (stx) in the same line. =syntax-rules=
+itself is a lambda expression surounding =syntax-case=. Thus second
+form does not use syntax-rules, but use syntax-case directly.
+
+#+BEGIN_SRC racket
+  (define-syntax foo
+    (syntax-rules ()
+      ((_ a ...) (printf "~a\n" (list a ...)))))
+  ;; <=>
+  (define-syntax (foo stx)
+    (syntax-case stx ()
+      (_ a ...)
+      #'(printf "~a\n" (list a ...))))
+#+END_SRC
+
+=syntax-case= match a given syntax object against patterns, and return
+another syntax object. It is doing the transformation. You can
+actually do the transformation yourself, using =sytax->datum=,
+operates on it, and use =datum->syntax= to convert it back. So
+=syntax-case= just provides an easier way to do that, in the sense
+that you don't need to convert explicitly. Instead, you specify by
+position the argument, to match the datum, and construct a syntax
+object as a result.
+#+BEGIN_SRC racket
+  (define-syntax (foo stx)
+    (syntax-case stx ()
+      [(_ a b c)
+       #'(if a b c)]))
+#+END_SRC
+
+See, stx is matched against the pattern =(_ a b c)=, and
+destructed. =a b c= can then be used to construct the returned syntax
+object. Note, the return must be a syntax object, it replaces the (foo
+xxx) and be evaluated. The first is =_= because we don't care about
+the =#'foo=. =stx= is not used??
+
+
+
+=define-syntax-rule= is shorthand for =define-syntax= and
+=syntax-rules=.
+
+#+BEGIN_SRC racket
+  (define-syntax-rule (id . pattern) template)
+  ;; <=>
+  (define-syntax id
+    (syntax-rules ()
+      [(id . pattern) template]))
+#+END_SRC
+This is so constrained. The following is equivalent to the above:
+#+BEGIN_SRC racket
+  (define-syntax-rule (foo a b c)
+    (if a b c))
+#+END_SRC
+
+While =syntax-rules= is a lambda expression, that call =syntax-case=
+to return a syntax object.
+
+#+BEGIN_SRC racket
+  (syntax-rules (literal-id ...)
+    [(id . pattern) template] ...)
+  ;; <=>
+  (lambda (stx)
+    (syntax-case stx (literal-id ...)
+      [(generated-id . pattern) (syntax-protect #'template)] ...))
+#+END_SRC
+
+
+** with-syntax
+This is often used to nest syntax. It is like =let=
+#+BEGIN_SRC racket
+(syntax-case <syntax> () [<pattern> <body>])
+;; <=>
+(with-syntax ([<pattern> <syntax>]) <body>)
+#+END_SRC
+
+** Reader
+To understand how macro works, we need to know how the reader handles
+the program.
+
+A datum is the basic output of a read. Datum can be compound, in which
+case the reader is recursively read the components. Some datums are
+interned by the reader, i.e. their values are always =eq?= when they
+are =equal?=. Such datums includes: symbols, keywords, strings, byte
+strings, regexps, characters, numbers.
+
+Some special read notation:
+- =#(1 2 3)= for vectors
+- =#s(struct-id 1 2 3)= for prefab structure types. note that for
+  complex structure, the print format is not intuitive.
+- =#hash(("a" . 5) ("b" b))= for hash tables
+** Syntax Model
+A /syntax object/ is a simple racket value + scope set + phase level.
+
+When require something, those functions are not visible in
+level 1. Thus if you want to use those when macro expands, you need
+=(reqire (for-syntax racket/base))=.
+
+Similaryly, a top-level =begin= is not visible in macro, we need
+=begin-for-syntax= to bind variables to use at level 1.
+** Expand
+- =(expand top-level-form)=: fully expand
+- =(expand-once top-level-form)=: expand only once
 * TODO rackunit
 
 * Trouble shooting
