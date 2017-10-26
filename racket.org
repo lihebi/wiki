@@ -1,4 +1,63 @@
 #+TITLE: Racket
+* Black Magic
+http://www.greghendershott.com/2015/07/keyword-structs-revisited.html
+#+BEGIN_SRC racket
+  (begin-for-syntax
+    (define syntax->keyword (compose1
+                             string->keyword
+                             symbol->string
+                             syntax->datum)))
+#+END_SRC
+* TODO Haskell
+
+* TODO Pattern Matching (racket/match)
+The syntax:
+
+#+BEGIN_SRC racket
+  (match val-expr clause ...)
+
+  clause = [pat [#:when cond-expr] body ...+]
+#+END_SRC
+cond-expr is in teh scope of pat (to have the bind or not??).
+
+The clauses are checked one-by-one, and the body of first match will
+be in the tail position.
+
+Pattern can be
+- =_= to match anything and abandon it.
+- a single id which matches anything and bind to it. An ID can appear
+  more than once, in which case the pattern is considered matching
+  only if all of the bindings of ID are same.
+  - e.g. =(list a b a)= will not match ='(1 2 3)=, but will match ='(1
+    2 1)=
+- a list which binds to the destruction. 
+- The quote can not be used to construct list of symbols, it will
+  match verbatically instead. For that, use quasiquote, which supports
+  the evaluation and splice-eval.
+  - e.g. =`(1 ,a ,b)= will match ='(1 2 3)= with =a= and =b= bound.
+- hash-table can be used to match the key and values, Using =...= in
+  it means collect into a list.
+  - e.g. =(hash-table ("key1" a) ("key2" b))=.
+  - e.g. =(hash-table (key val) ...)= will match =#hash(("a" . 1) ("b"
+    . 2))=, and key will be ='("b" "a")=
+- cons can be used to match pairs
+- =struct-id= can be used to match fields by position. Use =(struct
+  struct-id _)= to match an instance of structure itself. E.g.
+  - for structure =(struct tree (val left right))=
+  - pattern =(tree a (tree b  _ _) _)= will match
+  - =(tree 0 (tree 1 #f #f) #f)=
+  - with =a= bound to 0, =b= bound to 1
+- =and= is used to combine a list of patterns. The typical usage is
+  =(and id pat)= where you can bind =id= and still check the =pat=
+  against the entire value. =or= is also available but not that
+  useful.
+
+* TODO Macros
+Matthias Felleisen boils down macros into three main categories:
+1. Binding form
+2. Change order of evaluation
+3. Make DSLs
+* TODO rackunit
 
 * Trouble shooting
 
