@@ -64,6 +64,9 @@ and level 1 is compile time. But there're also level -1 and level 2,
 3, ..., thus it is more general. But typically the first two levels
 are used.
 
+When using racket syntax, you typically need to require the base
+library for it, by =(require (for-syntax racket/base))=.
+
 Everything boils down to =define-syntax= and =syntax-case=.
 =define-syntax= is nothing fancy. It just define a binding, same as
 define, but the binding is in effect at level 1. Thus actually we
@@ -91,6 +94,15 @@ operates on it, and use =datum->syntax= to convert it back. So
 that you don't need to convert explicitly. Instead, you specify by
 position the argument, to match the datum, and construct a syntax
 object as a result.
+
+#+BEGIN_SRC racket
+  (syntax-case stx-expr (literal-id ...)
+    [pattern result-expr] ...)
+#+END_SRC
+
+Note the result is =result-expr=, that means the expr is going to be
+executed, and the return value should be a syntax object.
+
 #+BEGIN_SRC racket
   (define-syntax (foo stx)
     (syntax-case stx ()
@@ -102,12 +114,30 @@ See, stx is matched against the pattern =(_ a b c)=, and
 destructed. =a b c= can then be used to construct the returned syntax
 object. Note, the return must be a syntax object, it replaces the (foo
 xxx) and be evaluated. The first is =_= because we don't care about
-the =#'foo=. =stx= is not used??
+the leading identifier =#'foo=.
 
+=syntax-rules= is a lambda expression, that calls =syntax-case= to
+return a syntax object. It is used to define multiple patterns and
+templates at one time. Note that the result is a "template" instead of
+"expr", meaning it is restricted: cannot run any code, merely return
+the template as if quoted. Thus when using syntax-rules, the result
+need not be quoted by =syntax=.
 
+#+BEGIN_SRC racket
+  (syntax-rules (literal-id ...)
+    [(id . pattern) template] ...)
+  ;; <=>
+  (lambda (stx)
+    (syntax-case stx (literal-id ...)
+      [(generated-id . pattern) (syntax-protect #'template)] ...))
+#+END_SRC
 
 =define-syntax-rule= is shorthand for =define-syntax= and
-=syntax-rules=.
+=syntax-rules=. The pattern is a list, the first is an identifier, the
+following are pattern variables that matches anything. The template is
+the constructed form to replace the old form. It is not quoted,
+because it uses syntax-rules to construct. All pattern variables will
+be replaced by the actual form.
 
 #+BEGIN_SRC racket
   (define-syntax-rule (id . pattern) template)
@@ -122,25 +152,13 @@ This is so constrained. The following is equivalent to the above:
     (if a b c))
 #+END_SRC
 
-While =syntax-rules= is a lambda expression, that call =syntax-case=
-to return a syntax object.
-
+=with-syntax= is often used to nest syntax. It is like =let= but is
+able to bind pattern variables.
 #+BEGIN_SRC racket
-  (syntax-rules (literal-id ...)
-    [(id . pattern) template] ...)
-  ;; <=>
-  (lambda (stx)
-    (syntax-case stx (literal-id ...)
-      [(generated-id . pattern) (syntax-protect #'template)] ...))
-#+END_SRC
-
-
-** with-syntax
-This is often used to nest syntax. It is like =let=
-#+BEGIN_SRC racket
-(syntax-case <syntax> () [<pattern> <body>])
+(syntax-case <syntax> () [<pattern> <body>] ...)
+(syntax-case (list stx-expr ...) () [(pattern ...) (let () body ...+)])
 ;; <=>
-(with-syntax ([<pattern> <syntax>]) <body>)
+(with-syntax ([<pattern> <stx-expr>] ...) <body> ...+)
 #+END_SRC
 
 ** Reader
@@ -163,11 +181,13 @@ A /syntax object/ is a simple racket value + scope set + phase level.
 
 When require something, those functions are not visible in
 level 1. Thus if you want to use those when macro expands, you need
-=(reqire (for-syntax racket/base))=.
+=(reqire (for-syntax racket/base))=.  Similarly, =for-meta= can be
+used to specify any number as shift level.
 
 Similaryly, a top-level =begin= is not visible in macro, we need
 =begin-for-syntax= to bind variables to use at level 1.
-** Expand
+
+Use these to expand a macro:
 - =(expand top-level-form)=: fully expand
 - =(expand-once top-level-form)=: expand only once
 * TODO rackunit
