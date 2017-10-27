@@ -190,7 +190,53 @@ Similaryly, a top-level =begin= is not visible in macro, we need
 Use these to expand a macro:
 - =(expand top-level-form)=: fully expand
 - =(expand-once top-level-form)=: expand only once
-* TODO rackunit
+* rackunit
+Since racket has the =test= module concept, there needs no unit test
+framework. However, it seems that =rackunit= provides some
+predicate functions.
+
+In racket, each file is a module with the file name as the module
+name. You can define a submodule using =module*= and =module+=. The
+former can only appear exactly once for each module, while the latter
+can appear multiple times, all of them concatenated into a single
+module as if using =module*=.
+
+Thus, folks typically use =module*= to define a =main= module, which
+will be run by racket after the enclosing module by
+=racket=. =module+= is used to define =test= modules, and will be
+executed by =raco test= command.
+
+=rackunit= provides check APIs and also organize tests into cases and
+suites.  A check is a simple check, like equality. A test case is a
+group of checks. If one of them fails, the following will not be
+executed, and the test case fails. A suite is a group of test cases,
+and has a name.
+
+Check APIs (all of them accepts an optional message at the end):
+- =check-eq?=
+- =check-not-eq?=
+- =check-equal?=
+- =check-not-equal?=
+- =check-pred pred v=: check if apply pred on v will produce
+  other than #f
+- ~check-= v1 v2 epsilon~: |v1-v2| <= epsilon
+- =check-true v=: #t
+- =check-false v=: #f
+- =check-not-flase v=: not #f
+- =check op v1 v2=: generic form, op is =(-> any any any)=
+- =fail=: fail unconditionally, useful when developing to mark some tests
+
+The following does not accept message, because they are straightforward:
+- =check-match v pattern=: check if v match pattern
+
+=test-begin expr ...= is used to group exprs, while =test-case name
+body ...+= accept a name for them, and get reported if test fails.
+
+Test suites are not going to run by default. This allows you to
+specify which tests to run. There're text (=run-tests= in
+=rackunit/text-ui=) and gui (=test/gui= in =rackunit/gui=) interfaces
+to select tests. Create a suite using =(test-suite name-expr test
+...)=. The tests can be single check or a test case.
 
 * Trouble shooting
 
