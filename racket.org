@@ -345,6 +345,139 @@ Input port specific:
 ;; '("4" "6")
 #+END_SRC
 
+* Pair, List, Vector
+- length
+- list-ref
+- list-tail
+- append
+- reverse
+- map, andmap, ormap
+- for-each
+- foldl, foldr
+- filter
+- remove
+- sort
+- member, memf (using function): if found, return the tail list
+  starting from the match
+- findf: like memf, but return just the matched element.
+- assoc v lst: the first element of lst whose car equal to
+  v. E.g. =(assoc 1 '((1 2) (3 4)))= returns ='(1 2)=
+
+from racket/list
+- empty?
+- first
+- rest
+- second
+- last
+- list-update lst pos updater: the pos index is updated with =(updater
+  (list-ref lst pos))=
+- list-set lst pos value
+- =index-of lst v=: return the index of the first v
+- =index-where lst proc=: use function
+- =indexes-of=, =indexes-where=: return all matches
+- =take lst pos=: take only the first pos elements
+- =drop lst pos=: same as list-tail
+- =split-at lst pos=: same as =(values (take lst pos) (drop lst pos))=
+- takef, dropf, splitf-at: take all the elements satisfying the
+  function.
+- take-right, drop-right, split-at-right, and their f-version
+- list-prefix? l r: whether l is prefix of r
+- take-common-prefix l r
+- drop-common-prefix l r
+- split-common-prefix l r
+- flatten v
+- check-duplicates lst
+- remove-duplicates lst
+- range end: [0,end)
+- range start end [step=1]
+- shuffle lst
+- combinations lst [size]: if size is given, return only combination
+  of length size.
+- permutations lst
+- =argmin proc lst=: return the first elemnt in lst that minimize
+  =(proc elem)=
+- argmax
+
+Vectors
+- vector-length
+- vector-ref
+- vector-set!: it makes sense to set a vector, because it takes
+  constant time to access and update
+- vector->list
+- list->vector
+- vector-fill! vec v
+- vector-copy! dst dst-start src [src-start] [src-end]
+
+From racket/vector:
+- vector-map
+- vector-append
+- vector-take, vector-drop
+- vector-take-right, vector-drop-right
+- vector-split-at, vector-split-at-right
+- vector-copy
+- vector-filter
+- vector-filter-not
+- vector-count proc vec
+- vector-argmin, vector-argmax
+- vector-member
+- vector-sort
+- vector-sort!
+
+* Hash Tables
+- (hash key val ... ...)
+- hash-set hash key v
+- hash-ref hash key
+- hash-has-key?
+- hash-update
+- hash-remove
+- hash-clear
+- hash-keys
+- hash-values
+- hash->list
+- =hash-keys-subset? hash1 hash2=: hash1 is a subset of hash2?
+- hash-count hash
+- hash-empty?
+- hash-union: require racket/hash
+
+* Sequence
+Sequence is designed to be used with =for=. Not only list and vectors
+are sequence, hash table is also sequence. Dictionary and set are also
+sequences. List can also be dictionary type.
+
+- sequence?
+Constructing sequences
+- in-range
+- in-naturals
+- in-list
+- in-vector
+- in-string
+- in-lines [in=(current-input-port)]
+- in-hash
+- in-hash-keys, in-hash-values, in-hash-pairs
+
+* Hash set (use racket/set)
+- set v ...: construct a hash set
+- list->set lst: construct from list
+- for/set
+- set-member?
+- set-add
+- set-remove
+- set-empty?
+- set-count
+- set-first
+- set-rest
+- set-copy
+- set-clear
+- set-union
+- set-intersect
+- set-subtract
+- set=?
+- subset? st1 st2: st1 is subset of st2?
+- proper-subset? st1 st2: strict subset
+- set->list
+- in-set
+
+
 
 * Trouble shooting
 
