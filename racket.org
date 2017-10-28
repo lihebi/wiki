@@ -238,6 +238,114 @@ specify which tests to run. There're text (=run-tests= in
 to select tests. Create a suite using =(test-suite name-expr test
 ...)=. The tests can be single check or a test case.
 
+
+* Control Structure
+- if
+- (cond [test-expr then-body ...+] ...)
+- (case val-expr [(datum ...) then-body ...+] ...): if val-expr
+  matches one of datum, execute the body
+- when
+- unless
+- (for ([id seq-expr] #:when guard-expr #:unless guard-expr) body)
+- for/list, for/vector, for/hash
+- for/and, for/or
+- for/sum, for/product
+- =for/first=, =for/last=
+- =for/fold=
+- =for*=: like for, but with implicit #:when #t between each
+  pair. Thus all clauses are nested. =for*= also has the form of
+  different return values.
+
+* String
+- make-string k [char]
+- string-length
+- string-ref
+- substring str start [end]
+- string-copy
+- string-append
+- string->list
+- list->string
+- string=?, string<?, ..
+- string-ci=?, ...
+- string-upcase, string-downcase, string-titlecase, string-foldcase
+  (normalize for different locale)
+
+With racket/string:
+- string-join
+- string-replace
+- string-split
+- string-trim
+- string-contains? s contained
+- string-prefix? s prefix
+- string-suffix? s suffix
+
+Byte string
+- make-bytes k [b]
+- bytes-length
+- bytes-ref
+- subbytes bstr start [end]
+- bytes-copy
+- bytes-append
+- bytes->list
+- list->bytes
+- bytes=?, ...
+- bytes->string/utf-8
+- bytes->string/locale
+- bytes->string/latin-1
+- string->bytes/utf-8
+- string->bytes/locale
+- string->bytes/latin-1
+
+* Regular Expression
+- #rx"xxx": regular expression
+- #px"xxx": perl regular expression
+
+Functions:
+- =regexp-quote=: generate a regular expression string that match the
+  string literally
+- =regexp-match= pattern input [start-pos end-pos]: find the pattern in
+  the input. and return a list containing the result (only one). If no
+  match, return #f. If has capture group, return the match and all
+  captured group.
+- =regexp-match*=: match multiple times, return list of
+  results. =#:match-select= accepts a procedure (defaults to
+  =car=). Examples: values (all), cadr
+- =regexp-match-position=: like =regexp-match=, but return list of number
+  pairs, each is a range of [start, end).
+- =regexp-match?=: return #t or #f
+- =regexp-match-exact?=: return #t only if entire content matches.
+
+- =regexp-split pattern input=: complement of =regexp-match*=
+- =regexp-replace pattern input insert=: replace the first
+  match. Match can be referenced by using =&= (whole match), =\0=
+  (whole match), =\n= captured.
+- =regexp-replace*=: replace all
+- =regexp-replaces input ([pat rep] ...)=: do =regexp-replace*= for
+  each replacement in order, chained. Which means latter can operate
+  on former.
+- =regexp-replace-quote=: produce string suitable to use as
+  replacement (unquoting =\= and =&=)
+
+Input port specific:
+- =regexp-try-match=: like =regexp-match=, but if the input is a port,
+  don't read the input on failure.
+- =regexp-match-peek=: do not read input ports on both failure and
+  success
+- =regexp-match-peek-positions=: return positions
+- =regexp-match-peek-immediate=: non-blocking on input port
+
+#+BEGIN_SRC racket
+(regexp-match #rx"x(.)" "12x4x6")
+;; '("x4" "4")
+(regexp-match* #rx"x(.)" "12x4x6" #:match-select var) ; default
+;; '("x4" "x6")
+(regexp-match* #rx"x(.)" "12x4x6" #:match-select values) ; all
+;; '(("x4" "4") ("x6" "6"))
+(regexp-match* #rx"x(.)" "12x4x6" #:match-select cadr)
+;; '("4" "6")
+#+END_SRC
+
+
 * Trouble shooting
 
 ** racket cannot find browsers
