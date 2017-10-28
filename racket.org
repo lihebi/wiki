@@ -478,6 +478,107 @@ Constructing sequences
 - in-set
 
 
+* structure
+- automatic fields: don't need to initialize, associated with the
+  type, same among all instances?
+- subtype will inherit fields, when initialize, initialize those
+  parent fields first
+- prefab means /previously fabricated/. Such structure types are
+  globally shared, and they can be print and read back.
+
+=struct id maybe-super (field ...) struct-option ...= is used to
+create (or use previous type if =#:prefab=) a structure type.
+Notable struct-options are =#:prefab=, =#:transparent=.
+
+The following procedures are created: id, id-field, id?
+
+* Multiple Values
+values produce multiple values value, to consume that, typically use
+=let-values=, =let*-values=, =define-values=. Also, binding forms that
+can destruct values can also be used.
+
+* Exception
+For now, I only care about how to handle exceptions. To do that:
+
+- call-with-exception-handler f thunk: (f ex)
+- with-handlers ([pred-expr handler-expr] ...) body ...+
+#+BEGIN_SRC racket
+  (with-handlers ([exn:fail:syntax?
+                   (λ (e) (displayln "got a syntax error"))]
+                  [exn:fail?
+                   (λ (e) (displayln "fallback clause"))])
+    (raise-syntax-error #f "a syntax error"))
+#+END_SRC
+
+Here's the hierarchy of built-in exceptions
+- exn
+  - exn:fail
+    - exn:fail:contract
+    - exn:fail:syntax
+    - exn:fail:read
+    - exn:fail:filesystem
+    - exn:fail:network
+    - exn:fail:out-of-memory
+    - exn:fail:unsupported
+    - exn:fail:user
+  - exn:break
+
+To raise an exception, you can use:
+- raise: too general, don't use for now
+- error: raise exn:fail
+- raise-user-error
+- raise-syntax-error
+
+* Concurrency
+Comparison
+- Thread: all the threads are running parallel, but they run on the
+  /same processor/.
+- Future: can utilize multiple processors
+
+Thread
+- thread thunk: create a thread to run, and return immediately with
+  thread descriptor. When thunk terminates, the thread
+  terminates. Threads are managed in current custodian.
+- thread?
+- current-thread
+- thread-suspend
+- thread-resume
+- kill-thread
+- break-thread
+- sleep [secs=0]: cause the current thread to sleep. 0 simply hint
+  other threads to execute (useful??).
+- thread-running?
+- thread-dead?
+- thread-wait thd: block until thd terminates
+- thread-send thd v
+- thread-receive: block until a v is ready
+- thread-try-receive: non-block version
+
+Future (racket/future)
+- future thunk: return the future. It will not run, until touch it.
+- touch f: blockingly run the future f, and return the result. After
+  touch returns, the results are still hold in the future. You can
+  touch it again and retrieve the same result. Then, how to run in
+  parallel? Create a thread to touch it??
+- current-future
+- future-enabled?
+- future?
+- processor-count
+- for/async (for-clause ...) body ...+
+
+Places can also use multiple cores. Place enables greater parallelism
+than future, because it creates a new racket VM, and include separate
+garbage collection. Thus the setup and communication cost is higher.
+Places can only communicate through place channels.
+
+* TODO IO
+* TODO OS
+** TODO File System
+** TODO Networking
+** TODO Processes
+** TODO CMD parsing
+** TODO ENV variable
+
 
 * Trouble shooting
 
