@@ -558,6 +558,21 @@ Thread
 - =thread-receive=: block until a v is ready
 - =thread-try-receive=: non-block version
 
+Parameters are procedures, which optionally accepts one argument. If
+no argument, get the value. Given the arguement, set the value. This
+is like a global variable, thus suitable for a command line option
+storage. The parameters are local to thread, and sub thread inherit
+parent ones, but not shared. This means setting the parameter will not
+affect the parameter in other thead (including parent thread).
+
+To make a parameter, simply:
+#+BEGIN_SRC racket
+(define aaa (make-parameter #f))
+(aaa) ; => #f
+(aaa 3)
+(aaa) ; => 3
+#+END_SRC
+
 Future (=racket/future=)
 - =future thunk=: return the future. It will not run, until touch it.
 - =touch f=: blockingly run the future f, and return the result. After
@@ -612,6 +627,12 @@ String IO
 
 
 * OS
+- =(getenv name)=
+- =(putenv name value)=
+
+In =racket/os=
+- =gethostname=
+- =getpid=
 ** Path
 - =string->path=
 - =path->string=
@@ -702,7 +723,7 @@ From =racket/file=:
     - ='directory=: create a directory(!!!) instead
   - directory: =#f=, means use default temporary path (=/var/tmp=)
 
-** TODO Networking
+** Networking
 I'm not going to dig deep on this because I don't use it. Just listing
 available functions. Needs require 
 
@@ -763,8 +784,80 @@ In =racket/system=:
   returned).
 - =process*/ports out in error-out cmd arg ...=
 
-** TODO CMD parsing
-** TODO ENV variable
+** CMD parsing (racket/cmdline)
+The =command-line= macro actually parse the command line. The
+=current-command-line-arguments= is actually a parameter that returns
+a vector of strings. It is the cmd args that used to run the racket
+program. Thus =command-line= consumes this value. But since it is a
+parameter, you can access it as many times as you want.
+
+All the arguments are actually keyword arguments, but they must appear
+in order, according to the grammar.
+#+BEGIN_EXAMPLE
+(command-line [name-expr] [argv-expr] flag-clause ... finish-clause)
+#+END_EXAMPLE
+
+The flag clauses can be:
+- =#:multi=: flags can appear multiple times
+- =#:once-each=: each flag can appear one time
+- =#:once-any=: one of the flag can appear
+- =#:final=: this is like =#:multi=, but no argument is treated as
+  flag any more after it (means they are all left over)
+
+Each of them will be followed by some =flag-sepcs=:
+#+BEGIN_EXAMPLE
+flag-spec ::= (flags id ... help-spec body ...+)
+flags ::= flag-string | (flag-string ...+)
+help-spec ::= string | (string-expr ...+)
+#+END_EXAMPLE
+
+Flags are equivalent, usually to supply =-x= and =--longer-x=. If
+=help-spec= is a list of strings, they are printed in separate lines.
+
+The =flag-clause= can also be some general printing service, followed
+by strings to print
+- =#:usage-help=: this is going to be printed right after the /usage/
+  of the command
+- =#:ps=: insert at the end of the help
+
+
+Finish clause just use =#:args arg-formals body ...+=. It is intended
+to handle left over arguments. arg-formals can be just a single ID, in
+which case it will be a list of left over arguments. It can also be a
+list, which indicates how many left over are expected. The body are
+executed and the value of last is returned as the result.
+
+A typical command line parser looks like this. It typically:
+- set parameters
+- print messages
+- return file lists
+
+#+BEGIN_SRC racket
+  (define verbose-mode (make-parameter #f))
+  (define profiling-on (make-parameter #f))
+  (define optimize-level (make-parameter 0))
+  (define link-flags (make-parameter null))
+
+  (define file-to-compile
+    (command-line
+     #:program "compiler"
+     #:once-each
+     [("-v" "--verbose") "Compile with verbose messages"
+                         (verbose-mode #t)]
+     [("-p" "--profile") "Compile with profiling"
+                         (profiling-on #t)]
+     #:once-any
+     [("-o" "--optimize-1") "Compile with optimization level 1"
+                            (optimize-level 1)]
+     [("--optimize-2") ("Compile with optimization level 2,"
+                        "which includes all of level 1")
+                       (optimize-level 2)]
+     #:multi
+     [("-l" "--link-flags") lf
+                            "Add a flag"
+                            (link-flags (cons lf (link-flags)))]
+     #:args (filename) filename))
+#+END_SRC
 
 
 * Trouble shooting
