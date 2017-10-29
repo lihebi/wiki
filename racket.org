@@ -571,8 +571,43 @@ than future, because it creates a new racket VM, and include separate
 garbage collection. Thus the setup and communication cost is higher.
 Places can only communicate through place channels.
 
-* TODO IO
-* TODO OS
+* IO
+
+- =eof=: global variable
+- =eof-object?=
+- =close-input-port=, =close-output-port=
+- =current-input-port=, =current-output-port=, =current-error-port=:
+  can be used to get/set the current
+- =flush-output out=: Input or output ports are both block-buffered by
+  default. Terminal output port is line-buffered. This function cause
+  the port to be flushed immediately
+
+File IO
+- =open-input-file path [#:mode flag]=: return an input port. mode can
+  be ='binary= or ='text=
+- =open-output-file path [#:mode flag #:exists flag]=: exist flag
+  includes
+  - error
+  - append
+  - replace: remove old file, create a new one
+- =open-input-output-file path [#:mode flag #:exists flag]=
+- =call-with-input-file path proc=: proc is =(input-port? . ->
+  . any)=. When proc returns, the port is closed.
+- =call-with-output-file path proc=
+- =with-input-from-file path thunk=: set =current-input-port= to
+  file. As it is similar to =call-with-input-file=, the port is closed
+  when thunk returns.
+- =with-output-to-file path thunk=
+
+String IO
+- =open-input-string str=: create a string port using str
+- =open-output-string=: create a output string port
+- =get-output-string out=: read from a output string port. This should
+  be used with the above method, specifically the out should be
+  =(and/c output-port? string-port?)=.
+
+
+* OS
 ** TODO File System
 ** TODO Networking
 ** TODO Processes
