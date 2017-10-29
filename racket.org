@@ -240,16 +240,16 @@ to select tests. Create a suite using =(test-suite name-expr test
 
 
 * Control Structure
-- if
-- (cond [test-expr then-body ...+] ...)
-- (case val-expr [(datum ...) then-body ...+] ...): if val-expr
+- =if=
+- =(cond [test-expr then-body ...+] ...)=
+- =(case val-expr [(datum ...) then-body ...+] ...)=: if val-expr
   matches one of datum, execute the body
-- when
-- unless
-- (for ([id seq-expr] #:when guard-expr #:unless guard-expr) body)
-- for/list, for/vector, for/hash
-- for/and, for/or
-- for/sum, for/product
+- =when=
+- =unless=
+- =(for ([id seq-expr] #:when guard-expr #:unless guard-expr) body)=
+- =for/list=, =for/vector=, =for/hash=
+- =for/and=, =for/or=
+- =for/sum=, =for/product=
 - =for/first=, =for/last=
 - =for/fold=
 - =for*=: like for, but with implicit #:when #t between each
@@ -257,48 +257,48 @@ to select tests. Create a suite using =(test-suite name-expr test
   different return values.
 
 * String
-- make-string k [char]
-- string-length
-- string-ref
-- substring str start [end]
-- string-copy
-- string-append
-- string->list
-- list->string
-- string=?, string<?, ..
-- string-ci=?, ...
-- string-upcase, string-downcase, string-titlecase, string-foldcase
-  (normalize for different locale)
+- =make-string k [char]=
+- =string-length=
+- =string-ref=
+- =substring str start [end]=
+- =string-copy=
+- =string-append=
+- =string->list=
+- =list->string=
+- ~string=?~, ~string<?~, ..
+- ~string-ci=?~, ...
+- =string-upcase=, =string-downcase=, =string-titlecase=,
+  =string-foldcase= (normalize for different locale)
 
-With racket/string:
-- string-join
-- string-replace
-- string-split
-- string-trim
-- string-contains? s contained
-- string-prefix? s prefix
-- string-suffix? s suffix
+With =racket/string=:
+- =string-join=
+- =string-replace=
+- =string-split=
+- =string-trim=
+- =string-contains?= s contained
+- =string-prefix?= s prefix
+- =string-suffix?= s suffix
 
 Byte string
-- make-bytes k [b]
-- bytes-length
-- bytes-ref
-- subbytes bstr start [end]
-- bytes-copy
-- bytes-append
-- bytes->list
-- list->bytes
-- bytes=?, ...
-- bytes->string/utf-8
-- bytes->string/locale
-- bytes->string/latin-1
-- string->bytes/utf-8
-- string->bytes/locale
-- string->bytes/latin-1
+- =make-bytes k [b]=
+- =bytes-length=
+- =bytes-ref=
+- =subbytes bstr start [end]=
+- =bytes-copy=
+- =bytes-append=
+- =bytes->list=
+- =list->bytes=
+- ~bytes=?~, ...
+- =bytes->string/utf-8=
+- =bytes->string/locale=
+- =bytes->string/latin-1=
+- =string->bytes/utf-8=
+- =string->bytes/locale=
+- =string->bytes/latin-1=
 
 * Regular Expression
-- #rx"xxx": regular expression
-- #px"xxx": perl regular expression
+- =#rx"xxx"=: regular expression
+- =#px"xxx"=: perl regular expression
 
 Functions:
 - =regexp-quote=: generate a regular expression string that match the
@@ -346,136 +346,136 @@ Input port specific:
 #+END_SRC
 
 * Pair, List, Vector
-- length
-- list-ref
-- list-tail
-- append
-- reverse
-- map, andmap, ormap
-- for-each
-- foldl, foldr
-- filter
-- remove
-- sort
-- member, memf (using function): if found, return the tail list
+- =length=
+- =list-ref=
+- =list-tail=
+- =append=
+- =reverse=
+- =map=, =andmap=, =ormap=
+- =for-each=
+- =foldl=, =foldr=
+- =filter=
+- =remove=
+- =sort=
+- =member=, =memf= (using function): if found, return the tail list
   starting from the match
-- findf: like memf, but return just the matched element.
-- assoc v lst: the first element of lst whose car equal to
+- =findf=: like memf, but return just the matched element.
+- =assoc v lst=: the first element of lst whose car equal to
   v. E.g. =(assoc 1 '((1 2) (3 4)))= returns ='(1 2)=
 
-from racket/list
-- empty?
-- first
-- rest
-- second
-- last
-- list-update lst pos updater: the pos index is updated with =(updater
-  (list-ref lst pos))=
-- list-set lst pos value
+from =racket/list=
+- =empty?=
+- =first=
+- =rest=
+- =second=
+- =last=
+- =list-update= lst pos updater: the pos index is updated with
+  =(updater (list-ref lst pos))=
+- =list-set lst pos value=
 - =index-of lst v=: return the index of the first v
 - =index-where lst proc=: use function
 - =indexes-of=, =indexes-where=: return all matches
 - =take lst pos=: take only the first pos elements
 - =drop lst pos=: same as list-tail
 - =split-at lst pos=: same as =(values (take lst pos) (drop lst pos))=
-- takef, dropf, splitf-at: take all the elements satisfying the
+- =takef=, =dropf=, =splitf-at=: take all the elements satisfying the
   function.
-- take-right, drop-right, split-at-right, and their f-version
-- list-prefix? l r: whether l is prefix of r
-- take-common-prefix l r
-- drop-common-prefix l r
-- split-common-prefix l r
-- flatten v
-- check-duplicates lst
-- remove-duplicates lst
-- range end: [0,end)
-- range start end [step=1]
-- shuffle lst
-- combinations lst [size]: if size is given, return only combination
+- =take-right=, =drop-right=, =split-at-right=, and their f-version
+- =list-prefix? l r=: whether l is prefix of r
+- =take-common-prefix l r=
+- =drop-common-prefix l r=
+- =split-common-prefix l r=
+- =flatten v=
+- =check-duplicates lst=
+- =remove-duplicates lst=
+- =range end=: [0,end)
+- =range start end [step=1]=
+- =shuffle lst=
+- =combinations lst [size]=: if size is given, return only combination
   of length size.
-- permutations lst
+- =permutations lst=
 - =argmin proc lst=: return the first elemnt in lst that minimize
   =(proc elem)=
-- argmax
+- =argmax=
 
 Vectors
-- vector-length
-- vector-ref
-- vector-set!: it makes sense to set a vector, because it takes
+- =vector-length=
+- =vector-ref=
+- =vector-set!=: it makes sense to set a vector, because it takes
   constant time to access and update
-- vector->list
-- list->vector
-- vector-fill! vec v
-- vector-copy! dst dst-start src [src-start] [src-end]
+- =vector->list=
+- =list->vector=
+- =vector-fill! vec v=
+- =vector-copy! dst dst-start src [src-start] [src-end]=
 
-From racket/vector:
-- vector-map
-- vector-append
-- vector-take, vector-drop
-- vector-take-right, vector-drop-right
-- vector-split-at, vector-split-at-right
-- vector-copy
-- vector-filter
-- vector-filter-not
-- vector-count proc vec
-- vector-argmin, vector-argmax
-- vector-member
-- vector-sort
-- vector-sort!
+From =racket/vector=:
+- =vector-map=
+- =vector-append=
+- =vector-take=, =vector-drop=
+- =vector-take-right=, =vector-drop-right=
+- =vector-split-at=, =vector-split-at-right=
+- =vector-copy=
+- =vector-filter=
+- =vector-filter-not=
+- =vector-count proc vec=
+- =vector-argmin=, =vector-argmax=
+- =vector-member=
+- =vector-sort=
+- =vector-sort!=
 
 * Hash Tables
-- (hash key val ... ...)
-- hash-set hash key v
-- hash-ref hash key
-- hash-has-key?
-- hash-update
-- hash-remove
-- hash-clear
-- hash-keys
-- hash-values
-- hash->list
+- =(hash key val ... ...)=
+- =hash-set hash key v=
+- =hash-ref hash key=
+- =hash-has-key?=
+- =hash-update=
+- =hash-remove=
+- =hash-clear=
+- =hash-keys=
+- =hash-values=
+- =hash->list=
 - =hash-keys-subset? hash1 hash2=: hash1 is a subset of hash2?
-- hash-count hash
-- hash-empty?
-- hash-union: require racket/hash
+- =hash-count hash=
+- =hash-empty?=
+- =hash-union=: require =racket/hash=
 
 * Sequence
 Sequence is designed to be used with =for=. Not only list and vectors
 are sequence, hash table is also sequence. Dictionary and set are also
 sequences. List can also be dictionary type.
 
-- sequence?
+- =sequence?=
 Constructing sequences
-- in-range
-- in-naturals
-- in-list
-- in-vector
-- in-string
-- in-lines [in=(current-input-port)]
-- in-hash
-- in-hash-keys, in-hash-values, in-hash-pairs
+- =in-range=
+- =in-naturals=
+- =in-list=
+- =in-vector=
+- =in-string=
+- ~in-lines [in=(current-input-port)]~
+- =in-hash=
+- =in-hash-keys=, =in-hash-values=, =in-hash-pairs=
 
 * Hash set (use racket/set)
-- set v ...: construct a hash set
-- list->set lst: construct from list
-- for/set
-- set-member?
-- set-add
-- set-remove
-- set-empty?
-- set-count
-- set-first
-- set-rest
-- set-copy
-- set-clear
-- set-union
-- set-intersect
-- set-subtract
-- set=?
-- subset? st1 st2: st1 is subset of st2?
-- proper-subset? st1 st2: strict subset
-- set->list
-- in-set
+- =set v ...=: construct a hash set
+- =list->set lst=: construct from list
+- =for/set=
+- =set-member?=
+- =set-add=
+- =set-remove=
+- =set-empty?=
+- =set-count=
+- =set-first=
+- =set-rest=
+- =set-copy=
+- =set-clear=
+- =set-union=
+- =set-intersect=
+- =set-subtract=
+- ~set=?~
+- =subset? st1 st2=: st1 is subset of st2?
+- ~proper-subset? st1 st2~: strict subset
+- =set->list=
+- =in-set=
 
 
 * structure
@@ -524,10 +524,10 @@ Here's the hierarchy of built-in exceptions
   - exn:break
 
 To raise an exception, you can use:
-- raise: too general, don't use for now
-- error: raise exn:fail
-- raise-user-error
-- raise-syntax-error
+- =raise=: too general, don't use for now
+- =error=: raise exn:fail
+- =raise-user-error=
+- =raise-syntax-error=
 
 * Concurrency
 Comparison
@@ -536,35 +536,35 @@ Comparison
 - Future: can utilize multiple processors
 
 Thread
-- thread thunk: create a thread to run, and return immediately with
+- =thread thunk=: create a thread to run, and return immediately with
   thread descriptor. When thunk terminates, the thread
   terminates. Threads are managed in current custodian.
-- thread?
-- current-thread
-- thread-suspend
-- thread-resume
-- kill-thread
-- break-thread
-- sleep [secs=0]: cause the current thread to sleep. 0 simply hint
+- =thread?=
+- =current-thread=
+- =thread-suspend=
+- =thread-resume=
+- =kill-thread=
+- =break-thread=
+- ~sleep [secs=0]~: cause the current thread to sleep. 0 simply hint
   other threads to execute (useful??).
-- thread-running?
-- thread-dead?
-- thread-wait thd: block until thd terminates
-- thread-send thd v
-- thread-receive: block until a v is ready
-- thread-try-receive: non-block version
+- =thread-running?=
+- =thread-dead?=
+- =thread-wait thd=: block until thd terminates
+- =thread-send thd v=
+- =thread-receive=: block until a v is ready
+- =thread-try-receive=: non-block version
 
-Future (racket/future)
-- future thunk: return the future. It will not run, until touch it.
-- touch f: blockingly run the future f, and return the result. After
+Future (=racket/future=)
+- =future thunk=: return the future. It will not run, until touch it.
+- =touch f=: blockingly run the future f, and return the result. After
   touch returns, the results are still hold in the future. You can
   touch it again and retrieve the same result. Then, how to run in
   parallel? Create a thread to touch it??
-- current-future
-- future-enabled?
-- future?
-- processor-count
-- for/async (for-clause ...) body ...+
+- =current-future=
+- =future-enabled?=
+- =future?=
+- =processor-count=
+- =for/async (for-clause ...) body ...+=
 
 Places can also use multiple cores. Place enables greater parallelism
 than future, because it creates a new racket VM, and include separate
