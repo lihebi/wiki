@@ -703,7 +703,66 @@ From =racket/file=:
   - directory: =#f=, means use default temporary path (=/var/tmp=)
 
 ** TODO Networking
-** TODO Processes
+I'm not going to dig deep on this because I don't use it. Just listing
+available functions. Needs require 
+
+TCP (=racket/tcp=)
+- =tcp-listen port-no=: return =tcp-listener?=
+- =tcp-connect hostname port-no=: return =input-port?= =output-port?=
+- =tcp-accept listener=: return =input-port?= =output-port?=
+- =tcp-close listener=
+
+UDP (=racket/udp=)
+- =udp-open-socket=
+- =udp-bind! udp-socket hostname-string port-no=
+- =udp-connect! udp-socket hostname-string port-no=
+- =udp-send-to udp-socket hostname port-no bstr=
+- =udp-send udp-socket bstr=
+- =udp-receive! udp-socket bstr=
+- =udp-send-to*=, =udp-send*=, =udp-receive!*=: non-block
+- udp-close udp-socket
+
+** Processes
+- =subprocess stdout stdin stderr cmd arg ...=
+  - the command runs ASYNC, it seems that it will run immediately
+  - If provided a port, it will use that. Otherwise (provide =#f=), it
+    will create one, and get returned. The return value is exactly the
+    same: =subprocess? port? port? port? path-string? string?=. =#f=
+    means no, no matter as parameter or return value.
+  - stderr can be ='stdout=, in which case the corresponding return
+    value will be =#f=
+  - All ports returned must be closed manually
+  - since the ports have capacity, it is possible to have deadlock
+- =subprocess-wait=: block until subprocess terminate
+- =subprocess-status=: returns either ='running= or the exit code
+- =subprocess-kill=
+- =subprocess-pid=
+
+In =racket/system=:
+- =system cmd=: execute cmd *through shell command*
+  SYNChronously. Return #t for success, #f for fail
+- =system* cmd arg ...=: differ in:
+  - execute directly instead of through shell command
+  - obviously arguments are provided as arguments instead of in string
+- =system/exit-code cmd=: same as =system=, but the return is exit
+  code
+- =system*/exit-code cmd arg ...=
+- =process cmd=: run ASYNC, through a shell, return (input port,
+  output port, PID, stderr, proc). All ports must be closed
+  manually. The procedure =proc= can accept one argument, and is used
+  to interact with the process. The argument can be:
+  - ='status=: return one of ='running=, ='done-ok=, ='done-error=
+  - ='exit-code=
+  - ='wait=: block until terminate
+  - ='interrupt=: send SIGINT
+  - ='kill=
+- =process* cmd arg ...=: like the difference of =system*= with
+  =system=
+- =process/ports out in error-out cmd=: You can provide the ports (the
+  return will be =#f=), or provide =#f= (the ports are created and
+  returned).
+- =process*/ports out in error-out cmd arg ...=
+
 ** TODO CMD parsing
 ** TODO ENV variable
 
