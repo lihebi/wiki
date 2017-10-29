@@ -8,7 +8,6 @@ http://www.greghendershott.com/2015/07/keyword-structs-revisited.html
                              symbol->string
                              syntax->datum)))
 #+END_SRC
-* TODO Haskell
 
 * Pattern Matching (racket/match)
 The syntax:
