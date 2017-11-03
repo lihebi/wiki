@@ -1,5 +1,7 @@
 #+TITLE: Emacs
 
+A separate page for [[file:gnus.org][Gnus]].
+
 * buffer
   - =list-face-displays=
   - =fill-region=

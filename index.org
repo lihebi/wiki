@@ -1,73 +1,81 @@
 #+TITLE: Hebi's Personal Wiki
+#+OPTIONS: toc:nil
 
-- [[file:proceedings.org][proceedings]]
-
-A human needs to learn so so many things through his life. He can
-master something at some period of time, but never think he can be
-expert after a month not touching it. What happen next is looking into
-various of manuals to get the memory back. The memory does help, but
-not that much if the manual is not written in a uniform format. That's
-the rational to create this page: a consistent format for all manuals.
-
-Of course most of the material in this wiki are for programming
-related because I'm not aware of some area having more various of
-reference manuals than the area of computer science.
-
-I'm talking about references, or manuals, not tutorials. At some point
-when you get more comfortable at programing, tutorial should be some
-easy-and-fun reading material rather than what you want to read in
-your morning time.
+#+BEGIN_QUOTE
+the palest ink is better than the best memory.
+#+END_QUOTE
+It makes no sense to go through the long research again when I forget
+something, so I created this wiki.
 
 The structure of the wiki is basically one page per topic, except some
-large ones having sub-topics, like C family and the standard and
-non-standard libraries. The index of the pages is on this page
-only. It should contain entries to all the pages.
+large ones having sub-topics. The index of the pages is on this page
+only. It should contain entries to all pages.
 
-If you don't like my style of writing, and you like the idea, you are
-always encouraged to create your own wiki. Head to
-https://github.com/lihebi/wiki for the source files for this site if
-you are interested.
+* The Workbench
+#+BEGIN_QUOTE
+Sharpening your axe will not delay your job of cutting wood.
+#+END_QUOTE
 
------
-* Get everything organized
-Get a [[file:linux.org][Linux]] distribution and enjoy the freedom and productivity after
-a deep learning curve. My distribution path come along Ubuntu,
-[[file:archlinux.org][ArchLinux]], gentoo, [[file:centos.org][CentOS]], [[file:debian.org][Debian]], then finally back to [[file:archlinux.org][ArchLinux]].  I
-used debian for a long time and there's a page for [[file:debian-setup.org][setup]] of it.  I
-installed linux for hundreds of times, if not thousands. [[file:liveusb.org][Live USB]].
-Some terms related: [[file:posix.org][POSIX]] and [[file:samba.org][samba]].  I use [[file:stumpwm.org][StumpWM]] as my [[file:x11.org][X11]] window
-manager.  [[file:tmux.org][Tmux]] for session manage. [[file:conkeror.org][conkeror]] used to be my default
-browser but I go back to chromium because the performance.  [[file:docker.org][docker]] is
-fantastic in that I can create a machine to play with very cheaply.
+It's ok to have something "just work", but it would be a sad story if
+it is something you extensively use. It might be because you are not
+aware of a better way, i.e. a recognitive issue. Paul Graham had a
+/Blub Paradox/ [fn:above-the-average] about that.
 
-There're well-known discussion for what's the best editor to use. Vim
-is good, and I used it for roughly 4 years when I'm in undergraduate
-study. But I'll never recommand it after switching to [[file:emacs.org][Emacs]]. Yes,
-Emacs is a full-fledged opearting system. Emacs is a much better
-choice thanks a lot to the [[file:elisp.org][Emacs Lisp]] language. There're tons of [[file:emacs-plugins.org][Emacs
-Plugins]] out there, and it is very easy and comfortable to extend the
-editor by my own writing some lisp. The elisp is tightly bounded with
-emacs editor functionalities, so there's a dedicated page for th [[file:elisp-emacs.org][Emacs
-Part of Elisp]].  Although elisp is a good start point of [[file:lisp.org][lisp]], it is
-not general purpose, and can only run inside emacs. Another lisp
-flavor, [[file:common-lisp.org][Common Lisp]] is more serious and practical lisp, the StumpWM is
-written in it.  [[file:clojure.org][Clojure]] arise recently and the authors are advertising
-it a lot. Many big player reside inside emacs, like the new reader
-[[file:gnus.org][Gnus]]. Currently my favorite is [[file:racket.org][racket]].
 
-[[file:haskell.org][Haskell]] seems to be another very interesting typed functional
-language, but I prefer the lisp grammar and metaprogramming.
 
-* Programming
-A project typically contains three parts: the main program and a bunch
-of scripts to automate things, as well as documentation. For a
-project, I use C family.  C family is the most fundamental
-language. Almost all the new and fancy languages are written in C
-family. So, never think they can have better performance than C. The
-legacy [[file:c.org][C]] is small and elegent. It is a good /start point/ if you want
-to learn serious compilers. C comes with [[file:c-lib.org][C standard library]]. C is
-tightly related to Unix features, for example [[file:signal.org][Signal Handling]] for
-C. [[file:cpp.org][C++]] is the language that achieve a good balance between performance
+
+Although I would definitely go for it if the lisp machines are still
+available, a [[file:linux.org][Linux]] distribution also gets the job done. Since it is a
+/workbench/, you might want to consider [[file:archlinux.org][ArchLinux]] because of the
+rolling release. In my mind, all other distributions are for specific
+purpose, like servers [[file:centos.org][CentOS]], [[file:debian.org][Debian]] due that they are "stable"
+because they care so much about backward compatible. Gentoo is cool
+(a.k.a. zhuang X) but pretty painful to use, I still remember the days
+when it takes hours for me to update chromium on an old pentium.  
+
+The [[file:posix.org][POSIX]] standard is what makes linux and all versions of unix feel
+at home.  [[file:docker.org][docker]] is a machine to play with very cheaply.  
+
+For software, I use [[file:stumpwm.org][StumpWM]] as my [[file:x11.org][X11]] window manager because it is the
+tiling one written in lisp. When connecting to remote server, use [[file:tmux.org][Tmux]]
+for session management. [[file:conkeror.org][conkeror]] used to be my default browser but I go
+back to chromium because the performance. I still hope to see (or
+make) a better emacs-integrated browser.
+
+There seems to be less than 1% developers are using [[file:emacs.org][Emacs]]. Well, this
+is good, we want to way way way above the
+average [fn:above-the-average]. There're tons of [[file:emacs-plugins.org][Emacs Plugins]] out
+there thanks to the power of lisp. To properly use emacs, refer to the
+page [[file:elisp.org][Emacs Lisp]] and a dedicated page for th [[file:elisp-emacs.org][Emacs Part of Elisp]].
+
+* Language
+
+If the workbench is something we work on, the language is the tool we
+are using. There is probably also less than 1% developers are using
+[[file:lisp.org][lisp]], well, the history from computing is only just more than half a
+century, there are plenty of time for people to realize they made a
+big mistake to deviate from the lost wisdom. The main lisp dialects
+are [[file:common-lisp.org][Common Lisp]] and scheme ([[file:racket.org][racket]] is my fav).  [[file:clojure.org][Clojure]] is based on
+JVM and the authors are advertising it a lot.
+
+
+[[file:haskell.org][Haskell]] completes the part of a properly typed language.
+
+It is beneficial for a 3rd langauge to be low level.  The legacy [[file:c.org][C]] is
+small and elegent. It is a good /start point/ if you want to learn
+serious compilers. C comes with [[file:c-lib.org][C standard library]]. C is tightly
+related to Unix features, for example [[file:signal.org][Signal Handling]] for C.
+
+Some newer languages can be interesting, but I haven't got time to
+look into yet. Of course there are tons of new languages coming up,
+most of which is reinventing some small (and not so important) part of
+lisp. Those will not be documented for sure.  For system programming,
+a recent alternative to C is [[file:rust.org][Rust]].
+
+*That's it*, stop from here! That's all language you need. The following
+contents are just for a reference of old writings.
+
+[[file:cpp.org][C++]] is the language that achieve a good balance between performance
 and morden features. It even continues to offer many fancy
 features. C++ has a lot of libraries.  [[file:stl.org][Standard Template Library(STL)]]
 defines containers and its algorithms.  The most functionalities not
@@ -75,24 +83,7 @@ specified in the standard librareis can often be found in [[file:boost.org][Boos
 [[file:cpp-lib.org][3rd-party C++ Libraries]] that is small enough to put into one page.
 [[file:pugixml.org][Pugixml]] is Data processing libraries for xml.  Use [[file:google-test.org][Google Test]] for
 unit testing.  Debugging using [[file:gdb.org][GDB]], of course. Here are some [[file:c-debug.org][C
-debugging techniques]]. [[file:unix.org][Unix Programming]] Interface. For system
-programming, a recent alternative to C is [[file:rust.org][Rust]].
-
-The area of [[file:compiler.org][compiler]] is interesting and pretty hard.  Some misc staff
-for real-world [[file:compiler-impl.org][compiler implementation]].  [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]] makes
-the ecosystem of compilation.  Profiling of you code by [[file:gcov.org][gcov]],
-[[file:gprof.org][gprof]]. When building compiler tools for [[file:program-analysis.org][Program Analysis]], [[file:llvm.org][LLVM]] and
-[[file:clang.org][Clang]] toolchain can make it pretty easy.
-
-Faminilar with [[file:design-pattern.org][Design Pattern]] when coding, and this can be learned
-best by doing refactoring. 
-# BTW refactoring is /THE/ most important
-# thing to do no matter whatever the project is, even academic
-# projects. If you can rewrite the sentence 10 times in your academic
-# paper (I do this too), why you don't give the same priority to your
-# code? Those who says refactoring is not important may simply because
-# they have never written serious code to be useful or big enough to
-# require a refactoring. In other word, TOY programs.
+debugging techniques]]. [[file:unix.org][Unix Programming]] Interface. 
 
 Scripting. [[file:./shell.org][shell]] concept and all [[file:shell-utils.org][shell utilities]] is
 specified in POSIX standard.  [[file:awk.org][awk]] and [[file:sed.org][sed]] can make really elegent
@@ -103,19 +94,29 @@ found [[file:python.org][python]] now is pretty easy to use thanks to the pretty
 I'm stronly against using the stupid indent as part of syntax.  [[file:r.org][R]] is
 very good at processing data, runs natively inside emacs.
 
+* Architecture
+This section contains computer architecture (TODO), compiler
+infrustructure, as well as programming paradigms and design patterns.
+
+The area of [[file:compiler.org][compiler]] is interesting and pretty hard.  Some misc staff
+for real-world [[file:compiler-impl.org][compiler implementation]].  [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]] makes
+the ecosystem of compilation.  Profiling of you code by [[file:gcov.org][gcov]],
+[[file:gprof.org][gprof]]. When building compiler tools for [[file:program-analysis.org][Program Analysis]], [[file:llvm.org][LLVM]] and
+[[file:clang.org][Clang]] toolchain can make it pretty easy.
+
+Faminilar with [[file:design-pattern.org][Design Pattern]] when coding, and this can be learned
+best by doing refactoring. 
+
 * Writing
-The 3rd part, Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide
-the ultimate way to create academic figures.  [[file:markdown.org][markdown]] is not
-recommanded from me. Instead I use [[file:org.org][Org Mode]] extensively.  [[file:doxygen.org][Doxygen]]
-generates good documents and [[file:uml.org][UML]] figures using [[file:dot.org][Graphviz/Dot]].
+Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide the ultimate
+way to create academic figures.  [[file:markdown.org][markdown]] is not recommanded from
+me. Instead I use [[file:org.org][Org Mode]] extensively.  [[file:doxygen.org][Doxygen]] generates good
+documents and [[file:uml.org][UML]] figures using [[file:dot.org][Graphviz/Dot]].
 
 * Misc
-I got some of the notes from computation theory class.  [[file:math/511/np.org][NP]], [[file:math/511/np-problems.org][NP
-problems]], [[file:math/531/NPC.org][NPC]], [[file:math/511/approximation.org][Approximation]], [[file:math/511/lp.org][Linear Programming]], [[file:math/531/tm.org][Turing Machine]],
-[[file:math/531/decidability.org][Decidability]]. And some from AI class too: [[file:search-alg.org][Search algorithm]], [[file:name-alg.org][Name
-Algorithm]], [[file:machine-learning.org][Machine Learning]], [[file:ai.org][Artificial Intelligence]]
+Apart from building software, I also enjoy making hardware, including
+working on my [[file:miata.org][Miata]] and making some [[file:wood.org][wood]] stuff.
 
-I do some [[file:leetcode.org][Leetcode]] ocationally to keep a sense of fast implementation
-of algorithm, but not much. Some related posts [[file:alg-string.org][String algorithms]],
-[[file:palindrome.org][Palindrome]], [[file:data-structure.org][data structure]], [[file:data-structure-old.org][old data structure page]], [[file:oj.org][algorithm in
-practice]].
+
+
+[fn:above-the-average] http://www.paulgraham.com/avg.html

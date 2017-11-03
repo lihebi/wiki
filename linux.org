@@ -1,5 +1,7 @@
 #+TITLE: Linux
 
+There's a separate page for some [[file:liveusb.org][Installation]] related issues.
+A page about [[file:samba.org][samba]].
 
 One of the most wired error I had (multiple times) is that,
 my dist is full.

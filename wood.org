@@ -1,0 +1,84 @@
+#+TITLE: Wood Working
+
+* Sanding
+The higher the number, the finer the paper.
+
+
+| number | stock |
+|--------+-------|
+|    220 |   20% |
+|     80 |   30% |
+|    120 |   50% |
+
+* Glue
+Glue can be stronger than the wood itself.
+
+- Yellow wood glue: titebond II
+
+Use a silicon brash or finger, credit card to spread it on the surface.
+
+Plamping the two wood evenly.
+
+The glue dries in 24 hours to reach its maximum strength. But you just
+need to wait for an hour to continue your projects.
+
+* Finish
+
+** Before finish
+Sand it using a 220 sandpaper, remove all dust and swipe with Klean
+Strip.
+
+Always finish in one direction.
+
+** Layered finish
+Stack on top of wood. Provide more protection.
+
+*** Polyurethane
+- the most popular
+- Time consuming to apply (at least 3 coat)
+- between each coast, use 320 sandpaper
+
+- water based poly
+  - easy to apply, 3 coasts
+- oil based poly
+  - usually 4 or more coasts
+  - looks better
+- wipe on poly
+  - can go back and force
+*** Lacquer
+- dry very fast
+- brushing lacquer
+  - do a little faster, and definitely not brushing back
+  - no need to sand between coats (but can lightly sand it before the
+    final coat)
+
+** Oil Finish
+Into the wood. Looks more natural.
+Easy to apply: just wipe on the coat.
+
+*** Linseed Oil
+- just need 2 coat
+*** Tung Oil
+- 5 coats
+*** Danish Oil (blend)
+
+* Saw
+** table saw
+** miter saw
+** jigsaw
+
+
+* Standing Desk
+- 3/4 in dia
+- 4 x 30in = 37.12
+- 2 x 18 in = 11.94
+- 2 x 12 in = 13.46
+- 4 x 6 in = 11.32
+- 3 x 3 1/2 in = 5.94
+- 4 caps = 7.92
+- 6 tee = 20.88
+- 2 couplings
+- 4 floor flengers = 21.88
+- 16 number 10 1in wood screws = 5.24
+- MINWAX wood finish stain JACOBEAN 2750 = 4.77
+- MINWAX POLYURETHANE = 6.48

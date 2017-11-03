@@ -186,7 +186,7 @@ or equivalent (e.g. Dexron II), bleed the fluid line.
   - from the reservoir, pump out old fluid as much as I can
   - add new ones
   - do air bleeding
-* Glosory
+* Glossary
 - gasket: 垫圈
 - bolt: 螺栓
 - nut: 螺母

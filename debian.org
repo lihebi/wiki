@@ -1,5 +1,7 @@
 #+TITLE: Debian
 
+A seperate [[file:debian-setup.org][setup]] page.
+
 * Power management
 - sudo journalctl | less
 - /etc/systemd/logind.conf
