@@ -16,25 +16,23 @@ only. It should contain entries to all pages.
 Sharpening your axe will not delay your job of cutting wood.
 #+END_QUOTE
 
-It's ok to have something "just work", but it would be a sad story if
+It's ok to have something "just works", but it would be a sad story if
 it is something you extensively use. It might be because you are not
-aware of a better way, i.e. a recognitive issue. Paul Graham had a
-/Blub Paradox/ [fn:above-the-average] about that.
-
-
-
+aware of a better way, i.e. a cognition issue. Paul Graham had a /Blub
+Paradox/ [fn:above-the-average] about that.
 
 Although I would definitely go for it if the lisp machines are still
 available, a [[file:linux.org][Linux]] distribution also gets the job done. Since it is a
 /workbench/, you might want to consider [[file:archlinux.org][ArchLinux]] because of the
 rolling release. In my mind, all other distributions are for specific
 purpose, like servers [[file:centos.org][CentOS]], [[file:debian.org][Debian]] due that they are "stable"
-because they care so much about backward compatible. Gentoo is cool
-(a.k.a. zhuang X) but pretty painful to use, I still remember the days
-when it takes hours for me to update chromium on an old pentium.  
+because they care so much about backward compatibility. Gentoo is cool
+(a.k.a. /zhuang X/) but pretty painful to use, I still remember the
+days when it took hours for me to update chromium on an old pentium
+platform.
 
 The [[file:posix.org][POSIX]] standard is what makes linux and all versions of unix feel
-at home.  [[file:docker.org][docker]] is a machine to play with very cheaply.  
+at home.  [[file:docker.org][docker]] creates machines to play with very cheaply.  
 
 For software, I use [[file:stumpwm.org][StumpWM]] as my [[file:x11.org][X11]] window manager because it is the
 tiling one written in lisp. When connecting to remote server, use [[file:tmux.org][Tmux]]
