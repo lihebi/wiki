@@ -113,6 +113,11 @@ When downloading a playlist, you can make the template to number the files
 youtube-dl -o "%(playlist_index)s-%(title)s.%(ext)s" <playlist_link>
 #+END_EXAMPLE
 
+Download music only:
+#+BEGIN_EXAMPLE
+youtube-dl --extract-audio --audio-format flac <url>
+#+END_EXAMPLE
+
 ** VNC
 I use tigervnc because it seems to be fast.
 
