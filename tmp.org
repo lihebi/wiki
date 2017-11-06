@@ -1,5 +1,25 @@
 #+TITLE: A tmp
 
+* Marshalling vs Serialization
+Both of them convert an object to a data format suitable to read
+back. Serialization is a /subset/ of marshalling, i.e. any
+serializable object is also marshallable. Marshalling also records the
+code base, e.g. when reading back, the class definition of the object
+might need to be loaded.
+
+Marshalling seems to be used often in remote servers.
+
+* Map Reduce
+map and reduce are from functional programming. Map is just map,
+reduce has another familiar name called /fold/.
+
+The Map-reduce framework does not just borrow the name. Its
+contribution is scalability and fault-tolerance.
+
+The steps:
+1. map: produce data by filtering, and emit the data (marshalling)
+2. reduce: fold
+
 * Similarity metrics
 ** Token based
 *** Jaccard coefficient/index
