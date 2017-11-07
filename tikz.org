@@ -227,7 +227,7 @@ Here are a list of all operations:
   is weired.
 - let operation: seems to bind variable to coordinates.
 - scoping operation: ={}=
-- node and edge operation
+- node and edge operation (Separate)
 - graph operation
 - pic operation
 
@@ -310,26 +310,203 @@ the full spec):
 ** TODO Bending and flexing
 ** TODO arrow tips
 
-* Special Syntax
-** Node
+* Node
 Nodes are intend for putting text. Everytime a node command is fired,
 it is inserted at the /current point/. A node has a shape, drawing a
 node means draw the shape.
 
-Predefined shape:
+Predefined shape (TODO other shapes from libraries):
 - rectangle
 - circle
 - ellipse
 
 A node can have a name for future reference. It is given by
 ~name=<name>~ option, or by =node(name){text}=.
-** Tree
-The node syntax can also be used to draw a tree. A node can be
-followed by any number of children, each introduced by keyword
-=child=. The children are also nodes, thus they can have children
-using the same syntax. Trees have a set of options (TODO).
 
-** Graph
+A node is created by a path operation, similar to other path
+operations, but node is not part of the path itself.
+
+The full syntax of the node:
+#+BEGIN_EXAMPLE
+node <foreach> [<options>] (<name>) at (<coordinate>) {<content>}
+#+END_EXAMPLE
+
+Everything between node and ={}= is optional, and the order does not
+matter except foreach. The node will be put at the current point,
+unless =at= presents.
+
+** Options
+Options are only applied to the node itself, possible options are:
+- draw
+- fill
+- shape=rectangle, circle, ellipse
+- behind path
+- in front of path
+- inner sep
+  - inner xsep
+  - inner ysep
+- outer sep
+  - outer xsep
+  - outer ysep
+- minimum size
+  - minimum height
+  - minimum width
+** Foreach
+Foreach works like this: the following create three nodes.  You can
+also nest the loops.
+#+BEGIN_EXAMPLE
+\tikz \draw (0,0) node foreach \x in {1,2,3} at (\x,0) {\x};
+\tikz \draw (0,0) node foreach \x in {1,2,3} foreach \y in {1,2,3} at (\x,0) {\x};
+#+END_EXAMPLE
+
+** Style
+The style hooks are =every node= and =every circle node=, =every
+rectangle node=, etc.
+
+The scope will not influence the lexical scope of the node names. Thus
+we can use another option =name prefix= and =name suffix= so that
+every node names inside the scope will be renamed under the hood.
+
+** TODO Multi-part node
+** Node Text
+Options
+- text=<color>
+- node font=<font command>
+- font=<font command>: font command can be =\small=, etc.
+- align: set the alignment. This also enables multiple line text.
+  - left
+  - flush left (use hyphen to break words)
+  - right
+  - flush right
+  - center
+  - flush center
+  - justify (use variable spacing)
+  - none
+- text width
+- text height
+- text depth: seems useless
+
+** Node Positioning
+It uses anchor. The default is the center of the node. Possible anchors
+- north east south west
+- base, center
+
+This is good enough, but the author thinks it is not intuitive enough,
+thus he came up with some suger:
+- above, below, left, right
+- centered
+
+*** TODO positioning
+For more advanced placement, there's a library called
+=positioning=. This package actually redefines the above, etc, thus
+loading this package will make the program behaves differently. The
+detail seems to be interesting.
+
+** Fitting
+This fits the scenario that you want a box that is just big enough to
+hold something. You need to load the =fit= library.
+
+You create a node, give fit as an option with the value of several
+nodes.
+#+BEGIN_EXAMPLE
+\node[fit=(a) (b) (c)]
+#+END_EXAMPLE
+
+*** TODO how to get several boxes to hold several things, but those boxes are of same size and aligned?
+** Place on a line
+These continue the node options
+- pos=<fraction>
+  - midway: same as pos=0.5
+  - near start 0.25
+  - near end 0.75
+  - very near start 0.125
+  - very near end 0.875
+  - at start 0
+  - at end 1
+- auto=<direction>: left, right
+- swap: swap left and right. The short alias is ='=
+- sloped: the text will be aligned with the line or on the tangent to
+  the curve
+
+** Label & Pin
+This is used to add a node of text /next to another node/.
+
+- label=[<options>]<angle>:<text>
+  - the angle can be the following, if it is not specified, the value
+    of =label position= is used.
+    - a number as degree
+    - anchor like north
+    - above, below, left, right
+  - =absolute= is a style. It will change the meaning of angle
+  - label distance
+  - every label: a style placeholder
+
+- pin=[<options>]<angle>:<text>: it is very similar to label, the only
+  difference is that it adds a line between the two nodes
+  - pin distance
+  - every pin
+  - pin position
+  - every pin edge
+  - pin edge
+
+The quotes syntax is very useful. It is in the library =quotes=. This
+must be placed /inside the option of a node/. The format is
+#+BEGIN_EXAMPLE
+"<text>"<options>
+#+END_EXAMPLE
+
+options don't need to be surrounded by curly braces, unless there's a
+comma in it (because the comma should mean the next option for the
+/node/). If the text has comma or colon, it MUST be surrounded by
+curly braces, like ="{hello, world}"=. This should be limitation of
+parser.
+
+- quotes mean label
+- quotes mean pin
+- every label quotes
+- every pin quotes
+- node quotes mean
+
+** TODO 17.12 Edge and from here
+* Pic
+You can define some shape, and then reuse it at any place a node can
+appear. But the pic itself cannot be referenced. But the node inside
+pic can be referenced.
+
+You define a pic by
+#+BEGIN_EXAMPLE
+\tikzset {
+mypic/.pic = {
+\draw (-3mm, 0) to [bend left] (0,0) to [bend left] (3mm,0)
+}
+};
+#+END_EXAMPLE
+
+Reuse it by
+#+BEGIN_EXAMPLE
+\tikz \draw (1,1) -- (2,2) pic {mypic} -- (3,2) pic {mypic};
+#+END_EXAMPLE
+
+The pic syntax is
+#+BEGIN_EXAMPLE
+pic [<options>] {<pic type>}
+#+END_EXAMPLE
+
+You can also draw some inline pics. Note that you still need the curly
+brace, but leave it empty.
+#+BEGIN_EXAMPLE
+\tikz \pic [pics/code={\draw ...;}] {}
+#+END_EXAMPLE
+
+Pic can have actions, too, like
+- red
+- draw
+- fill
+
+Finally, to style pic, you can use =every pic=. You can use quote
+syntax inside the option of pic, too.
+
+* TODO Graph
 The graph system is syntax suger for nodes, for the sake of creating a
 lot of similar nodes. The =\graph= command is sure a DSL, /extending/
 the DOT syntax.
@@ -341,34 +518,11 @@ the DOT syntax.
 #+END_SRC
 
 
-
-
-* Simple
-#+BEGIN_SRC latex
-  \draw[grid] (-2,0) grid (2,12);
-  \draw[grid,blue] (-10,0) grid (-3,12);
-#+END_SRC
-* Style
-
-Action
-- draw=green
-- fill=green!70!blue
-- opacity=1
-- scale=0.8
-
-Shape
-- rectangle
-- rounded corners
-
-String type:
-- dashed
-- dotted
-- thick
-
-* Coordinate
-#+BEGIN_SRC latex
-([shift={(2,-0.5)}] iflen.east)
-#+END_SRC
+* TODO Tree
+The node syntax can also be used to draw a tree. A node can be
+followed by any number of children, each introduced by keyword
+=child=. The children are also nodes, thus they can have children
+using the same syntax. Trees have a set of options (TODO).
 
 * Node
 - align=left :: have to have this to make the "\\" able to create
@@ -401,7 +555,7 @@ The text of a node can be anything, e.g. =lstlisting= environemnt.
 \node (A)[opt,label={right:label text}] at (0,0) {text};
 #+END_SRC
 
-* Matrix
+* TODO Matrix
 #+BEGIN_SRC latex
 \matrix {
   \node {}; & \node {}; \\
@@ -409,7 +563,7 @@ The text of a node can be anything, e.g. =lstlisting= environemnt.
 };
 #+END_SRC
 
-* Packages
+* TODO Packages
 ** shapes.multipart
 #+BEGIN_SRC latex
 \usetikzlibrary{shapes.multipart}
