@@ -57,8 +57,30 @@ needs not a value, and it is interpreted like this:
 
 They are specified in =key=value= pairs.
 
-- line width
-- color
+- color: a color can be the name (list TODO) or using xcolor
+  extension, (color1!30!color2), where color2 is optional.
+- line width. Expect a dimension. The following are /standalone/
+  options, specifying to line width
+  - ultra thin
+  - very thin
+  - semithick
+  - thick
+  - very thick
+  - ultra thick
+- Patterns
+  - solid
+  - dotted, densely dotted, loosely dotted
+  - dashed, densely dashed, loosely dashed
+  - dash dot, densely .., loosely ..
+  - dash dot dot, densely .., loosely ..
+  - double=<core color>
+  - double distance=<dimension>
+
+Path can be decorated, given =decorate= and
+~decoration=<name>~. Possible names:
+- zigzag
+
+
 ** Scope
 Parameters can have scope. It is introduced by ={scope}= invironment,
 taking the parameters as options,
@@ -209,20 +231,86 @@ Here are a list of all operations:
 - graph operation
 - pic operation
 
-* Special Syntax
-** Path
-- =\path (x1,y1) -- (x2,y2) -- (x3,y3)=
-
-On the path, the last element can be =cycle=
-
-Actions (on path).
-- =\draw=: =\draw= is an abbreviation for =\path[draw]=
+* Actions (on path)
+** Draw
+- =\draw=: =\draw= is an abbreviation for =\path[draw]=. It will draw
+  the entire path if this option appear /anywhere/ inside the
+  path. The ~draw=color~ will specify the color.
 - =\fill=: only for closed path. abbrev for =\path[fill]=. =\filldraw=
   is abbrev for =\path[fill,draw]=.
+  - fill=<color>
+  - pattern=<name> TODO list of patterns
+    - dots
+    - bricks
+  - pattern color=<color>
 - =\shade=: similarly there're =\shade= and =\shadedraw=
+** Clip
 - =\clip=: does NOT have =\clipdraw= because it seems not making
   sense. If you want, use =\path[draw,clip]= explicitly
 
+clip can be nested, and the clipped area will be in effect for the
+subsequent path. Those path will not affect the picture size. The only
+way to end the clip is to close the scope. Thus scope is typically
+used to create local clip, and clip is typically the first path in a
+scope.
+
+** Bounding box
+A path can be used as a bounding box. It can be used in two ways, make
+it smaller or bigger.
+
+Smaller
+#+BEGIN_EXAMPLE latex
+  Letf\begin{tikzpicture}
+  \draw[use as bounding box] (2,0) rectangle (3,1);
+  \draw (1,0) -- (4.75);
+  \end{tikzpicture}Right
+#+END_EXAMPLE
+
+The second draw will be out of the box of this picture, and strike
+through the text.
+
+Bigger
+#+BEGIN_EXAMPLE latex
+Left
+\begin{tikzpicture}
+\useasboundingbox (0,0) rectangle (3,1);
+\fill (0.75, .25) cicle (.5cm);
+\end{tikzpicture}
+Right
+#+END_EXAMPLE
+
+The bounding box is larger than the filled circle, so the text will be
+further apart.
+
+There's a node =current bounding box=, which has the shape of
+rectangle. For a single path, there's also a node called =current path
+bounding box=. The tikzpicture env also supports a =trim left= (which
+has a default of 0pt) and =trim right=. It will trim the bounding box,
+not the figure.
+
+* Arrow
+Use the library =arrows.meta=.
+
+Precoditions:
+- have specified =arrows= or its short form (it must have a /dash/)
+  (just put -> inside the path option)
+- the tips must be valid
+- [C] do not use clip
+- [C] the path is not closed
+
+Possible arrow specification (=startspec-endspec=) (arrows={xxx} is
+the full spec):
+- ->
+- >-Stealth: the first > actually change the tail of the arrow
+- -{Stealth[red]}: the red is applied to arrow tip. The option is
+  inside the brackets, and multiple options can be provided,
+  e.g. length, width, scale, scale length, scale width, color, fill,
+  line width, round, sharp
+
+** TODO Bending and flexing
+** TODO arrow tips
+
+* Special Syntax
 ** Node
 Nodes are intend for putting text. Everytime a node command is fired,
 it is inserted at the /current point/. A node has a shape, drawing a
