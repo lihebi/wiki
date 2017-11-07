@@ -1,13 +1,32 @@
 #+TITLE: Tikz
 
 * Code Structure
+First, use the package
 #+BEGIN_SRC latex
   \usepackage{tikz}
-  \usetikzlibrary{shapes.multipart}
+#+END_SRC
 
+Then load libraries
+#+BEGIN_SRC latex
+  \usetikzlibrary{shapes.multipart}
+#+END_SRC
+
+Optionally some settings (TODO). Except =\tikzset= command, all other
+command should be put inside tikzpicture.
+#+BEGIN_SRC latex
   \tikzset{>=latex}
   \tikzset{grid/.style={gray,very thin,opacity=1}}
+#+END_SRC
 
+
+To start a tikzpicture, you start the ={tikzpicture}= environment. It
+is suitable to be put inside a ={figure}= env. This also means, if it
+is not put inside a figure, it can actually be used as an inline
+image. The baseline is the center of current line, and you can use
+=/tikz/baseline= option to lower or raise it. This option is evaluted
+at the end of drawing, thus have access to the node names defined. It
+can also access the outmost =current bounding box=.
+#+BEGIN_SRC latex
   \begin{figure*}[ht]
     \centering
     \begin{tikzpicture}[options]
@@ -17,13 +36,101 @@
   \end{figure*}
 #+END_SRC
 
-\tikz command; is the same as begin and end tikzpicture, and put
-command inside.
+=\tikz= command; is the same as begin and end =tikzpicture=, and put
+command inside. At the end of this environment, tikz makes a guess
+about the bounding box, which is updated whenever it encounters a
+coordinate. This may be imprecise.
 
-The most common errors for tikz are:
-- miss semicolon
-- miss curly braces
-- miss include tikz library
+Finally, the background is transparent. In order to set to something
+else, you need the =background= package.
+
+# The most common errors for tikz are:
+# - miss semicolon
+# - miss curly braces
+# - miss include tikz library
+
+* Special Syntax
+** Points
+- =(x,y)=: xy-corredinate
+- =(30:1cm)=: 1cm in the 30 degress direction.
+- unit: All numbers can accept the following unit (TODO), and if no
+  unit is provided, it uses the coordinate system setting, which
+  defaults to /cm/.
+- =(x,y,z)=: 3d
+- =++(x,y)=: You can also use relative position.  means shift to the
+  /last point/ used.
+- =+(x,y)=: similar to ++ but does not change the /last point/
+
+** Path
+- =\path (x1,y1) -- (x2,y2) -- (x3,y3)=
+
+On the path, the last element can be =cycle=
+
+Actions (on path).
+- =\draw=: =\draw= is an abbreviation for =\path[draw]=
+- =\fill=: only for closed path. abbrev for =\path[fill]=. =\filldraw=
+  is abbrev for =\path[fill,draw]=.
+- =\shade=: similarly there're =\shade= and =\shadedraw=
+- =\clip=: does NOT have =\clipdraw= because it seems not making
+  sense. If you want, use =\path[draw,clip]= explicitly
+
+** Parameters (options)
+The options are the same as using =\tikzset{options}=. Sometimes there
+needs not a value, and it is interpreted like this:
+- If key is a color, ~color=key~ is processed
+- if key contains a /dash/, ~arrows=key~ is processed
+- if key is a name of a shape, ~shape=key~ is processed.
+
+They are specified in =key=value= pairs.
+
+- line width
+- color
+
+Parameters can have scope. It is introduced by ={scope}= invironment,
+taking the parameters as options,
+i.e. ~\begin{scope}[key=value]~. Scopes can be nested, and have
+lexcial scope. The top level ={tikzpicture}= env also acts like a
+scope.
+
+There's also a =every scope= option to install styless for every
+scope.
+
+The =scopes= package provide an easier way to specify scopes, using
+just ={[options] ...}=. This is pretty useful for inside-path
+scoping. One line scope command is also available as
+=\scoped[options]<path command>=.
+
+** Node
+Nodes are intend for putting text. Everytime a node command is fired,
+it is inserted at the /current point/. A node has a shape, drawing a
+node means draw the shape.
+
+Predefined shape:
+- rectangle
+- circle
+- ellipse
+
+A node can have a name for future reference. It is given by
+~name=<name>~ option, or by =node(name){text}=.
+** Tree
+The node syntax can also be used to draw a tree. A node can be
+followed by any number of children, each introduced by keyword
+=child=. The children are also nodes, thus they can have children
+using the same syntax. Trees have a set of options (TODO).
+
+** Graph
+The graph system is syntax suger for nodes, for the sake of creating a
+lot of similar nodes. The =\graph= command is sure a DSL, /extending/
+the DOT syntax.
+
+#+BEGIN_SRC latex
+\graph [grow down, branch right] {
+  root -> {left, right -> {child, child}}
+};
+#+END_SRC
+
+
+
 
 * Simple
 #+BEGIN_SRC latex
