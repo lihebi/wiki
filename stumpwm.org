@@ -2,10 +2,66 @@
 
 This is an excellent Window Manager! It has an info document ready in Emacs.
 
-* TODO
+* TMP
 - mode-line add group information
 - like ~C-e~ for opening a browser
 - rule based window
+
+
+** A better way to install stumpwm
+- This seems a better way to install stumpwm =(ql:quickload
+  "stumpwm")=
+But this require the .xinitrc to be
+#+BEGIN_EXAMPLE
+exec sbcl --load /path/to/startstump
+#+END_EXAMPLE
+with startstump
+#+BEGIN_EXAMPLE
+(require :stumpwm)
+(stumpwm:stumpwm)
+#+END_EXAMPLE
+** Live Debugging
+To debug it live, you might need this in .stumpwmrc:
+#+BEGIN_SRC lisp
+  (in-package :stumpwm)
+
+  (require :swank)
+  (swank-loader:init)
+  (swank:create-server :port 4004
+                       :style swank:*communication-style*
+                       :dont-close t)
+#+END_SRC
+
+The above wont work unless swank is installed:
+#+BEGIN_EXAMPLE
+(ql:quickload "swank")
+#+END_EXAMPLE
+
+The port is actually interesting. Here it is set to 4004, and the
+slime in Emacs defaults to 4005, thus they wont mess up. The trick to
+connect to stumpwm is to use =slime-connect= and put 4004 for the port
+prompt.
+
+So acutally if you just want to live debug, just install swank and
+#+BEGIN_EXAMPLE
+(require 'swank)
+(swank:create-server)
+#+END_EXAMPLE
+
+# (ql:quickload :swank)
+Note lastly that to install using quickload, you need permission. So
+
+#+BEGIN_EXAMPLE
+sudo sbcl --load /usr/lib/quicklisp/setup
+#+END_EXAMPLE
+
+To test if it works, you should be able to switch to stumpwm namespace
+and operate the window, like this:
+
+#+BEGIN_EXAMPLE
+(in-package :stumpwm)
+(stumpwm:select-window-by-number 2)
+#+END_EXAMPLE
 
 
 * Installation
