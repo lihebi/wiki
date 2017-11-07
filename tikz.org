@@ -524,37 +524,6 @@ followed by any number of children, each introduced by keyword
 =child=. The children are also nodes, thus they can have children
 using the same syntax. Trees have a set of options (TODO).
 
-* Node
-- align=left :: have to have this to make the "\\" able to create
-     newline
-- text=color :: apply on text
-- draw=color :: apply on border
-- color :: apply for everything
-
-=\path node=  is the same as =\node=.
-
-To add the arrow tips, first add =[->]= option for the tikz environment.
-
-#+BEGIN_SRC latex
-\node (poi)[cfg,bench] at (0,0) {\texttt{strcpy(buf,s)}};
-\draw (c9) -- (poi);
-\draw[dotted] (c8) -- node[mystyle,auto]{The Text} (c9); % auto will place the label above the edge
-\draw (c8) -- node[tf,auto,']{false} (poi); % swap(') will swap the auto label to the other half
-\draw (callbar) .. controls ++(right:3) and +(left:3) .. (bar.west); % edge that curves
-#+END_SRC
-
-
-The text of a node can be anything, e.g. =lstlisting= environemnt.
-
-
-** Label
-- every label/.style
-- label position={north east}
-
-#+BEGIN_SRC latex
-\node (A)[opt,label={right:label text}] at (0,0) {text};
-#+END_SRC
-
 * TODO Matrix
 #+BEGIN_SRC latex
 \matrix {
