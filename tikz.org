@@ -48,33 +48,7 @@ else, you need the =background= package.
 # - miss semicolon
 # - miss curly braces
 # - miss include tikz library
-
-* Special Syntax
-** Points
-- =(x,y)=: xy-corredinate
-- =(30:1cm)=: 1cm in the 30 degress direction.
-- unit: All numbers can accept the following unit (TODO), and if no
-  unit is provided, it uses the coordinate system setting, which
-  defaults to /cm/.
-- =(x,y,z)=: 3d
-- =++(x,y)=: You can also use relative position.  means shift to the
-  /last point/ used.
-- =+(x,y)=: similar to ++ but does not change the /last point/
-
-** Path
-- =\path (x1,y1) -- (x2,y2) -- (x3,y3)=
-
-On the path, the last element can be =cycle=
-
-Actions (on path).
-- =\draw=: =\draw= is an abbreviation for =\path[draw]=
-- =\fill=: only for closed path. abbrev for =\path[fill]=. =\filldraw=
-  is abbrev for =\path[fill,draw]=.
-- =\shade=: similarly there're =\shade= and =\shadedraw=
-- =\clip=: does NOT have =\clipdraw= because it seems not making
-  sense. If you want, use =\path[draw,clip]= explicitly
-
-** Parameters (options)
+* Parameters (options)
 The options are the same as using =\tikzset{options}=. Sometimes there
 needs not a value, and it is interpreted like this:
 - If key is a color, ~color=key~ is processed
@@ -85,7 +59,7 @@ They are specified in =key=value= pairs.
 
 - line width
 - color
-
+** Scope
 Parameters can have scope. It is introduced by ={scope}= invironment,
 taking the parameters as options,
 i.e. ~\begin{scope}[key=value]~. Scopes can be nested, and have
@@ -99,6 +73,155 @@ The =scopes= package provide an easier way to specify scopes, using
 just ={[options] ...}=. This is pretty useful for inside-path
 scoping. One line scope command is also available as
 =\scoped[options]<path command>=.
+
+** Styles
+Another way to group code together is to define a style. Like =help
+lines= style. Styles are defined as an option, e.g.
+#+BEGIN_EXAMPLE
+my style/.style={draw=red, fill=red!20}
+#+END_EXAMPLE
+The =.style= means "these keys should not be applied immediately, but
+rather a definition". Later reference to it is same as written the key
+values literally.
+
+There seems not to be a way to inherit a style, but rather, you can
+~.append style~. The appended style is added to the end, and the last
+style will win. There's also a ~.prefix style~ but not useful in this
+case. The content of style can be parameterized, by =#n= where n
+starts from 1. It seems that it will be replaced literally.
+
+#+BEGIN_SRC latex
+outline/.style={draw=#1, fill=#1!50},
+outline/.default=black
+#+END_SRC
+
+Note 2 things:
+1. the lexer is actually pretty good
+2. can use default value (s?)
+
+Use it as ~outline=blue~
+
+* Coordinates
+The general syntax is
+#+BEGIN_EXAMPLE
+([options] <coordinate spec>)
+#+END_EXAMPLE
+
+Options are optional, and coordinate spec can be any one of the
+system. The options includes
+- xshift=3cm
+- shift=(x,y)
+
+The Systems. /Inside/ each value, the arithmetic operations can be
+used. All numbers can accept the following unit (pt, cm, TODO), and if no unit
+is provided, it uses the coordinate system setting.
+
+- =(x,y)=: xy-corredinate
+- =(30:1cm)=: 1cm in the 30 degress direction.
+- =(x,y,z)=: 3d
+
+Node is also often used for specify a coordinate. The implicit way is
+- (a)
+- (a.north)
+- (a.10): 10 degree angle
+** Intersection
+
+Yet another way is to use /perpendicular/ coordinate system. This
+calculate the intersection.
+- (2,1 |- 3,4): yield 2,4
+- (3,4 -| 2,1)
+
+A more general way to find intersection of two pathes is to use
+=intersections= library (TODO).
+
+** Relative position
+- =++(x,y)=: You can also use relative position.  means shift to the
+  /last point/ used.
+- =+(x,y)=: similar to ++ but does not change the /last point/
+
+Note that the scoping will not localize the position, thus to make a
+local part "local", you can use the =/tikz/current point is local=
+option.
+
+** calc
+The package =calc= provide calculation for coordinates. The general
+syntax is:
+#+BEGIN_EXAMPLE
+([options] $<coordinate computation$)
+#+END_EXAMPLE
+
+The coordinate computation is roughly
+#+BEGIN_EXAMPLE
+compute ::= A [+-] A [+-] A ...
+A ::= <factor>*<coordinate><modifiers>
+#+END_EXAMPLE
+
+Note that the <coordinate> must be surounded by =()=.  Modifiers can
+be:
+- partway modifier: =!number!angle:<second coordinate>=,
+  e.g. =(1,2)!.75!(3,4)=. angle: is optional
+- distance modifiers: =!dimension!angle:<second coordinate>=. This
+  differs with partway that it is a concrete distance (like 1cm)
+  instead of a percentage.
+- projection modifiers: =(a)!(b)!(c)= means draw a line between a-c,
+  and project b onto c, get the intersection point.
+
+* Path
+Path is a list of path operations. The coordinates can be =cycle=, literally.
+Before each operation, options can be given. The option will apply to
+ALL following path operations.
+- rounded corners
+- sharp corners
+- color=red
+
+There's a style set point as =/tikz/every path=.
+
+Here are a list of all operations:
+- move-to: (a)
+- line-to:
+  - straight line: -- (a)
+  - horizontal and vertical line: -|(a) |-(a)
+- curve-to: ..controls<c>and<d>..(a): and<d> is optional.
+- rectangle: rectangle(a)
+- circle and ellipse
+  - circle[<options>]: the options are mandary. Set a =radius=. If set
+    =x radius= and =y radius= differently, it will be a ellipse.
+- arc operation: arc[<options>]: TODO
+- grid operation: grid[<options>](a): add a grid filling the
+  rectangle. Options include step, xstep, ystep. The typically used
+  style is =help lines=.
+#+BEGIN_EXAMPLE
+\draw [help lines] (0,0) grid (3,2)
+#+END_EXAMPLE
+- parabola TODO
+- sin/cos TODO
+- svg TODO
+- plot
+- to path operation: to[<options>]<nodes>(a): nodes are the label
+  nodes, there's a =every to= style option to style it. Options
+  include =in= and =out= to set the degree of the in and out lines.
+- foreach operation: foreach<variables>[<options>] in {values} {<path
+  commands>}. E.g. =foreach \x in {1,...,3} {--(\x,1) -- (\x,0)}= This
+  is weired.
+- let operation: seems to bind variable to coordinates.
+- scoping operation: ={}=
+- node and edge operation
+- graph operation
+- pic operation
+
+* Special Syntax
+** Path
+- =\path (x1,y1) -- (x2,y2) -- (x3,y3)=
+
+On the path, the last element can be =cycle=
+
+Actions (on path).
+- =\draw=: =\draw= is an abbreviation for =\path[draw]=
+- =\fill=: only for closed path. abbrev for =\path[fill]=. =\filldraw=
+  is abbrev for =\path[fill,draw]=.
+- =\shade=: similarly there're =\shade= and =\shadedraw=
+- =\clip=: does NOT have =\clipdraw= because it seems not making
+  sense. If you want, use =\path[draw,clip]= explicitly
 
 ** Node
 Nodes are intend for putting text. Everytime a node command is fired,
