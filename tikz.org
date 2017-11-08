@@ -57,28 +57,28 @@ needs not a value, and it is interpreted like this:
 
 They are specified in =key=value= pairs.
 
-- color: a color can be the name (list TODO) or using xcolor
+- =color=: a color can be the name (list TODO) or using xcolor
   extension, (color1!30!color2), where color2 is optional.
-- line width. Expect a dimension. The following are /standalone/
+- =line width=. Expect a dimension. The following are /standalone/
   options, specifying to line width
-  - ultra thin
-  - very thin
-  - semithick
-  - thick
-  - very thick
-  - ultra thick
+  - =ultra thin=
+  - =very thin=
+  - =semithick=
+  - =thick=
+  - =very thick=
+  - =ultra thick=
 - Patterns
-  - solid
-  - dotted, densely dotted, loosely dotted
-  - dashed, densely dashed, loosely dashed
-  - dash dot, densely .., loosely ..
-  - dash dot dot, densely .., loosely ..
-  - double=<core color>
-  - double distance=<dimension>
+  - =solid=
+  - =dotted=, =densely dotted=, =loosely dotted=
+  - =dashed=, =densely dashed=, =loosely dashed=
+  - =dash dot=, densely .., loosely ..
+  - =dash dot dot=, densely .., loosely ..
+  - =double=<core color>=
+  - =double distance=<dimension>=
 
 Path can be decorated, given =decorate= and
 ~decoration=<name>~. Possible names:
-- zigzag
+- =zigzag=
 
 
 ** Scope
@@ -131,8 +131,8 @@ The general syntax is
 
 Options are optional, and coordinate spec can be any one of the
 system. The options includes
-- xshift=3cm
-- shift=(x,y)
+- =xshift=3cm=
+- =shift=(x,y)=
 
 The Systems. /Inside/ each value, the arithmetic operations can be
 used. All numbers can accept the following unit (pt, cm, TODO), and if no unit
@@ -143,15 +143,15 @@ is provided, it uses the coordinate system setting.
 - =(x,y,z)=: 3d
 
 Node is also often used for specify a coordinate. The implicit way is
-- (a)
-- (a.north)
-- (a.10): 10 degree angle
+- =(a)=
+- =(a.north)=
+- =(a.10)=: 10 degree angle
 ** Intersection
 
 Yet another way is to use /perpendicular/ coordinate system. This
 calculate the intersection.
-- (2,1 |- 3,4): yield 2,4
-- (3,4 -| 2,1)
+- =(2,1 |- 3,4)=: yield 2,4
+- =(3,4 -| 2,1)=
 
 A more general way to find intersection of two pathes is to use
 =intersections= library (TODO).
@@ -192,24 +192,25 @@ be:
 Path is a list of path operations. The coordinates can be =cycle=, literally.
 Before each operation, options can be given. The option will apply to
 ALL following path operations.
-- rounded corners
-- sharp corners
-- color=red
+- =rounded corners=
+- =sharp corners=
+- ~color=red~
 
 There's a style set point as =/tikz/every path=.
 
 Here are a list of all operations:
-- move-to: (a)
+- move-to: =(a)=
 - line-to:
-  - straight line: -- (a)
-  - horizontal and vertical line: -|(a) |-(a)
-- curve-to: ..controls<c>and<d>..(a): and<d> is optional.
-- rectangle: rectangle(a)
-- circle and ellipse
-  - circle[<options>]: the options are mandary. Set a =radius=. If set
-    =x radius= and =y radius= differently, it will be a ellipse.
-- arc operation: arc[<options>]: TODO
-- grid operation: grid[<options>](a): add a grid filling the
+  - straight line: =-- (a)=
+  - horizontal and vertical line: =-|(a)= and =|-(a)=
+- curve-to: =..controls<c>and<d>..(a)=
+  - =and<d>= is optional.
+- rectangle: =rectangle (a)=
+- circle and ellipse =circle[<options>]=
+  - the options are mandary. Set a =radius=. If set =x radius= and =y
+    radius= differently, it will be a ellipse.
+- arc operation: =arc[<options>]=: TODO
+- grid operation: =grid[<options>](a)=: add a grid filling the
   rectangle. Options include step, xstep, ystep. The typically used
   style is =help lines=.
 #+BEGIN_EXAMPLE
@@ -219,12 +220,13 @@ Here are a list of all operations:
 - sin/cos TODO
 - svg TODO
 - plot
-- to path operation: to[<options>]<nodes>(a): nodes are the label
+- to path operation: =to[<options>]<nodes>(a)=: nodes are the label
   nodes, there's a =every to= style option to style it. Options
   include =in= and =out= to set the degree of the in and out lines.
-- foreach operation: foreach<variables>[<options>] in {values} {<path
-  commands>}. E.g. =foreach \x in {1,...,3} {--(\x,1) -- (\x,0)}= This
-  is weired.
+- foreach operation
+  - =foreach<variables>[<options>] in {values} {<path commands>}=
+  - E.g. =foreach \x in {1,...,3} {--(\x,1) -- (\x,0)}= This is
+    weired.
 - let operation: seems to bind variable to coordinates.
 - scoping operation: ={}=
 - node and edge operation (Separate)
@@ -311,20 +313,10 @@ the full spec):
 ** TODO arrow tips
 
 * Node
-Nodes are intend for putting text. Everytime a node command is fired,
-it is inserted at the /current point/. A node has a shape, drawing a
+Nodes are intended for putting text. They cannot be easily nested.  A
+node is created by a path operation, similar to other path operations,
+but node is not part of the path itself. A node has a shape, drawing a
 node means draw the shape.
-
-Predefined shape (TODO other shapes from libraries):
-- rectangle
-- circle
-- ellipse
-
-A node can have a name for future reference. It is given by
-~name=<name>~ option, or by =node(name){text}=.
-
-A node is created by a path operation, similar to other path
-operations, but node is not part of the path itself.
 
 The full syntax of the node:
 #+BEGIN_EXAMPLE
@@ -333,26 +325,28 @@ node <foreach> [<options>] (<name>) at (<coordinate>) {<content>}
 
 Everything between node and ={}= is optional, and the order does not
 matter except foreach. The node will be put at the current point,
-unless =at= presents.
+unless =at= presents. A node can have a name for future reference. It
+is given by ~name=<name>~ option, or by =node(name){text}=.
+
 
 ** Options
 Options are only applied to the node itself, possible options are:
-- draw
-- fill
-- shape=rectangle, circle, ellipse
-- behind path
-- in front of path
-- inner sep
-  - inner xsep
-  - inner ysep
-- outer sep
-  - outer xsep
-  - outer ysep
-- minimum size
-  - minimum height
-  - minimum width
+- =draw=
+- =fill=
+- =shape=rectangle=, =circle=, =ellipse=
+- =behind path=
+- =in front of path=
+- =inner sep=: set the following together
+  - =inner xsep=
+  - =inner ysep=
+- =outer sep=: set the following together
+  - =outer xsep=
+  - =outer ysep=
+- =minimum size=: set the following together
+  - =minimum height=
+  - =minimum width=
 ** Foreach
-Foreach works like this: the following create three nodes.  You can
+Foreach works like this: the following creates three nodes.  You can
 also nest the loops.
 #+BEGIN_EXAMPLE
 \tikz \draw (0,0) node foreach \x in {1,2,3} at (\x,0) {\x};
@@ -370,31 +364,31 @@ every node names inside the scope will be renamed under the hood.
 ** TODO Multi-part node
 ** Node Text
 Options
-- text=<color>
-- node font=<font command>
-- font=<font command>: font command can be =\small=, etc.
-- align: set the alignment. This also enables multiple line text.
-  - left
-  - flush left (use hyphen to break words)
-  - right
-  - flush right
-  - center
-  - flush center
-  - justify (use variable spacing)
-  - none
-- text width
-- text height
-- text depth: seems useless
+- ~text=<color>~
+- ~node font=<font command>~
+- ~font=<font command>~: font command can be =\small=, etc.
+- =align=: set the alignment. This also enables multiple line text.
+  - =left=
+  - =flush left= (use hyphen to break words)
+  - =right=
+  - =flush right=
+  - =center=
+  - =flush center=
+  - =justify= (use variable spacing)
+  - =none=
+- =text width=
+- =text height=
+- =text depth=: seems useless
 
 ** Node Positioning
 It uses anchor. The default is the center of the node. Possible anchors
-- north east south west
-- base, center
+- =north= =east= =south= =west=
+- =base=, =center=
 
 This is good enough, but the author thinks it is not intuitive enough,
 thus he came up with some suger:
-- above, below, left, right
-- centered
+- =above=, =below=, =left=, =right=
+- =centered=
 
 *** TODO positioning
 For more advanced placement, there's a library called
@@ -415,39 +409,39 @@ nodes.
 *** TODO how to get several boxes to hold several things, but those boxes are of same size and aligned?
 ** Place on a line
 These continue the node options
-- pos=<fraction>
-  - midway: same as pos=0.5
-  - near start 0.25
-  - near end 0.75
-  - very near start 0.125
-  - very near end 0.875
-  - at start 0
-  - at end 1
-- auto=<direction>: left, right
-- swap: swap left and right. The short alias is ='=
-- sloped: the text will be aligned with the line or on the tangent to
-  the curve
+- =pos=<fraction>=
+  - =midway=: same as pos=0.5
+  - =near start= 0.25
+  - =near end= 0.75
+  - =very near start= 0.125
+  - =very near end= 0.875
+  - =at start= 0
+  - =at end= 1
+- ~auto=<direction>~: direction can be =left=, =right=
+- =swap=: swap left and right. The short alias is ='=
+- =sloped=: the text will be aligned with the line or on the tangent
+  to the curve
 
 ** Label & Pin
 This is used to add a node of text /next to another node/.
 
-- label=[<options>]<angle>:<text>
+- ~label=[<options>]<angle>:<text>~
   - the angle can be the following, if it is not specified, the value
     of =label position= is used.
     - a number as degree
-    - anchor like north
-    - above, below, left, right
+    - anchor like =north=
+    - =above=, =below=, =left=, =right=
   - =absolute= is a style. It will change the meaning of angle
-  - label distance
-  - every label: a style placeholder
+  - =label distance=
+  - =every label=: a style placeholder
 
-- pin=[<options>]<angle>:<text>: it is very similar to label, the only
+- ~pin=[<options>]<angle>:<text>~: it is very similar to label, the only
   difference is that it adds a line between the two nodes
-  - pin distance
-  - every pin
-  - pin position
-  - every pin edge
-  - pin edge
+  - =pin distance=
+  - =every pin=
+  - =pin position=
+  - =every pin edge=
+  - =pin edge=
 
 The quotes syntax is very useful. It is in the library =quotes=. This
 must be placed /inside the option of a node/. The format is
@@ -461,11 +455,11 @@ comma in it (because the comma should mean the next option for the
 curly braces, like ="{hello, world}"=. This should be limitation of
 parser.
 
-- quotes mean label
-- quotes mean pin
-- every label quotes
-- every pin quotes
-- node quotes mean
+- =quotes mean label=
+- =quotes mean pin=
+- =every label quotes=
+- =every pin quotes=
+- =node quotes mean=
 
 ** TODO 17.12 Edge and from here
 * Pic
@@ -499,9 +493,9 @@ brace, but leave it empty.
 #+END_EXAMPLE
 
 Pic can have actions, too, like
-- red
-- draw
-- fill
+- ~color=red~
+- =draw=
+- =fill=
 
 Finally, to style pic, you can use =every pic=. You can use quote
 syntax inside the option of pic, too.
@@ -509,13 +503,176 @@ syntax inside the option of pic, too.
 * TODO Graph
 The graph system is syntax suger for nodes, for the sake of creating a
 lot of similar nodes. The =\graph= command is sure a DSL, /extending/
-the DOT syntax.
+the DOT syntax. To use it, load the =graphs= library.
 
-#+BEGIN_SRC latex
-\graph [grow down, branch right] {
-  root -> {left, right -> {child, child}}
-};
-#+END_SRC
+=graph= is actually a path command, and =\graph= is abbrev for =\path
+graph=. Thus it can be used anywhere on path that expect =--=. The
+styling hook is =every graph=. The syntax:
+
+#+BEGIN_EXAMPLE
+graph [<options>] <group spec>
+#+END_EXAMPLE
+
+Options can be:
+- ~nodes=<options>~: these options are applied to nodes, multiple
+  options require enclosing curly braces.
+- ~edges=<options>~: edge options
+- =edge=: alias for =edges=
+- ~edge node=<node spec>~: if this presents, it will cause a node to
+  be added implicitly to each edge, placed next to it. A node spec is
+  nothing special, just a =node [options] {text}=.
+- ~edge label=<text>~: abbrev for ~edge node=node[auto]{text}~
+- ~edge label'=<text>~: abbrev for ~edge node=node[auto,swap]{text}~
+
+** Specs
+*** Group Spec
+#+BEGIN_EXAMPLE
+<group spec> ::= {[options] <chain spec> [,;] <chain spec> ...}
+<chain spec> ::= <node spec> <edge spec> <node spec> ...
+<edge spec> ::= [-> | -- | <- | <-> | -!-] [<options>]
+#+END_EXAMPLE
+
+Options will be local to the group.
+
+The chain spec are seperated by comma or semicolon, they are
+equivalent.  A chain is a list of nodes seperated by edge, where 5
+types of edge is availabe. The last one means no edge is desired, this
+is useful in =simple= graph. As opposite to =multi= graph, in =simple=
+graph there's only one edge (latter win) between two nodes. These are
+graph options.
+
+Foreach can be used inside a group spec at any place of a chain
+spec. Each of the iteration will create a chain spec, separated by
+comma. Macros can also be used here.
+
+#+BEGIN_EXAMPLE
+\foreach \i in {1,2,3} {
+  a\i -> {x_\i, y_\i}
+}
+#+END_EXAMPLE
+
+The edge spec options can be:
+- ~left anchor=<anchor>~: use =east=, =west=, etc. It is the anchor of
+  the source.
+- ~right anchor=<anchor>~
+
+*** Node Spec
+#+BEGIN_EXAMPLE
+<node spec> ::= <direct> | <reference> | <group spec>
+<direct> ::= <node name> / <text> [<options>]
+<reference> ::= (<node name> | <node set name>)
+#+END_EXAMPLE
+If the node starts with open paren, it is treated as a reference to a
+existing node or set. If it starts with open brace, it is a
+group. Otherwise it is a direct.
+
+For a direct node, if the node name contains special symbols, it must
+be quoted by double quotes. The slash and text is optional, in which
+case the /simple/ name is used (very likely to be the node
+name). Otherwise, the text is shown in the node.
+
+Typically if a node name is already created, it will use that. The
+behavior is controled by some group options.
+- ~use existing node=<true or false>~
+- ~fresh nodes=<true or false>~: all nodes are created, the repeated
+  nodes are named by appending a ='=. This new name can be used as
+  reference to this node.
+- ~number nodes=<start number=1>~: same as fresh nodes, but repeated
+  names are renamed by append a space and an increasing number.
+- ~name=<text>~: it is a prefix added to all nodes, separated by
+  space. Prefixes can be nested.
+
+The nodes also accept following options:
+- ~as=<text>~: use text as shown in the node
+- =empty nodes=: node text will be empty
+- =math nodes=: the node name used as text will be treated as math
+  (but without requiring the dollar sign) when shown.
+
+For a reference node, it is simple. But you can create a node set. The
+set must be created manually, before you can add nodes into the
+set. Create the set by the following option:
+- ~/tikz/new set=<set name>~: Create a set. unlike most of graph
+  options (which start from =/tikz/graphs=), this is under the root
+  tikz name. That means it is intended to be used outside the group
+  env.
+- ~/tikz/set=<set name>~: add the current node to the already defined
+  set
+
+Finally, the =<group spec>= in the syntax means that a group spec can
+appear at whatever places a node spec can be.
+
+
+** Edge
+The edge option can accept quotes.
+
+- ~edge quotes=<options>~: abbrev for ~every edge quotes/.style~
+- =edge quotes center=: abbrev for setting ~edge quotes={anchor=center}~
+- =edge quotes mid=
+
+A good trick is to specify a graph structure first, and then specify
+the edges to be colored. The nodes will not be recreated.
+
+When connecting with groups, there're multiple edges. You can specify
+a single edge by add options to the node.
+- ~target edge style=<options>~: abbrev => options=
+- ~target edge clear~: abbrev =clear >=
+- ~target edge node=<node spec>~
+- ~source edge style=<options>~: abbrev =< options=
+- ~source edge clear~: abbrev =clear <=
+- ~source edge node=<node spec>~
+
+** Coloring
+The color is logical color. Some predefined color including =source=
+and =target=. These are used by connecting groups. You can use =not
+source= and =not target= on some nodes to remove them from the list,
+thus they will not be connected. Another color class is =all= which
+reference to all nodes. You can also create classes, but I don't
+currently need this feature.
+
+When joining groups, you can use =complete bipartite= for the
+connecting edge option. This is called graph operator, the effect is
+to connect the each =source= and each =target=. Note that the =source=
+and =target= are the color classes of the nodes, used by =complete
+bipartite= by default. You can change it.
+
+E.g. create color class
+#+BEGIN_EXAMPLE
+color class=red, color class=green
+#+END_EXAMPLE
+
+Set the nodes to color class, and connect them.
+#+BEGIN_EXAMPLE
+{[red] a b c} -- [complete bipartite={red}{green}]
+{[green] d e f}
+#+END_EXAMPLE
+
+** Node placement
+The idea of graph is to make the positioning automatic. Thus we have
+some algorithm to use.
+
+- grow up, down, left, right
+- branch up, down, left, right
+- grid placement
+
+We also have some positioning that takes the node size into
+consideration.
+- grow right/left/up/down sep
+- branch up/down/left/right sep
+
+We also have circular placement
+- clockwise
+- counterclockwise
+
+For the levels, we can give them styles at once.
+#+BEGIN_EXAMPLE
+level 1/.style={...}
+#+END_EXAMPLE
+
+# #+BEGIN_SRC latex
+# \graph [grow down, branch right] {
+#   root -> {left, right -> {child, child}}
+# };
+# #+END_SRC
 
 
 * TODO Tree
