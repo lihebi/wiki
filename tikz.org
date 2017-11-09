@@ -500,7 +500,7 @@ Pic can have actions, too, like
 Finally, to style pic, you can use =every pic=. You can use quote
 syntax inside the option of pic, too.
 
-* TODO Graph
+* Graph
 The graph system is syntax suger for nodes, for the sake of creating a
 lot of similar nodes. The =\graph= command is sure a DSL, /extending/
 the DOT syntax. To use it, load the =graphs= library.
@@ -675,19 +675,50 @@ level 1/.style={...}
 # #+END_SRC
 
 
-* TODO Tree
+* Tree
 The node syntax can also be used to draw a tree. A node can be
 followed by any number of children, each introduced by keyword
 =child=. The children are also nodes, thus they can have children
 using the same syntax. Trees have a set of options (TODO).
 
-* TODO Matrix
-#+BEGIN_SRC latex
-\matrix {
-  \node {}; & \node {}; \\
-  \node {}; & \node {}; \\
-};
-#+END_SRC
+
+* Matrix
+Matrix is actually a node with =matrix= as option. The =\matrix= is
+abbrev for =\path node [matrix]=.
+
+A matrix consists of rows of cells. Inside each row, columns are
+seperated by =&=. Rows end with =\\=, even for the last one. Each cell
+picture is a light weight drawing canvas. It need not to be a node. It
+can be multiple nodes, a drawing path, etc.
+
+The alignment defaults to the origin of the cell picture, i.e. for
+both row and column, origin of the cell pictures are aligned. The
+origin /seems/ to be similar to the center of the node.  Eash node can
+have =left= and =right= option, to change the alignment.
+
+The separation of the rows and columns are controlled by ~column
+sep=<spacing list>~ and ~row sep=<spacing list>~, where spacing list
+is =1cm= or =1cm, between origin= or =1cm, between borders=. The =&=
+and =\\= can also take options, but only spacing list. This will
+specify the spacing for the next separation.
+
+** Styling
+- ~every cell={<row>}{<column>}~: this is a style hook. The row and
+  column are optional.
+  - ~cells=<options>~: abbrev for ~every cell/.append style=<options>~
+  - ~nodes=<options>~: abbrev for ~every node/.append style=<options>~
+- ~column <number>~: style for the column
+  - =every odd column=
+  - =every even column=
+- =row <number>=: style for the row
+  - =every odd row=
+  - =every even row=
+- =row <number>  column <number>=: more specific
+
+** Anchoring
+- ~matrix anchor=<anchor>~: this anchor will only apply to the matrix
+- ~anchor=<anchor>~: apply to both matrix and cells
+
 
 * TODO Packages
 ** shapes.multipart
