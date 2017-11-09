@@ -681,6 +681,61 @@ followed by any number of children, each introduced by keyword
 =child=. The children are also nodes, thus they can have children
 using the same syntax. Trees have a set of options (TODO).
 
+child must follow a full node, or another child. The syntax of child:
+#+BEGIN_EXAMPLE
+child ::= child [<options>] foreach <variables> in {<values>} {<child path>}
+#+END_EXAMPLE
+
+The foreach staff makes this seems complex, while it is not at
+all. Apart from child keyword, everything is optional, including the
+={<child path>}=, in which case an empty node is added. Foreach has a
+special keyword, and the repeatition will start from the preceeding
+child keyword, i.e. the whole thing shown above.
+
+The child path does not have a formal syntax, so allow me make
+one up
+
+#+BEGIN_EXAMPLE
+<child path> ::= <child> <child path> | <node spec>
+#+END_EXAMPLE
+
+Multiple children can be specified, in which case they are
+siblings. Each child should only have one node. Tikz will give a name
+for each children as <parent>-N where N starts from 1. This naming
+system is nested. The child can also be manually named, using (name),
+and this node will not have the automatic naming. However, the rest of
+the nodes will still have the same counting names, as if this node
+also counts.
+
+** Styling
+Rules
+- option before root: apply to the whole tree
+- option after root: apply to root node only
+- option before child: apply to all children from here
+- option after child: apply to this child and its children
+- option after node: apply to this node only
+
+Some hooks
+- every child
+- every child node
+- level <number>
+
+** Placement
+The following options can be specified multiple times for each portion
+of the tree.
+- level distance
+- sibling distance
+- grow=direction: direction can be a degree, or down,up,left,right;
+  north,east,etc.
+
+A special option for use after the =child= is =missing=. It will leave
+the space, but don't draw the node. A special styling of edge is to
+put =edge from parent[<options>]= right after a node, styling the
+coming edge.
+
+
+** forest
+
 
 * Matrix
 Matrix is actually a node with =matrix= as option. The =\matrix= is
