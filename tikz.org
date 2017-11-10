@@ -1,5 +1,8 @@
 #+TITLE: Tikz
 
+* FAQ
+Use ~scale=0.5, transform shape~ to scale
+
 * Code Structure
 First, use the package
 #+BEGIN_SRC latex
@@ -471,9 +474,9 @@ You define a pic by
 #+BEGIN_EXAMPLE
 \tikzset {
 mypic/.pic = {
-\draw (-3mm, 0) to [bend left] (0,0) to [bend left] (3mm,0)
+\draw (-3mm, 0) to [bend left] (0,0) to [bend left] (3mm,0);
 }
-};
+}
 #+END_EXAMPLE
 
 Reuse it by
