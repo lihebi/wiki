@@ -1,5 +1,10 @@
 #+TITLE: Tikz
 
+* Hacks
+When fitting figure, if you put text direclty into the fitted node, it
+will not be vertically centered. Instead, create a new node at the
+(node.center), and put text in it.
+
 * FAQ
 Use ~scale=0.5, transform shape~ to scale
 
