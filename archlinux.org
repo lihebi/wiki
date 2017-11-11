@@ -188,6 +188,11 @@ systemctl enable dhcpcd
 - markdown
 - dosfstools: for mkfs.vfat, used for raspberry pi
 
+fonts
+- wqy-zenhei
+- adobe-source-han-sans-cn-fonts
+- adobe-source-code-pro-fonts
+
 *** For Helium
 - zeromq
 - memcached libmemcached
