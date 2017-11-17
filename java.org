@@ -19,6 +19,24 @@ You can export ant =build.xml= file by: project, export, general, ant build file
 List is the interface. There are many implementation, including =ArrayList= and =LinkedList=.
 =ArrayList= can be accessed by index expression.
 
+* String
+- charAt
+- compareTo
+- endsWith
+- getBytes
+- indexOf
+- isEmpty
+- lastIndexOf
+- length
+- matches(regex)
+- replace(old, new)
+- replaceAll
+- split(regex)
+- startsWith
+- substring
+- trim
+
+
 
 * File System
 ** Files

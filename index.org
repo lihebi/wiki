@@ -83,6 +83,9 @@ specified in the standard librareis can often be found in [[file:boost.org][Boos
 unit testing.  Debugging using [[file:gdb.org][GDB]], of course. Here are some [[file:c-debug.org][C
 debugging techniques]]. [[file:unix.org][Unix Programming]] Interface. 
 
+[[file:java.org][Java]] is dying for 20 years. I document it because the stupid course
+requires java code.
+
 Scripting. [[file:./shell.org][shell]] concept and all [[file:shell-utils.org][shell utilities]] is
 specified in POSIX standard.  [[file:awk.org][awk]] and [[file:sed.org][sed]] can make really elegent
 scripts for simple tasks.  [[file:regex.org][Regular Expression]] is very important in
