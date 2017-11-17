@@ -782,6 +782,226 @@ specify the spacing for the next separation.
 - ~matrix anchor=<anchor>~: this anchor will only apply to the matrix
 - ~anchor=<anchor>~: apply to both matrix and cells
 
+* Data Visualization
+Use the library =datavisualization=.
+
+The syntax:
+#+BEGIN_EXAMPLE
+\datavisualization[options] <data spec>;
+#+END_EXAMPLE
+
+This command must be inside tikzpicture env, and the prefix is
+=/tikz/data visulization=. Thus, the common tikz command like =red=
+cannot be used. You have another set of options to use.
+
+Options must have at least the following two components:
+- axis
+- visualizers
+
+=data spec= is similar to path, it contains sequence of keywords with
+their own parameters.
+
+Other commands include:
+- scope
+- info
+
+** Axis system
+You can specify axis system manually, but typically just choose from
+one of the pre-defined systems.
+- scientific axes
+- school book axes
+
+#+BEGIN_SRC
+\datavisualization [
+  scientific axes,
+  all axis={grid},
+  x axis = {attribute=time, label, length=2.5cm, ticks=few},
+  y axix = {attribute=colname2, label={$x^2$}},
+  visualize as smooth line
+] data {
+  time, colname2
+  1,2
+  3,4
+}
+#+END_SRC
+
+ticks can be
+- few
+- some
+- many
+
+There are also absolute positioning and several positioning
+strategies. There are also styling options for ticks and grid.
+
+** Provide data
+Use =data= command.
+
+#+BEGIN_EXAMPLE
+data [<option>] {<inline data>}
+#+END_EXAMPLE
+
+This command, used inside =data spec=, give data. The whole ~{<inline
+data>}~ is optional. If present, it is used. Otherwise, option specify
+the file to read, by ~read from file=<filename>~ option.
+
+#+BEGIN_EXAMPLE
+data {
+  x,y
+  1,1
+  2,2
+  ...
+}
+#+END_EXAMPLE
+
+
+#+BEGIN_EXAMPLE
+data point[<options>]
+#+END_EXAMPLE
+
+specify one single data point, options
+- x
+- y
+
+#+BEGIN_EXAMPLE
+data group [<options>] {<name>} = {<data spec>}
+data group [<options>] {<name>} += {<data spec>}
+data group [<options>] {<name>}
+#+END_EXAMPLE
+
+1. define a group of data points
+2. extend a group
+3. use a group
+
+This is for reuse some data points.
+
+** Visualizers
+Specified in options.
+- visualize as smooth line
+- visualize as scatter
+
+You may use multiple visualizers. Then you want to use different
+colors, provide legends.
+
+Using these without parameter will use =line= and =scatter= as
+default set name.
+
+- visualize as line,
+- visualize as scatter
+- visualize as smooth line
+
+Use these to specify particular set name.
+#+BEGIN_EXAMPLE
+visualize as line=sin,
+visualize as line=cos
+#+END_EXAMPLE
+
+This also has a sugar syntax:
+#+BEGIN_EXAMPLE
+visualize as line/.list={sin, cos}
+#+END_EXAMPLE
+
+To specify which data belong to which visualizer, you have two ways.
+
+#+BEGIN_EXAMPLE
+data {
+  x,y,set
+  0,0,sin
+  1,1,cos
+}
+#+END_EXAMPLE
+
+Or
+#+BEGIN_EXAMPLE
+data [set=sin] {
+}
+data [set=cos] {
+}
+#+END_EXAMPLE
+
+The second one is obviously better in most cases.
+
+After defining the visualizer with different name, you can set style
+to it by just assign options to the name.
+
+#+BEGIN_EXAMPLE
+sin={<options>}
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+style={<style options>}
+#+END_EXAMPLE
+
+Style options:
+- red
+- densely dotted
+- mark=x
+
+Apart from style option, you also has legend option. Legend is
+actually automatically added.
+#+BEGIN_EXAMPLE
+legend={below, rows=2},
+sin={label in legend={text=$x^2$}},
+style sheet=strong colors
+#+END_EXAMPLE
+
+** Style sheets & Legends
+style sheet values:
+
+Color
+- strong colors
+- vary hue
+- shades of blue
+- shades of red
+- gray scale
+
+Line
+- vary thickness
+- vary dashing
+
+Scatter
+- cross marks
+
+A very good idea is to put label or pin directly inside the graph, for
+that, for each visualizer defined, assign the =label in data= or =pin
+in data= with proper text and style.
+
+#+BEGIN_EXAMPLE
+sin={label in data={text=$x^2$, when=y is 1, text colored}}
+#+END_EXAMPLE
+
+It will place x^2 at the point of y=1, with the same color as the
+sin line.
+
+For =pin in data=, you have also =pin length= and =pin angle= options.
+
+Now back to legend placement, it can be (alias in parenthesis):
+- east outside (right)
+- north east outside
+- south east outside
+- west outside (left)
+- north west outside
+- south west outside
+- north outside (above)
+- south outside (below)
+
+Inside placement is also supported
+- south east inside
+- east inside
+- ...
+
+Can also relative to data points
+- right of=<data point>: e.g. right of={x=1,y=2}
+- above right of=<data point>
+- above of
+- above left of
+- left of
+- below left of
+- below of
+- below right of
+
+The text of legend can be styled as well.
+
+
 
 * TODO Packages
 ** shapes.multipart
