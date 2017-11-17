@@ -126,100 +126,6 @@ DHCP is not enabled by default. It is the philloshophy for Arch: installing a pa
 systemctl enable dhcpcd
 #+END_EXAMPLE
 
-** Intall packages
-*** Essential packages
-
-- base-devel
-- emacs
-- xterm
-- xorg-server
-- xorg-xinit
-- mlocate
-- rxvt-unicode
-- texlive-core
-- texlive-most: this includes 1) texlive-bibtexextra 2) texlive-core
-  3) texlive-fontsextra 4) texlive-formatsextra 5) texlive-games 6)
-  texlive-genericextra 7) texlive-htmlxml 8) texlive-humanities 9)
-  texlive-latexextra 10) texlive-music 11) texlive-pictures 12)
-  texlive-plainextra 13) texlive-pstricks 14) texlive-publishers 15)
-  texlive-science
-- xorg-xinput
-- xorg-xdm
-- xorg-xconsole
-- tmux
-- cmake
-- clang
-- llvm
-- clang-tools-extra
-- bash-completion
-- ctags
-- pugixml
-- ninja
-- gtest
-- doxygen
-- boost
-- the_silver_searcher
-- antlr2
-- curl
-- libxslt
-- python
-- python2
-- ispell
-- feh
-- debootstrap
-- tidy
-- unzip
-- gperftools
-- valgrind
-- cloc
-- svn
-- clojure
-- ntfs-3g
-- mplayer
-- openssh
-- python-pip
-- ipython
-- r
-- youtube-dl
-- spice # the command is remove-viewer
-- virt-viewer
-- rapidjson
-- ruby
-- markdown
-- dosfstools: for mkfs.vfat, used for raspberry pi
-
-fonts
-- wqy-zenhei
-- adobe-source-han-sans-cn-fonts
-- adobe-source-code-pro-fonts
-
-*** For Helium
-- zeromq
-- memcached libmemcached
-**** audio
-- pavucontrol
-- pulseaudio
-
-*** Apps
-- chromium
-
-*** for Pdf Tools
-- libzip
-- poppler-glib
-- imagemagick
-
-*** Install using AUR (in order!)
-- cl-ppcre
-- clx-git
-- stumpwm
-- quicklisp
-  - On arch, after install quicklisp via AUR, it prompts: to load
-    quicklisp /etc/default/quicklisp into ~/.sbclrc.
-
-- rtags-git
-- plantuml
-- leiningen2-git
-
 ** Then
 run
 - setup-quicklisp
@@ -295,3 +201,98 @@ is still incorrect. To fix that, install =ntp= package and run
 #+BEGIN_EXAMPLE
 sudo ntpd -qg
 #+END_EXAMPLE
+
+
+
+* Packages
+** libraries
+- base-devel
+- cmake
+- pugixml
+- ninja
+- gtest
+- antlr2
+- rapidjson
+- libxslt
+
+** Xorg
+- xorg-server
+- xorg-xinit
+- xterm
+- rxvt-unicode
+- xorg-xinput
+- xorg-xdm
+- xorg-xconsole
+
+** utils
+- curl
+- mlocate
+- bash-completion
+- ctags
+- the_silver_searcher
+- python
+- python2
+- python-pip
+- ipython
+- ispell
+- feh
+- tidy
+- unzip
+- cloc
+- svn
+- ntfs-3g
+- openssh
+- clojure
+- r
+- youtube-dl
+- spice # the command is remove-viewer
+- virt-viewer
+- ruby
+- markdown
+- dosfstools: for mkfs.vfat, used for raspberry pi
+- pavucontrol
+- pulseaudio
+
+** Not so important
+- doxygen
+- gperftools
+- valgrind
+
+** App
+- emacs
+- tmux
+- mplayer
+- chromium
+- firefox
+** Large ones
+- texlive-most (including texlive-core)
+- clang
+- llvm
+- clang-tools-extra
+- boost
+
+** fonts
+- wqy-zenhei
+- adobe-source-han-sans-cn-fonts
+- adobe-source-code-pro-fonts
+
+** For Helium
+- zeromq
+- memcached libmemcached
+
+** for Pdf Tools
+- libzip
+- poppler-glib
+- imagemagick
+
+** Install using AUR (in order!)
+- cl-ppcre
+- clx-git
+- stumpwm
+- quicklisp
+  - On arch, after install quicklisp via AUR, it prompts: to load
+    quicklisp /etc/default/quicklisp into ~/.sbclrc.
+
+- rtags-git
+- plantuml
+- leiningen2-git
