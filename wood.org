@@ -1,5 +1,22 @@
 #+TITLE: Wood Working
 
+* Driver bits
+https://www.youtube.com/watch?v=rmuDlovQHJU
+
+- spade bit
+- hole saw
+- forstner bit
+- right angle attachment
+- screw extractor
+- countersink bit
+- quickchange tapcon drive
+
+* Table Saw
+- Some guides: https://www.youtube.com/watch?v=91v0Yg1L4ok
+
+* Cutting skills
+- tenon: https://www.youtube.com/watch?v=4CvMccfXKnk
+
 * Sanding
 The higher the number, the finer the paper.
 
