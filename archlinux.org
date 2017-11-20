@@ -225,6 +225,7 @@ sudo ntpd -qg
 - xorg-xconsole
 
 ** utils
+- git
 - curl
 - mlocate
 - bash-completion
@@ -235,6 +236,8 @@ sudo ntpd -qg
 - python-pip
 - ipython
 - ispell
+- aspell
+- aspell-en
 - feh
 - tidy
 - unzip
@@ -288,7 +291,8 @@ sudo ntpd -qg
 ** Install using AUR (in order!)
 - cl-ppcre
 - clx-git
-- stumpwm
+- cl-alexandria
+- stumpwm-git
 - quicklisp
   - On arch, after install quicklisp via AUR, it prompts: to load
     quicklisp /etc/default/quicklisp into ~/.sbclrc.
