@@ -46,7 +46,7 @@ cmake -G Ninja .. -DLLVM_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
 #+END_EXAMPLE
 
 Variables:
-- DLLVM_ENABLE_RTTI=ON: support RTTI
+- ~DLLVM_ENABLE_RTTI=ON~: support RTTI
 
 * try the llvm toolchain
 
@@ -285,3 +285,9 @@ for (pred_iterator PI = pred_begin(BB), E = pred_end(BB); PI != E; ++PI) {
   BasicBlock *Pred = *PI;
 }
 #+END_SRC
+
+* Source Code Reading
+
+
+
+

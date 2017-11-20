@@ -1,5 +1,21 @@
 #+TITLE: Clang
 
+
+* Source Code Reading
+** How the invoke of clang works through the APIs
+Cannot find
+
+** TODO How the recursive descent parser is implemented
+*** TODO AST hierarchy
+*** TODO How it is different from the yacc parsers
+*** TODO Is it feasible to rewrite a Recursive Descent Parser in lisp in a few days? Why it is better?
+** TODO How the error recovery works?
+** TODO Preprocessor?
+** TODO Manage the symbol table
+** TODO type system
+
+
+
 * Note from LLVM
 
 When doing casting, don't use C++ =static_cast= or
