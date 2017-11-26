@@ -33,6 +33,17 @@ There should be two empty lines after the footnote definition.
   It is very useful to narrow the subtree using =C-x n s= and widen it back by =C-x n w=.
 
 * Agenda
+It is very convenient to use =org-capture= to quickly write down a
+task to a pre-specified org file, and return from this
+interruption. After that, use =org-refile= (=C-c C-w=) to organize the
+entries *inside* the file, into different top-level headings. When a
+job is done, use =org-archive-subtree= to move it to the archive file,
+defaults to =xxx_archive= (=C-c C-x C-s=)in the same directory.
+
+=org-capture-goto-target= will goto the file associated with template
+entry. =org-capture-goto-last-stored= goes directly to the last stored
+file.
+
 - Creating :: A =TODO= keyword in the beginning of a heading mark it as a TODO item, or simply =M-S-<RET>= to create one.
 - Attributes ::
   You can add a /schedule/ or /deadline/ for such an item,
