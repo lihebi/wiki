@@ -514,6 +514,10 @@ everything is of type =t=. For example, a number 13 is of type
 Function =typep= (=(typep obj type)=) tests whether an object is of a type.
 =(subtypep type1 type2)= tests the type hierarchy.
 
+Type conversion functions are those I found used most but hardly
+remember, documenting here.
+- =parse-integer=: string to integer
+
 * Numbers
 Numbers can use read form, e.g. =#b010101=, =#xaf08=. Predicates such
 as =numberp=, =integerp=, =rationalp=, =floatp=, =realp=, =complexp=

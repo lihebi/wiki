@@ -2,6 +2,10 @@
 
 This is the lisp index page, containing general staff for lisp.
 
+There's a [[http://hyperpolyglot.org/lisp][page]] for corresponding APIs of common lisp, racket, clojure,
+emacs lisp.
+
+
 * Lisp-1 vs. Lisp-2
 
 http://www.nhplace.com/kent/Papers/Technical-Issues.html
