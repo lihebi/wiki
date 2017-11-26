@@ -197,9 +197,8 @@ These blocks can utilize the horizontal space.
 #+TBLFM: $4=(round $4)
 #+end_example
 * Image
-#+BEGIN_QUOTE
-[[./image.jpg]]
-#+END_QUOTE
+=[[./image]]=
+
 - org-toggle-inline-image
 - org-display-inline-image
 - org-redisplay-inline-image
@@ -208,6 +207,8 @@ These blocks can utilize the horizontal space.
 The width is defined by =org-image-actual-width=
 - t: actual width
 - 300: 300px
+
+Use =#+ATTR_HTML: :width 300px= to set the html export size.
 
 * org-ref
 *** Commands
