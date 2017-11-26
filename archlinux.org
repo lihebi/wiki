@@ -117,19 +117,119 @@ grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=myarch
 grub-mkconfig -o /boot/grub/grub.cfg
 #+END_EXAMPLE
 
+Before reboot, it is good to make sure the network will work, by
+installing some networking packages:
+- =dialog=
+- =wpa_suppliant=
+- =iw=
+
 Now reboot
 
-* System Setup
-DHCP is not enabled by default. It is the philloshophy for Arch: installing a package will not enable any service. Enable it by;
+
+** Config
+Install the packages, and config the system using my scripts:
+- setup-quicklisp
+- setup-git
+
+
+** Dual boot with Windows
+The only difference is that, you do not need to create the EFI boot
+partition, but use the existing one. Just mount it to boot. The rest
+is the same.
+
+
+* Wireless Networking
+
+** General DHCPCD
+DHCP is not enabled by default. It is the philloshophy for Arch:
+installing a package will not enable any service. Enable it by;
 
 #+BEGIN_EXAMPLE
 systemctl enable dhcpcd
 #+END_EXAMPLE
 
-** Then
-run
-- setup-quicklisp
-- setup-git
+
+** iw
+- iw dev: list dev
+- iw dev <interface> link: show status
+- ip link set <interface> up: up the interface
+- ip link show <interface>: if you see <UP> in the output, the interface is up
+- iw dev interface scan: scan for network
+- iw dev <interface> connect "SSID": connect to open network
+
+** wpa_supplicant
+=iw= can only connect to public network. This is used to connect
+WPA2/WEP encrypted network.
+
+*** Configuration
+The config file (e.g. =/etc/wpa_supplicant/example.conf=) can be
+generated in two ways: using =wpa_cli= or =use wpa_passphrase=.
+=wpa_cli= is interactive, and has commands =scan=, =add_network=,
+=save_config=.
+
+#+begin_example
+wpa_passphrase MYSSID <passphrase> > /path/to/example.conf
+#+end_example
+
+Inside this file, there's a network section. The =ssid= is a quoted
+SSID name, while =psk= is unquoted encrypted phrase. The psk can also
+be quoted clear password.  If the network is open, you can use
+=key_mgmt=NONE= in place of =psk=
+
+*** Connect
+#+begin_example
+wpa_supplicant -B -i <interface> -c <(wpa_passphrase <MYSSID> <passphrase>)
+#+end_example
+connect to a WPA/WEP protected network
+- -b: fork into background
+- -i interface
+- -c: path to configuration file. 
+
+Alternatively, you can use the config file
+#+begin_example
+wpa_supplicant -B -i <interface> -c /path/to/example.conf
+#+end_example
+
+*** Obtain IP
+After this, you need to get IP address by the "usual" way, e.g.
+#+begin_example
+dhcpcd <interface>
+#+end_example
+
+It seems that we should enable the service:
+- wpa_supplicant@<interface>
+- dhcpcd@<interface>
+
+Also, dhcpcd has a hook that can launch wpa_supplicant implicitly.
+
+*** To Sum Up
+Find the interface by =iw dev=. Say it is =wlp4s0=.
+
+Create config file =/etc/wpa_supplicant/wpa_supplicant-wlp4s0.conf=:
+
+#+begin_example
+  network={
+          ssid="MYSSID"
+          psk="clear passwd"
+          psk=fjiewjilajdsf8345j38osfj
+  }
+
+  network={
+          ssid="2NDSSID"
+          key_mgmt=NONE
+  }
+#+end_example
+
+Enable =wpa_supplicant@wlp4s0= and =dhcpcd@wlp4s0= (or just =dhcpcd=)
+
+
+To change another wifi, kill the server and use another one
+#+begin_example
+sudo killall wpa_supplicant
+wpa_supplicant -B -i wlp4s0 -c /path/to/wifi.conf
+#+end_example
+
+
 
 
 * Trouble shooting
@@ -225,6 +325,8 @@ sudo ntpd -qg
 - xorg-xconsole
 
 ** utils
+- sbcl
+- bc
 - git
 - curl
 - mlocate
@@ -255,6 +357,8 @@ sudo ntpd -qg
 - dosfstools: for mkfs.vfat, used for raspberry pi
 - pavucontrol
 - pulseaudio
+- alsa-utils
+- pulseaudio-alsa
 
 ** Not so important
 - doxygen
@@ -288,6 +392,13 @@ sudo ntpd -qg
 - poppler-glib
 - imagemagick
 
+** Nvidia driver
+- nvidia
+- nvidia-settings
+
+To activate nvidia card, run =nvidia-xconfig=, and reboot (to restart
+xorg-server).
+
 ** Install using AUR (in order!)
 - cl-ppcre
 - clx-git
@@ -296,7 +407,28 @@ sudo ntpd -qg
 - quicklisp
   - On arch, after install quicklisp via AUR, it prompts: to load
     quicklisp /etc/default/quicklisp into ~/.sbclrc.
+- translate-shell
+- acpilight
 
 - rtags-git
 - plantuml
 - leiningen2-git
+
+* TP25
+
+This is something I went through during setup my thinkpad 25.
+
+** backlight
+The =xorg-xbacklight= is not working. The drop-in replacement
+=acpilight= (aur) does.
+
+To setup for video group users to adjust backlight, place a file
+=/etc/udev/rules.d/90-backlight.rules=
+
+#+begin_example
+SUBSYSTEM=="backlight", ACTION=="add", \
+  RUN+="/bin/chgrp video %S%p/brightness", \
+  RUN+="/bin/chmod g+w %S%p/brightness"
+#+end_example
+
+The command is still =xbacklight=.
