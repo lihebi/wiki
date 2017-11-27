@@ -373,7 +373,9 @@ sudo ntpd -qg
 - tmux
 - mplayer
 - chromium
-- firefox
+- firefox (do not install if I only want to use chromium)
+- mpd
+- cantata (mpd GUI client, requires pretty much dependencies, based on qt)
 ** Large ones
 - texlive-most (including texlive-core)
 - clang
