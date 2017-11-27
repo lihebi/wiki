@@ -325,6 +325,7 @@ sudo ntpd -qg
 - xorg-xconsole
 
 ** utils
+- ghostscript (for ps2pdf)
 - sbcl
 - bc
 - git
@@ -386,6 +387,11 @@ sudo ntpd -qg
 ** For Helium
 - zeromq
 - memcached libmemcached
+
+** Undecided
+- acpi: battery
+- acpid: power management daemon
+
 
 ** for Pdf Tools
 - libzip
