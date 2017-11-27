@@ -7,6 +7,14 @@ find ~/data/fast/pick-master/ -name '*.[ch]'
 
 - sort -k 4 -n
 
+
+#+begin_src sh
+  for name in data/github-bench/*; do 
+      echo "===== $name"\
+          | tee -a log.txt; { time helium --create-cache $name; } 2>&1\
+          | tee -a log.txt; done
+#+end_src
+
 * Q&A
 ** redirect output of time
 #+BEGIN_EXAMPLE
