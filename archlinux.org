@@ -360,6 +360,8 @@ sudo ntpd -qg
 - pulseaudio
 - alsa-utils
 - pulseaudio-alsa
+- racket
+- racket-docs
 
 ** Not so important
 - doxygen
@@ -419,6 +421,10 @@ xorg-server).
 - rtags-git
 - plantuml
 - leiningen2-git
+
+** Racket packages
+Install using =raco pkg install <pkg>=
+- =c-utils=
 
 * TP25
 
