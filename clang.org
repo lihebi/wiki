@@ -1,5 +1,56 @@
 #+TITLE: Clang
 
+* GNU C Preprocessor
+The followings are done separately:
+1. Three transformations
+   - all comments are replaced with single spaces
+   - backslash-newline combo is removed
+   - predefined macros are replaced
+2. include header files
+3. macro expansion
+4. conditional compilation
+5. line control
+
+It seems that these are not necessarily sequential. You can invoke any
+of them.
+
+** Invoking
+- =-C=: do not discard comments
+- =-nostdinc=: do not search standard system directory for header files,
+  use only -I directories.
+- =D, U, -undef=: predefine or un-predefine macros. Note that this is
+  *pre-defined macros only*, will not affect the macros in code
+- =-dM=: instead of normal preprocessed program, output all the #define
+  directives (including both pre-defined and user-defined)
+- =-dD=: output preprocessed + user-defined define directive
+- =-dI=: output preprocessed + #include directive
+- =-M, -MM, MD, MMD=: There are also some commands dealing with source
+  code dependencies
+
+*** TODO The line control might be very useful for Helium
+*** TODO nostdinc, what is the standard?
+
+** Macro
+The simple form is a single identifier. The input is scanned
+sequentially. Each time a substitution happens, the result is added to
+the front of remaining text, allowing nested expansion. This also
+means, if later the nested macro is redefined to another value, the
+*new value is always used*.
+
+In terms of macros with arguments, the substitution checks for comma
+to separate parameters. The parameters can be any arbitrary expression
+that does not contain comma. However, a single parameter can have
+comma. This is done by matching parenthesis for each parameter,
+i.e. *the parameter must have balanced parenthesis*, and a comma
+inside parenthesis does not end the parameter. However, the brackets
+and braces are not checked for balance. Like the simple macros, the
+output is added to the front of remaining text and get expanded
+accordingly.
+
+When defining a argument macro, the argument names (should be
+specifically the open parenthesis) must follow macro name immediately
+without any space.
+
 
 * Source Code Reading
 ** How the invoke of clang works through the APIs
