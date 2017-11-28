@@ -444,7 +444,7 @@ The APIs:
 - =map=, =andmap=, =ormap=
 - =for-each=
 - =foldl=, =foldr=
-- =filter=
+- =filter pred lst=: return list with items that makes =pred= =#t=.
 - =remove=
 - =sort=
 - =member=, =memf= (using function): if found, *return the tail* list
@@ -479,6 +479,13 @@ from =racket/list=
 - =flatten v=
 - =check-duplicates lst=
 - =remove-duplicates lst=
+- =partition prod lst=: return two lists, with items that =prod=
+  evaluates to =#t= and =#f= respectively. It is the same as
+#+begin_src racket
+  (values (filter pred lst)
+          (filter (negate pred) lst))
+#+end_src
+
 - =range end=: [0,end)
 - =range start end [step=1]=
 - =shuffle lst=
