@@ -41,6 +41,16 @@ To use a absolute path, you have to use =(file string)=, and
 - tide home directory
 - absolute path
 
+The =#lang= is a shorthand.
+#+begin_src racket
+#lang racket
+decl ...
+;; equivalent to
+(module name racket
+  decl ...)
+#+end_src
+
+Where name is the file name.
 
 
 * Black Magic
