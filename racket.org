@@ -79,6 +79,10 @@ Pattern can be
   pattern. I.e. first, apply =expr= on the value to match, if =#t=,
   the additional =pat= are matched using the above =and= pattern.
 
+There are some syntax sugar for matching:
+- =(match-lambda clause ...)=: equivalent to =(lambda (id) (match id
+  clause ...))=
+
 * Macros
 Matthias Felleisen boils down macros into three main categories:
 1. Binding form
