@@ -1,4 +1,29 @@
 #+TITLE: Racket
+* Basic
+The local binding is established by =let= family. Apart from normal
+=let=, racket has a second form, known as *named let*.
+
+#+begin_example
+(let proc-id ([id init-expr] ...) body ...+)
+#+end_example
+
+It first evaluates the init-exprs, the resulting values become
+arguments to *an application of a procedure*.
+
+#+begin_example
+(lambda (id ...) body ...+)
+#+end_example
+
+Within the body, =proc-id= is bound to the procedure itself.
+
+#+begin_src racket
+  (let fac ([n 10])
+    (if (zero? n) 1
+        (* n (fac (sub1 n)))))
+#+end_src
+
+
+
 * Black Magic
 http://www.greghendershott.com/2015/07/keyword-structs-revisited.html
 #+BEGIN_SRC racket
@@ -46,10 +71,13 @@ Pattern can be
   - pattern =(tree a (tree b  _ _) _)= will match
   - =(tree 0 (tree 1 #f #f) #f)=
   - with =a= bound to 0, =b= bound to 1
-- =and= is used to combine a list of patterns. The typical usage is
+- =(and pat ...)= is used to combine a list of patterns. The typical usage is
   =(and id pat)= where you can bind =id= and still check the =pat=
   against the entire value. =or= is also available but not that
   useful.
+- =(? expr pat ...)=: combine a predicate and the =and=
+  pattern. I.e. first, apply =expr= on the value to match, if =#t=,
+  the additional =pat= are matched using the above =and= pattern.
 
 * Macros
 Matthias Felleisen boils down macros into three main categories:
@@ -238,9 +266,66 @@ to select tests. Create a suite using =(test-suite name-expr test
 ...)=. The tests can be single check or a test case.
 
 
+* Procedure
+The =define= keyword can be used to bind a id to a variable, but most
+likely you are binding a procedure. So the syntax for arguments
+matters.
+
+#+begin_example
+  (define (head args) body ...+)
+  args = arg ... | arg ... . rest-id
+  arg = arg-id
+      | [arg-id default-expr]
+      | keyword arg-id
+      | keyword [arg-id default-expr]
+#+end_example
+
+Note how the rest-id are used to implement the =...= by using one dot.
+
+The context matters. In an internal-definition context, a =define=
+binds a local binding. At top level, it introduces /top-level
+binding/.
+
+In application of procedures, =apply= will apply the procedure with
+content of the list as argument, thus the procedure must accept *as
+many parameters as* the length of list. The list is actually more
+flexible, i.e. collected using =list*=.
+
+=compose= accepts one or more procedures, and composes them by
+applying one by one, and fold result into parameter to the next. The
+last procedure is applied first. There're two versions, =compose=
+allow arbitrary number of values to be passed between procedure calls,
+as long as the number of results and parameters match. =compose1=
+restricts this to exactly one value.
+
+
 * Control Structure
 - =if=
 - =(cond [test-expr then-body ...+] ...)=
+
+#+begin_example
+  (cond cond-clause ...)
+  cond-clause = [test-expr then-body ...+]
+              | [else then-body ...+]
+              | [test-expr => proc-expr]
+              | [test-expr]
+#+end_example
+
+- =and=: A typically trick: =(and (some expr) #t)= to return a boolean
+  value
+  - if no expr, return =#t=
+  - one expr, return its value in tail position.
+  - Multiple exprs
+    - if first eval to =#f=, return #f
+    - *otherwise* recursive call with the rest of exprs in tail
+      position.
+
+- =test-expr => proc-expr=: =proc-expr= must *produce* a procedure
+  that accept exactly *one* argument, the result of =test-expr= is
+  that argument. The value is returned.
+- =test-expr= without a body will return the result of
+  =test-expr=. Not in tail position.
+
 - =(case val-expr [(datum ...) then-body ...+] ...)=: if val-expr
   matches one of datum, execute the body
 - =when=
@@ -345,6 +430,12 @@ Input port specific:
 #+END_SRC
 
 * Pair, List, Vector
+The variants tradition:
+- v: use eqv?
+- q: use eq?
+- f: accept and use a procedure
+
+The APIs:
 - =length=
 - =list-ref=
 - =list-tail=
@@ -356,11 +447,12 @@ Input port specific:
 - =filter=
 - =remove=
 - =sort=
-- =member=, =memf= (using function): if found, return the tail list
+- =member=, =memf= (using function): if found, *return the tail* list
   starting from the match
 - =findf=: like memf, but return just the matched element.
 - =assoc v lst=: the first element of lst whose car equal to
-  v. E.g. =(assoc 1 '((1 2) (3 4)))= returns ='(1 2)=
+  v. E.g. =(assoc 1 '((1 2) (3 4)))= returns ='(1 2)=. variants:
+  =assv=, =assq=, =assf=
 
 from =racket/list=
 - =empty?=
@@ -406,6 +498,17 @@ Vectors
 - =list->vector=
 - =vector-fill! vec v=
 - =vector-copy! dst dst-start src [src-start] [src-end]=
+
+A /box/ is like a single-element vector, typically used as minimal
+mutable storage.
+- =box=: create a box
+- =box?=
+- =unbox=: return the content
+- =set-box! box v=: return =#<void>=
+- =box-cas! box old new=: *atomically* update content *from old* to
+  new, return =#t=. If does not contain old, nothing changed, and
+  return =#f=.
+
 
 From =racket/vector=:
 - =vector-map=
@@ -482,18 +585,77 @@ Constructing sequences
 
 
 * structure
-- automatic fields: don't need to initialize, associated with the
-  type, same among all instances?
-- subtype will inherit fields, when initialize, initialize those
-  parent fields first
-- prefab means /previously fabricated/. Such structure types are
-  globally shared, and they can be print and read back.
+#+begin_example
+struct id maybe-super (field ...) struct-option ...
+field = field-id | [field-id field-option ...]
+#+end_example
 
-=struct id maybe-super (field ...) struct-option ...= is used to
-create (or use previous type if =#:prefab=) a structure type.
-Notable struct-options are =#:prefab=, =#:transparent=.
+The =struct= form creates a structure type (unless =#:prefab= is
+specified), and some names (along with others). Now we use =myid= as
+the provided id:
+- =struct:myid=: the /structure type descriptor/, can be used in
+  =#:super= option
+- =myid=: constructor, unless =#:constructor-name= option is specified
+- =myid?=: predicate procedure
+- =myid-myfield=: accessor procedure for each field
 
-The following procedures are created: id, id-field, id?
+** Field options
+There are two available field options:
+- =#:auto=: automatic fields: the constructor does not accept argument
+  for that field, the auto value by =#:auto-value= (defaults to =#f=)
+  is used.
+- =#:mutable=: =set-myid-myfield!=: destructively update field. A
+  mutable field is defined in *one* of two ways: defined for the
+  fields with =#:mutable= option, or struct option =#:mutable= for all
+  fields. Specify both results in syntax error.
+
+** Subtyping
+You can specify super class in *one* of two ways: maybe-super or via
+=#:super= option. Specify both results in syntax error.  Subtype will
+inherit fields, when initialize, initialize those parent fields first.
+
+** Structure options
+- =#:mutable=: same as set =#:mutable= for all fields
+- =#:super=: same as set maybe-super
+- =#:prefab=: means /previously fabricated/. Also known as predefined,
+  globally shared. Such structure types are globally shared, and they
+  can be print and read back. If it has a super class, obviously it
+  must also be prefab. It is inherently transparent, and cannot have a
+  guard or property. I.e. it cannot be used together with
+  =#:transparent=, =#:inspector=, =#:guard=, =#:property=.
+- =#:auto-value=: supply *one* value for all =#:auto= fields
+- =#:transparent=: shorthand for =#:inspector #f=. All structures are
+  by default opaque, thus the print out format does not show any
+  information. If the structure is transparent, the print information
+  can see the data. The =equal?= will also works by recursively
+  compare all fields, while for opaque structures, this require to
+  define generic method for =equal?=. However, the prints cannot be
+  read back, to do which the prefab is required.
+- =#:inspector= specify an inspector. This is intended for use by
+  debuggers. It is related to reflection, i.e. providing access to
+  structure fields and structure type information.
+- =#:guard= specify a guard procedure, or just =#f= to turn it
+  off. This is used to filter the arguments to constructor. It accepts
+  n+1 arguments: the n constructor arguments, plus the name of the
+  structure, and return n arguments that is actually used for
+  construction. It is called "guard" in the sense that it can raise
+  exceptions.
+- =#:property=: this can be specified multiple times for multiple
+  properties. A property is associated with the type, not the
+  instance. Subtype will inherit property, and can override it. The
+  usage is TODO, and how to retrieve is also TODO.
+- =#:methods=: TODO
+
+
+Other
+- =#:authentic=
+- =#:name=
+- =#:extra-name=
+- =#:constructor-name=
+- =#:extra-constructor-name=
+- =#:reflection-name=
+- =#:omit-define-syntaxes=
+- =#:omit-define-values=
 
 * Multiple Values
 values produce multiple values value, to consume that, typically use
