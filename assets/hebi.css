@@ -21,9 +21,10 @@ a:hover {
 /* @media all and (max-width:850px){html {font-size: 13px;}} */
 /* @media all and (max-width:830px){html {font-size: 12px;}} */
 /* @media all and (max-width:740px){html {font-size: 11px;}} */
-* {
+body {
     max-width: 1024px;
-    text-align: left;
-    margin-left: 1%;
-    margin-right: 1%;
+    margin: auto;
+    /* text-align: left; */
+    /* margin-left: 1%; */
+    /* margin-right: 1%; */
 }
