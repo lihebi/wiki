@@ -1,5 +1,6 @@
 #+TITLE: Racket
 * Basic
+** Local binding
 The local binding is established by =let= family. Apart from normal
 =let=, racket has a second form, known as *named let*.
 
@@ -21,6 +22,24 @@ Within the body, =proc-id= is bound to the procedure itself.
     (if (zero? n) 1
         (* n (fac (sub1 n)))))
 #+end_src
+
+** require
+=require= introduces bindings. It can only be used in two context, the
+top-level context, or the module context (in which it introduce module
+bindings).
+
+To require a installed module, use =(lib "rel-string")=, and its
+widely used shorthand =(require id)= where id is the unquoted string.
+
+When requiring a local file, use plain relative (to current directory)
+path in a string. The path should NOT start or end with a slash. It
+seems that the suffix is optional.
+
+To use a absolute path, you have to use =(file string)=, and
+=expand-user-path= is called, so you can use:
+- relative path
+- tide home directory
+- absolute path
 
 
 
