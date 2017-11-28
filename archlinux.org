@@ -362,6 +362,7 @@ sudo ntpd -qg
 - pulseaudio-alsa
 - racket
 - racket-docs
+- swi-prolog
 
 ** Not so important
 - doxygen
