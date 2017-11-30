@@ -3,6 +3,52 @@
 This file describe the general concept of a compiler. I'm going to
 relearn it in the hard way.
 
+* Tmp
+** CYK parser
+According to the length $n$ of the program measured by tokens, it
+construct a triangle table with length $n$.
+
+#+begin_example
+T
+T T
+T T T
+T T T T
+a a b b
+#+end_example
+
+** Earley's algorithm
+Invented by Jay Earley, it is used to parse CFG. It can parse all CFG,
+while LR and LL can only handle restricted classes. It executes in
+O(n^3) where n is length of string, O(n^2) for unambiguous grammars,
+and linear for almost all LR(k) grammars. It performs particularly
+well for left-recursive grammars.
+
+Notation: for every input position, it generates a /state set/ (called
+S(k) for input position k), consisting of:
+- the production rule using
+- the position in that production rule
+- the original position in the string
+
+The parser repeatedly executes three options:
+- *Prediction*: for every state in S(k) of the form $X->\alpha \cdot Y
+  \beta$, add $Y->\cdot \gamma$ to *S(k)*
+- *Scanning*: for every state in S(k) of form $Y -> \alpha \cdot a
+  \beta$, add $X -> \alpha a \cdot \beta$ to *S(k+1)*
+- *Completion*: for every state in S(k) of the form $X -> \gammar
+  \cdot$, and ... (TODO), add $Y -> \alpha X \cdot \beta$ to *S(k)*
+
+#+begin_example
+  procedure PREDICTOR((A → α•B, i), j, grammar)
+    for each (B → γ) in GRAMMAR-RULES-FOR(B, grammar) do
+      ADD-TO-SET((B → •γ, j), chart[ j])
+  procedure SCANNER((A → α•B, i), j)
+    if B ⊂ PARTS-OF-SPEECH(word[j]) then
+      ADD-TO-SET((B → word[j], i), chart[j + 1])
+  procedure COMPLETER((B → γ•, j), k)
+    for each (A → α•Bβ, i) in chart[j] do
+      ADD-TO-SET((A → αB•β, i), chart[k])
+#+end_example
+
 
 * Parser
 
