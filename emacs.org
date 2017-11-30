@@ -2,6 +2,11 @@
 
 A separate page for [[file:gnus.org][Gnus]].
 
+* Tmp
+- =toggle-truncate-lines=: some file format, e.g. txt, will have a
+  line wrap at the end of the screen. This might be annoying, and
+  toggle this will truncate the line.
+
 * buffer
   - =list-face-displays=
   - =fill-region=
