@@ -374,6 +374,27 @@ restricts this to exactly one value.
   different return values.
 
 * String
+The reading syntax of characters starts with =#\=, with following
+forms
+
+| ASCII | name                   | desc                                       |
+|-------+------------------------+--------------------------------------------|
+|     0 | #\null                 |                                            |
+|     8 | #\backspace            |                                            |
+|     9 | #\tab                  | \t                                         |
+|    10 | #\newline #\linefeed   | linefeed (\n), move cursor to next line    |
+|    11 | #\vtab                 |                                            |
+|    12 | #\page                 | page break                                 |
+|    13 | #\return               | carriage return (\r), move cursor to begin |
+|    32 | #\space                |                                            |
+|   127 | #\rubout               |                                            |
+|       | #\<digit_8>^{{3}}      | Unicode for octal number                   |
+|       | #\<digit_{16}>^{{1,4}} | Unicode for Hex                            |
+|       | #\<c>                  | the single character                       |
+
+As a side note, windows use =\r\n=, Unix use =\n=, Mac OS use =\r=
+
+APIs
 - =make-string k [char]=
 - =string-length=
 - =string-ref=
