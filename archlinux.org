@@ -15,6 +15,22 @@ can easilly convert debian to arch.
 
 https://github.com/gh2o/digitalocean-debian-to-arch
 
+** Kill Xorg
+Kill all Xorg instances
+#+begin_example
+pkill -15 Xorg
+#+end_example
+
+If using kill:
+#+begin_example
+ps -ef | grep Xorg # find the pid
+kill -9 <PID>
+#+end_example
+
+The xkill is not working properly, giving me "unable to find display" error.
+
+
+
 * Installation
 
 Download the image (no need extra package files as the time of 2011
@@ -324,6 +340,16 @@ sudo ntpd -qg
 - xorg-xdm
 - xorg-xconsole
 - openbox: just in case stumpwm stops working
+
+- xorg-twm
+- xorg-xterm
+- xorg-xclock
+- xorg-xkill
+- xorg-xeyes
+- xorg-xcalc
+- xorg-xconsole
+
+- xorg-server-devel: for nvidia-xconfig to work
 
 ** utils
 - ghostscript (for ps2pdf)
