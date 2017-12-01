@@ -323,6 +323,7 @@ sudo ntpd -qg
 - xorg-xinput
 - xorg-xdm
 - xorg-xconsole
+- openbox: just in case stumpwm stops working
 
 ** utils
 - ghostscript (for ps2pdf)
