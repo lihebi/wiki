@@ -329,9 +329,13 @@ sudo ntpd -qg
 - gtest
 - antlr2
 - rapidjson
-- libxslt
+- laxest
 
 ** Xorg
+Actually xorg group seems to contain all of them, except:
+- xorg-xinit
+
+Common xorg packages:
 - xorg-server
 - xorg-xinit
 - xterm
@@ -341,6 +345,7 @@ sudo ntpd -qg
 - xorg-xconsole
 - openbox: just in case stumpwm stops working
 
+To make the default startx work:
 - xorg-twm
 - xorg-xterm
 - xorg-xclock
@@ -349,7 +354,8 @@ sudo ntpd -qg
 - xorg-xcalc
 - xorg-xconsole
 
-- xorg-server-devel: for nvidia-xconfig to work
+for nvidia-xconfig to work:
+- xorg-server-devel
 
 ** utils
 - ghostscript (for ps2pdf)
