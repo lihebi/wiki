@@ -136,6 +136,89 @@ breadth-first-search, whenever multiple choices can be taken. All the
 choices are explored simultaneously, until it reach an error state or
 merge into another (if they generate the same set of symbols).
 
+** About C Grammar
+
+This is a easily misunderstood problem.
+There's a old 1989 discussion on comp.lang.misc:
+- https://groups.google.com/forum/#!topic/comp.lang.misc/MCZmQv56--Q
+
+So here's my understanding:
+C language is context sensitive:
+- an identifier must be previously defined, to be able to be a typedef-name
+  - this is different from an undeclared variable: an identifier is
+    always parsed into category "identifier", regardless of whether it
+    has been declared. However, undefined typedefs are ambiguous.
+  - typedef-name : identifier
+- else must match the closest else-less if
+- continue and break must be in correct context
+
+On the other hand, the C grammar in the back of K&R, *is*
+context-free, because it is in BNF format. However, it accepts more
+than C language.
+
+Also in another word, the K&R grammar generates valid C programs and
+some invalid ones, and those are detected by the semantic analyzer.
+
+A word about ambiguity: it does not affect the language it generates,
+but only generates (or recognizes) the same sentence in multiple ways.
+
+Yacc generates LALR(1) parser. The C grammar is not a /no-feedback
+yacc-able grammar./ The thing is, when the lexer is trying the rule
+"typedef-name: identifier", the lexer should answer "typedef-name" iff
+the identifier happens to be a typedef name.. We also need to make
+sure that it tries this rule before the rule "primary: identifier". So
+the implementation is to add a predicate
+"identifier-is-really-typedef" to the action of the rule
+"typedef-name".
+
+
+K&R has the following sentence:
+#+begin_quote
+With one further change, namely deleting the production typedef-name:
+identifier and making typedef-name a terminal symbol, this grammar is
+acceptable to the YACC parser-generator.
+#+end_quote
+
+This is the fundamental reason why the yacc grammar differs from the
+K&R grammar. The typedef-name a terminal symbol also means that, C
+does have a infinite number of (non?-)terminals.
+
+David Gudeman in that mailing archive said one sentence:
+#+begin_quote
+The grammar is intended to show syntactic categories with semantic
+attachment.
+#+end_quote
+
+And someone said:
+#+begin_quote
+we generally do not write grammars that accept only strictly correct
+inputs.  Instead, we take some shortcuts and patch things up via
+semantics.
+#+end_quote
+
+Chris Torek:
+#+begin_quote
+Strictly speaking (as long as you stick with `typedef produces a new
+type specifier'), C's grammar is not context free; but it is indeed
+not seriously `screwed up'.  Perfect generators are not necessary, and
+a language `close enough to C' exists that can be parsed simply.
+#+end_quote
+
+Since typedef produce a new "terminal", can we really say C grammar
+has infinite number of "terminals", and the definition of Chomsky
+hierarchy context free grammar does not hold for C grammar.
+
+The C grammar in back of K&R by no means is the correct C grammar, or
+the grammar used in compiler implementation.
+
+The typedef-name problem is also called /The Lexer Hack/. There must
+be a feedback loop from the parser to insert the typedef-name into the
+symbol table, and the lexer will use this information to determine
+whether it is a typedef-name or token. The parser action must insert
+this table before the ~,=;~ declarator terminator, because the lexer
+is allowed to lookahead 1 token, and the token might be an identifier.
+
+
 
 * Parser
 
