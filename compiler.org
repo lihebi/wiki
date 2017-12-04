@@ -4,6 +4,7 @@ This file describe the general concept of a compiler. I'm going to
 relearn it in the hard way.
 
 * Tmp
+
 ** CYK parser
 According to the length $n$ of the program measured by tokens, it
 construct a triangle table with length $n$.
@@ -48,6 +49,92 @@ The parser repeatedly executes three options:
     for each (A → α•Bβ, i) in chart[j] do
       ADD-TO-SET((A → αB•β, i), chart[k])
 #+end_example
+
+* Chomsky Hierarchy
+
+** Attribute grammar
+The *evaluation* of the node will benefit from the attributes. It is
+categories into synthesized attributes and inherited attributes. This
+is mentioned in the syntax-directed translation part of dragon book,
+so I don't really think it is syntax related.
+
+** Affix grammar
+This seems to be synonyms of attribute grammar. Wikipedia has an
+example of using it to resolve the plural verbs, e.g. ~John likes
+children~. The grammar does make perfect sense to me though.
+
+#+begin_example
+Sentence → Subject + number Predicate+number
+Subject + number → Noun + number
+Predicate + number → Verb + number Object
+Object → Noun + number
+Noun + singular → John
+Noun + singular → Mary
+Noun + plural → children
+Noun + plural → parents
+Verb + singular → likes
+Verb + plural → like
+Verb + singular → helps
+Verb + plural → help
+#+end_example
+
+
+** two-level grammar
+Two level grammar is used to generate another formal grammar. This is
+like meta programming, or abstraction. One advantage is that is can
+define a grammar with infinite number of rules, due that it is
+generated.
+
+For the context-sensitive language ={a^nb^nc^n}=, the two level
+grammar is:
+#+begin_example
+N ::= 1 | N1
+X ::= a | b
+#+end_example
+
+*Together* with the schema:
+#+begin_example
+S ::= <a^N><b^N><c^N>
+<X^{N1}> ::= <X^N> X
+<X^1> ::= X
+#+end_example
+
+** Van Wijngaarden grammar
+It is named by its inventor, and used in the language ALGOL 68. It is
+also called vW-grammar, or W-grammar. Also note that it is too
+powerful and also impractical as well.
+
+
+It is:
+- affix grammar
+- two-level grammar
+
+The ALGOL 68 grammar:
+#+begin_example
+a) program : open symbol, standard prelude,
+     library prelude option, particular program, exit,
+     library postlude option, standard postlude, close symbol.
+b) standard prelude : declaration prelude sequence.
+c) library prelude : declaration prelude sequence.
+d) particular program :
+     label sequence option, strong CLOSED void clause.
+e) exit : go on symbol, letter e letter x letter i letter t, label symbol.
+f) library postlude : statement interlude.
+g) standard postlude : strong void clause train
+#+end_example
+
+The idea is simple: provide non-terminal symbols with attributes (or
+affixes) that pass information between nodes of parse tree. This seems
+essentially to be using syntax to specify semantics. E.g. ~variable :=
+value~ is in-complete but instead ~REF TYPE variable := TYPE value~.
+
+
+** Generalized LR parser
+LR cannot handle nondeteministic and ambiguous grammars. GLR allows
+shift/reduce and reduce/reduce conflicts. It does that by doing a
+breadth-first-search, whenever multiple choices can be taken. All the
+choices are explored simultaneously, until it reach an error state or
+merge into another (if they generate the same set of symbols).
 
 
 * Parser
