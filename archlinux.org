@@ -6,6 +6,19 @@ You can back up configuration by:
 - https://github.com/CyberShadow/aconfmgr
 
 * TMP
+** useradd
+The account will use the values on command line, *plus* the default
+value for system. A group will also be created by default.
+
+- =-g GROUP=: specify the initial login group. Typically *just ignore*
+  this, the default value will be used.
+- =-G group1,group2,...=: additional groups. You might want: =video=,
+  =audio=, =wheel=
+- =-m=: create home if it does not exists
+- =-s SHELL=: use this shell. Typically just ignore this, the system
+  will choose for you.
+
+** small
 - install =vlc= in order to use EMMS
 - =mpd= and =mpc= for music playing
 
@@ -329,7 +342,7 @@ sudo ntpd -qg
 - gtest
 - antlr2
 - rapidjson
-- laxest
+- libxslt
 
 ** Xorg
 Actually xorg group seems to contain all of them, except:
