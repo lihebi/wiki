@@ -76,6 +76,7 @@
 - [[file:palindrome.org][Palindrome]]
 - [[file:proceedings.org][Proceedings]]
 - [[file:program-analysis.org][Program Analysis]]
+- [[file:prolog.org][Prolog]]
 - [[file:pugixml.org][Pugixml]]
 - [[file:python.org][Python]]
 - [[file:python-3rd-lib.org][Python 3rd Party Libraries]]

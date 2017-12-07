@@ -1,0 +1,87 @@
+#+TITLE: Prolog
+
+* Reference
+
+- Swipl tutorial: http://lpn.swi-prolog.org/lpnpage.php?pageid=top
+- Swipl library http://www.swi-prolog.org/pldoc/man?section=lists
+
+* Syntax
+- the *varaible* starts with *Upper* case or *underscore*
+  - lower case means string literal
+  - underscore means anonymous varaible
+- functor must be followed directly by brace, no space
+  - =foo(a)= +=foo (a)=+
+- *ends with dot(.)*
+
+** Control
+#+begin_example
+maxlist([], 0).
+maxlist([H|T],Max) :- maxlist(T,MaxT), (H>MaxT -> Max is H ; Max is MaxT).
+#+end_example
+
+If combined with other clauses, the parenthesis is must.
+
+** IS
+If you want to use the inference feature, you cannot use the ~=~ or
+~==~ to do equivalent checking. Instead, use the ~OutputVar is
+Something~.
+
+
+
+* Emacs
+- =C-c C-c r=: eval region
+
+* library
+
+
+* Logic Theory
+** Precision and Recall
+Scenario: there are a set of correct and incorrect items, we want to
+retrieve all the correct ones.
+- Precision: $\frac{\text{retrieve correct}}{\text{all retrieve}}$
+- Recall: $\frac{\text{retrieve correct}}{\text{all correct}}$
+** Syllogism (syllogistic reasoning)
+  - a kind of logical argument that applies *deductive reasoning* to
+    arrive at *a conclusion based on two or more propositions* that are
+    asserted or assumed to be true.
+  - Example
+    - P1: All men are mortal.
+    - P2: Socrates is a man.
+    - Conclusion: Therefore Socrates is mortal.
+
+** Propositional Logic
+  - proposition: a statement or assertion that express a judgement
+  - Format:
+    - Premise 1: $P \rightarrow Q$
+    - Premise 2: $P$
+    - Conclusion: $Q$
+  - Examples
+    - Premise 1: If it's raining then it's cloudy.
+    - Premise 2: It's raining.
+    - Conclusion: It's cloudy.
+** First order logic
+- Definition
+  - Use Qualifiers
+    - for all
+    - there exists
+  - Can Use Variables
+- Example
+  - Propositional Logic: Socrates is a man
+  - First Order Logic: there exists X such that X is Socrates and X is a man
+    - $\exists X (X \in Socrates) \cup (X \in man)$
+** High order logic
+  - first order logic + additional qualifiers
+  - Nested qualifiers
+    - $\forall x(\exists y((f(x)=y)\land(\neg(g(y)=y))))$
+** Horn Clause
+- /clause/ is a disjunction of many predicates.
+- /horn clause/ is a clause with *at most* one positive literal
+- /dual-horn clause/ is a clause with *at most* one *negated* literal
+- /definite clause/ is a horn clause with *exactly* one positive
+  literal
+  - if they all hold, then it holds
+- /fact/ is a definite clause with no negative literal (i.e. it only
+  has one literal)
+  - assume it holds
+- /goal clause/ is a horn clause without positive literal
+  - show everyone holds
