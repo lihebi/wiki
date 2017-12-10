@@ -417,6 +417,24 @@ With =racket/string=:
 - =string-prefix?= s prefix
 - =string-suffix?= s suffix
 
+With =racket/format=:
+- =~a=: accept a value, using =display=. It accepts several keyword
+  arguments:
+  - =#:separator ""=: the function actually accepts multiple values, each
+    of them is connected with separator
+  - =#:width=
+  - =#:max-width=
+  - =#:min-width=
+  - =#:limit-marker ""=: if the string is longer than the width, use this
+    as indication of "more".
+  - =#:align=: ~(or/c 'left 'center 'right) = 'left~
+  - =#:pad-string " "=: when width is less than the specified width, this
+    is used to pad
+- =~v=: use =print= instead of =display=. Default separator is " ",
+  default limit-marker is "..."
+- =~s=: use =write=. Default separator is " ", default limit-marker is
+  "..."
+
 Byte string
 - =make-bytes k [b]=
 - =bytes-length=
@@ -813,7 +831,8 @@ garbage collection. Thus the setup and communication cost is higher.
 Places can only communicate through place channels.
 
 * IO
-
+** ports
+*** General operation
 - =eof=: global variable
 - =eof-object?=
 - =close-input-port=, =close-output-port=
@@ -823,7 +842,7 @@ Places can only communicate through place channels.
   default. Terminal output port is line-buffered. This function cause
   the port to be flushed immediately
 
-File IO
+*** File IO
 - =open-input-file path [#:mode flag]=: return an input port. mode can
   be ='binary= or ='text=
 - =open-output-file path [#:mode flag #:exists flag]=: exist flag
@@ -840,12 +859,53 @@ File IO
   when thunk returns.
 - =with-output-to-file path thunk=
 
-String IO
+*** String IO
 - =open-input-string str=: create a string port using str
 - =open-output-string=: create a output string port
 - =get-output-string out=: read from a output string port. This should
   be used with the above method, specifically the out should be
   =(and/c output-port? string-port?)=.
+
+
+** Reading
+- =read-char=
+- =read-byte=
+- =read-line=
+- =read-bytes-line=
+- =read=: read a /datum/ from an input port
+- =read-syntax=: like read, but produce a /syntax object/, with
+  source-location information
+
+** Writing
+- =write-char=
+- =write-byte=
+- =newline=
+- =write-string=
+- =write-bytes=
+
+- =write=: write a datum so that it can be read back
+- =display=: write string without the quotes
+- =print=: this is pretty weird. The existence rationale is that,
+  /display and write both have specific output convention/. But print
+  has no pre-assumed convention, and the environment is free to modify
+  its behavior.
+- =writeln=, =displayln=, =println=
+- =fprintf out form v ...=
+  - out is an output port
+  - form is a format string.
+    - =~n=: new line
+    - =~a=: display
+    - =~s=: write
+    - =~v=: print
+- =printf form v ...=: equivalent to =fprintf (current-output-port) form v ...=
+- =eprintf form v ...=: print to (current-error-port)
+- =format form v ...=: return the string
+
+with =racket/pretty=
+- =pretty-print=
+- =pretty-write=
+- =pretty-display=
+- =pretty-format=
 
 
 * OS
