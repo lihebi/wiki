@@ -298,6 +298,38 @@ specify which tests to run. There're text (=run-tests= in
 to select tests. Create a suite using =(test-suite name-expr test
 ...)=. The tests can be single check or a test case.
 
+* Numbers
+- =/=: provide the fraction if given two numbers, not to round it.
+- =quotient n m=: =(truncate (/ n m))=
+- =remainder n m=: seems that the result has the same sign with n
+- =modulo n m=: seems that the result has the same sign with m
+- =add1=
+- =sub1=
+- =abs=
+- =max=
+- =min=
+- =gcd=
+- =lcm=: least common multiple
+- =round=
+- =floor=
+- =ceiling=
+- =truncate=: towards 0
+- =numerator=
+- =denominator=
+
+Computation
+- =sqrt=
+- =expt e p=: e to the power of p
+- =exp z=
+- =log z [b (exp 1)]=
+
+Random
+- =random k=: =[0,k)=
+- =random min max=: =[min,max)=
+- =random-seed k=
+
+With =racket/random=:
+- =random-sample seq n=
 
 * Procedure
 The =define= keyword can be used to bind a id to a variable, but most
