@@ -950,7 +950,7 @@ In =racket/os=
 ** Path
 - =string->path=
 - =path->string=
-- =build-path base sub ...=
+- *=build-path base sub ...=*
 - =absolute-path?=, =relative-path?=
 - =path->directory-path=: from =x/y= to =x/y/=
 - =resolve-path=: follow soft link. Note that itself does not expand
@@ -960,19 +960,19 @@ In =racket/os=
   checking). =cleanse-path=, =expand-user-path=, =simplify-path= are
   exceptions in the sense that they does not access filesystem, but
   will do cleanse. But what exactly cleanse does?
-- =expand-user-path=: a leading =~= is replaced by the user home
+- *=expand-user-path=*: a leading =~= is replaced by the user home
   directory.
 - =simplify-path=: nomalize as much as possible. I.e. remove
   - redundant path separators (except single trailing separator)
   - =..=, =.=
-- =split-path=: remove the last component (without consideration of
+- *=split-path=*: remove the last component (without consideration of
   trailing =/=, as we will see in the 3rd return value), and return 3
   values (e.g. "aa/bb/cc/"):
   - base: =aa/bb/=
   - name: =cc=
   - must-be-dir?: =#t=
 - =explode-path=: split path extensively, the first one is root
-- =path-replace-extension path ext=: extension starts from the last
+- *=path-replace-extension path ext=*: extension starts from the last
   dot. =ext= should lead by a dot. If no dot in the path, simply add
   it.
 - =path-add-extension path ext [sep #"_"]=: add the extension. If
@@ -980,7 +980,7 @@ In =racket/os=
 
 From =racket/path=
 - =file-name-from-path=
-- =path-get-extension=
+- *=path-get-extension=*
 - =path-has-extension?=
 - =file-relative-path base path=: how to do from base TO path
   - =(find-relative-path "a/b" "a/b/c/d")= returns =c/d=
@@ -992,17 +992,17 @@ From =racket/path=
 - =find-system-path kind=, where kind is
   - ='home-dir=
   - ='temp-dir=
-- =find-executable-path program=
-- =file-exists?=
+- *=find-executable-path program=*
+- *=file-exists?=*
 - =link-exists?=
-- =delete-file=
+- *=delete-file=*
 - =rename-file-or-directory old new=
 - =file-size=: in bytes
 - =copy-file src dest=
 - =make-file-or-directory-link to path=: create =path=, link to =to=
   (soft or hard??)
-- =current-directory= get or set, this is a parameter
-- =directory-exists?=
+- *=current-directory=* get or set, this is a parameter
+- *=directory-exists?=*
 - =make-directory=
 - =delete-directory=
 - =directory-list [path #:build build?]=: list of all files or
@@ -1012,7 +1012,7 @@ From =racket/path=
   that, use the sequence generator =in-directory=.
 
 From =racket/file=:
-- =file->string=: this READs the file content to a string
+- *=file->string=*: this READs the file content to a string
 - =file->value=: READs a single S-expression using =read=. Seems that
   the file can contain more
 - =file->list path [proc = read]=: reads the file content with proc
@@ -1026,8 +1026,9 @@ From =racket/file=:
 - =find-files predicate [start-path]=: start-path defaults ot
   current. Use predicate to filter what should be returned. Seems that
   this is recursive.
-- =make-directory*=: seems to be =mkdir -p=
-- =make-parent-directory*=
+- *=make-directory*=*: seems to be =mkdir -p=
+- *=make-parent-directory*=*: this is very convenient in making a
+  necessary directory to write a file
 - =make-temporary-file [template copy-from-filename directory]=:
   create it, and return path.
   - template: ="rkttmp~a"=
