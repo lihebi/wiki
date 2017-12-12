@@ -36,10 +36,10 @@ kpsewhich sig-alternate-05-2015.cls
               =\Rightarrow= (\Rightarrow) =\Leftarrow= (\Leftarrow)
               =\Leftrightarrow= (\Leftrightarrow) =\longrightarrow=
               (\longrightarrow)
-   - accents :: =\hat{a}= (\hat{a}) =\vec{x}= (\vec{x})
+   - accents :: =\hat{a}= (\hat{a}), =\bar{a}= (\bar{a}) =\vec{x}= (\vec{x})
    - math :: =\infty= (\infty) =\propto= (\propto) =\lfloor= (\lfloor)
              =\rfloor= (\rfloor) =\lceil= (\lceil) =\rceil= (\rceil)
-             =\sum= (\sum) =\int= (\int) =\prod= (\prod) =\times= (\times)
+             =\sum_i^j= (\sum_i^j) =\sum\limits_i^j= ($\sum\limits_i^j$) =\int= (\int) =\prod= (\prod) =\times= (\times)
              =\ldots= ( \ldots ) =\frac{a}{b}= (\frac{a}{b}) =\sqrt{n}=
              (\sqrt{n}) =\overline{abc}= (\overline{abc})
    - mark :: =\checkmark= (\checkmark)
