@@ -1,0 +1,23 @@
+#+TITLE: Probability
+
+* Vocabulary
+- sample point: each possible outcome of an experiment
+- sample space: set of all sample points, $\omega$
+- event E: a subset of $\omega$
+  - disjoint: E_1 and E_2 are disjoint if $E_1 \cap E_2 = \emptyset$
+  - mutually disjoint: a collection of events are mutually disjoint if
+    for every $i \ne j$, $E_i \cap E_j = \emptyset$
+- probability function: P from $\omega$ to [0,1]
+- $\bar{E}$: $\omega - E$
+- uniform probability: $P(x) = \frac{1}{|\omega|}$, P(E) = \frac{|E|}{|\omega|}
+- P(E) = \sum_{x\in E}P(x)
+
+- independent: if events A and B are
+
+* Bounds
+** Union Bound
+$P(\cup_i E_i) \le \sum\limits_i P(E_i)$
+
+This is because of disjoint.
+
+* Probability Example

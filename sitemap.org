@@ -74,6 +74,7 @@
 - [[file:overtone.org][Overtone]]
 - [[file:posix.org][POSIX]]
 - [[file:palindrome.org][Palindrome]]
+- [[file:probability.org][Probability]]
 - [[file:proceedings.org][Proceedings]]
 - [[file:program-analysis.org][Program Analysis]]
 - [[file:prolog.org][Prolog]]

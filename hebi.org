@@ -32,7 +32,7 @@ There's always a [[file:tmp.org][tmp]] buffer, a [[file:backup.org][BackUp]], an
 I got some of the notes from computation theory class.  [[file:math/511/np.org][NP]], [[file:math/511/np-problems.org][NP
 problems]], [[file:math/531/NPC.org][NPC]], [[file:math/511/approximation.org][Approximation]], [[file:math/511/lp.org][Linear Programming]], [[file:math/531/tm.org][Turing Machine]],
 [[file:math/531/decidability.org][Decidability]]. And some from AI class too: [[file:search-alg.org][Search algorithm]], [[file:name-alg.org][Name
-Algorithm]], [[file:machine-learning.org][Machine Learning]], [[file:ai.org][Artificial Intelligence]]
+Algorithm]], [[file:machine-learning.org][Machine Learning]], [[file:ai.org][Artificial Intelligence]], [[file:probability.org][probability]].
 
 Some related posts [[file:alg-string.org][String algorithms]], [[file:palindrome.org][Palindrome]], [[file:data-structure.org][data structure]], [[file:data-structure-old.org][old
 data structure page]], [[file:oj.org][algorithm in practice]].
