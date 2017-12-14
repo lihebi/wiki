@@ -436,6 +436,53 @@ The conflict here:
 
 Grammar that contains these conflicts are non-LR grammar.
 
+**** The dangling else problem
+This is a canonical example for shift/reduce conflict. The C grammar
+for selection-statement is like this. [[https://www.gnu.org/software/bison/manual/html_node/Shift_002fReduce.html][The bison way]] to deal with it is
+to "choose shift, unless otherwise directed by operator precedence
+declarations". This naturally groups the else with nearest if. But
+bison will /STILL/ report 2 shift/reduce conflicts. You can suppress
+this warning by use =%expect 2=, but this is not recommended.
+
+More elegant way is to use precedence or associativity. To do this,
+either make =else= to have higher precedence than =then=, /OR/ make them
+equal precedence, but give both =then= and =else= right
+associativity. In the case there is no =then= keyword, like C, the
+terminal is =r-paren=.
+
+Below is the code giving =else= higher precedence. Note that =%token=
+only declares the token exists, no precedence. =%precedence= does both
+declaring and precedence assigning. It follows the same rule: the
+lower the position, the higher the precedence.
+#+begin_example
+%precedence "then"
+%precedence "else"
+#+end_example
+
+Give right associativity:
+#+begin_example
+%right "then" "else"
+#+end_example
+
+
+
+One more way to resolve this is to slightly modify the grammar:
+#+begin_example
+  statement = ...
+     | selection-statement
+
+  statement-with-else = ...
+     | selection-statement-with-else
+
+  selection-statement = ...
+     | IF ( expression ) statement
+     | IF ( expression ) statement-with-else ELSE statement
+
+  selection-statement-with-else = ...
+     | IF ( expression ) statement-with-else ELSE statement-with-else
+#+end_example
+
+
 *** LR(k) Parsing
 - L :: left to right scanning
 - R :: producing rightmost derivation
