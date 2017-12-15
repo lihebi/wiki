@@ -250,6 +250,73 @@ Similaryly, a top-level =begin= is not visible in macro, we need
 Use these to expand a macro:
 - =(expand top-level-form)=: fully expand
 - =(expand-once top-level-form)=: expand only once
+
+Here's an example from Racket Guide that implements call-by-reference
+
+#+begin_src racket
+  (define-syntax-rule (define-get/put-id id get put!)
+    (define-syntax id
+      (make-set!-transformer
+       (lambda (stx)
+         (syntax-case stx (set!)
+           [id (identifier? (syntax id)) (syntax (get))]
+           [(set! id e) (syntax (put! e))])))))
+
+  (define-syntax-rule (define-cbr (id arg ...) body)
+    (begin
+      (define-syntax id
+        (syntax-rules ()
+          [(id actual (... ...))
+           (do-f (lambda () actual)
+                 (... ...)
+                 (lambda (v)
+                   (set! actual v))
+                 (... ...))]))
+      (define-for-cbr do-f (arg ...)
+        () ; explained below...
+        body)))
+
+  (define-syntax define-for-cbr
+    (syntax-rules ()
+      [(define-for-cbr do-f (id0 id ...)
+         (gens ...) body)
+       (define-for-cbr do-f (id ...)
+         (gens ... (id0 get put)) body)]
+      [(define-for-cbr do-f ()
+         ((id get put) ...) body)
+       (define (do-f get ... put ...)
+         (define-get/put-id id get put) ...
+         body)]))
+#+end_src
+
+Test with
+#+begin_src racket
+  (define-cbr (f a b)
+    (swap a b))
+
+  (let ([x 1] [y 2])
+    (f x y)
+    (list x y))
+#+end_src
+
+The define-for-cbr is pretty tricky, the following =with-syntax= is
+better:
+#+begin_src racket
+  (define-syntax (define-for-cbr stx)
+    (syntax-case stx ()
+      [(_ do-f (id ...) body)
+       (with-syntax ([(get ...) (generate-temporaries #'(id ...))]
+                     [(put ...) (generate-temporaries #'(id ...))])
+         #'(define (do-f get ... put ...)
+             (define-get/put-id id get put) ...
+             body))]))
+#+end_src
+
+
+
+
+
+
 * rackunit
 Since racket has the =test= module concept, there needs no unit test
 framework. However, it seems that =rackunit= provides some
