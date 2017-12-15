@@ -253,6 +253,29 @@ Use these to expand a macro:
 
 Here's an example from Racket Guide that implements call-by-reference
 
+Should generate
+#+begin_src racket
+(define (do-f get-a get-b put-a! put-b!)
+  (define-get/put-id a get-a put-a!)
+  (define-get/put-id b get-b put-b!)
+  (swap a b))
+(do-f (lambda () x)
+      (lambda () y)
+      (lambda (v) (set! x v))
+      (lambda (v) (set! y v)))
+#+end_src
+
+The test code:
+#+begin_src racket
+  (define-cbr (f a b)
+    (swap a b))
+
+  (let ([x 1] [y 2])
+    (f x y)
+    (list x y))
+#+end_src
+
+The actual implementation:
 #+begin_src racket
   (define-syntax-rule (define-get/put-id id get put!)
     (define-syntax id
@@ -287,16 +310,6 @@ Here's an example from Racket Guide that implements call-by-reference
        (define (do-f get ... put ...)
          (define-get/put-id id get put) ...
          body)]))
-#+end_src
-
-Test with
-#+begin_src racket
-  (define-cbr (f a b)
-    (swap a b))
-
-  (let ([x 1] [y 2])
-    (f x y)
-    (list x y))
 #+end_src
 
 The define-for-cbr is pretty tricky, the following =with-syntax= is
