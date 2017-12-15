@@ -26,10 +26,7 @@ available, a [[file:linux.org][Linux]] distribution also gets the job done. Sinc
 /workbench/, you might want to consider [[file:archlinux.org][ArchLinux]] because of the
 rolling release. In my mind, all other distributions are for specific
 purpose, like servers [[file:centos.org][CentOS]], [[file:debian.org][Debian]] due that they are "stable"
-because they care so much about backward compatibility. Gentoo is cool
-(a.k.a. /zhuang X/) but pretty painful to use, I still remember the
-days when it took hours for me to update chromium on an old pentium
-platform.
+because they care so much about backward compatibility.
 
 The [[file:posix.org][POSIX]] standard is what makes linux and all versions of unix feel
 at home.  [[file:docker.org][docker]] creates machines to play with very cheaply.  
