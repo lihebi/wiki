@@ -65,6 +65,7 @@
 - [[file:make.org][Make]]
 - [[file:markdown.org][Markdown]]
 - [[file:miata.org][Miata]]
+- [[file:jargon.org][My Jargon File]]
 - [[file:name-alg.org][Name Algorithm]]
 - [[file:oj.org][Online Judge Excerpts]]
 - [[file:open-source.org][Open Source Projects I should consider contribute]]
