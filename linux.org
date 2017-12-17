@@ -429,3 +429,16 @@ Or you can use =dos2unix=, perhaps by
 #+BEGIN_EXAMPLE
 find . -name *.java | xargs dos2unix
 #+END_EXAMPLE
+
+* Kernel Developers
+- Linus Torvalds
+- Steve Rostedt
+- Sarah Sharp
+- Greg Kroah-Hartman
+- Alan Cox
+- Dave Jones
+- Jean Delvare
+- Arnd Bergmann
+- Herbert Xu
+- Arnd Bergmann
+- Jes Sorensen
