@@ -104,7 +104,7 @@ the ecosystem of compilation.  Profiling of you code by [[file:gcov.org][gcov]],
 [[file:clang.org][Clang]] toolchain can make it pretty easy.
 
 Faminilar with [[file:design-pattern.org][Design Pattern]] when coding, and this can be learned
-best by doing refactoring. 
+best by doing refactoring. [[file:git.org][git]] is a preferred VCS.
 
 * Writing
 Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide the ultimate
