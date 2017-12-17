@@ -1,119 +1,14 @@
 #+TITLE: Gnus
 
-Finally I decide to learn Gnus the hard way. I have to learn it, I
-need to read news.
-
-This is built in with emacs.
-To read archive messages:
-
 #+BEGIN_QUOTE
 In emacs, <DEL> means backspace, <delete> means the delete key.
 #+END_QUOTE
-
-* Tutorial
-Inside emacs, run =gnus= command. This brings the =*Group*= buffer.
-
-Some settings
-#+BEGIN_SRC elisp
-(setq gnus-default-nntp-server "news.gmane.org")
-(setq gnus-select-method '(nntp "news.gmane.org"))
-(setq gnus-use-adaptive-scoring t)
-(add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
-#+END_SRC
-
-** In Group Buffer:
-# - B :: =gnus-group-browse-foreign-server=, use =nntp= as back-end and =news.gmane.org= as address.
-
-*** Finding the groups
-- A A :: List all groups that are available from the server(s).
-- u :: toggle subscription of the group
-- l :: list only subscribed ones with unread articles
-- L :: show all subscribed groups
-
-Also, if you want to add RSS feeds, in group buffer:
-- G R :: and paste the rss feed url
-
-*** Management
-- <Ret> :: enter the group
-- g :: check for news
-- q :: quit
-- c :: catchup: mark all unread articles in the group under cursor as read
-- C :: catchup: mark all +unread+ articles in the group under cursor as read
-- m :: create a new message
-- a :: create a new post
-- ^ :: enter server buffer
-
-*** Topic
-- t :: toggle topic minor mode. Topic mode group subscriptions into categories.
-- T n (gnus-topic-create-topic) :: create a new topic
-- T <Del> (gnus-topic-delete) :: delete topic under cursor
-- T m (gnus-topic-move-group) :: move the group under cursor to a topic
-- T h (gnus-topic-hide-topic) ::
-- T s (gnus-topic-show-topic) ::
-
-
-** In Article (Summary) buffer
-*** Navigating
-- <RET> :: view article under cursor
-- n :: next unread article
-- p :: previous unread article
-- N :: next article
-- P :: previous article
-- <SPC> :: scroll down, move to next unread article when at bottom
-- <DEL> :: scroll up, but will not move article
-- ^ :: fetch parent article
-
-*** Replying
-- F :: follow-up to group and cite the article
-- f :: follow-up to group without citing the article
-- R :: reply by mail and cite the article
-- r :: reply by mail without cite the article
-- m :: new mail
-- a :: new post
-
-*** Management
-- c :: catchup ALL in the buffer
-- T T :: toggle threading (flat style or thread style)
-- t :: toggle all headers (a lot of MIME information)
-- TODO L :: create low score
-- TODO I :: create high score
-- ! :: mark as important
-- ? :: mark as dormant
-
-*** Marking
-
-**** Unread
-- ! :: ticked. This means important, and will always show
-- ? :: dormant. This will show up whenever there are follow-ups.
-- space :: unread at all
-**** Read
-- r :: marked as read by =d=
-- R :: actually read
-- O :: old. Marked as read in previous sessions.
-- Y :: having a too level score (computed by emacs by rules, e.g. when
-       you mark an article as read while didn't really read it, the
-       related ones are marked like this)
-
-**** Operation
-- ! ::
-- ? ::
-- d :: mark as read
-- / o :: gnus-summary-insert-old-articles, show all read articles
-- M-u :: gnus-summary-clear-mark-forward
-- V R :: gnus-summary-rescore
-
-** In a message buffer
-- C-c C-c :: send
-- C-c C-d :: save as draft
-- C-c C-k :: kill
-- C-c C-m f :: attach file
-
 
 * Gmail Setup
 Add the credential information to =~/.authinfo=
 
 #+BEGIN_EXAMPLE
-machine imap.gmail.com login <username> password <password> port imaps
+machine imap.gmail.com login <username> password <password> port 993
 machine smtp.gmail.com login <username> password <password> port 587
 #+END_EXAMPLE
 
@@ -143,3 +38,157 @@ Add the following into =.gnus=
       smtpmail-smtp-service 587
       starttls-use-gnutls t)
 #+END_EXAMPLE
+
+* gmane news group setting
+#+BEGIN_SRC elisp
+(setq gnus-default-nntp-server "news.gmane.org")
+(setq gnus-select-method '(nntp "news.gmane.org"))
+(setq gnus-use-adaptive-scoring t)
+(add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+#+END_SRC
+
+* Usage
+Inside emacs, run =gnus= command. This brings the =*Group*=
+buffer. You will see the list of groups, use =<spc>= or =<enter>= to
+enter the group. As usual, =g= to refresh. =q= for quit.
+
+In general in all buffers, the important keybindings are: =c= for
+catch up current item, =n= and =p= for next or previous *unread*
+articles =N= and =P= for actually next and previous article, =m= for
+create new message, =a= for creating new post, =r= for reply without
+cite, =R= for reply with cite, =t= for toggle some mode.
+
+
+** Group Buffer:
+Finding the groups
+- =gnus-group-browse-foreign-server= (=B=): use =nntp= as back-end and
+  =news.gmane.org= as address.
+- =gnus-group-list-active (A A)=: List all groups that are available
+  from the server(s).
+- =gnus-group-unsubscribe-current-group (u)=: toggle subscription of
+  the group
+- *=gnus-group-list-groups (l)=*: list only subscribed ones with
+  unread articles
+- *=gnus-group-list-all-groups (L)=*: show all subscribed groups
+- =gnus-group-make-rss-group (G R)=: paste the rss feed url to add RSS
+  feeds
+- =gnus-group-jump-to-group (j)=: jump to a group by entering name,
+  this works for non-listing groups.
+
+Management
+- =gnus-group-catchup-current (c)=: mark all unread articles in the
+  group under cursor as read
+- =gnus-group-catchup-current-all (C)=: mark all +unread+ articles in
+  the group under cursor as read
+- =gnus-group-mail (m)=: create a new message
+- =gnus-group-post-news (a)=: create a new post
+- =gnus-group-enter-server-mode (^)=: enter server buffer
+
+
+Topic mode group subscriptions into categories.
+- =gnus-topic-mode (t)=: toggle topic minor mode. 
+- =gnus-topic-create-topic (T n)=: create a new topic
+- =gnus-topic-delete (T <Del>)=: delete topic under cursor
+- =gnus-topic-move-group (T m)=: move the group under cursor to a
+  topic
+- =gnus-topic-hide-topic (T h)=:
+- =gnus-topic-show-topic (T s)=:
+
+
+** Summary and Article buffer
+This will list all the mails. =<RET>= to enter a specific mail.  The
+following commands work in both buffers.
+
+- =gnus-summary-next-unread-article (n)=: next unread article
+- =gnus-summary-prev-unread-article (p)=: previous unread article
+- =gnus-summary-next-article (N)=: next article
+- =gnus-summary-prev-article (P)=: previous article
+- =gnus-summary-next-page (<SPC>)=: scroll down, move to next unread
+  article when at bottom
+- =gnus-summary-prev-page (<DEL> or <BACKSPACE>)=: scroll up, but will
+  not move article
+- =gnus-summary-refer-parent-article (^)=: fetch parent article
+
+Replying
+- =gnus-summary-followup-with-original (F)=: follow-up to group and
+  cite the article
+- =gnus-summary-followup (f)=: follow-up to group without citing the
+  article
+- =gnus-summary-reply-with-original (R)=: reply by mail and cite the
+  article
+- =gnus-summary-reply-with-original (r)=: reply by mail without cite
+  the article
+- =message-forward-show-mml (C-c C-f)=: forward to another person
+- =gnus-summary-mail-other-window (m)=: new mail
+- =gnus-summary-post-news (a)=: new post
+
+Management
+- =gnus-summary-catchup-and-exit (c)=: catchup ALL in the buffer
+- =gnus-summary-toggle-header (t)=: toggle all headers (a lot of MIME
+  information)
+- *=gnus-summary-toggle-threads (T T)=*: toggle threading (flat style
+  or thread style)
+- *=gnus-summary-insert-old-articles (/ o)=*: show all read articles
+- =gnus-summary-rescore (V R)=: recompute the score. Score is computed
+  by emacs rules. This can be explicitly set, or affected by some
+  operations. For example, when you mark an article as read while
+  didn't really read it, the related ones are marked like this.
+- =gnus-sticky-article (A S)=: normally the article and summary buffer
+  is reused, that means you cannot put two mails side-by-side. This
+  command make the current article buffer un-reusable for doing that.
+
+Scores are computed for each article, for the sake of making important
+ones stand out.
+- =gnus-summary-lower-score (L)=: create low score
+- =gnus-summary-increase-score (I)=: create high score
+
+Article will have marks to indicate the status of them. The followings
+are read marks:
+- =r=: marked as read by =d= command
+- =R=: actually been read
+- =O=: stands for old, marked as read in previous session
+- =Y=: having a too low score
+- =C=: marked as catchup
+
+Other marks:
+- =!=: tick, i.e. important, and will always show
+- =?=: dormant for now. This will show up whenever there are
+  follow-ups.
+- =A=: this article has been replied or followed-up by
+  me. =gnus-replied-mark=, this variable has a default value of 65,
+  the ASCII for "A".
+- =F=: this article has been forwarded
+- =*=: this article is stored in cache
+- =S=: this article is saved
+- =#=: the process mark. This is similar to =m= in dired: you select
+  some articles, and process them at the same time, using some
+  commands.
+- =.=: gnus-unseen-mark, this article hasn't been seen before by the
+  user. What does this mean??
+
+The following commands interact with marks
+- =gnus-summary-clear-mark-forward (M c)=: clear mark
+- =gnus-summary-mark-as-read-forward (d)=: mark as read.
+- =gnus-summary-tick-article-forward (!)=: mark as important.
+- =gnus-summary-mark-as-dormant (?)=: mark as dormant.
+- =gnus-summary-set-bookmark (M b)=: set a bookmark in the *current
+  article*. This seems to be a position inside a long article. Gnus
+  will jump to this bookmark the next time it encounters the article.
+- =gnus-summary-remove-bookmark (M B)=: remove the bookmark from
+  current article.
+- =gnus-summary-mark-as-processable (#)=: mark the current article the
+  process mark
+- =gnus-summary-unmark-as-processable (M-#)=: remove the process mark
+
+** Message buffer
+This is pretty standard: =C-c C-c= for send, =C-c C-k= for kill. What
+is not standard though is =C-c C-d= for draft, =C-c C-m f= to attach
+file.
+
+During editing a message, you can just save it normally, and it will
+be in the draft group. The next time you enter draft, type =D e=
+(=gnus-draft-edit-message=) in draft summary buffer, you will resume
+to editing. Rejected articles will also be in draft group.
+
+There are some commands for jumping around the buffer, and edit the
+headers.
