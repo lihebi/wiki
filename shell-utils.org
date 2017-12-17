@@ -1,19 +1,27 @@
 #+TITLE: Shell Utilities
 
 * Tmp
+
+** find
 #+BEGIN_EXAMPLE
 find ~/data/fast/pick-master/ -name '*.[ch]'
 #+END_EXAMPLE
 
+** sort
 - sort -k 4 -n
 
-
+** tee
 #+begin_src sh
   for name in data/github-bench/*; do 
       echo "===== $name"\
           | tee -a log.txt; { time helium --create-cache $name; } 2>&1\
           | tee -a log.txt; done
 #+end_src
+
+** xz
+a general-purpose data compression tool
+** cpio
+copy files between archives and directories
 
 * Q&A
 ** redirect output of time
