@@ -1,0 +1,5 @@
+#+TITLE: My Jargon File
+
+- Murphy's lay: Anything that can go wrong will go wrong.
+- RMS: Richard Matthew Stallman
+- ESR: Eric Steven Raymond
