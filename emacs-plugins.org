@@ -1,6 +1,23 @@
 #+TITLE: Emacs Plugins
 
+* Tmp
 https://www.emacswiki.org/emacs/KeyChord
+* ERC
+- =erc=: connect
+- =erc-iswitch=: =C-c C-b=
+- =erc-join-channel=: =C-c C-j=
+- =erc-save-buffer-in-logs=: =C-c C-l=
+- =erc-channel-names=: =C-c C-n=: run =/names #channel= command in the
+  current channel.
+- =erc-part-from-channel=: =C-c C-p=: leave the channel
+- =erc-quit-server=: =C-c C-q=: disconnect server
+
+IRC commands
+- identify: =/msg NickServ identify <password>=
+- join: =/join #linux=
+- register: =/msg NickServ register <psssword> <email>=
+- private talking: =/query <nick>=. Only registered people can be
+  queried
 
 * Flycheck
   The default (at least the one I'm using) for C/C++ is =c/c++-clang=.
