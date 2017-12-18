@@ -3,7 +3,10 @@
 A separate page for [[file:gnus.org][Gnus]].
 
 * Mail
-To start a mail, use =compose-mail (C-x m)=. =C-c C-c= to send it.
+To start a mail, use =compose-mail (C-x m)=. This will drop you to a
+=message= buffer, with =message-mode=.
+
+- =message-send-and-exit (C-c C-c)=: send it
 
 * Tmp
 - =toggle-truncate-lines=: some file format, e.g. txt, will have a
