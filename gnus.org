@@ -12,6 +12,12 @@ machine imap.gmail.com login <username> password <password> port 993
 machine smtp.gmail.com login <username> password <password> port 587
 #+END_EXAMPLE
 
+To configure multiple IMAP client for gnus:
+#+begin_example
+machine gmail login XXX@gmail.com password <PASSWORD> port 993
+machine cymail login XXX@iastate.edu password <PASSWORD> port 993
+#+end_example
+
 Add the following into =.gnus=
 
 #+BEGIN_EXAMPLE
@@ -58,6 +64,15 @@ articles =N= and =P= for actually next and previous article, =m= for
 create new message, =a= for creating new post, =r= for reply without
 cite, =R= for reply with cite, =t= for toggle some mode.
 
+** Server buffer
+From group buffer, type =^= to enter server buffer. Use =<space>= (NOT
+=<enter>=!) to browse the groups of it, and subscribe via =u=. To
+unsubscribe, type =u= again. Actually after unsubscribe, the group
+still shows up in the group buffer, with =U= mark. To /really/ remove
+it, use =C-k= (=gnus-group-kill-group=) on it /in the group
+buffer/. Oh, just noticed this is just kill-line command, so you can
+yank it back via =C-y= (=gnus-group-yank-group=). Likewise, kill a
+region also works as expect.
 
 ** Group Buffer:
 Finding the groups
@@ -85,14 +100,38 @@ Management
 - =gnus-group-enter-server-mode (^)=: enter server buffer
 
 
-Topic mode group subscriptions into categories.
+Since we like organizing, there's a topic mode, enabled by =t=. After
+that, you will have a bunch of command prefixed with =T=. Topic mode
+group subscriptions into categories.
+
 - =gnus-topic-mode (t)=: toggle topic minor mode. 
 - =gnus-topic-create-topic (T n)=: create a new topic
+- =gnus-topic-indent (<TAB>)=: indent current topic
+- =gnus-topic-unindent (M-<TAB>)=: unindent
 - =gnus-topic-delete (T <Del>)=: delete topic under cursor
+
+You generally just kill (C-k) and yank (C-y) to organize the groups
+into specific topics. UPDATE: Don't use C-k C-y, it seems to cause
+bug, that cannot save the configuration. Use the following instead.
+
 - =gnus-topic-move-group (T m)=: move the group under cursor to a
   topic
+
+When topic mode is enabled, <enter> and <space> on a topic line will
+fold or unfold it. So you don't really need the following commands.
 - =gnus-topic-hide-topic (T h)=:
 - =gnus-topic-show-topic (T s)=:
+
+Groups can be combined into virtual groups. This is very helpful for
+reading emails. For gmail, the inbox will not show *my* interactions,
+that is in =Sent Mail=. So on Group buffer, create a virtual group by
+=gnus-group-make-empty-virtual (G V)= and edit it via
+=gnus-group-edit-group-method (M-e)= with regular expression like
+this:
+
+#+begin_example
+(nnvirtual "nnimap\\+cymail:INBOX\\|nnimap\\+cymail:.*/Sent Mail")
+#+end_example
 
 
 ** Summary and Article buffer
