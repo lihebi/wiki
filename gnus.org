@@ -146,7 +146,6 @@ following commands work in both buffers.
   article when at bottom
 - =gnus-summary-prev-page (<DEL> or <BACKSPACE>)=: scroll up, but will
   not move article
-- =gnus-summary-refer-parent-article (^)=: fetch parent article
 
 Replying
 - =gnus-summary-followup-with-original (F)=: follow-up to group and
@@ -165,8 +164,6 @@ Management
 - =gnus-summary-catchup-and-exit (c)=: catchup ALL in the buffer
 - =gnus-summary-toggle-header (t)=: toggle all headers (a lot of MIME
   information)
-- *=gnus-summary-toggle-threads (T T)=*: toggle threading (flat style
-  or thread style)
 - *=gnus-summary-insert-old-articles (/ o)=*: show all read articles
 - =gnus-summary-rescore (V R)=: recompute the score. Score is computed
   by emacs rules. This can be explicitly set, or affected by some
@@ -175,6 +172,13 @@ Management
 - =gnus-sticky-article (A S)=: normally the article and summary buffer
   is reused, that means you cannot put two mails side-by-side. This
   command make the current article buffer un-reusable for doing that.
+
+Threading
+- *=gnus-summary-toggle-threads (T T)=*: toggle threading (flat style
+  or thread style)
+- *=gnus-summary-refer-thread (A T)=*: display the full thread
+- *=gnus-summary-refer-parent-article (^)=*: fetch parent article
+- =gnus-summary-top-thread (T o)=: go to the top of this thread
 
 Scores are computed for each article, for the sake of making important
 ones stand out.
