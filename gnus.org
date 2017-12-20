@@ -179,6 +179,7 @@ Threading
 - *=gnus-summary-refer-thread (A T)=*: display the full thread
 - *=gnus-summary-refer-parent-article (^)=*: fetch parent article
 - =gnus-summary-top-thread (T o)=: go to the top of this thread
+- =gnus-summary-kill-thread (T k)=: mark whole thread as read
 
 Scores are computed for each article, for the sake of making important
 ones stand out.
