@@ -1,5 +1,233 @@
 #+TITLE: Haskell
 
+* Reference
+- Haskell wiki: https://wiki.haskell.org
+- Haskell wiki book: https://en.wikibooks.org/wiki/Haskell
+- Write yourself a scheme: https://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours
+- The tutorial: https://www.haskell.org/tutorial/index.html
+- language specification: https://wiki.haskell.org/Language_and_library_specification
+
+* Tmp
+** TODO Happy parser
+** TODO Parsec Parser
+** Syntactic Sugar
+#+begin_example haskell
+x `elem` xs = elem x xs
+`elem` xs = flip elem xs
+[1,2,3] = (1:2:3:[])
+do x <- f; g x = f >>= (\x -> g x)
+#+end_example
+
+** strictness
+In a strict language, the arguments to a function are always evaluated
+before it is invoked.  In a non-strict language, the arguments are not
+evaluated until their values are *actually* required.  As a result, if
+during the evaluation of the arguments, run-time error occurs, the
+strict language will crash, but the non-strict program might finish
+peacefully.
+
+Scheme is strict, while Haskell is non-strict.
+** Notations
+In =5 :: Integer=, =::= reads "has type".
+
+* GHC
+
+https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/
+
+REPL
+
+* Monad
+
+A monad is a way to structure computations in terms of values and
+sequences of computations using those values.
+
+#+begin_quote
+It is useful to think of a monad as a strategy for combining
+computations into more complex computations.
+#+end_quote
+
+** Three Components of monad
+A monad is *a type constructor*, a function called *=return=*, and a
+combinator function called *bind* or ~>>=~. These three elements work
+together to encapsulate a strategy for combining computations to
+produce more complex computations.
+
+the monad *type constructor* defines a type of computation, the
+*return function* creates primitive values of that computation type
+and *~>>=~* combines computations of that type together to make more
+complex computations of that type.
+
+** Type constructor
+A type constructor is a parameterized type definition used with
+polymorphic types.
+
+** Using class
+To define a monad, you basically need the three components. You can do
+it from scratch, but a better idea is through the use of class
+=Monad=.
+
+#+begin_src haskell
+class Monad m where
+    (>>=)  :: m a -> (a -> m b) -> m b
+    return :: a -> m a
+#+end_src
+
+There's a /do notation/ that can be used with a monad. It is a
+syntactic sugar that "provides a simple, imperative-style notation for
+describing computations with monads"
+
+Apart from these two operations, the =Monad= class also has two more
+operations: =fail= and =>>=. They are optional. Use =fail= if you want
+to have different behavior for failure. The =>>= function is a
+convenience operator that "used to bind a monadic computation that
+does not require input from the previous computation in the sequence."
+It is defined in terms of >>=:
+
+#+begin_src haskell
+  (>>) :: m a -> m b -> m b
+  m >> k = m >>= (\_ -> k)
+#+end_src
+
+So the full version should be
+#+begin_src haskell
+  class Monad m where
+    (>>=)  :: m a -> (  a -> m b) -> m b
+    (>>)   :: m a ->  m b         -> m b
+    return ::   a                 -> m a
+    fail   :: String -> m a
+#+end_src
+
+
+
+** the monad laws
+All instances of Monad should obey the following equations, called
+/Monad Laws/:
+
+#+begin_example
+return a >>= k                  =  k a
+m        >>= return             =  m
+m        >>= (\x -> k x >>= h)  =  (m >>= k) >>= h
+#+end_example
+
+1. return is a *left-identity* with respect to >>=
+2. return is a *right-identity* with respect to >>=
+3. a kind of *associativity* law for >>=
+
+Any type constructor with return and bind operators that satisfy the
+three monad laws is a monad.
+
+The compiler, however, does not check these laws.
+
+** A different expression of Monad Laws
+1. create a description of a computation that will produce
+   (a.k.a. "return") a given Haskell value, and
+2. combine (a.k.a. "bind") a computation description with a reaction
+   to it
+   - a pure Haskell function that is set to receive a
+     computation-produced value (when and if that happens) and return
+     another computation description, using or dependent on that value
+     if need be
+   - creating a description of a combined computation that will feed
+     the original computation's output through the reaction while
+     automatically taking care of the particulars of the computational
+     process itself.
+
+
+** One Way Monad
+The IO monad is a familiar example of a one-way monad in
+Haskell. Because you can't escape from the IO monad, it is impossible
+to write a function that does a computation in the IO monad but whose
+result type does not include the IO type constructor. This means that
+any function whose result type does not contain the IO type
+constructor is guaranteed not to use the IO monad. Other monads, such
+as List and Maybe, do allow values out of the monad. So it is possible
+to write functions which use these monads internally but return
+non-monadic values.
+
+The wonderful feature of a one-way monad is that it can support
+side-effects in its monadic operations but prevent them from
+destroying the functional properties of the non-monadic portions of
+the program.
+
+* TODO IO
+
+
+* Type
+/polymorphic types/: =[a]= denotes the family of types, for each type
+a, the type "list of a". Identifiers such as a above are called /type
+variables/, and are uncapitalized to distinguish them from specific
+types such as =Int=.
+
+User can define type by using =data= declaration. e.g.
+
+#+begin_src haskell
+  data Bool = False | True
+#+end_src
+
+The defined type Bool has exactly two *values*: True and False. =Bool=
+is a /type constructor/, =True= and =False= are /data constructors/,
+or just /constructors/ for short.
+
+This is called /parametric polymorphism/, useful to define families of
+types by universally quantifying them.
+
+* TODO Type classes
+This is /ad hoc polymorphism/. Compared to /parametric polymorphism/,
+it quantifies over some smaller set of types, e.g. those that can be
+compared for equality.
+
+It seems that type classes are defining some constrained set of types
+for some type, e.g. a subset of Integers.
+
+Take an example:
+
+#+begin_src haskell
+  class Eq a where 
+    (==)                  :: a -> a -> Bool
+#+end_src
+
+This reads: "a type a is an instance of the class Eq if there is an
+(overloaded) operation ==, of the appropriate type, defined on it."
+
+The defined type class =Eq= is not a type, but rather expresses a
+constraint on a type. The constraint is called a /context/. The
+context is placed at the front of type expressions. This creates the
+following effect:
+
+#+begin_src haskell
+  (==)                    :: (Eq a) => a -> a -> Bool
+#+end_src
+
+Which reads: "For every type =a= that is *an instance of* the class
+Eq, == has type a->a->Bool".
+
+Haskell also support class inheritance:
+#+begin_src haskell
+class  (Eq a) => Ord a  where
+  (<), (<=), (>=), (>)  :: a -> a -> Bool
+  max, min              :: a -> a -> a
+#+end_src
+
+We defined class =Ord= which inherits all of the operations of =Eq=,
+but it has some more. Similarly, we say =Eq= is /superclass/ of =Ord=,
+and =Ord= is /subclass/ of =Eq=.
+
+Haskell also supports multiple inheritance.
+#+begin_src haskell
+class (Eq a, Show a) => C a where ...
+#+end_src
+
+* TODO Pattern Matching
+
+
+* TODO Cabal
+
+https://www.haskell.org/cabal/
+
+Package management.
+
+
+
 * TODO Learn Haskell
 
 ** TODO Typeclasses of Haskell comparing to C++
