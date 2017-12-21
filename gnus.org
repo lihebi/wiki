@@ -146,6 +146,8 @@ following commands work in both buffers.
   article when at bottom
 - =gnus-summary-prev-page (<DEL> or <BACKSPACE>)=: scroll up, but will
   not move article
+- ~gnus-summary-expand-window (=)~: this expand the summary buffer,
+  very handy (instead of switch to summary and C-x 1).
 
 Replying
 - =gnus-summary-followup-with-original (F)=: follow-up to group and
