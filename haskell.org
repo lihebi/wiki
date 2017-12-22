@@ -113,15 +113,16 @@ let {d1;...;dn} in e
 case expression matches =e= against a list of patches. But if a
 pattern matched, the body is not a single expression, but seems to be
 another round of matching. Each match is a list of guard expression
-separated by vertical bar. Each guard expression is a list of actual
-guards. Only if all the actual guards succeed, the guard expression
-succeeds. The corresponding expression is the result. Seems that the
-top-level patterns and the match guards have the same semantic,
-i.e. if one fail, try the next one.
+separated by vertical bar (note *the first vertical bar is
+mandatory*). Each guard expression is a list of actual guards. Only if
+all the actual guards succeed, the guard expression succeeds. The
+corresponding expression is the result. Seems that the top-level
+patterns and the match guards have the same semantic, i.e. if one
+fail, try the next one.
 
 #+begin_src haskell
 case e of {p1 match1; ... ; pn matchn}
-match ::= gs1 -> e1 | gs2 -> e2 | ...
+match ::= | gs1 -> e1 | gs2 -> e2 | ...
 gs ::= guard1, guard2, ...
 guard ::= p <- e
 guard ::= let decls
@@ -136,7 +137,10 @@ course the compiler will complain if they do not match. Thus, the
 expression with type-signature simply evaluates to the expression.
 
 The declared type may be more specific than the principal type derived
-from exp, but it is an error that the declared type is more general.
+from exp, but *it is an error that the declared type is more
+general*. But, it seems that, if we declare a more general type
+signature *before* the use of the type (thus before the inference), it
+is OK.
 
 #+begin_src haskell
 exp :: [context =>] type
