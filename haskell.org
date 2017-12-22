@@ -1,13 +1,49 @@
 #+TITLE: Haskell
 
 * Reference
-- Haskell wiki: https://wiki.haskell.org
-- Haskell wiki book: https://en.wikibooks.org/wiki/Haskell
+- [X] Haskell wiki: https://wiki.haskell.org
+- [X] Haskell wiki book: https://en.wikibooks.org/wiki/Haskell
 - Write yourself a scheme: https://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours
-- The tutorial: https://www.haskell.org/tutorial/index.html
+- [X] The tutorial: https://www.haskell.org/tutorial/index.html
 - language specification: https://wiki.haskell.org/Language_and_library_specification
 
 * Tmp
+** Names
+There are six kinds of names:
+- (value) variables
+- (value) constructors
+- type variables
+- type constructors
+- type classes
+- module names
+
+There are two constraints on naming:
+- lower-case vs upper-case
+  - variables and type variables must begin with *lowercase* letter or
+    underscore
+  - other 4 kinds of names must begin with *uppercase* letter
+- in the same scope, *type constructor and type class* must not be the
+  same
+** Comment
+Pretty flexible, but just use
+- =--= for line comment
+- ={- XXX -}= for block comment
+** layout
+Haskell support two style of programming, possibly mixed: using
+explicit braces and semicolons, or use indention. The rule is pretty
+straight forward.
+
+The layout rule takes effect whenever *the open brace is omitted*
+after keywords *=where=*, *=let=*, *=do=*, *=of=*. If it is not
+omitted, nothing happens, the indention will not matter at all. The
+indention of the next lexeme is remembered, and *the omitted open
+brace is inserted*. In the subsequent lines:
+- if the indention is larger, nothing inserted, i.e. it is same as
+  writing on the previous line
+- if the indention is the same, a semicolon is inserted
+- if the indention is smaller, a close brace is inserted, and the
+  layout rule ends
+
 ** TODO Happy parser
 ** TODO Parsec Parser
 ** Syntactic Sugar
@@ -29,6 +65,14 @@ peacefully.
 Scheme is strict, while Haskell is non-strict.
 ** Notations
 In =5 :: Integer=, =::= reads "has type".
+
+Functions are defined by equations (~=~). E.g.
+#+begin_src haskell
+inc n = n + 1
+#+end_src
+
+This is a /declaration/.
+
 
 * GHC
 
@@ -153,10 +197,10 @@ the program.
 
 
 * Type
-/polymorphic types/: =[a]= denotes the family of types, for each type
-a, the type "list of a". Identifiers such as a above are called /type
-variables/, and are uncapitalized to distinguish them from specific
-types such as =Int=.
+/polymorphic types/: =(forall a)[a]= denotes the family of types, for
+each type a, the type "list of a". Identifiers such as a above are
+called /type variables/, and are uncapitalized to distinguish them
+from specific types such as =Int=.
 
 User can define type by using =data= declaration. e.g.
 
