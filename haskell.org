@@ -7,6 +7,107 @@
 - [X] The tutorial: https://www.haskell.org/tutorial/index.html
 - language specification: https://wiki.haskell.org/Language_and_library_specification
 
+* Expression
+conditional
+#+begin_src haskell
+if e1 then e2 else e3
+case e1 of { True -> e2; False -> e3}
+#+end_src
+
+List
+#+begin_src haskell
+[e1,e2,...,ek]
+e1:(e2:(...(ek:[])))
+#+end_src
+
+Tuple
+#+begin_src haskell
+(e1,...,ek)
+#+end_src
+
+enumerations (note the =..= is an operator)
+#+begin_src haskell
+[e1..]
+[e1,e2..]
+[e1..e3]
+[e1,e2..e3]
+#+end_src
+
+list comprehension: Each of q_i is a qualifier, can have three
+forms. These qualifiers are *nested*. The first is pattern matching
+that matches =pat= against a *list expression* (thus called
+/generator/), the second create local bindings, the third a boolean
+guard. Pattern matching creates lambda bound, while let creates
+lexical bounds.
+
+#+begin_src haskell
+[e | q1,...,qn]
+#+end_src
+
+#+begin_example
+pat <- exp
+let decls
+exp
+#+end_example
+
+Let expression introduces a nested, lexically-scoped
+mutually-recursive (letrec) list of /declarations/.
+
+#+begin_src haskell
+let {d1;...;dn} in e
+#+end_src
+
+case expression matches =e= against a list of patches. But if a
+pattern matched, the body is not a single expression, but seems to be
+another round of matching. Each match is a list of guard expression
+separated by vertical bar. Each guard expression is a list of actual
+guards. Only if all the actual guards succeed, the guard expression
+succeeds. The corresponding expression is the result. Seems that the
+top-level patterns and the match guards have the same semantic,
+i.e. if one fail, try the next one.
+
+#+begin_src haskell
+case e of {p1 match1; ... ; pn matchn}
+match ::= gs1 -> e1 | gs2 -> e2 | ...
+gs ::= guard1, guard2, ...
+guard ::= p <- e
+guard ::= let decls
+guard ::= boolean guard
+#+end_src
+
+do expression seems to be exclusively used in monad.
+
+Expression type-signature is a notation for human only. The compiler
+does not need to know it, because it infers the type signature. Of
+course the compiler will complain if they do not match. Thus, the
+expression with type-signature simply evaluates to the expression.
+
+The declared type may be more specific than the principal type derived
+from exp, but it is an error that the declared type is more general.
+
+#+begin_src haskell
+exp :: [context =>] type
+#+end_src
+
+Pattern matching match pattern against values, and construct bounds.
+
+1. matching =var= against a value =v= always succeed, and bounds =var= to =v=
+2. matching =~apat= against a value =v= always succeed. This is called
+   a irrefutable pattern, means I force it to match, don't give me
+   error. The error will occur when the matched bindings are
+   evaluated.
+3. wildcard pattern =_= against any value always succeed
+4. matching =con pat= where =con= is a type constructor (defined by
+   =newtype=), the value must also be =con v= to succeed
+5. matching =con pat1 ... patn= where =con= is a data constructor
+   (defined by =data=), the value must also be =con v1 ... vn= with
+   the same constructor to succeed. The variables are bound.
+6. [ ] fields
+7. matching numeric, character, or string literal will only succeed if
+   the value is that literal.
+8. match =var@apat= will basically match =apat= against =v=, but
+   introduce additional bound =var= for the whole =v=.
+
 * Tmp
 ** Names
 There are six kinds of names:
