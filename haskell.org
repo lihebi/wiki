@@ -332,15 +332,6 @@ p = let decls in
       ...
 #+end_src
 
-* Tmp
-** Notations
-Functions are defined by equations (~=~). E.g.
-#+begin_src haskell
-inc n = n + 1
-#+end_src
-
-This is a /declaration/.
-
 * Monad
 
 A monad is a way to structure computations in terms of values and
