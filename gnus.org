@@ -238,3 +238,22 @@ to editing. Rejected articles will also be in draft group.
 
 There are some commands for jumping around the buffer, and edit the
 headers.
+
+* Scoring
+
+To mark a score for an article:
+1. how: =I= for increase or =L= for lower.
+2. what:
+   - =a= for author
+   - =s= for subject line
+3. match type:
+   - =e= exact match
+   - =f= fuzzy
+4. expiring
+   - =t=: temporary
+   - =p=: permanent
+   - =i=: immediate, i.e. in effect right now, before even save the
+     file
+
+So what I want is actually =I a f p=. The scoring file is stored by
+default at =~/News/<group-name>.SCORE=.
