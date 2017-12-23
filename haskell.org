@@ -280,7 +280,7 @@ newtype ... deriving C
 This type of declaration denotes those that can be nested inside =let=
 or =where=.
 
-first is type signature declaration
+First is type signature declaration
 #+begin_src haskell
 var1, ..., varn :: cx => t
 #+end_src
@@ -290,7 +290,7 @@ Then the fixity declaration
 (infixl | infixr | infix) [integer] ops
 #+end_src
 
-function binding is a list of bindings. They are used to match
+Function binding is a list of bindings. They are used to match
 different patterns of parameters.  Each match is very similar to the
 match in =case= expression, but instead use ~=~ instead of ~->~.
 
@@ -331,6 +331,103 @@ p = let decls in
       () | gs2 -> e2
       ...
 #+end_src
+
+
+* Predefined classes
+Here just literally copy the definition of those types.
+
+Basic types
+#+begin_src haskell
+  -- bool
+  data  Bool  =  False | True deriving
+                               (Read, Show, Eq, Ord, Enum, Bounded)
+  -- string
+  type  String  =  [Char]
+  -- list
+  data  [a]  =  [] | a : [a]  deriving (Eq, Ord)
+  -- unit
+  data  () = () deriving (Eq, Ord, Bounded, Enum, Read, Show)
+  data  Maybe a     =  Nothing | Just a  deriving (Eq, Ord, Read, Show)
+  data  Either a b  =  Left a | Right b  deriving (Eq, Ord, Read, Show)
+  data  Ordering    =  LT | EQ | GT deriving
+                                    (Eq, Ord, Bounded, Enum, Read, Show)
+  class  Bounded a  where
+      minBound, maxBound :: a
+#+end_src
+
+Eq is pretty canonical
+#+begin_src haskell
+  class  Eq a  where
+        (==), (/=)  ::  a -> a -> Bool
+        x /= y  = not (x == y)
+        x == y  = not (x /= y)
+  class  (Eq a) => Ord a  where
+     compare              :: a -> a -> Ordering
+     (<), (<=), (>=), (>) :: a -> a -> Bool
+     max, min             :: a -> a -> a
+
+     compare x y | x == y    = EQ
+                 | x <= y    = LT
+                 | otherwise = GT
+
+     x <= y  = compare x y /= GT
+     x <  y  = compare x y == LT
+     x >= y  = compare x y /= LT
+     x >  y  = compare x y == GT
+
+     -- Note that (min x y, max x y) = (x,y) or (y,x)
+     max x y | x <= y    =  y
+             | otherwise =  x
+     min x y | x <= y    =  x
+             | otherwise =  y
+#+end_src
+
+Read and Show
+#+begin_src haskell
+  type  ReadS a = String -> [(a,String)]
+  type  ShowS   = String -> String
+
+  class  Read a  where
+      readsPrec :: Int -> ReadS a
+      readList  :: ReadS [a]
+      -- ... default decl for readList given in Prelude
+
+  class  Show a  where
+      showsPrec :: Int -> a -> ShowS
+      show      :: a -> String
+      showList  :: [a] -> ShowS
+
+      showsPrec _ x s   = show x ++ s
+      show x            = showsPrec 0 x ""
+      -- ... default decl for showList given in Prelude
+#+end_src
+
+Enumerator is a classical example of laziness
+
+#+begin_src haskell
+  class  Enum a  where
+      succ, pred     :: a -> a
+      toEnum         :: Int -> a
+      fromEnum       :: a -> Int
+      enumFrom       :: a -> [a]            -- [n..]
+      enumFromThen   :: a -> a -> [a]       -- [n,n'..]
+      enumFromTo     :: a -> a -> [a]       -- [n..m]
+      enumFromThenTo :: a -> a -> a -> [a]  -- [n,n'..m]
+#+end_src
+
+Of course we have the Monad:
+#+begin_example haskell
+  class  Functor f  where
+      fmap    :: (a -> b) -> f a -> f b
+  class  Monad m  where
+      (>>=)   :: m a -> (a -> m b) -> m b
+      (>>)    :: m a -> m b -> m b
+      return  :: a -> m a
+      fail    :: String -> m a
+
+      m >> k  =  m >>= \_ -> k
+      fail s  = error s
+#+end_example
 
 * Monad
 
@@ -393,8 +490,6 @@ So the full version should be
     fail   :: String -> m a
 #+end_src
 
-
-
 ** the monad laws
 All instances of Monad should obey the following equations, called
 /Monad Laws/:
@@ -444,4 +539,3 @@ The wonderful feature of a one-way monad is that it can support
 side-effects in its monadic operations but prevent them from
 destroying the functional properties of the non-monadic portions of
 the program.
-
