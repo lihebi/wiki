@@ -5,11 +5,15 @@
 - [X] Haskell wiki book: https://en.wikibooks.org/wiki/Haskell
 - Write yourself a scheme: https://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours
 - [X] The tutorial: https://www.haskell.org/tutorial/index.html
-- language specification: https://wiki.haskell.org/Language_and_library_specification
+- [X] language specification: https://wiki.haskell.org/Language_and_library_specification
 - GHC: https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/
 
 ** TODO Happy parser
 ** TODO Parsec Parser
+** TODO Cabal
+https://www.haskell.org/cabal/
+
+Package management.
 
 * Concept
 ** strictness
@@ -129,7 +133,11 @@ guard ::= let decls
 guard ::= boolean guard
 #+end_src
 
-do expression seems to be exclusively used in monad.
+do expression seems to be exclusively used in monad. It is a syntax
+sugar of /bind/ operation.
+#+begin_example haskell
+do x <- f; g x = f >>= (\x -> g x)
+#+end_example
 
 Expression type-signature is a notation for human only. The compiler
 does not need to know it, because it infers the type signature. Of
@@ -165,16 +173,166 @@ Pattern matching match pattern against values, and construct bounds.
 8. match =var@apat= will basically match =apat= against =v=, but
    introduce additional bound =var= for the whole =v=.
 
+* Declaration
+Actually there are two categories of declarations: type and
+binding. So first we need to figure out what is type in Haskell.
+
+There are two /kinds/ of types, namely =*= and =*->*=. In Haskell, a
+type variable is assumed to be universally qualified, i.e. $a
+\rightarrow a$ means $\forall a . a \rightarrow a$.
+
+Type context indicates the membership of a type variable to some type
+classes. The context is often written as ~cx => t~.
+
+The type that best describe an expression is its /principal type/.
+
+
+** Data Types (=type=, =newtype=, =data=)
+This is called /polymorphic types/: =(forall a)[a]= denotes the family
+of types, for each type a, the type "list of a". Identifiers such as a
+above are called /type variables/, and are uncapitalized to
+distinguish them from specific types such as =Int=.  This is called
+/parametric polymorphism/, useful to define families of types by
+universally quantifying them.
+
+=data= declares an algebraic datatype.  The following declares a new
+/type constructor/ T, with zero or more /data constructors/ (or just
+/constructor/) K1 to Kn.
+#+begin_src haskell
+data cx => T u1 ... uk = K1 t ... t | ... | Kn t ... t
+#+end_src
+
+=type= introduces a new type that is equivalent to the old one. This
+is called /Type Synonym/.
+
+#+begin_src haskell
+type T u1 ... uk = t
+#+end_src
+
+=newtype= introduces a new type whose representation is the same as
+old one. This seems very similar to type synonyms. But this is called
+/renaming/. It is introduced by the form
+#+begin_src haskell
+newtype cx => T u1 ... uk = N t
+#+end_src
+
+The difference:
+- =newtype= *creates a distinct type* that must be explicitly coerced
+  to or from the original type
+- =newtype= can be used to define recursive types.
+- New instance can be defined for a =newtype=, but may not be defined
+  for a type synonym.
+
+** Type Classes (=class=, =instance=, =default=)
+This is /ad hoc polymorphism/. Compared to /parametric polymorphism/,
+it quantifies over some smaller set of types, e.g. those that can be
+compared for equality.  It seems that type classes are defining some
+constrained set of types for some type, e.g. a subset of Integers.  It
+defines not a type, but rather expresses a constraint on a type. The
+constraint is called a /context/. The context is placed at the front
+of type expressions.
+
+The =class= declares a new /type class/ (or just /class/). It will
+together define a set of methods that all instance of this class must
+support. You have two ways to define the instance relationship:
+through an explicit =instance= declaration, or use =deriving= to embed
+it into the =class= declaration.
+
+#+begin_src haskell
+class cx => C u where
+  op :: cx => t -- cdecl 1
+  infixr 7 'op' -- cdecl 2
+  op = ... -- cdecl 3
+#+end_src
+
+This introduces a class named C, with super class from =cx=. As shown
+in the example, there are three kinds of decls. First is a method
+declaration. This only declares the type signature of the method.
+
+Second is a /fixity declaration/. It has the following grammar, with
+integer be 0 to 9, where 9 is the highest precedence. I'm not sure why
+op needs to be quoted (or is it a quote?) though.
+
+The third declaration is a default class method for any of the method
+declared.
+
+Finally, a =instance= introduce an instance T of a class C. T is a
+type constructor, and cannot be a type synonym. This is called a /C-T
+instance declaration/.
+
+#+begin_src haskell
+instance cx => C (T u1 ... uk) where {d}
+#+end_src
+
+Since =instance= only declares the relationship, the type T still
+needs to be defined. It is also possible to declare the instance
+relationship together with the declaration of type. Specifically
+=newtype= and =data= can have an optional =deriving= sub-form for
+that. Omitting it is equivalent to writing an empty deriving instance
+=deriving ()=.
+
+#+begin_src haskell
+data ... deriving C
+newtype ... deriving C
+#+end_src
+
+** nested declarations
+This type of declaration denotes those that can be nested inside =let=
+or =where=.
+
+first is type signature declaration
+#+begin_src haskell
+var1, ..., varn :: cx => t
+#+end_src
+
+Then the fixity declaration
+#+begin_src haskell
+(infixl | infixr | infix) [integer] ops
+#+end_src
+
+function binding is a list of bindings. They are used to match
+different patterns of parameters.  Each match is very similar to the
+match in =case= expression, but instead use ~=~ instead of ~->~.
+
+#+begin_src haskell
+foo p1 ... pn match
+foo p1 ... pn match
+...
+match ::= | gs1 = e1 | gs2 = e2 | ...
+gs ::= guard1, guard2, ...
+guard ::= p <- e
+guard ::= let decls
+guard ::= boolean guard
+#+end_src
+
+Basically, it is semantically equivalent to this case statement:
+
+#+begin_src haskell
+x = \x1, ..., xk -> case (x1, ..., xk) of
+    p1 ... pn match
+    p1 ... pn match
+#+end_src
+
+Finally, we have pattern binding decl. The form can be:
+#+begin_src haskell
+-- simple form
+p = e
+-- general form
+p | gs1 = e1
+  | gs2 = e2
+  ...
+#+end_src
+
+This is semantically equivalent to
+#+begin_src haskell
+p = let decls in
+    case () of
+      () | gs1 -> e1
+      () | gs2 -> e2
+      ...
+#+end_src
+
 * Tmp
-
-** Syntactic Sugar
-#+begin_example haskell
-x `elem` xs = elem x xs
-`elem` xs = flip elem xs
-[1,2,3] = (1:2:3:[])
-do x <- f; g x = f >>= (\x -> g x)
-#+end_example
-
 ** Notations
 Functions are defined by equations (~=~). E.g.
 #+begin_src haskell
@@ -295,88 +453,4 @@ The wonderful feature of a one-way monad is that it can support
 side-effects in its monadic operations but prevent them from
 destroying the functional properties of the non-monadic portions of
 the program.
-
-* TODO IO
-
-
-* Type
-/polymorphic types/: =(forall a)[a]= denotes the family of types, for
-each type a, the type "list of a". Identifiers such as a above are
-called /type variables/, and are uncapitalized to distinguish them
-from specific types such as =Int=.
-
-User can define type by using =data= declaration. e.g.
-
-#+begin_src haskell
-  data Bool = False | True
-#+end_src
-
-The defined type Bool has exactly two *values*: True and False. =Bool=
-is a /type constructor/, =True= and =False= are /data constructors/,
-or just /constructors/ for short.
-
-This is called /parametric polymorphism/, useful to define families of
-types by universally quantifying them.
-
-* TODO Type classes
-This is /ad hoc polymorphism/. Compared to /parametric polymorphism/,
-it quantifies over some smaller set of types, e.g. those that can be
-compared for equality.
-
-It seems that type classes are defining some constrained set of types
-for some type, e.g. a subset of Integers.
-
-Take an example:
-
-#+begin_src haskell
-  class Eq a where 
-    (==)                  :: a -> a -> Bool
-#+end_src
-
-This reads: "a type a is an instance of the class Eq if there is an
-(overloaded) operation ==, of the appropriate type, defined on it."
-
-The defined type class =Eq= is not a type, but rather expresses a
-constraint on a type. The constraint is called a /context/. The
-context is placed at the front of type expressions. This creates the
-following effect:
-
-#+begin_src haskell
-  (==)                    :: (Eq a) => a -> a -> Bool
-#+end_src
-
-Which reads: "For every type =a= that is *an instance of* the class
-Eq, == has type a->a->Bool".
-
-Haskell also support class inheritance:
-#+begin_src haskell
-class  (Eq a) => Ord a  where
-  (<), (<=), (>=), (>)  :: a -> a -> Bool
-  max, min              :: a -> a -> a
-#+end_src
-
-We defined class =Ord= which inherits all of the operations of =Eq=,
-but it has some more. Similarly, we say =Eq= is /superclass/ of =Ord=,
-and =Ord= is /subclass/ of =Eq=.
-
-Haskell also supports multiple inheritance.
-#+begin_src haskell
-class (Eq a, Show a) => C a where ...
-#+end_src
-
-* TODO Pattern Matching
-
-
-* TODO Cabal
-
-https://www.haskell.org/cabal/
-
-Package management.
-
-
-
-* TODO Learn Haskell
-
-** TODO Typeclasses of Haskell comparing to C++
-http://www.michaelburge.us/2017/10/15/haskell-typeclasses-vs-cpp-classes.html
 
