@@ -6,10 +6,19 @@
 - Write yourself a scheme: https://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours
 - [X] The tutorial: https://www.haskell.org/tutorial/index.html
 - [X] language specification: https://wiki.haskell.org/Language_and_library_specification
-- GHC: https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/
+- [X] GHC: https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/
 
-** TODO Happy parser
-** TODO Parsec Parser
+** TODO Parsers
+- [ ] Parsec Parser: https://hackage.haskell.org/package/parsec
+  - [ ] megaparsec: This is a fork of parsec. https://github.com/mrkkrp/megaparsec
+- [ ] Happy parser: https://www.haskell.org/happy/
+- [ ] Alex: https://www.haskell.org/alex/
+- [ ] Earley: believe it or not, this is a new one. https://github.com/ollef/Earley
+- attoparsec: another combinator, but seems not feature
+  rich. https://github.com/bos/attoparsec
+- trifecta: this is yet another combinator. But seems to be out of
+  date and buggy? https://github.com/ekmett/trifecta/
+- parsers: also combinator. https://hackage.haskell.org/package/parsers
 ** TODO Cabal
 https://www.haskell.org/cabal/
 
