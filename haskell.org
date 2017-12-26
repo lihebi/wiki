@@ -1,29 +1,5 @@
 #+TITLE: Haskell
 
-* Reference
-- [X] Haskell wiki: https://wiki.haskell.org
-- [X] Haskell wiki book: https://en.wikibooks.org/wiki/Haskell
-- [X] Write yourself a scheme: https://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours
-- [X] The tutorial: https://www.haskell.org/tutorial/index.html
-- [X] language specification: https://wiki.haskell.org/Language_and_library_specification
-- [X] GHC: https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/
-
-** TODO Parsers
-- [ ] Parsec Parser: https://hackage.haskell.org/package/parsec
-  - [ ] megaparsec: This is a fork of parsec. https://github.com/mrkkrp/megaparsec
-- [ ] Happy parser: https://www.haskell.org/happy/
-- [ ] Alex: https://www.haskell.org/alex/
-- [ ] Earley: believe it or not, this is a new one. https://github.com/ollef/Earley
-- attoparsec: another combinator, but seems not feature
-  rich. https://github.com/bos/attoparsec
-- trifecta: this is yet another combinator. But seems to be out of
-  date and buggy? https://github.com/ekmett/trifecta/
-- parsers: also combinator. https://hackage.haskell.org/package/parsers
-** TODO Cabal
-https://www.haskell.org/cabal/
-
-Package management.
-
 * Concept
 ** strictness
 In a strict language, the arguments to a function are always evaluated
@@ -563,3 +539,24 @@ The wonderful feature of a one-way monad is that it can support
 side-effects in its monadic operations but prevent them from
 destroying the functional properties of the non-monadic portions of
 the program.
+
+* Reference
+- [X] Haskell wiki: https://wiki.haskell.org
+- [X] Haskell wiki book: https://en.wikibooks.org/wiki/Haskell
+- [X] Write yourself a scheme: https://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours
+- [X] The tutorial: https://www.haskell.org/tutorial/index.html
+- [X] language specification: https://wiki.haskell.org/Language_and_library_specification
+- [X] GHC: https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/
+- [X] Cabal: package management https://www.haskell.org/cabal/
+
+** Parsers
+- [X] Parsec Parser: https://hackage.haskell.org/package/parsec
+  - [X] megaparsec: This is a fork of parsec https://hackage.haskell.org/package/megaparsec
+- [X] Happy parser: https://www.haskell.org/happy/
+- [X] Alex: https://www.haskell.org/alex/
+- [X] Earley: believe it or not, this is a new one. https://hackage.haskell.org/package/Earley
+- attoparsec: another combinator, but seems not feature
+  rich. https://github.com/bos/attoparsec
+- trifecta: this is yet another combinator. But seems to be out of
+  date and buggy? https://github.com/ekmett/trifecta/
+- parsers: also combinator. https://hackage.haskell.org/package/parsers
