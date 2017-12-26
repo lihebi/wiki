@@ -12,3 +12,29 @@ http://www.nhplace.com/kent/Papers/Technical-Issues.html
 
 Lisp-1 has seperate namespace for functions and variables, while
 Lisp-2 only have one universal namespace.
+
+
+* fold & unfold
+
+#+begin_quote
+In academic functional programming literature, folds are often called
+catamorphisms, unfolds are often called anamorphisms, and the
+combinations of the two are often called hylomorphisms. They're
+interesting because any for-each loop can be represented as a
+catamorphism. To convert from a loop to a foldl, package up all
+mutable variables in the loop into a data structure (records work well
+for this, but you can also use an algebraic data type or a list). The
+initial state becomes the accumulator; the loop body becomes a
+function with the loop variables as its first argument and the
+iteration variable as its second; and the list becomes, well, the
+list. The result of the fold function is the new state of all the
+mutable variables.
+
+Similarly, every for-loop (without early exits) can be represented as
+a hylomorphism. The initialization, termination, and step conditions
+of a for-loop define an anamorphism that builds up a list of values
+for the iteration variable to take. Then, you can treat that as a
+for-each loop and use a catamorphism to break it down into whatever
+state you wish to modify.
+#+end_quote
+
