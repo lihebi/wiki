@@ -1,9 +1,9 @@
 #+TITLE: Hebi's Personal Wiki
 #+OPTIONS: toc:nil
 
-#+BEGIN_QUOTE
-the palest ink is better than the best memory.
-#+END_QUOTE
+# #+BEGIN_QUOTE
+# the palest ink is better than the best memory.
+# #+END_QUOTE
 It makes no sense to go through the long research again when I forget
 something, so I created this wiki.
 
@@ -12,9 +12,9 @@ large ones having sub-topics. The index of the pages is on this page
 only. It should contain entries to all pages.
 
 * The Workbench
-#+BEGIN_QUOTE
-Sharpening your axe will not delay your job of cutting wood.
-#+END_QUOTE
+# #+BEGIN_QUOTE
+# Sharpening your axe will not delay your job of cutting wood.
+# #+END_QUOTE
 
 It's ok to have something "just works", but it would be a sad story if
 it is something you extensively use. It might be because you are not
