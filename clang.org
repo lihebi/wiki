@@ -1,5 +1,19 @@
 #+TITLE: Clang
 
+* Compilation Database
+To create a =compilation_commands.json= from a Makefile, use
+
+#+begin_example
+bear make
+#+end_example
+
+
+To create from a cmake project, use
+#+begin_example
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+#+end_example
+
+
 * libclang
 The document is simply the doxygen page:
 http://clang.llvm.org/doxygen/group__CINDEX.html
