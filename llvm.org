@@ -1,12 +1,18 @@
 #+TITLE: LLVM
 
-llvm version used: 3.9.0svn
+* Note from LLVM
 
-Some useful manuals:
-- Manual: http://llvm.org/docs/ProgrammersManual.html
-- IR Reference: http://llvm.org/docs/LangRef.html
-- Pass: http://llvm.org/docs/WritingAnLLVMPass.html
-- Source Level Debugging: http://llvm.org/docs/SourceLevelDebugging.html
+When doing casting, don't use C++ =static_cast= or
+=dynamic_cast=. Instead, use the following:
+- isa<>: check and return bool
+- cast<>: this is checked cast from base class to derived. will
+  trigger assertion failure if the instance is not class.
+- dyn_cast<>: this is checking cast, will return nullptr on failure
+
+These functions also have one under clang namespace.
+
+The type inside the cast should NOT be the pointer.
+
 * Build and install LLVM system
 
 #+begin_src shell
@@ -286,8 +292,10 @@ for (pred_iterator PI = pred_begin(BB), E = pred_end(BB); PI != E; ++PI) {
 }
 #+END_SRC
 
-* Source Code Reading
-
-
-
+* Reference
+Some useful manuals:
+- Manual: http://llvm.org/docs/ProgrammersManual.html
+- IR Reference: http://llvm.org/docs/LangRef.html
+- Pass: http://llvm.org/docs/WritingAnLLVMPass.html
+- Source Level Debugging: http://llvm.org/docs/SourceLevelDebugging.html
 

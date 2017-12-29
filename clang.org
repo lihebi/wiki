@@ -1,84 +1,188 @@
 #+TITLE: Clang
 
-* GNU C Preprocessor
-The followings are done separately:
-1. Three transformations
-   - all comments are replaced with single spaces
-   - backslash-newline combo is removed
-   - predefined macros are replaced
-2. include header files
-3. macro expansion
-4. conditional compilation
-5. line control
+* libclang
+The document is simply the doxygen page:
+http://clang.llvm.org/doxygen/group__CINDEX.html
 
-It seems that these are not necessarily sequential. You can invoke any
-of them.
-
-** Invoking
-- =-C=: do not discard comments
-- =-nostdinc=: do not search standard system directory for header files,
-  use only -I directories.
-- =D, U, -undef=: predefine or un-predefine macros. Note that this is
-  *pre-defined macros only*, will not affect the macros in code
-- =-dM=: instead of normal preprocessed program, output all the #define
-  directives (including both pre-defined and user-defined)
-- =-dD=: output preprocessed + user-defined define directive
-- =-dI=: output preprocessed + #include directive
-- =-M, -MM, MD, MMD=: There are also some commands dealing with source
-  code dependencies
-
-*** TODO The line control might be very useful for Helium
-*** TODO nostdinc, what is the standard?
-
-** Macro
-The simple form is a single identifier. The input is scanned
-sequentially. Each time a substitution happens, the result is added to
-the front of remaining text, allowing nested expansion. This also
-means, if later the nested macro is redefined to another value, the
-*new value is always used*.
-
-In terms of macros with arguments, the substitution checks for comma
-to separate parameters. The parameters can be any arbitrary expression
-that does not contain comma. However, a single parameter can have
-comma. This is done by matching parenthesis for each parameter,
-i.e. *the parameter must have balanced parenthesis*, and a comma
-inside parenthesis does not end the parameter. However, the brackets
-and braces are not checked for balance. Like the simple macros, the
-output is added to the front of remaining text and get expanded
-accordingly.
-
-When defining a argument macro, the argument names (should be
-specifically the open parenthesis) must follow macro name immediately
-without any space.
+This library is nice to parse the file (given the command line
+arguments), get the AST, and traverse it. During the traversal, you
+can get the kind of the AST node, the underline tokens, and raw
+text. However, you cannot get the AST class, i.e. you cannot get a
+IfStmt, and call its =then= method. But this is enough for dumping the
+AST into a plain text file, right?
 
 
-* Source Code Reading
-** How the invoke of clang works through the APIs
-Cannot find
+** Source Location
+In this stage, there are three important classes: the cursor and the
+token, and location.
 
-** TODO How the recursive descent parser is implemented
-*** TODO AST hierarchy
-*** TODO How it is different from the yacc parsers
-*** TODO Is it feasible to rewrite a Recursive Descent Parser in lisp in a few days? Why it is better?
-** TODO How the error recovery works?
-** TODO Preprocessor?
-** TODO Manage the symbol table
-** TODO type system
+A source location can be generated from line and column number pair.
+
+#+begin_src haskell
+-- line,columne -> location
+clang_getLocation ::  CXTranslationUnit, CXFile, Line, Column -> CXSourceLocation
+clang_getRange :: CXSourceLocation, CXSourceLocation -> CXSourceRange
+-- location -> line,column (#line is respected)
+clang_getPresumedLocation :: CXSourceLocation, FileName -> Line, Column
+-- predicates
+clang_Location_isInSystemHeader :: CXSourceLocation -> Int
+clang_Location_isFromMainFile :: CXSourceLocation -> Int
+#+end_src
+
+- cursor <-> location
+#+begin_src haskell
+clang_getCursor :: CXTranslationUnit, CXSourceLocation -> CXCursor
+clang_getCursorLocation :: CXCursor -> CXSourceLocation
+clang_getCursorExtent :: CXCursor -> CXSourceRange
+#+end_src
+
+- token <-> location
+#+begin_src haskell
+clang_tokenize :: CXTranslationUnit, CXSourceRange -> CXToken
+-- get location
+clang_getTokenLocation :: CXTranslationUnit, CXToken -> CXSourceLocation
+clang_getTokenExtent :: CXTranslationUnit, CXToken -> CXSourceRange
+#+end_src
+
+- token -> cursor: you cannot get token directly from a cursor
+
+#+begin_src haskell
+-- roughly equivalent to clang_getCursor() with the source range
+clang_annotateTokens :: CXTranslationUnit, CXToken -> CXCursor
+#+end_src
 
 
+** Translation unit manipulation
 
-* Note from LLVM
+When using libclang, the first thing is to parse the file, i.e. create
+a translation unit from a file, using some command line options. The
+first seems to be better, but I don't think they have difference.
+#+begin_src haskell
+clang_parseTranslationUnit :: FileName, CmdArgs -> CXTranslationUnit
+clang_createTranslationUnitFromSourceFile :: FileName, CmdArgs -> CXTranslationUnit
+#+end_src
 
-When doing casting, don't use C++ =static_cast= or
-=dynamic_cast=. Instead, use the following:
-- isa<>: check and return bool
-- cast<>: this is checked cast from base class to derived. will
-  trigger assertion failure if the instance is not class.
-- dyn_cast<>: this is checking cast, will return nullptr on failure
+It can also be created from an *AST file*. It is typically emitted by
+=-emit-ast=, but can also be generated using the
+=clang_saveTranslationUnit= API. This is a binary file, and seems not
+so interesting to me
 
-These functions also have one under clang namespace.
+#+begin_src haskell
+clang_createTranslationUnit :: ASTFileName -> CXTranslationUnit
+#+end_src
 
-The type inside the cast should NOT be the pointer.
+There's also utility to get the inclusion files.
+#+begin_src cpp
+// this call visitor function on each included file
+void clang_getInclusions (CXTranslationUnit tu, CXInclusionVisitor visitor, CXClientData client_data)
+typedef void (*CXInclusionVisitor) (CXFile included_file, CXSourceLocation *inclusion_stack, unsigned include_len, CXClientData client_data)
+#+end_src
+
+** Token manipulation
+You can get tokens from translation unit. The text and kind of token
+is available.
+
+#+begin_src haskell
+-- get text
+clang_getTokenSpelling :: (CXTranslationUnit, CXToken) -> CXString
+-- kind can be: CXToken_ prefixed Punctuation, Keyword, Identifier, Literal, Comment
+clang_getTokenKind CXToken -> CXTokenKind
+#+end_src
+
+** Cursors
+*** Map to source location
+
+
+*** Traversing
+#+begin_src cpp
+unsigned clang_visitChildren (CXCursor parent, CXCursorVisitor visitor, CXClientData client_data)
+typedef enum CXChildVisitResult(* CXCursorVisitor)
+ (CXCursor cursor, CXCursor parent, CXClientData client_data)
+#+end_src
+
+Clearly the visitor is a function, accepting the cursor, parent, and
+optionally some data (it is void*), and return a result indicating
+continue traversal or not (in my case I would want to stop at the
+expression level, for example). The result can have three values:
+- =CXChildVisit_Break=: terminate
+- =CXChildVisit_Continue=: to sibling, without visiting children (skipping children)
+- =CXChildVisit_Recurse=: depth first for children
+
+
+*** type information
+These are the type (e.g. float, typedef) for the a cursor. Important
+ones include (prefixed with =CXType_=): =Void=, =Bool=, =Short=,
+=Int=, =Long=, =Float=, =Double=, =Record=, =Enum=, =Typedef=.
+
+#+begin_src cpp
+  CXType clang_getCursorType (CXCursor C)
+  // pretty print the type
+  CXString clang_getTypeSpelling (CXType CT)
+  // type conversion
+  CXType clang_getCanonicalType (CXType T)
+  CXString clang_getTypedefName (CXType CT)
+  CXType clang_getPointeeType (CXType T)
+  CXCursor clang_getTypeDeclaration (CXType T)
+  // predicates
+  unsigned clang_isConstQualifiedType (CXType T)
+  unsigned clang_isVolatileQualifiedType (CXType T)
+  unsigned clang_isRestrictQualifiedType (CXType T)
+  // for function type
+  CXType clang_getResultType (CXType T)
+  int clang_getNumArgTypes (CXType T)
+  CXType clang_getArgType (CXType T, unsigned i)
+  // array
+  CXType clang_getElementType (CXType T)
+  long long clang_getNumElements (CXType T)
+  CXType clang_getArrayElementType (CXType T)
+  long long clang_getArraySize (CXType T)
+#+end_src
+
+
+*** manipulation
+#+begin_src cpp
+  CXCursor clang_getTranslationUnitCursor (CXTranslationUnit)
+  CXTranslationUnit clang_Cursor_getTranslationUnit (CXCursor)
+  // cursor kinds can be, e.g. 
+  // CXCursor_VarDecl, CXCursor_IfStmt
+  enum CXCursorKind clang_getCursorKind (CXCursor)
+  // some predicates
+  unsigned clang_isDeclaration (enum CXCursorKind)
+  unsigned clang_isReference (enum CXCursorKind)
+  unsigned clang_isExpression (enum CXCursorKind)
+  unsigned clang_isStatement (enum CXCursorKind)
+  // seems to be related to C++ namespace
+  CXCursor clang_getCursorSemanticParent (CXCursor cursor)
+  CXCursor clang_getCursorLexicalParent (CXCursor cursor)
+  // the cursor must be a include directive
+  CXFile clang_getIncludedFile (CXCursor cursor)
+#+end_src
+
+
+** Compilation Database
+#+begin_src cpp
+  // read database file
+  CXCompilationDatabase
+  clang_CompilationDatabase_fromDirectory
+  (const char *BuildDir, CXCompilationDatabase_Error *ErrorCode);
+  // get commands by file
+  CXCompileCommands
+  clang_CompilationDatabase_getCompileCommands
+  (CXCompilationDatabase, const char *CompleteFileName);
+  // get all commands
+  CXCompileCommands
+  clang_CompilationDatabase_getAllCompileCommands
+  (CXCompilationDatabase);
+  CXCompileCommand
+  clang_CompileCommands_getCommand
+  (CXCompileCommands, unsigned I);
+
+  // get the 3 components
+  CXString clang_CompileCommand_getDirectory (CXCompileCommand);
+  CXString clang_CompileCommand_getFilename (CXCompileCommand);
+  unsigned clang_CompileCommand_getNumArgs (CXCompileCommand);
+  CXString clang_CompileCommand_getArg (CXCompileCommand, unsigned I);
+#+end_src
 
 * clang::tooling
 ** clang::tooling::ClangTool
