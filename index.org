@@ -55,7 +55,8 @@ on JVM and the authors are advertising it a lot. [[file:prolog.org][Prolog]] is 
 lisp.
 
 
-*[[file:haskell.org][Haskell]]* completes the part of a properly typed language.
+*[[file:haskell.org][Haskell]]* completes the part of a properly typed language. [[file:ml.org][ML]] is
+strongly typed, impure, eager evaluation one.
 
 It is beneficial for a 3rd langauge to be low level.  The legacy [[file:c.org][C]] is
 small and elegent. It is a good /start point/ if you want to learn

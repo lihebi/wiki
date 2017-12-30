@@ -1,0 +1,350 @@
+#+TITLE: Meta Language
+
+ML language stands for /Meta Language/, rooted in Lisp, commonly known
+as "Lisp with types".  It is *impure, eager evaluation* language.
+/Caml/ stands for /Categorical Abstract Machine Language/.
+
+* General Concepts
+** Algebraic data type
+Algebraic data type, is a kind of composite type. There are two common
+classes: /product types/ and /sum types/. Product type is like
+structure in C, with many /fields/. Sum type is like union in C, can
+hold either one kind of value, but not both. Thus it is also called
+/union types/ or /variant types/.
+
+
+* Standard ML
+
+** Reference
+- https://www.smlnj.org/
+- http://sml-family.org/
+- Harper's book on SML: cite:1997-Book-Harper-Programming
+- Functional Data Structure: cite:1999-Book-Okasaki-Purely
+
+
+** Binding
+ML is static lexical scoping.  A type binding looks like this.  Here,
+tycon means type constructor, typ means type expression. A type
+binding expression can establish multiple bindings at the same time.
+#+begin_example
+type tycon1 = typ1
+and ...
+and tyconn = typn
+#+end_example
+
+A variable binding is very similar.
+#+begin_example
+val var1 : typ1 = exp1
+and ...
+and varn : typn = expn
+#+end_example
+
+Multiple (2+) bindings writing sequentially, optionally separated by a
+semicolon, forms a /declaration/.
+
+A =let= binding or =local= binding creates local scoping. The =dec=
+here is a declaration. The binding is only in scope in the evaluation
+of =exp=. The =local= expression just means the bindings of =dec= is
+visible in evaluating of =dec'=. But what's the use-case??
+
+#+begin_example
+let dec in exp end
+local dec in dec' end
+#+end_example
+
+** Function
+A /function expression/, or /lambda expression/, is of form:
+
+#+begin_example
+fn var : typ => exp
+#+end_example
+
+It seems that ML also is curried, and function application is written
+as =(function param)=. The above definition is anonymous, we can bind
+it to a variable:
+
+#+begin_example
+var foo : real -> real =
+  fn x : real => x
+#+end_example
+
+There's a syntax sugar for this
+#+begin_example
+fun foo (x:real):real = x
+#+end_example
+
+** Product Type
+
+The type of a /tuple/ is =typ1*typ2*...*typn=, while the value is
+=(val1,val2,...,valn)=.
+
+** Pattern Matching
+#+begin_example
+val pat = exp
+#+end_example
+
+Within the pattern
+- a variable pattern is of form =var:typ=
+- a tuple pattern is of form =(pat1,...,patn)=
+- a wildcard pattern is of form =_=
+
+Instead of using position to refer to a field in tuple, a record type
+is introduced. The type is of form
+#+begin_example
+{lab1:typ1, ..., labn:typn}
+#+end_example
+
+While the value is
+#+begin_example
+{lab1=val1,...,labn=valn}
+#+end_example
+
+ML can take pattern matching to function parameters too. When
+declaring function like this, it will apply pattern matching on the
+parameters and establish bindings.
+
+#+begin_example
+fn pat => exp
+#+end_example
+
+The corresponding syntax sugar (=fun= notation)
+#+begin_example
+fun foo (x:read, y:real):real*real = x
+#+end_example
+
+Note that, thanks to using pat as the function signature, we can now
+accept multiple parameters, and provide multiple results!
+
+There's also a syntax sugar, called /sharp notation/, to retrieve
+components from tuple based on either location (=#i=), or field
+(=#foo=). Note that these are functions that have signature of
+=typ1*...*typn -> typi=. The use of sharp notation is *strongly
+discouraged* though, due to lack of readability.
+
+** Case
+The forms of all values of a tuple type must be the same, this is
+called /Homogeneous Types/. Otherwise, it is called /Heterogeneous
+Type/.  This is useful to declare a /Clausal Function/ expression.
+
+#+begin_example sml
+fn pat1 => exp1
+ | pat2 => exp2
+ | ...
+ | patn => expn
+#+end_example
+
+each pat=>exp is called a /clause/, or a /rule/. If any of the pattern
+match the supplied parameters, the function will have a specific
+type. Note that the type of the function can be different upon
+different parameters, thus it is called /Heterogeneous Type/. In a
+word, /Heterogeneous Type/ is introduced by the alternation
+symbol. The function also has a corresponding =fun= notation:
+
+#+begin_example sml
+fun foo 0 = 0
+  | foo (x:int) = x
+#+end_example
+
+The =case= seems to be a syntax sugar for the clausal function
+expression (it is the general case in Haskell).
+
+#+begin_example sml
+case exp
+  of pat1 => exp1
+   | ...
+   | patn => expn
+#+end_example
+
+is short for the function application:
+#+begin_example sml
+(fn pat1 => exp1
+  | ...
+  | patn => expn) exp
+#+end_example
+
+As some example, the negation function =not= is defined as
+#+begin_example sml
+fun not true = false
+  | not false = true
+#+end_example
+
+conditional expression
+#+begin_example sml
+if exp then exp1 else exp2
+#+end_example
+
+if short hand for
+#+begin_example sml
+case exp
+  of true => exp1
+   | false => exp2
+#+end_example
+
+The =andalso= and =orelse= is defined as
+#+begin_src sml
+  exp1 andalso exp2
+  if exp1 then exp2 else false
+  exp1 orelse exp2
+  if exp1 then true else exp2
+#+end_src
+
+** Recursive Function
+In ML, only functions can be recursively defined. This is because it
+is eagerly evaluated. Haskell can define even recursive values, thanks
+to its lazy evaluation.
+
+#+begin_src sml
+val rec var:typ = fnexp
+#+end_src
+
+The keyword =rec= indicates this is a recursive binding, and the name
+=var= can be used in the right-hand side to refer to itself. The =fun=
+notation simply does not require the =rec= keyword.
+
+#+begin_src sml
+fun foo 0 = 1
+  | foo (n:int) = n * foo (n-1)
+#+end_src
+
+The type checking for recursive function is done inductively,
+i.e. assume nth-iteration is correct, check (n+1)-th iteration is also
+correct.
+
+SML supports /mutually recursive/ definition, i.e. foo calls bar, bar
+calls foo, by connecting them together. The =and= is must.
+
+#+begin_src sml
+fun even 0 = true
+  | even n = odd (n-1)
+and odd 0 = false
+  | odd n = even (n-1)
+#+end_src
+
+** Type inference
+Like in Haskell, although the language is strongly typed, you most
+likely will not write it yourself. The type system is so good that it
+can most likely inference for you. In addition, it does a better job
+in that, it will infer the most general, i.e. /principal type/, for
+you. The prototypical example is the identity function, ~fn x=>x~. =x=
+here can be of any type. This function is said to be /polymorphic/,
+the pattern captured here is called a /type scheme/, expressed by
+/type variable/. In this case, the type scheme is =a->a=.
+** list
+The type is written as =typ list=, and the values of this type is a
+list of values of type =typ=. It is defined inductively.
+
+#+begin_src sml
+val nil : typ list
+val (op ::) : typ * typ lsit -> typ list
+#+end_src
+
+The notation =(op ::)= tells that, here, =::= is an operator function,
+rather than the one used in /list notation/.
+
+So, a value of =typ list= can be
+#+begin_src sml
+val1 :: val2 :: ... :: valn :: nil
+#+end_src
+
+The /list notation/ is also available as you expect
+#+begin_src sml
+[val1, val2, ..., valn]
+#+end_src
+
+Of course, list supports pattern matching, too.
+#+begin_src sml
+fun length nil = 0
+  | length (_::t) = 1 + length t
+#+end_src
+
+** Concrete data type
+
+Concrete data type corresponds to the =data= expression in Haskell.
+The =suite= is called /type constructor/, and each of =Spades=,
+=Diamonds=, =Clubs= are /value constructor/. In particular, the value
+constructors accepts no parameter, thus called /nullary value
+constructor/. They are constants.
+
+#+begin_src sml
+datatype suite = Spades | Diamonds | Clubs
+#+end_src
+
+You can have type variables, and define other type of value
+constructors, using =of= keyword. =SOME= here is a /unary value
+constructor/.
+
+#+begin_src sml
+datatype 'a option = NONE | SOME of 'a
+#+end_src
+
+The data constructor can also be recursive.
+
+#+begin_src sml
+  datatype 'a tree =
+           Empty |
+           Node of 'a tree * 'a * 'a tree
+#+end_src
+
+Another canonical example is in pattern matching
+#+begin_src sml
+  datatype expr =
+           Numeral of int |
+           Plus of expr * expr |
+           Times of expr * expr
+  fun eval (Numeral n) = Numeral n 
+    | eval (Plus (e1, e2)) =
+      let
+          val Numeral n1 = eval e1
+          val Numeral n2 = eval e2
+      in
+          Numeral (n1+n2)
+      end
+    | eval (Times (e1, e2)) =
+      let
+          val Numeral n1 = eval e1
+          val Numeral n2 = eval e2
+      in
+          Numeral (n1*n2)
+      end
+#+end_src
+
+** Mutable Storage
+A /reference/ indicates a mutable storage. It is created by =ref=, read
+by =!=, assign by ~:=~. The type =typ ref= is similar to =typ list=,
+and is the reference to the storage of type =typ=.
+
+#+begin_src sml
+fun ref      : typ -> typ ref
+fun (op !)   : typ ref -> typ
+fun (op :=)  : typ ref * typ -> unit
+#+end_src
+
+To define a function accepting a =typ ref=, you can use /ref
+pattern/. The semantic is that, the function accept a reference, whose
+content matches the pattern. The =!= function itself is defined as:
+
+#+begin_src sml
+fun ! (ref a) = a
+#+end_src
+
+** IO
+The types =instream=, =outstream=. The common IO port: =stdIn=,
+=stdOut=, =stdErr=
+
+#+begin_src sml
+fun inputLine : instream -> string
+fun print     : string -> unit
+(* blocking read *)
+fun input : instream -> string
+(* test whether input would block *)
+fun canInput : instream * int -> int option
+fun output    : outstream * string -> unit
+fun flushOut  : outstream -> unit
+fun endOfStream : instream -> bool
+
+fun openIn : string -> instream
+fun openout : string -> outstream
+fun closeIn : instream -> unit
+fun closeOut : outstream -> unit
+#+end_src
+
