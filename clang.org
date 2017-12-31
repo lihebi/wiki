@@ -92,6 +92,24 @@ void clang_getInclusions (CXTranslationUnit tu, CXInclusionVisitor visitor, CXCl
 typedef void (*CXInclusionVisitor) (CXFile included_file, CXSourceLocation *inclusion_stack, unsigned include_len, CXClientData client_data)
 #+end_src
 
+libclang supports reading Compilation Database.
+
+#+begin_src haskell
+-- read database file
+clang_CompilationDatabase_fromDirectory :: BuildDir -> Cb
+-- get commands by file
+clang_CompilationDatabase_getCompileCommands :: (Db, Filename) -> CMDs
+-- get all commands
+clang_CompilationDatabase_getAllCompileCommands :: Db -> CMDs
+clang_CompileCommands_getCommand :: (CMDs, Int) -> CMD
+-- get the 3 components
+clang_CompileCommand_getDirectory :: CMD -> CXString
+clang_CompileCommand_getFilename :: CMD -> CXString
+clang_CompileCommand_getNumArgs :: CMD -> Unsigned
+clang_CompileCommand_getArg :: (CMD, Int) -> CXString
+#+end_src
+
+
 ** Token manipulation
 You can get tokens from translation unit. The text and kind of token
 is available.
@@ -104,8 +122,6 @@ clang_getTokenKind CXToken -> CXTokenKind
 #+end_src
 
 ** Cursors
-*** Map to source location
-
 
 *** Traversing
 #+begin_src cpp
@@ -128,122 +144,109 @@ These are the type (e.g. float, typedef) for the a cursor. Important
 ones include (prefixed with =CXType_=): =Void=, =Bool=, =Short=,
 =Int=, =Long=, =Float=, =Double=, =Record=, =Enum=, =Typedef=.
 
-#+begin_src cpp
-  CXType clang_getCursorType (CXCursor C)
-  // pretty print the type
-  CXString clang_getTypeSpelling (CXType CT)
-  // type conversion
-  CXType clang_getCanonicalType (CXType T)
-  CXString clang_getTypedefName (CXType CT)
-  CXType clang_getPointeeType (CXType T)
-  CXCursor clang_getTypeDeclaration (CXType T)
-  // predicates
-  unsigned clang_isConstQualifiedType (CXType T)
-  unsigned clang_isVolatileQualifiedType (CXType T)
-  unsigned clang_isRestrictQualifiedType (CXType T)
-  // for function type
-  CXType clang_getResultType (CXType T)
-  int clang_getNumArgTypes (CXType T)
-  CXType clang_getArgType (CXType T, unsigned i)
-  // array
-  CXType clang_getElementType (CXType T)
-  long long clang_getNumElements (CXType T)
-  CXType clang_getArrayElementType (CXType T)
-  long long clang_getArraySize (CXType T)
+#+begin_src haskell
+clang_getCursorType :: CXCursor -> CXType
+-- pretty print the type
+clang_getTypeSpelling :: CXType -> CXString
+-- type conversion
+clang_getCanonicalType :: CXType -> CXType
+clang_getTypedefName :: CXType -> CXString
+clang_getPointeeType :: CXType -> CXType
+clang_getTypeDeclaration :: CXType -> CXCursor
+-- predicates
+clang_isConstQualifiedType :: CXType -> Unsigned
+clang_isVolatileQualifiedType :: CXType -> Unsigned
+clang_isRestrictQualifiedType :: CXType -> Unsigned
+-- for function type
+clang_getResultType :: CXType -> CXType
+clang_getNumArgTypes :: CXType -> Int
+clang_getArgType CXType -> Unsigned -> CXType
+-- array
+clang_getElementType :: CXType -> CXType
+clang_getNumElements :: CXType -> Long Long
+clang_getArrayElementType :: CXType -> CXType
+clang_getArraySize :: CXType -> Long Long
 #+end_src
 
 
 *** manipulation
-#+begin_src cpp
-  CXCursor clang_getTranslationUnitCursor (CXTranslationUnit)
-  CXTranslationUnit clang_Cursor_getTranslationUnit (CXCursor)
-  // cursor kinds can be, e.g. 
-  // CXCursor_VarDecl, CXCursor_IfStmt
-  enum CXCursorKind clang_getCursorKind (CXCursor)
-  // some predicates
-  unsigned clang_isDeclaration (enum CXCursorKind)
-  unsigned clang_isReference (enum CXCursorKind)
-  unsigned clang_isExpression (enum CXCursorKind)
-  unsigned clang_isStatement (enum CXCursorKind)
-  // seems to be related to C++ namespace
-  CXCursor clang_getCursorSemanticParent (CXCursor cursor)
-  CXCursor clang_getCursorLexicalParent (CXCursor cursor)
-  // the cursor must be a include directive
-  CXFile clang_getIncludedFile (CXCursor cursor)
+#+begin_src haskell
+clang_getTranslationUnitCursor :: (CXTranslationUnit) -> CXCursor
+clang_Cursor_getTranslationUnit :: (CXCursor) -> CXTranslationUnit
+-- cursor kinds can be, e.g. 
+-- CXCursor_VarDecl, CXCursor_IfStmt
+clang_getCursorKind :: (CXCursor) -> enum CXCursorKind
+-- some predicates
+clang_isDeclaration :: (enum CXCursorKind) -> unsigned
+clang_isReference :: (enum CXCursorKind) -> unsigned
+clang_isExpression :: (enum CXCursorKind) -> unsigned
+clang_isStatement :: (enum CXCursorKind) -> unsigned
+-- seems to be related to C++ namespace
+clang_getCursorSemanticParent :: (CXCursor cursor) -> CXCursor
+clang_getCursorLexicalParent :: (CXCursor cursor) -> CXCursor
+-- the cursor must be a include directive
+clang_getIncludedFile :: (CXCursor cursor) -> CXFile
 #+end_src
 
+* LibTooling
 
-** Compilation Database
-#+begin_src cpp
-  // read database file
-  CXCompilationDatabase
-  clang_CompilationDatabase_fromDirectory
-  (const char *BuildDir, CXCompilationDatabase_Error *ErrorCode);
-  // get commands by file
-  CXCompileCommands
-  clang_CompilationDatabase_getCompileCommands
-  (CXCompilationDatabase, const char *CompleteFileName);
-  // get all commands
-  CXCompileCommands
-  clang_CompilationDatabase_getAllCompileCommands
-  (CXCompilationDatabase);
-  CXCompileCommand
-  clang_CompileCommands_getCommand
-  (CXCompileCommands, unsigned I);
+** In-memory code parsing
+LIbTooling can be used to parse code in memory or disk. The in-memory
+code parsing seems to support less setup (i.e. what command line
+arguments to use), and is intended to test initial results. It is
+invoked through a function =runToolOnCode=, with the code as string
+and an action. The function has several variations.
 
-  // get the 3 components
-  CXString clang_CompileCommand_getDirectory (CXCompileCommand);
-  CXString clang_CompileCommand_getFilename (CXCompileCommand);
-  unsigned clang_CompileCommand_getNumArgs (CXCompileCommand);
-  CXString clang_CompileCommand_getArg (CXCompileCommand, unsigned I);
+#+BEGIN_SRC haskell
+runToolOnCode :: FrontendAction -> Code -> bool
+runToolOnCodeWithArgs :: FrontendAction -> Code -> Args -> bool
+buildASTFromCode :: Code -> ASTUnit
+buildASTFromCodeWithArgs :: Code -> Args -> ASTUnit
+#+END_SRC
+
+
+** On-disk code parsing
+The real tool building of LibTooling starts by creating an instance of
+=ClangTool=, with compilation database and an array of source files as
+parameters. The tool can than run any number of actions called
+=ToolAction=.
+
+#+BEGIN_SRC haskell
+run :: ToolAction -> ()
+buildASTs :: [ASTUnit]
+#+END_SRC
+
+** Command Line
+
+Compilation database is supported. In general, a compilation data base
+specifies what are the commands used for the files to compile. This
+can be specified in the command line, or read from a file (typically
+through a =-p= option).  There's of course a parser for it, called
+=CommonOptionsParser=.
+
+#+BEGIN_SRC haskell
+_ :: Argc -> Argv -> CommonOptionParser (Parser)
+getCompilations :: Parser -> Db
+getSourcePathList :: Parser -> [String]
+#+END_SRC
+
+Or, you can use the static functions to create the DB directly. I
+believe this is a wrapper around =CommonOptionsParser=. The CMD got
+from the it contains directory, filename, command line, output, as
+expected.
+
+#+begin_src haskell
+loadFromDirectory :: BuildDir -> Db
+loadFromFile :: FilePath -> Db
+getAllFiles :: Db -> [String]
+getCompileCommands :: Db -> String -> [CMD]
 #+end_src
 
-* clang::tooling
-** clang::tooling::ClangTool
-#+BEGIN_SRC C++
-  ClangTool::ClangTool(const CompilationDatabase &Compilations, 
-                       ArrayRef< std::string > SourcePaths);
-  ClangTool::run (ToolAction *Action);
-  // directly build ASTs
-  ClangTool::buildASTs(std::vector<std::unique_ptr<ASTUnit> > &ASTs);
-#+END_SRC
+Once we got the compilation database, we basically knows how to
+compile all the files in the project.
 
-** clang::tooling::CompilationDatabase
-- clang::tooling::CompilationDatabase
-- clang::tooling::JSONCompilationDatabase
-#+BEGIN_SRC C++
-  static CompilationDatabase::loadFromDirectory(StringRef BuildDirectory);
-  class JSONCompilationDatabase : public CompilationDatabase {};
-  static JSONCompilationDatabase::loadFromFile(StringRef FilePath);
-#+END_SRC
+** TODO FrontendAction
 
-** clang::tooling::runToolOnCode
-- runToolOnCode
-- runToolOnCodeWithArgs
-- buildASTFromCode
-- buildASTFromCodeWithArgs
-#+BEGIN_SRC C++
-  using namespace clang::tooling;
-  bool runToolOnCode(clang::FrontendAction *ToolAction,
-                     const Twine &Code,
-                     const Twine &FileName="input.cc");
-  bool runToolOnCodeWithArgs(clang::FrontendAction *ToolAction,
-                             const Twine &Code,
-                             const std::vector<std::string> &Args,
-                             const Twine &FileName="input.cc");
-  std::unique_ptr<ASTUnit>
-  buildASTFromCode(const Twine &Code,
-                   const Twine &FileName="input.cc");
-  std::unique_ptr<ASTUnit>
-  buildASTFromCodeWithArgs(const Twine &Code,
-                           const std::vector<std::string> &Args,
-                           const Twine &FileName="input.cc");
-#+END_SRC
-
-** TODO clang::tooling::Range
-** TODO clang::tooling::Replacement
-- clang::tooling::Replacement
-- clang::tooling::Replacements
 
 * Compiler
 ** CompilerInstance
@@ -1196,71 +1199,71 @@ there's also a =buildASTFromCode= family:
 *** Project Setup
 
 **** Main File
- First of all, get the =CMakeLists.txt= setup:
+First of all, get the =CMakeLists.txt= setup:
 
- The first line:
- #+BEGIN_SRC cmake
+The first line:
+#+BEGIN_SRC cmake
  cmake_minimum_required(VERSION 3.0)
- #+END_SRC
+#+END_SRC
 
- Setting directory to =lib= and =bin=
+Setting directory to =lib= and =bin=
 
- #+BEGIN_SRC cmake
+#+BEGIN_SRC cmake
  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
- #+END_SRC
+#+END_SRC
 
- Other setup
- #+BEGIN_SRC cmake
+Other setup
+#+BEGIN_SRC cmake
  SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
- #+END_SRC
+#+END_SRC
 
- Thread library:
+Thread library:
 
- #+BEGIN_SRC cmake
+#+BEGIN_SRC cmake
  find_package (Threads)
  link_libraries(${CMAKE_THREAD_LIBS_INIT})
- #+END_SRC
+#+END_SRC
 
- LLVM library configuration:
- #+BEGIN_SRC cmake
+LLVM library configuration:
+#+BEGIN_SRC cmake
  find_package(LLVM REQUIRED CONFIG)
  message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
  message(STATUS "Using LLVMCOnfig.cmake in: ${LLVM_DIR}")
  add_definitions(${LLVM_DEFINITIONS})
  include_directories(${LLVM_INCLUDE_DIRS})
  set(LLVM_LINK_COMPONENTS support)
- #+END_SRC
+#+END_SRC
 
- Clang library setup
- #+BEGIN_SRC cmake
+Clang library setup
+#+BEGIN_SRC cmake
  find_package(Clang REQUIRED CONFIG)
- #+END_SRC
+#+END_SRC
 
- Trouble shooting setup
- #+BEGIN_SRC cmake
+Trouble shooting setup
+#+BEGIN_SRC cmake
  # Otherwise error: undefined reference to typeinfo for xxx
  add_compile_options(-fno-rtti)
- #+END_SRC
+#+END_SRC
 
- link library
- #+BEGIN_SRC cmake
+link library
+#+BEGIN_SRC cmake
  link_libraries(clang clangTooling clangFrontend clangFrontendTool)
  link_libraries(libclang gtest)
- #+END_SRC
+#+END_SRC
 
- Add sub-directories
- #+BEGIN_SRC cmake
+Add sub-directories
+#+BEGIN_SRC cmake
  enable_testing()
  add_subdirectory (src)
  add_subdirectory (test)
- #+END_SRC
+#+END_SRC
 
 **** Sub-directory files
- =src/CMakeLists.txt= to add libraries, executables
+=src/CMakeLists.txt= to add libraries, executables
 
- #+BEGIN_SRC cmake
+#+BEGIN_SRC cmake
  add_library (Sqr sqr.cpp sqr.h)
  add_executable (demo main.cpp)
  target_link_libraries (demo Sqr)
@@ -1268,22 +1271,22 @@ there's also a =buildASTFromCode= family:
  add_executable(ast ast.cpp)
  add_executable(token token.cpp)
  add_executable(rewriter rewriter.cpp)
- #+END_SRC
+#+END_SRC
 
- =test/CMakeLists.txt=
+=test/CMakeLists.txt=
 
- The only requirement is to have =enable_testing= before =add_test=. The
- command can be in =src= level list if no test source files.
+The only requirement is to have =enable_testing= before =add_test=. The
+command can be in =src= level list if no test source files.
 
- #+BEGIN_SRC cmake
+#+BEGIN_SRC cmake
  add_test(NAME toktest COMMAND hetok ../test/a.c)
  add_test(NAME MyTest COMMAND Test)
- #+END_SRC
+#+END_SRC
 
 *** Header files
- Some representative header files:
+Some representative header files:
 
- #+BEGIN_SRC cpp
+#+BEGIN_SRC cpp
  #include "clang/AST/ASTConsumer.h"
  #include "clang/AST/RecursiveASTVisitor.h"
  #include "clang/Frontend/CompilerInstance.h"
@@ -1292,26 +1295,26 @@ there's also a =buildASTFromCode= family:
  #include "clang/Frontend/FrontendActions.h"
  #include "llvm/Support/CommandLine.h"
  #include "clang/Tooling/CommonOptionsParser.h"
- #+END_SRC
+#+END_SRC
 
 *** Entry Point
- The entry point is creating the =tooling::ClangTool= class.  Just pass
- =argc/v= into it. The command line option =--= at the end to invoke the
- tool will not trying to find compilation database.
+The entry point is creating the =tooling::ClangTool= class.  Just pass
+=argc/v= into it. The command line option =--= at the end to invoke the
+tool will not trying to find compilation database.
 
- #+BEGIN_SRC cpp
+#+BEGIN_SRC cpp
    int main(int argc, const char **argv) {
      CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
      ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
      Tool.run(newFrontendActionFactory<MyAction>().get());
    }
- #+END_SRC
+#+END_SRC
 
- The Tool would run on some "action". This is our main logic. The
- action derives from =ASTFrontendAction=, and override the
- =CreateASTConsumer= class.
+The Tool would run on some "action". This is our main logic. The
+action derives from =ASTFrontendAction=, and override the
+=CreateASTConsumer= class.
 
- #+BEGIN_SRC cpp
+#+BEGIN_SRC cpp
    class MyAction : public clang::ASTFrontendAction {
    public:
      virtual std::unique_ptr<clang::ASTConsumer>
@@ -1320,19 +1323,19 @@ there's also a =buildASTFromCode= family:
          (new MyConsumer(&Compiler.getASTContext()));
      }
    };
- #+END_SRC
+#+END_SRC
 
- The Consumer would derive from =ASTConsumer= and override
- =HandleTranslationUnit=. This function is called when the whole
- translation unit is parsed. This provides the entry point of the AST
- by the top most /decl/ by =Context.getTranslationUnitDecl()=.
+The Consumer would derive from =ASTConsumer= and override
+=HandleTranslationUnit=. This function is called when the whole
+translation unit is parsed. This provides the entry point of the AST
+by the top most /decl/ by =Context.getTranslationUnitDecl()=.
 
- The visitor will automatically call =WalkUpFromXXX(x)= to recursively
- visit child nodes of x returning false of TraverseXXX or =WalkUpFromXXX=
- will terminate the traversal. By default this will be a pre-order
- traversal. Calling a method to change to post-order.
+The visitor will automatically call =WalkUpFromXXX(x)= to recursively
+visit child nodes of x returning false of TraverseXXX or =WalkUpFromXXX=
+will terminate the traversal. By default this will be a pre-order
+traversal. Calling a method to change to post-order.
 
- #+BEGIN_SRC cpp
+#+BEGIN_SRC cpp
    class MyConsumer : public clang::ASTConsumer {
    public:
      explicit MyConsumer(ASTContext *Context)
@@ -1343,12 +1346,12 @@ there's also a =buildASTFromCode= family:
    private:
      MyVisitor Visitor;
    };
- #+END_SRC
+#+END_SRC
 
- The visitor itself implement what to do with each AST node. Override
- the list of =VisitXXX= method for each type of AST node.
+The visitor itself implement what to do with each AST node. Override
+the list of =VisitXXX= method for each type of AST node.
 
- #+BEGIN_SRC cpp
+#+BEGIN_SRC cpp
    class TokenVisitor
      : public RecursiveASTVisitor<TokenVisitor> {
    public:
@@ -1359,45 +1362,45 @@ there's also a =buildASTFromCode= family:
    private:
      ASTContext *Context;
    };
- #+END_SRC
+#+END_SRC
 
 
 *** Location
- - Decl::getLocStart -> =SourceLocation= loc
- - context->getFullLoc(loc) -> FullSourceLoc full
- - full.getSpellingLinenumber
+- Decl::getLocStart -> =SourceLocation= loc
+- context->getFullLoc(loc) -> FullSourceLoc full
+- full.getSpellingLinenumber
 
 *** APIs
- =Decl=
+=Decl=
 
- #+BEGIN_SRC cpp
+#+BEGIN_SRC cpp
  SourceLocation getLocStart ();
  SourceLocation getLocEnd ();
  virtual SourceRange getSourceRange ();
- #+END_SRC
+#+END_SRC
 
- =ASTContext=
+=ASTContext=
 
- #+BEGIN_SRC cpp
+#+BEGIN_SRC cpp
  FullSourceLoc getFullLoc (SourceLocation Loc) const
  SourceManager& getSourceManager ()
- #+END_SRC
+#+END_SRC
 
- =FullSourceLoc=
+=FullSourceLoc=
 
- #+BEGIN_SRC cpp
+#+BEGIN_SRC cpp
  unsigned getSpellingLineNumber (bool *Invalid=nullptr) const
  unsigned getSpellingColumnNumber (bool *Invalid=nullptr) const
  FileID 	getFileID () const
- #+END_SRC
+#+END_SRC
 
- =SourceManager=
+=SourceManager=
 
- #+BEGIN_SRC cpp
+#+BEGIN_SRC cpp
  FileManager& getFileManager () const;
  FileID getMainFileID () const; // this file being processed
  const FileEntry *getFileEntryForID (FileID FID) const;
- #+END_SRC
+#+END_SRC
 
 ** Use As Command
 
