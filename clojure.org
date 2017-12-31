@@ -2,21 +2,231 @@
 
 # https://clojuredocs.org/quickref
 
+* Emacs
+It is called cider
+- https://github.com/clojure-emacs/cider
+- https://cider.readthedocs.io/en/latest/
 
-The documen for clojure is terrible. I like the scheme and common-lisp
-document better. I simply want to read a well sectioned document containing all things.
-- the reference is part, not all
-- the library API is not ordered at all
-- the official cheatsheet contains duplicated items here and there
-- the un-official manuals and cheatsheet are not complete
+First, `lein new hello-world` to create a hello-world project.
 
-Suspend the interest for clojure for now.
+Navigate emacs to one of the files or the directory inside the project
+and call `cider-jack-in`.
 
-- The [[file:clojure-other.org][old clojure page]]
-- the [[file:clojure-tools.org][tools]] for clojure
+** Eval
+- cider-eval-last-sexp (C-x C-e)
+- cider-eval-defun-at-point (C-M-x)
+- cider-interrupt: interrupt pending evaluation
+- cider-macroexpand-1 (C-c C-m)
+- cider-load-buffer
+- cider-refresh: reload all modified files
+- cider-inspect (C-c M-i)
 
-- https://clojure.github.io/ is the API reference, in alphabet order
+** Navigation
+- cider-switch-to-repl-buffer (C-c C-z)
+- cider-quit
 
+** Doc
+- cider-doc (C-c C-d C-d)
+- cider-javadoc (C-c C-d C-j): display in browser
+
+** Tests
+- cider-test-run-test: run test at point
+- cider-test-rerun-test: rerun the last test
+- cider-test-run-project-tests
+- cider-test-rerun-failed-tests
+- cider-test-show-report
+
+* Lein
+#+BEGIN_EXAMPLE
+lein new hello-world
+cd hello-world
+lein deps # install deps
+lein repl # start repl
+#+END_EXAMPLE
+
+* A first try
+
+** Setup
+First, install clojure and lein2.
+
+To start a new project:
+#+BEGIN_EXAMPLE
+lein new myproj
+cd myproj
+lein repl
+#+END_EXAMPLE
+
+
+This will install dependencies and enter repl.
+
+
+** Type
+Since clojure sits on top of JVM, the type seems to be the same, and
+you can get the type of something by the function =type=.
+
+#+BEGIN_EXAMPLE
+user=> (type 3)
+;; java.lang.Long
+user=> (type :cat)
+clojure.lang.Keyword
+#+END_EXAMPLE
+
+A list of types
+- java.lang.Long :: (type 3)
+- clojure.lang.BigInt :: (type 5N)
+- java.lang.Integer :: (type (int 0))
+- java.lang.Short :: (type (short 0))
+- java.lang.Byte :: (type (byte 0))
+- java.lang.Double :: (type 1.23)
+- java.lang.Float :: (type (float 1.23))
+- java.lang.String :: (type "cat")
+- clojure.lang.Symbol :: (class 'str)
+- clojure.lang.Keyword :: (type :cat)
+- clojure.lang.PersistentList :: (type '(1 2 3))
+- clojure.lang.PersistentVector :: (type [1 2 3])
+- clojure.lang.PersistentHashSet :: #{:a :b :c}
+- clojure.lang.PersistentArrayMap :: {:name "mittens" :weight 9 :color "black"}
+
+** Function
+- let ::
+- fn :: lambda function
+- def :: symbol
+- defn :: define a named function
+
+** Macro
+- defmacro ::
+
+** State
+*** delay
+
+Basically this is an abstraction of function: define a function will
+not evaluate function body. So delay works similar: the call to delay
+returns an Delay Object, which can be called on by =deref= to evaluate
+the body.
+
+#+BEGIN_SRC clojure
+(def later (fn [] (prn "Adding") (+ 1 2)))
+(later) ;; => print output
+
+(def later (delay (prn "Adding") (+ 1 2)))
+(deref later) ;; => print output
+#+END_SRC
+
+The difference between a delay and a function:
+- function evaluate every time it is called
+- delays only evaluate their expressions once. They remember their
+  value, after the first evaluation, and return it for every
+  successive deref.
+
+The delay opeartor: =@later= is equivalent to =(deref later)=.
+*** Future
+This is for parallel.
+
+#+BEGIN_QUOTE
+I don’t need the result of evaluating these expressions yet, but I’d
+like it later. Could you start working on it in the meantime?
+#+END_QUOTE
+
+#+BEGIN_SRC clojure
+(def x (future (prn "hi") (+ 1 2)))
+(deref x) ;; => 3
+#+END_SRC
+
+The body of future is executed in a *new thread* in parallel! Deref it
+will get the value of the *last* expression.  Like delays, the
+expressions are only evaluated once.
+
+**** Atom
+The parallel program brings thread-safe problem: modify something at
+the same time in different threads. Clojure has a =atom= function to
+protect a data and ensure its thread-safety.
+
+Use =reset!= to set value of atom, and use =swap!= to update.
+
+#+BEGIN_SRC clojure
+(def xs #{})
+(dotimes [i 10] (future (def xs (conj xs i))))
+user=> xs ;; => #{1 4 5 7}
+
+(def xs (atom #{}))
+(dotimes [i 10] (future (swap! xs conj i)))
+user=> @xs ;; => #{0 1 2 3 4 5 6 7 8 9}
+#+END_SRC
+
+**** Ref
+Atom is linearizable, but not serializable: it does not guarantee
+orders. Ref is serializable.
+
+Use =ref-set= to set value of a ref, and use =alter= to update. They
+must be in a =dosync= block, and the block order is guaranteed.
+
+#+BEGIN_SRC clojure
+user=> (def x (ref 0))
+user=> (def y (ref 0))
+user=> (dosync
+         (ref-set x 1)
+         (ref-set y 2))
+2
+user=> [@x @y]
+[1 2]
+
+user=> (def x (ref 1))
+user=> (def y (ref 2))
+user=> (dosync
+         (alter x + 2)
+         (alter y inc))
+3
+user=> [@x @y]
+[3 3]
+#+END_SRC
+
+If some of the refs do not need order, you can boost the program by
+release that, using =commute=:
+
+#+BEGIN_SRC clojure
+user=> (dosync
+         (commute x + 2)
+         (commute y inc))
+#+END_SRC
+
+Finally, you can use =ensure= to update one ref using another,
+guaranteeing order.
+#+BEGIN_SRC clojure
+user=> (dosync
+         (alter x + (ensure y)))
+#+END_SRC
+
+*** Promise
+#+BEGIN_QUOTE
+Delays defer evaluation, and futures parallelize it. What if we wanted
+to defer something we dont even have yet? To hand someone an empty box
+and, later, before they open it, sneak in and replacing its contents
+with an actual gift?
+#+END_QUOTE
+
+#+BEGIN_SRC clojure
+(def box (promise))
+(deref box) ;; empty
+(deliver box :live-scorpiojns!)
+(deref box) ;; => live-scorpiojns!
+(deliver box :puppy) ;; => nil
+(deref box) ;; => live-scorpiojns!
+#+END_SRC
+
+Some highlights:
+- box contains nothing initially
+- can be delivered
+- cannot be re-delivered
+
+
+** TODO Logistics
+https://aphyr.com/posts/311-clojure-from-the-ground-up-logistics
+
+** TODO Modeling
+https://aphyr.com/posts/312-clojure-from-the-ground-up-modeling
+
+** TODO Debugging
+https://aphyr.com/posts/319-clojure-from-the-ground-up-debugging
 
 * clojure.core
 - =*in*=
@@ -245,6 +455,19 @@ literals for keywords: =:kw=, =:my.ns/kw=, =::in-cur-ns=
 - nth
 - get
 - peek
+
+
+
+* Reference
+- https://clojure.github.io/ is the API reference, in alphabet order
+
+Some interesting projects:
+- [[file:supercollider.org][SuperCollider]] is a server and a language for music synthesizing.
+- [[file:overtone.org][Overtone]] offers a /clojure/ wrapper and emacs environment for the SuperCollider backend.
+- https://github.com/ring-clojure/ring
+- http://liquidz.github.io/
+- https://github.com/liquidz/misaki
+- http://nakkaya.com/
 
 
 
