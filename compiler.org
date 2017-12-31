@@ -749,3 +749,9 @@ int main() {
   b=(a+b)*a;
 }
 #+END_SRC
+
+* Reference
+- A recursive descent parser generator in Common Lisp:
+  http://www.informatimago.com/develop/lisp/com/informatimago/small-cl-pgms/rdp/
+- cl-python: A python compiler in Common Lisp. This is VERY good.
+  https://github.com/metawilm/cl-python
