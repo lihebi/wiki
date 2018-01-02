@@ -1,0 +1,89 @@
+#+TITLE: C backup
+
+* Language Specification
+**  varargs functions (variadic functions)
+A function to take a variable number or type of arguments
+
+Receiving of arguments: You actually need both the number and type of
+the arguments to retrieve.
+
+1. create =va_list=
+2. initialize using =va_start=
+3. access using multiple =va_arg=. The first gives you the first arg, and so on.
+4. call =va_end=
+
+The macro prototypes (defined in =stdarg.h=). Note these are macros, not functions.
+- ~void va_start (va_list ap, last-required)~
+- ~type va_arg (va_list ap, type)~
+- ~void va_end (va_list ap)~
+
+An real world example:
+#+BEGIN_SRC C
+  #include <stdarg.h>
+  #include <stdio.h>
+
+  int
+  add_em_up (int count,...)
+  {
+    va_list ap;
+    int i, sum;
+    va_start (ap, count);         /* Initialize the argument list. */
+    sum = 0;
+    for (i = 0; i < count; i++)
+      sum += va_arg (ap, int);    /* Get the next argument value. */
+    va_end (ap);                  /* Clean up. */
+    return sum;
+  }
+  int
+  main (void)
+  {
+    /* This call prints 16. */
+    printf ("%d\n", add_em_up (3, 5, 5, 6));
+    /* This call prints 55. */
+    printf ("%d\n", add_em_up (10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+    return 0;
+  }
+#+END_SRC
+
+** Variadic Macros
+#+BEGIN_SRC C
+#define eprintf(format, ...) fprintf (stderr, format, __VA_ARGS__)
+#+END_SRC
+
+The ~__VA_ARGS__~ will be replaced with whatever in =...=.
+The variable argument is completely macro-expanded before it is inserted into the macro expansion,
+just like an ordinary argument.
+
+* Compound Literals
+
+A compound literal looks like a cast containing an initializer.
+Its value is an object of the type specified in the cast,
+containing the elements specified in the initializer;
+it is an lvalue.
+
+** Example
+
+#+begin_src C
+struct foo {int a; char b[2];} structure;
+#+end_src
+
+The constructing:
+
+#+begin_src C
+structure = ((struct foo) {x + y, 'a', 0});
+#+end_src
+
+** more examples
+
+#+begin_src C
+char **foo = (char *[]) { "x", "y", "z" };
+#+end_src
+
+** static
+Value in the compound literals must be constant.
+
+#+begin_src C
+static struct foo x = (struct foo) {1, 'a', 'b'};
+static int y[] = (int []) {1, 2, 3};
+static int z[] = (int [3]) {1};
+#+end_src

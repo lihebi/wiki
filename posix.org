@@ -18,6 +18,16 @@ I found most of them are not that interesting, except Base Definition
 section 9 regular expression. This definition is used by many shell
 utilities such as awk.
 
+* Tmp
+sleep
+#+BEGIN_SRC C
+#include <unistd.h>
+unsigned int sleep(unsigned int seconds); // seconds
+int usleep(useconds_t useconds); // microseconds
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
+#+END_SRC
+
+
 
 * Regular Expression
 ** Definition

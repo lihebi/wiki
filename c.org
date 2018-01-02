@@ -1,551 +1,363 @@
 #+TITLE: C
 
-* 变量和基本类型
-
-** 类型
- * 是用 ~char~ 时，需要明确指明 ~unsigned char~ 还是 ~signed char~ ，否则根据系统的不同而不同。
- * ~long long~ >= ~long~ >= ~int~ >= ~short~
-*** 如何选择类型
-1. 若不为负，选unsigned
-2. 用 ~int~ 和 ~long long~ ，而不用 ~long~ ,因为 ~long~ 一般和 ~int~ 一样。
-3. 明确指定 ~char~ 的类型
-4. 一般用 ~double~ 而不用 ~float~
-
-*** Static
- * ~static member function~: can use ~ClassName::function()~ directly
- * ~static member variable~: only one object for all instance of the class
- * ~static variable~: A static variable inside a function keeps its value between invocations.
-  A static global variable or a function is "seen" only in the file it's declared in
- * ~static functions~: Static functions are not visible outside of the C file they are defined in.
-
-
-*** 转义
-
-| 代码                     | 含义     |
-|--------------------------+----------|
-| /                        | <        |
-| \n                       | 换行     |
-| \r                       | 回车     |
-| \v                       | 纵向制表 |
-| \b                       | 退格     |
-| \x加一个或多个16进制的数 |          |
-| \加1，2，3个8进制的数    |          |
-
-*** 字面值类型
-
-前缀
-
-| 符号 | 含义          | 类型           |
-|------+---------------+----------------|
-| /    | <             | <              |
-| u    | Unicode16字符 | =char16_t=     |
-| U    | Unicode32     | =char32_t=     |
-| L    | 宽字符        | =wchar_t L'a'= |
-| u8   | utf8字符串    | =char u8"hi"=  |
-
-后缀
-
-| 符号 | 类型        | 适用于 |
-|------+-------------+--------|
-| /    | <           | <      |
-| U    | Unsigned    | 整型   |
-| L    | long        | 整型   |
-| LL   | long long   | 整型   |
-| F    | float       | 浮点型 |
-| L    | long double | 浮点型 |
-
-对象是指一块能存储数据并具有某种类型的内存空间。
-
-*** 初始化
-
-#+begin_src C
-int a=0;
-int a={0};
-int a{0}; //C++11
-int a(0);
-#+end_src
-
-定义于任何函数体之 _外_ 的 _内置类型变量_ 被初始化为0.
-定义于任何函数体之 _内_ 的 _内置类型变量_ 不初始化。
-
-string默认为空串。
-
-#+begin_src C
-extern int i; // 声明
-extern int i=1; // 定义，不可在函数体内部
-#+end_src
-
-
-
-* Language Specification
-**  varargs functions (variadic functions)
-a function to take a variable number or type of arguments
-
-Receiving of arguments:
-You actually need both the number and type of the arguments to retrieve.
-
-1. create =va_list=
-2. initialize using =va_start=
-3. access using multiple =va_arg=. The first gives you the first arg, and so on.
-4. call =va_end=
-
-The macro prototypes (defined in =stdarg.h=). Note these are macros, not functions.
-- ~void va_start (va_list ap, last-required)~
-- ~type va_arg (va_list ap, type)~
-- ~void va_end (va_list ap)~
-
-An real world example:
-#+BEGIN_SRC C
-  #include <stdarg.h>
-  #include <stdio.h>
-
-  int
-  add_em_up (int count,...)
-  {
-    va_list ap;
-    int i, sum;
-    va_start (ap, count);         /* Initialize the argument list. */
-    sum = 0;
-    for (i = 0; i < count; i++)
-      sum += va_arg (ap, int);    /* Get the next argument value. */
-    va_end (ap);                  /* Clean up. */
-    return sum;
-  }
-  int
-  main (void)
-  {
-    /* This call prints 16. */
-    printf ("%d\n", add_em_up (3, 5, 5, 6));
-    /* This call prints 55. */
-    printf ("%d\n", add_em_up (10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-    return 0;
-  }
-#+END_SRC
-
-** Variadic Macros
-#+BEGIN_SRC C
-#define eprintf(format, ...) fprintf (stderr, format, __VA_ARGS__)
-#+END_SRC
-
-The ~__VA_ARGS__~ will be replaced with whatever in =...=.
-The variable argument is completely macro-expanded before it is inserted into the macro expansion,
-just like an ordinary argument.
-
-* idioms
-#+begin_src C
-typedef enum { false, true } bool;
-#+end_src
-
-* Cast
-
-** In a word
-
- * ~static_cast~: ordinary type conversions.
- * ~dynamic_cast~: converting pointers/references within an inheritance hierarchy.
- * ~reinterpret_cast~: low-level reinterpreting of bit patterns.
-  Use with extreme caution.
- * ~const_cast~: casting away const/volatile.
-  Avoid this unless you are stuck using a const-incorrect API.
-** C style cast: **DO NOT USE**
-
-** Static Cast
-
-~static_cast~ is the first cast you should attempt to use.
-It does things like implicit conversions between types
-(such as =int= to =float=, or pointer to =void*=),
-and it can also call explicit conversion functions (or implicit ones).
-In many cases, explicitly stating =static_cast= isn't necessary,
-but it's important to note that the ~T(something)~ syntax is equivalent to ~(T)something~
-and should be avoided (more on that later).
-A ~T(something, something_else)~ is safe, however, and guaranteed to call the constructor.
-
-=static_cast= can also cast through inheritance hierarchies.
-It is unnecessary when casting upwards (towards a base class),
-but when casting downwards it can be used as long as it doesn't cast through virtual inheritance.
-It does not do checking, however,
-and it is undefined behavior to =static_cast= down a hierarchy to a type that isn't actually the type of the object.
-
-** Const Cast
-
-=const_cast= can be used to remove or add const to a variable;
-no other C++ cast is capable of removing it (not even =reinterpret_cast=).
-It is important to note that modifying a formerly const value is only undefined if the original variable is const;
-if you use it to take the const off a reference to something that wasn't declared with const,
-it is safe.
-This can be useful when overloading member functions based on const, for instance.
-It can also be used to add const to an object,
-such as to call a member function overload.
-
-=const_cast= also works similarly on volatile,
-though that's less common.
-
-** Dynamic Cast
-
-=dynamic_cast= is almost exclusively used for handling polymorphism.
-You can cast a pointer or reference to any polymorphic type to any other class type
-(a polymorphic type has at least one virtual function, declared or inherited).
-You can use it for more than just casting downwards -- you can cast sideways or even up another chain.
-The =dynamic_cast= will seek out the desired object and return it if possible.
-If it can't, it will return NULL in the case of a pointer,
-or throw =std::bad_cast= in the case of a reference.
-
-=dynamic_cast= has some limitations, though.
-It doesn't work if there are multiple objects of the same type in the inheritance hierarchy
-(the so-called 'dreaded diamond') and you aren't using virtual inheritance.
-It also can only go through public inheritance -
-it will always fail to travel through protected or private inheritance.
-This is rarely an issue, however, as such forms of inheritance are rare.
-
-** Reinterpret Cast
-
-=reinterpret_cast= is the most dangerous cast, and should be used very sparingly.
-It turns one type directly into another -
-such as casting the value from one pointer to another,
-or storing a pointer in an int, or all sorts of other nasty things.
-Largely, the only guarantee you get with =reinterpret_cast= is that normally if you cast the result back to the original type,
-you will get the exact same value (but not if the intermediate type is smaller than the original type).
-There are a number of conversions that =reinterpret_cast= cannot do, too.
-It's used primarily for particularly weird conversions and bit manipulations,
-like turning a raw data stream into actual data,
-or storing data in the low bits of an aligned pointer.
-
-** C style cast
-
-C casts are casts using (type)object or type(object).
-A C-style cast is defined as the first of the following which succeeds:
-
- * =const_cast=
- * =static_cast= (though ignoring access restrictions)
- * =static_cast= (see above), then =const_cast=
- * =reinterpret_cast=
- * =reinterpret_cast=, then =const_cast=
-
-It can therefore be used as a replacement for other casts in some instances,
-but can be extremely dangerous because of the ability to devolve into a =reinterpret_cast=,
-and the latter should be preferred when explicit casting is needed,
-unless you are sure =static_cast= will succeed or =reinterpret_cast= will fail.
-Even then, consider the longer, more explicit option.
-
-C-style casts also ignore access control when performing a =static_cast=,
-which means that they have the ability to perform an operation that no other cast can.
-This is mostly a kludge, though,
-and in my mind is just another reason to avoid C-style casts.
-
-
-* Compound Literals
-
-A compound literal looks like a cast containing an initializer.
-Its value is an object of the type specified in the cast,
-containing the elements specified in the initializer;
-it is an lvalue.
-
-** Example
-
-#+begin_src C
-struct foo {int a; char b[2];} structure;
-#+end_src
-
-The constructing:
-
-#+begin_src C
-structure = ((struct foo) {x + y, 'a', 0});
-#+end_src
-
-** more examples
-
-#+begin_src C
-char **foo = (char *[]) { "x", "y", "z" };
-#+end_src
-
-** static
-Value in the compound literals must be constant.
-
-#+begin_src C
-static struct foo x = (struct foo) {1, 'a', 'b'};
-static int y[] = (int []) {1, 2, 3};
-static int z[] = (int [3]) {1};
-#+end_src
-
-
-* extern
-
- * extern means extend the visibility of a variable or function.
- * Declaration can be many times, but definition can only appear once.
- * Definition will allocate memory, but declaration will never allocate memory.
-
-** Function
-
-For function declare and define, `extern` is added by compiler by default.
-So use or not use `extern` for functions are equivalent.
-
-** Variable
-
-define a variable
-
-#+begin_src C
-int a;
-#+end_src
-
-declare a variable
-
-#+begin_src C
-extern int a;
-#+end_src
-
-This can be used so that in this file,
-a refer to the variable actually defined and allocated in another file.
-The definition of the variable in the other file does not have extern,
-but it is still available by this file ...
-
-An exception: extern a variable with initialization
-
-#+begin_src C
-extern int a = 8;
-#+end_src
-
-This will be treated as definition.
-
-** extern "C"
-#+BEGIN_QUOTE
-extern "C" makes a function-name in C++ have 'C' linkage
-(compiler does not mangle the name)
-so that client C code can link to (i.e use) your function
-using a 'C' compatible header file
-that contains just the declaration of your function.
-#+END_QUOTE
-
-1. Since C++ has overloading of function names and C does not
-2. C++ compiler cannot just use the function name as a unique id to link to, so it mangles the name by adding information about the arguments
-3. A C compiler does not need to mangle the name since you can not overload function names in C
-
-When you state that a function has extern "C" linkage in C++,
-the C++ compiler does not add argument/parameter type information
-to the name used for linkage.
-
-** syntax
- * can specify "C" linkage to each individual declaration/definition explicitly
- * use a block to group a sequence of declarations/definitions to have a certain linkage:
+* Tmp
+=~= yields one's complement of an integer, i.e. sets 1 to 0 and 0 to 1
+for all bits.
+
+* Type
+Tips for primitive types
+- When using =char=, you must indicate whether it is signed or
+  unsigned, because the default is system dependent.
+- Most likely, =long= is same as =int=. So when you want a large
+  number, use =long long=.
+
+=sizeof= is *compile-time* operator. It has two forms: =sizeof
+object=, =sizeof(type name)=.
+
+Structure is of form =struct [tag] {};=.  This is a structure
+definition. The tag is optional. If no tag, it just announce a
+template of structure type, and nothing happens. If has tag, the tag
+can be used later to refer to just this structure (scope??). Since it
+is a type, it can define some variables just at the same time.
+
+Initializers for structure is a list of initializers for each of the
+members, surrounded by braces. For automatic variables, the
+initializer can also be assignment from just another value of the same
+structure type.
+** storage class & linkage type
+Internal and external are relative to a function. /Internal/ to a
+function includes the arguments and variables defined inside the
+function. Internal variables are /automatic variables/, because they
+are allocated to temporary storage, and get out of space when the
+function returns.
+
+/External/ to a function refers to the external variables and
+functions. All functions must be external, because C does not allow
+definition of functions inside function. By default, external
+variables and functions have the property that, all references by the
+*same name*, even if compiled separately in separate files, will refer
+to the same thing. This is called /external linkage/. To change the
+linkage type, use =static= to limit an external variable or function
+inside this file.
+
+The /scope/ of a name is the part of program within which the name can
+be used. Scope of an automatic variable is the body of the
+function. The scope of an external variable or function lasts from the
+point it is *declared* to the end of the file.  If a function or
+variable is not in scope, it must be declared before usage. This is
+done by a =extern= keyword. The declaration only *announces* the
+properties of it, while the definition allocate the storage. There
+must be only one definition of an external variable among all files
+that make up the program. Array size must be specified in the
+definition, but optional to an =extern= declaration. Initialization of
+an external variable goes only with the definition.
+
+For a /non-automatic variable/ (including static variables and
+external variables), the initialization is done once only,
+*conceptually* before the program starts executing. If no initializer,
+it is initialized to 0. If has, the initializer must be a *constant
+expression*. On the other hand, an /automatic variable/ is initialized
+every time the function or block is entered, and the initializer can
+be *any expression*, this is just a shorthand for assignment
+statement. If there's no initializer, the default value is
+*undefined*. An array can be initialized by assigning a list of
+initializers enclosed in braces separated by commas, and the length,
+when omitted, can be computed by the length of the initializers. If
+there are fewer initializers than the size, the rest will be
+initialized to 0, even for automatic variables. A string constant can
+serve as an initializer array of characters.
+
+/Extern "C"/ makes a function-name in C++ have 'C' linkage, i.e.
+compiler will not mangle the function name. C++ can overload function
+names, thus internally the compiler cannot just use function name to
+refer to the function. It add argument/parameter type information to
+the name used for linkage. However, C does not allow function
+overloading, thus C compiler expect just the original name, but
+couldn't find one because the name is modified. Thus, when you state
+that a function has extern "C" linkage in C++, the C++ compiler does
+not modify it, thus it is suitable to use in C code.
+
+It can be applied to either an individual declaration or definition,
+or a whole block of code.
 
 #+begin_src C
 extern "C" void foo(int);
-extern "C"
-{
+extern "C" {
    void g(char);
    int i;
 }
 #+end_src
 
+** register
+A register declaration /advises/ the compiler that this variable will
+be heavily used.
 
-* restrict
-The restrict keyword is a declaration of intent given by the programmer to the compiler.
+** restrict
+The restrict keyword is a declaration of *intent given by the
+programmer* to the compiler.  It says that for the lifetime of the
+pointer, only it or a value directly derived from it (such as
+pointer + 1) will be used to access the object to which it points.
+This limits the effects of pointer aliasing, aiding optimizations.  If
+this intention is not followed and the object is accessed by an
+independent pointer, this will result in undefined behavior.
 
-It says that for the lifetime of the pointer,
-only it or a value directly derived from it (such as pointer + 1)
-will be used to access the object to which it points.
+** volatile
+The keyword tells the compiler that the value of the variable may
+change at any time.  It may change unexpectedly, so DO NOT optimize
+the code when you compiler think it would not change.
 
-This limits the effects of pointer aliasing, aiding optimizations.
-
-If the declaration of intent is not followed
-and the object is accessed by an independent pointer,
-this will result in undefined behavior.
-
-
-
-* volatile
-When your code works without compiler optimization, but fails when you turn optimization on,
-perhaps it is because of `volatile`.
-
-If compiler found that around a variable, no one change it, it will do some optimization based on this.
-Maybe remove unnecessary code which it thinks will never execute.
-
-The keyword tells the compiler that the value of the variable may change at any time.
-It may change unexpectedly,
-so DO NOT optimize the code when you compiler think it would not change.
-
-** syntax
-
-declare a variable(both are equalvalent)
+It is most commonly to declare a pointer to be volatile, and most
+likely you do not intent to declare the place it points to be
+volatile.
 
 #+begin_src C
 volatile int foo;
-int volatile foo;
-#+end_src
-
-declare pointers to volatile varialbes(common usage)
-
-#+begin_src C
 volatile uint8_t *pReg;
-uint8_t volatile *pReg;
+int * volatile p; // very rare
+volatile int * volatile p; // very rare
 #+end_src
 
-volatile pointers to non-volatile data(very rare)
+The common use-case is
+1. The register's value may change by hardware.
+2. global variables modified by interrupt
+3. global variables accessed by multiple threads
 
-#+begin_src C
-int * volatile p;
+* Standard Libraries
+
+** DONE stdio.h
+- types:
+  - =size_t=
+  - FILE
+
+Macro: =NULL=
+
+#+begin_src haskell
+remoev :: String -> Int
+rename :: String -> String -> Int
+tmpfile :: () -> FILE
+tmpnam :: String -> String
+fclose :: FILE -> Int
+fflush :: FILE -> Int
+fopen :: String -> Mode -> FILE
+freopen :: String -> Mode -> FILE -> FILE
+-- TODO setvbuf
+fprintf :: FILE -> FormatString -> Int
+fscanf :: FILE -> FormatString -> Int
+printf :: FormatString -> Int
+snprintf :: String -> Int -> FormatString -> Int
+sprintf ::  String -> FormatString -> Int
+sscanf :: String -> FormatString -> Int
 #+end_src
 
-volatile pointer to volatile variable(also rare)
-
-#+begin_src C
-int volatile * volatile p;
+character IO
+fgetc :: FILE -> Int
+fgets :: String -> Int -> FILE -> String
+fputc :: Int -> FILE -> Int
+fputs :: String -> FILE -> Int
+getc :: 
+#+begin_src c
+int fgetc(FILE *stream);
+char *fgets(char *s, int n, FILE *stream);
+int fputc(int c, FILE *stream)
+int fputs (char *s, FILE *stream)
+int getc(FILE *stream)
+int getchar(void)
+char *gets(char *s)
+putc
+puts
+ungetc
 #+end_src
 
-** When to use it
+- File
+  - fgetc
+  - fgets
+  - fputc
+  - fputs
+- stdin
+  - getc
+  - getchar
+  - gets
+  - putc
+  - putchar
+  - puts
+- Put Back
+  - ungetc
+- Low-level
+  - fread
+  - fwrite
+  - fgetpos
+  - fseek
+  - fsetpos
+  - ftell
+  - rewind
+  - clearerr
+  - feof
+  - ferror
+  - perror
+** ctype.h
+mapping of characters.
 
-*** Memory-mapped peripheral registers
+#+begin_src haskell
+isalpha :: Int -> Bool
+isblank :: Int -> Bool
+iscntrl :: Int -> Bool
+isdigit :: Int -> Bool
+isgraph :: Int -> Bool
+islower :: Int -> Bool
+isprint :: Int -> Bool
+ispunct :: Int -> Bool
+isspace :: Int -> Bool
+isupper :: Int -> Bool
+isxdigit :: Int -> Bool
+tolower :: Int -> Int
+toupper :: Int -> Int
+#+end_src
+** signal.h
 
-The register's value may change by hardware.
-But in the code, compiler cannot see it,
-so it may assume it is constant, and do some optimization.
-
-#+begin_src C
-uint8_t *pReg = (uint8_t) 0x1234;
-while (*pReg==0) {}
+#+begin_src haskell
+signal :: Int -> Func -> ()
+raise :: Int -> Int
+#+end_src
+** math.h
+First, trigonometric functions. The f-suffix is =float=, l-suffix is
+=long double=
+#+begin_src haskell
+acos :: Double -> Double
+asin :: Double -> Double
+atan :: Double -> Double
+atan2 :: Double -> Double -> Double
+cos :: Double -> Double
+sin :: Double -> Double
+tan :: Double -> Double
 #+end_src
 
-Since no `volatile`, the assembly looks like:
+#+begin_src haskell
+exp :: Double -> Double
+log :: Double -> Double
+log10 :: Double -> Double
+hypot :: Double -> Double -> Double -- sqrt (x^2 + y^2)
+pow :: Double -> Double -> Double
+sqrt :: Double -> Double
+ceil :: Double -> Double
+floor :: Double -> Double
+round :: Double -> Double
+trunc :: Double -> Double
+#+end_src
+** stdlib.h
+- Conversion
+  - atof
+  - atoi, atol, atoll
+  - strtod, strtof, strtold
+  - strtol, strtoll, strtoul, strtoull
+- Random
+  - rand
+  - srand
+- Memory
+  - calloc
+  - free
+  - malloc
+  - realloc
+- other
+  - abort
+  - exit
+  - getenv
+  - system
+- arithmetic
+  - abs
+  - div
+** string.h
+- Copy
+  - memcpy
+  - memmove
+  - strcpy
+  - strncpy
+  - strcat
+  - strncat
+- Compare
+  - memcmp
+  - strcmp
+  - strcoll: seems to be strcmp with locale
+  - strncmp
+  - strxfrm: also some sort of strcmp
+- Search
+  - memchr
+  - strchr
+  - strrchr
+  - strstr
+  - strtok: tokenize
+- Other
+  - memset
+  - strerror
+  - strlen
+** time.h
 
-#+begin_src asm
-  mov ptr, #0x1234
-  mov a, @ptr
-loop:
-  bz loop
+Types
+- clock_t
+- time_t
+- struct tm
+
+functions
+- clock
+- difftime
+- mktime
+- time
+- asctime
+- ctime
+- gmtime
+- strftime
+
+** Simple Ones
+*** assert.h
+Make the macro =assert= available.
+*** complex.h
+This works with complex arithmetic. Not interesting.
+
+*** errno.h
+Error reporting macros. Not interesting
+*** fenv.h
+For floating point environment. Not interesting.
+*** float.h
+Seems to contain nothing.
+*** inttypes.h
+It includes =stdint.h= and extend it. Not interesting
+*** iso646.h
+Macros for logical comparators. E.g. =and= for =&&=.
+*** limits.h
+Nothing interesting.
+*** locale.h
+Formatting of numerical values. Locale related. Not interesting.
+
+*** setjmp.h
+Defines the macro =setjmp=, type =jmp_buf=, function =longjmp=.
+
+*** stdarg.h
+Variable arguments.
+
+- type: =va_list=
+- macros
+  - va_start
+  - va_arg
+  - va_end
+  - va_copy
+
+#+begin_src c
+type va_arg(va_list ap, type);
+void va_copy(va_list dest, va_list src);
+void va_end(va_list ap);
+void va_start(va_list ap, parmN);
 #+end_src
 
-To fix it, use volatile to declare it:
+*** stdbool.h
+macro =bool= expands to =_Bool=. Also defines =true= =false= as macros.
 
-#+begin_src C
-uint8_t volatile *pReg = (uint8_t volatile *)0x1234
-#+end_src
+*** stddef.h
+- macros: =NULL=
 
-The assembly will be:
+*** stdint.h
+Nothing
+*** tgmath.h
+Generic math. Nothing interesting.
 
-```asm
-  mov ptr, #0x1234
-loop:
-  mov a, @ptr
-  bz loop
-```
-*** Global variables modified by an ISR(Interrupt Service Routine)
-
-Compiler will of course not know about interrupt.
-So when the global file can be modified by interrupt,
-we must tell it.
-
-#+begin_src C
-int volatile etx_rcvd = FALSE;
-void main() {
-  while(!ext_rcvd) {}
-}
-interrupt void rx_isr(void) {
-  if (ETX == rx_char) {
-    etx_rcvd = TRUE;
-  }
-}
-#+end_src
-
-If no volatile, compiler will think the while condition always be true,
-thus never go out of the loop.
-
-*** Global variables accessed by multiple tasks within a multi-threaded application
-
-Compiler doesn't find the variable change near the code it is defined,
-so it may assume it is unchanged.
-While another task in the same time may change it,
-it is just like the interrupt.
-
-
-* Operator Precedence
-| Precedence | Operator             | Description                                       | Associativity |
-|------------+----------------------+---------------------------------------------------+---------------|
-|          / | <                    | <                                                 | <             |
-|          0 | **::**               | scope resolution                                  | L to R        |
-|------------+----------------------+---------------------------------------------------+---------------|
-|          1 | ++ --                | Suffix increment and decrement                    |               |
-|            | ()                   | Function call                                     |               |
-|            | []                   | Array subscripting                                |               |
-|            | .                    | Structure and union member access                 |               |
-|            | ->                   | Structure and union member access through pointer |               |
-|            | (type){list}         | Compound literal(C99)                             |               |
-|------------+----------------------+---------------------------------------------------+---------------|
-|          2 | ++ --                | Prefix increment and decrement                    | R to L        |
-|            | + -                  | Unary plus and minus                              |               |
-|            | ! ~                  | Logical NOT and bitwise NOT                       |               |
-|            | (type)               | Type cast                                         |               |
-|            | *                    | dereference                                       |               |
-|            | &                    | Address-of                                        |               |
-|            | sizeof               |                                                   |               |
-|            | _Alignof             | Alignment requirement(C11)                        |               |
-|            | **new, new[]**       | Dynamic memory allocation                         |               |
-|            | **delete, delete[]** | Dynamic memory deallocation                       |               |
-|------------+----------------------+---------------------------------------------------+---------------|
-|          3 | * / %                |                                                   | L to R        |
-|          4 | + -                  | Addition and subtraction                          |               |
-|          5 | << >>                | Bitwise left shift and right shift                |               |
-|          6 | < <=                 | Compare                                           |               |
-|            | > >=                 |                                                   |               |
-|          7 | == !=                |                                                   |               |
-|          8 | &                    | Bitwise AND                                       |               |
-|          9 | ^                    | Bitwise XOR (exclusive or)                        |               |
-|         10 | l                    | Bitwise OR (inclusive or)                         |               |
-|         11 | &&                   | Logical AND                                       |               |
-|         12 | ll                   | Logical OR                                        |               |
-|         13 | ?:                   | Ternary conditional                               | R to L        |
-|------------+----------------------+---------------------------------------------------+---------------|
-|         14 | **throw**            |                                                   |               |
-|            | =                    |                                                   |               |
-|            | += -=                |                                                   |               |
-|            | *= /= %=             |                                                   |               |
-|            | <<= >>=              | Assignment by bitwise left shift and right shift  |               |
-|            | &= ^= l=             | Assignment by bitwise AND, XOR, and OR            |               |
-|------------+----------------------+---------------------------------------------------+---------------|
-|         15 | ,                    | Comma                                             | L to R        |
-
-** notes
-*** For =?:=
- the middle of the conditional operator (between ? and :)
- is parsed as if parenthesized: its precedence relative to =?:= is ignored
-*** For C++
- The operand of sizeof can't be a C-style type cast:
- the expression =sizeof (int) * p= is unambiguously interpreted as =(sizeof(int)) * p=,
- but not =sizeof((int)*p)=.
-*** In c++ table, the =?:= is also in 14 cell
-
-* Unix Library
-sleep
-#+BEGIN_SRC C
-#include <unistd.h>
-unsigned int sleep(unsigned int seconds); // seconds
-int usleep(useconds_t useconds); // microseconds
-int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
-#+END_SRC
-
-There's no implementation of =clock_gettime= as in Unix, the following serves as an portable solution.
-#+BEGIN_SRC C
-#ifdef __MACH__
-#include <sys/time.h>
-#define CLOCK_REALTIME 0
-#define CLOCK_MONOTONIC 0
-//clock_gettime is not implemented on OSX
-int clock_gettime(int /*clk_id*/, struct timespec* t) {
-    struct timeval now;
-    int rv = gettimeofday(&now, NULL);
-    if (rv) return rv;
-    t->tv_sec  = now.tv_sec;
-    t->tv_nsec = now.tv_usec * 1000;
-    return 0;
-}
-#endif
-#+END_SRC
-
-use it like this
-#+BEGIN_SRC C
-double get_time() {
-  struct timespec ts;
-  ts.tv_sec=0;
-  ts.tv_nsec=0;
-  clock_gettime(CLOCK_REALTIME, &ts);
-  double d = (double)ts.tv_sec + 1.0e-9*ts.tv_nsec;
-  return d;
-}
-#+END_SRC
+*** wchar.h
+Wide character. Nothing special.
+*** wctype.h
