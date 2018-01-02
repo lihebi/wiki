@@ -1,0 +1,263 @@
+#+TITLE: clang Backup file
+* General Tips
+Got an expr, how to get the variables inside it, and refer to the
+- type
+- where defined
+
+Some examples
+- b>0
+  - BinaryOperator
+    - ImplicitCastExpr
+      - DeclRefExpr ParmVar (Var) b
+    - IntegerLiteral
+- a=b+c
+  - BinaryOperator =
+    - DeclRefExpr Var a
+    - BinaryOperator +
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var b
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var c
+- a+=b*c
+  - CompoundAssignOperator +=
+    - DeclRefExpr Var a
+    - BinaryOperator
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var b
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var c
+- a++
+  - UnaryOperator ++
+    - DeclRefExpr Var a
+- foo(a,b)
+  - CallExpr
+    - ImplicitCastExpr FunctionToPointerDecay
+      - DeclRefExpr Function 'foo'
+    - ImplicitCastExpr
+      - DeclRefExpr a
+- a=foo() + bar()
+  - BinaryOperator =
+    - DeclRefExpr a
+    - BinaryOperator +
+      - CallExpr
+        - ImplicitCastExpr
+          - DeclRefExpr Function bar
+      - CallExpr
+        - ImplicitCastExpr
+          - DeclRefExpr Function bar
+- a=b*(b+c)
+  - BinaryOperator =
+    - ImplicitCastExpr
+      - DeclRefExpr b
+    - ParenExpr
+      - BinaryOperator +
+        - ImplicitCastExpr DeclRefExpr
+        - ImplicitCastExpr DeclRefExpr
+- a.mem
+  - ImplicitCastExpr L2R
+    - MemberExpr .mem
+      - DeclRefExpr Var x "struct A"
+- p->mem
+  - ImplicitCastExpr L2R
+    - MemberExpr ->mem
+      - ImplicitCastExpr L2R
+        - DeclRefExpr Var px "struct A *"
+
+
+* Compiler
+** CompilerInstance
+#+BEGIN_SRC C++
+// high level invocation
+bool ExecuteAction(FrontendAction &act);
+bool hasInvocation();
+CompilerInvocation& getInvocation();
+void setInvocation(std::shared_ptr<CompilerInvocation> value);
+
+// options
+DiagnosticOptions& getDiagnosticOpts();
+FrontendOptions& getFrontendOpts();
+HeaderSearchOptions& getHeaderSearchOpts();
+LangOptions& getLangOpts();
+PreprocessorOptions& getPreprocessorOpts();
+
+// diagnoatic
+bool hasDiagnostics();
+DiagnosticsEngine& getDiagnostics();
+void setDiagnostics(DiagnosticsEngine *value);
+
+// managers
+bool hasFileManager();
+FileManager& getFileManager();
+void setFileManager(FileManager *value);
+bool hasSourceManager();
+SourceManager& getSourceManager();
+void setSourceManager(SourceManager *value);
+
+bool hasPreprocessor();
+Preprocessor& getPreprocessor();
+void setPreprocessor(std::shared_ptr<Preprocessor> value);
+
+bool hasASTContext();
+ASTContext& getASTContext();
+
+bool hasASTConsumer();
+ASTConsumer& getASTConsumer();
+
+// construction
+void createDiagnostics();
+void createFileManager();
+void createSourceManager(FileManager &FileMgr);
+void createPreprocessor(TranslationUnitKind TUKind);
+#+END_SRC
+
+** Preprocessor
+#+BEGIN_SRC C++
+DiagnosticEngine &getDiagnostics();
+FileManager& getFileManager();
+SourceManager& getSourceManager();
+IdentifierTable& getIdentifierTable();
+
+// macros
+bool isMacroDefined(StringRef id);
+bool isMacroDefined(const IdentifierInfo *ii);
+MacroDefinition getMacroDefinition(const IdentifierInfo *ii);
+MacroInfo *getMacroInfo(const IdentifierInfo *ii);
+macro_iterator macro_begin(bool IncludeExternalMacros=true);
+macro_iterator macro_end(bool IncludeExternalMacros=true);
+
+typedef MacroMap::const_iterator macor_iterator;
+typedef llvm::DenseMap<const IdentifierInfo *, MacroState> MacroMap;
+#+END_SRC
+
+*** MacroDefinition
+#+BEGIN_SRC C++
+MacroInfo *getMacroInfo();
+#+END_SRC
+
+*** MacroInfo
+#+BEGIN_SRC C++
+// this does not include the "#define"
+SourceLocation getDefinitionLoc();
+SourceLocation getDefinitionEndLoc();
+
+bool isFunctionLike();
+bool isObjectLike();
+bool isC99Varargs();
+bool isGNUVarargs();
+bool isVariadic();
+bool isBuiltinMacro();
+#+END_SRC
+
+The builtin cannot distinguish most of the "builtin" macros. So in
+order to detect user defined macros, get the source manager, and check
+isWrittenInMainFile (/not/ isInMainFile) for the source location.
+
+
+* General
+** IdentifierInfo
+#+BEGIN_SRC C++
+StringRef getName();
+bool hasMacroDefinition();
+#+END_SRC
+
+** clang::ASTUnit
+#+BEGIN_SRC C++
+ASTContext &ASTunit::getASTContext();
+#+END_SRC
+
+** clang::ASTContext
+#+BEGIN_SRC C++
+SourceManager &getSourceManager();
+const LangOptions &getLangOpts();
+TranslationUnitDecl *getTranslationUnitDecl();
+DiagnosticsEngine &getDiagnostics();
+FullSourceLoc getFullLoc(SourceLocation loc);
+#+END_SRC
+
+** clang::SourceManager
+#+BEGIN_SRC C++
+FileID getMainFileID();
+FileEntry *getFileEntryForID(FileID FID);
+SourceLocation getSpellingLoc(SourceLocation loc);
+std::pair<FileID, unsigned> getDecomposedLoc(SourceLocation loc);
+std::pair<FileID, unsigned> getDecomposedSpellingLoc(SourceLocation loc);
+std::pair<FileID, unsigned> getDecomposedIncludedLoc(FileID FID);
+bool isInMainFile(SourceLocation loc);
+// PresumedLoc
+bool isInFileID(SourceLocation loc, FileID FID);
+// SpellingLoc
+bool isWrittenInMainFile(SourceLocation loc);
+#+END_SRC
+
+- clang::FileEntry
+#+BEGIN_SRC C++
+StringRef getName();
+#+END_SRC
+
+
+** Location
+- clang::SourceRange
+#+BEGIN_SRC C++
+SourceLocation getBegin();
+SourceLocation getEnd();
+bool operator==(const SourceRange &X);
+bool operator!=(const SourceRange &X);
+#+END_SRC
+- clang::SourceLocation: no interesting member functions. Use
+  =SourceManager= to decode it. But typically we are not going to use
+  =SourceManager=, instead, use =ASTContext= to decode it into
+  =FullSourceLoc=.
+
+- clang::FullSourceLoc : public clang::SourceLocation
+#+BEGIN_SRC C++
+bool hasManager();
+SourceManager& getManager();
+unsigned getSpellingLineNumber();
+unsigned getSpellingColumnNumber();
+unsigned getLineNumber();
+unsigned getColumnNumber();
+FileEntry *getFileEntry();
+#+END_SRC
+
+
+
+
+* clang::Rewriter
+
+#+BEGIN_SRC C++
+#include "clang/Rewrite/Core/Rewriter.h"
+
+SourceManager &getSourceMgr();
+void setSourceMgr(SourceManager &SM, const LangOptions &LO);
+
+int getRangeSize(SourceRange range);
+std::string getRewrittenText(SourceRange range);
+
+bool InsertText(SourceLocation loc, StringRef str, bool InsertAfter=true, bool indentNewLines=false);
+bool InsertTextAfter(SourceLocation loc, StringRef str);
+bool InsertTextAfterToken(SourceLocation loc, StringRef str);
+bool InsertTextBefore(SourceLocation loc, StringRef str);
+
+bool RemoveText(SourceLocation start, unsigned length);
+bool RemoveText(SourceRange range);
+
+bool ReplaceText(SourceLocation start, unsigned OrigLength, StringRef NewStr);
+bool ReplaceText(SourceRange range, StringRef NewStr);
+bool ReplaceText(SourceRange range, SourceRange replacementRange);
+
+bool IncreaseIndentation(SourceRange range, SourceLocation parentIndent);
+
+RewriteBuffer &getEditBuffer(FileID FID);
+const RewriteBuffer *getRewriteBufferFor(FileID FID) const;
+
+buffer_iterator buffer_begin();
+buffer_iterator buffer_end();
+bool overwriteChangedFiles();
+#+END_SRC
+
+Usage example
+#+BEGIN_SRC C++
+Rewriter rewriter;
+rewriter.setSourceMgr(source_manager, )
+#+END_SRC
+
