@@ -1890,3 +1890,9 @@ The "delete" mechanism can be used for any function.
 But, just use them on copy constructor and assignment operator. 
 
 Reference: http://www.stroustrup.com/C++11FAQ.html#default
+
+* Trouble Shooting
+
+** RTTI
+use =-fno-rtti= to *NOT* use rtti. Otherwise error: undefined
+reference to typeinfo for xxx.
