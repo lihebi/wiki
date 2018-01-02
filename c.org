@@ -361,3 +361,29 @@ Generic math. Nothing interesting.
 *** wchar.h
 Wide character. Nothing special.
 *** wctype.h
+
+* POSIX Headers
+** dirent.h
+type:
+- DIR
+
+Function
+- closedir
+- opendir
+- readdir
+- seekdir
+- telldir
+** fcntl.h
+- creat
+- fcntl
+- open
+- openat
+** sys/stat.h
+- chmod
+- fchmod
+- fstat
+- mkdir
+- mkfifo
+- mknod
+- stat
+- umask
