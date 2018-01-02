@@ -155,3 +155,40 @@ To build the boost:
 ./bootstrap.sh --without-libraries=atomic,chrono,context,coroutine,exception,graph,graph_parallel,iostreams,locale,log,math,mpi,python,random,serialization,signals,test,timer,wave
 ./b2 --prefix=/path/to/custom/location link=static cxxflags="-fPIC -static -Wl,--whole-archive" threading=multi install
 #+END_EXAMPLE
+
+* Idiom
+
+#+BEGIN_SRC cmake
+ cmake_minimum_required(VERSION 3.0)
+ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+ SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+ find_package (Threads)
+ link_libraries(${CMAKE_THREAD_LIBS_INIT})
+ enable_testing()
+ add_subdirectory (src)
+ add_subdirectory (test)
+#+END_SRC
+
+=src/CMakeLists.txt= to add libraries, executables
+
+#+BEGIN_SRC cmake
+ add_library (Sqr sqr.cpp sqr.h)
+ add_executable (demo main.cpp)
+ target_link_libraries (demo Sqr)
+
+ add_executable(ast ast.cpp)
+ add_executable(token token.cpp)
+ add_executable(rewriter rewriter.cpp)
+#+END_SRC
+
+=test/CMakeLists.txt=
+
+The only requirement is to have =enable_testing= before =add_test=. The
+command can be in =src= level list if no test source files.
+
+#+BEGIN_SRC cmake
+ add_test(NAME toktest COMMAND hetok ../test/a.c)
+ add_test(NAME MyTest COMMAND Test)
+#+END_SRC
