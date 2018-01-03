@@ -50,9 +50,9 @@ are using. There is probably also less than 1% developers are using
 [[file:lisp.org][lisp]], well, the history from computing is only just more than half a
 century, there are plenty of time for people to realize they made a
 big mistake to deviate from the lost wisdom. The main lisp dialects
-are *[[file:common-lisp.org][Common Lisp]]* and scheme (*[[file:racket.org][Racket]]* is my fav).  [[file:clojure.org][Clojure]] is based
-on JVM and the authors are advertising it a lot. [[file:prolog.org][Prolog]] is similar to
-lisp.
+are *[[file:common-lisp.org][Common Lisp]]* and scheme (*[[file:racket.org][Racket]]* is my favorite).  [[file:clojure.org][Clojure]] is
+based on JVM and the authors are advertising it a lot. [[file:prolog.org][Prolog]] is
+similar to lisp.
 
 
 *[[file:haskell.org][Haskell]]* completes the part of a properly typed language. [[file:ml.org][ML]] is
