@@ -89,6 +89,10 @@ Finding the groups
   feeds
 - =gnus-group-jump-to-group (j)=: jump to a group by entering name,
   this works for non-listing groups.
+- =gnus-group-make-rss-group (G R)=: prompt to enter the RSS url. It
+  is the link of the rss page of a blog,
+  e.g. https://danluu.com/atom.xml
+
 
 Management
 - =gnus-group-catchup-current (c)=: mark all unread articles in the
