@@ -978,6 +978,19 @@ Places can only communicate through place channels.
   be used with the above method, specifically the out should be
   =(and/c output-port? string-port?)=.
 
+*** Extra
+Requires =racket/port=. This is actually the most commonly used
+helpers. All of these have bytes counterparts.
+
+- *=port->string=*
+- =port->lines=
+- =display-lines=
+- =call-with-output-string proc=: proc: =(output-port? . -> . any)=
+- =with-output-to-string proc=: proc is =(-> any)=
+- =call-with-input-string str proc=: proc: =(input-port? . -> . any)=
+- =with-input-from-string str proc=: proc is =(-> any)=
+
+
 
 ** Reading
 - =read-char=
