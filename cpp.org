@@ -1,5 +1,16 @@
 #+TITLE: C++
 
+* Emacs Rtags
+
+Install rtags by =rtags-install= with prompt location. Setup the PATH
+to find rc and rdm. =rtags-start-process-unless-running= to start
+rdm. In the *build* dir of your project, create index by =rc -J
+.=. Then in C file buffer, you can use =rtags-find-symbol-at-point=
+and =rtags-find-references-at-point= to find symbol,
+=rtags-location-stack-forward= and =rtags-location-stack-back= to jump
+back and forth.
+
+
 * Tmp
 - ~static member function~: can use ~ClassName::function()~ directly
 - ~static member variable~: only one object for all instance of the
