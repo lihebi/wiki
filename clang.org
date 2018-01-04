@@ -508,6 +508,50 @@ cast. For example
 - call a function needs to use the cast FunctionToPointerDecay
 - use a value in the righ hand side will need the cast LValueToRValue
 
+* Lexer
+
+Use lexer when you want to get the token level information, such as
+raw source code.
+
+The =getExpansionLocation= family can support macro, otherwise you
+will get a location in the macro definition file.
+
+There's a class called =Rewriter=. It is used like this. However, this
+will have bug when generating a =TypedefNameDecl=, resulting in part
+of seemingly binary data. It might cause other problems.
+
+#+begin_src C++
+  Rewriter rewriter;
+  rewriter.setSourceMgr(src_mgr, LangOptions());
+  StringRef str = rewriter.getRewrittenText(range);
+#+end_src
+
+The most reliable way is to use Lexer. It has a static method
+getSourceText that generate text from a =CharSourceRange=. You can get
+=CharSourceRange= from =SourceRange= using =getCharRange= method, no
+problem. However, note that clang has two concepts of source range:
+the token source range and the character source range. Token source
+range is typically used in AST, and meant to be the *start of
+token*. So a typical source range in AST's perspective will be the
+beginning locations of the begin and end token. When converting this
+directly to char source range, you are guaranteed to miss the last
+token. The correct way is to first convert the end location to /the
+end of the token/, using =getLocForEndOfToken=. Be careful that don't
+call this twice.
+
+The Lexer provides a method =getAsCharRange= that seems to want to do
+exactly this. There is probably a clang bug though. In
+=Lexer::getAsCharRange=, the =getLocForEndOfToken= is called, but when
+constructing =CharSourceRange=, the end is adjusted by
+=getLocWithOffset(-1)=, and cause the getSourceText to miss one
+character.
+
+#+begin_src C++
+end = Lexer::getLocForEndOfToken(end, 0, mgr, LangOptions());
+CharSourceRange char_range = CharSourceRange::getCharRange(begin, end);
+StringRef text = Lexer::getSourceText(char_range, mgr, LangOptions());
+#+end_src
+
 
 
 * Reference
