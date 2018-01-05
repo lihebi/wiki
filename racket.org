@@ -747,7 +747,7 @@ Constructing sequences
 - ~in-lines [in=(current-input-port)]~
 - =in-hash=
 - =in-hash-keys=, =in-hash-values=, =in-hash-pairs=
-- =in-directory [dir use-dir?]=: It is depth first. The path are
+- *=in-directory [dir use-dir?]=*: It is depth first. The path are
   built, not individual components. If =dir= is not given, use current
   dir. If use-dir? =with signature (path? . -> any/c)= is given, it
   acts like as a filter of the results
@@ -1098,11 +1098,11 @@ From =racket/path=
 - *=directory-exists?=*
 - =make-directory=
 - =delete-directory=
-- =directory-list [path #:build build?]=: list of all files or
+- *=directory-list [path #:build build?]=*: list of all files or
   directories in =path=. path defaults to current directory, while
   build? defaults to =#f=. If =#:build= is =#t=, each of the results
   are built with prefix =path=. Note that this is not recursive, for
-  that, use the sequence generator =in-directory=.
+  that, use the *sequence generator =in-directory=*.
 
 From =racket/file=:
 - *=file->string=*: this READs the file content to a string
