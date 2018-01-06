@@ -38,3 +38,9 @@ for-each loop and use a catamorphism to break it down into whatever
 state you wish to modify.
 #+end_quote
 
+
+* Reference
+- Ron Garret: Why Lisp: http://blog.rongarret.info/2015/05/why-lisp.html
+  - the idea is that, the power of lisp comes the the minimal syntax
+    of representing the code
+
