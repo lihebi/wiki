@@ -848,6 +848,67 @@ Other
 - =#:omit-define-syntaxes=
 - =#:omit-define-values=
 
+** Generic Interface
+
+require =racket/generic=.
+
+First define the interface.
+#+begin_src racket
+(define-generics printable
+  (gen-print printable port)
+  (gen-port-print port printable)
+  (gen-print* printable [port] #:width width #:height height))
+#+end_src
+
+We are defining a generic id called =printable=. The =gen:printable=
+will be the transformer binding used when defining the structure. The
+followings are the methods that are supposed to be defined. Note:
+there must be a =printable= literally in each of these methods. It
+does not matter which position, but this particular position should be
+kept as the variable in your actual definition. The arguments are
+nothing new, including optional variable, default values, as well as
+keyword arguments.
+
+Define the structure. To declare that this structure satisfies a
+generic interface, specify it in =#:methods=. It accepts two values:
+=gen:name=, and =method-defs=. You can supply multiple =#:methods= of
+course. Each of the def is a define of the function, very normal. Note
+that the variable that corresponds to the =printable=, by position, is
+the data object. Since there cannot be duplicate arguments, you cannot
+use this twice (this of course is not likely what you want).
+
+There's a =define/generic= that has a fixed form of two arguments,
+=local-id= and =method-id=. The latter can only be one of these
+generic method. It is the form used to create a binding. Using just
+define cannot create this, because =gen-print= will not be in
+scope. And =define/generic= can only be used here. And interestingly
+inside a generic function, the =gen-print= is in scope, and can be
+bound by a =let= expression (why??).
+
+#+begin_src racket
+(struct num (v)
+  #:methods gen:printable
+  [(define/generic alias gen-print)
+   (define/generic alias2 gen-print*)
+   ;; (define alias3 gen-print)
+   (define (gen-print n port)
+     (fprintf port "Num: ~a" (num-v n)))
+   (define (gen-port-print port n)
+     (let ([alias2 gen-print]) 
+       (gen-print n port)
+       (alias n port)
+       ;; (alias2 n)
+       ;; (alias3 n port)
+       ))])
+#+end_src
+
+Use like this:
+#+begin_src racket
+(gen-port-print (current-output-port) (num 8) )
+#+end_src
+
+
+
 * Multiple Values
 values produce multiple values value, to consume that, typically use
 =let-values=, =let*-values=, =define-values=. Also, binding forms that
