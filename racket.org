@@ -1,4 +1,9 @@
 #+TITLE: Racket
+* TODO racket blog
+A lot of good reading, a good way to pass time.
+
+http://blog.racket-lang.org/index.html
+
 * Basic
 ** Local binding
 The local binding is established by =let= family. Apart from normal
@@ -326,11 +331,58 @@ better:
 #+end_src
 
 
+** Hygienic
+A very good writing about syntax-case, and how to (NOT) write
+non-hygienic macros.
+http://blog.racket-lang.org/2011/04/writing-syntax-case-macros.html
 
 
+- a syntax object is a plain datum with some lexical context
+  information
+- =syntax->datum= accepts one syntax object, and return the raw list
+- =datum->syntax= accepts one context syntax object to donor its
+  context, and a plain datum to be converted.
+- scheme macro is hygienic, i.e.
+  1. if it inserts a binding, it will be renamed through its lexical
+     scope
+  2. if it refers a free variable, it refers to the one in scope in
+     which *the definition of the macro* happens.
+
+Thus, to break the hygienic
+
+#+begin_src racket
+(define-syntax (while stx)
+  (syntax-case stx ()
+    [(_ test body ...)
+     (syntax-case (datum->syntax stx 'it) ()
+       [it #'(let loop ()
+               (let ([it test])
+                 (when it
+                   body ...
+                   (loop))))])]))
+
+#+end_src
+
+or using =with-syntax= to bind pattern variable:
+#+begin_src racket
+(define-syntax (while stx)
+  (syntax-case stx ()
+    [(_ test body ...)
+     (with-syntax ([it (datum->syntax stx 'it)])
+       #'(let loop ()
+           (let ([it test])
+             (when it
+               body ...
+               (loop)))))]))
+#+end_src
+
+This is primarily used to introduce a binding that is visible to the
+outside world. It seems that /syntax parameters/ can do that better.
+
+     
 
 
-* rackunit
+* Rackunit
 Since racket has the =test= module concept, there needs no unit test
 framework. However, it seems that =rackunit= provides some
 predicate functions.
