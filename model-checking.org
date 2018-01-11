@@ -1,0 +1,39 @@
+#+TITLE: Model Checking
+
+* Kripke Structure
+1. S: set of states
+2. T: transitions: \subsetof SxS
+   - /left total/: forall s, xists s', s,s' \in T. I.e. every state
+     has an outgoing edge.
+3. L: labeling function, e.g. busy, non-busy. S->P(AP): P: powerset,
+   AP: set of propositions
+
+- Computation model :: pick a state, and unfold (infinite because of
+     left total) all transitions. It is a tree. Thus it is also called
+     /computation tree model/.
+- Path :: ordered sequence of states in the computation model (also
+          infinite)
+- Computation Tree Temporal Logic (CTL)
+
+phi is the /formula/, i.e. the aV(b^c) thing, in propositional logic.
+
+#+begin_example
+\phi :: true | false |
+        AP (atom proposition) |
+        \not \phi | \phi \vee \phi | \phi \hedge \phi
+        AX phi
+        EX phi
+        AF phi
+        EF
+        AG
+        EG
+        A (phi U phi)
+        E (phi U phi)
+#+end_example
+
+- E: Exists a path
+- A: along All path
+- X: in the neXt state
+- F: Finally in a state
+- G: Globally in all states
+- U: until
