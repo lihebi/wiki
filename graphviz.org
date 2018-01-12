@@ -1,0 +1,95 @@
+#+TITLE: Graphviz/Dot
+
+* Language
+A graphviz source start from either =graph= or =digraph=. In graph,
+you need to use =--= for edges, while in =digraph=, use =->= instead.
+An optional =strict= means there's no duplicated edges (previous will be
+removed).
+
+Statements are separated by semicolon. Typically there are node stmt,
+edge stmt, and subgraph to group statements.
+
+#+begin_example
+graph :: [strict] (graph | digraph) [ID] '{' stmt_list '}'
+subgraph :: [subgraph [ID] ] '{' stmt_list '}'
+#+end_example
+
+#+begin_example
+stmt_list :: stmt ';' stmt_list
+stmt :: node_stmt | edge_stmt | attr_stmt | ID '=' ID | subgraph
+#+end_example
+
+Attributes can be associated with node, edge, graph, subgraph, or
+cluster of subgraph. It is a list of key=value pairs. The =attr_stmt=
+is meant for setting style for the whole subgraph.
+#+begin_example
+attr_stmt :: (graph | node | edge) attr_list
+attr_list :: '[' (ID = ID) + ']'
+#+end_example
+
+If you only want to apply attr to node, you should write the node_stmt
+separately, otherwise it will be applied on the edges.
+#+begin_example
+edge_stmt :: (node_id | subgraph) (->|--) (node_id | subgraph) + [attr_list]
+node_stmt :: node_id [attr_list]
+#+end_example
+
+A subgraph is a cluster, if its name has prefix =cluster=.
+
+
+* Attributes
+- attribute: https://graphviz.gitlab.io/_pages/doc/info/attrs.html
+- Color names: https://graphviz.gitlab.io/_pages/doc/info/colors.html
+
+| name          | used by (NEC by default) | value |
+|---------------+--------------------------+-------|
+| color         |                          |       |
+| fillcolor     |                          |       |
+| fontcolor     |                          |       |
+| fontsize      |                          |       |
+| label         |                          |       |
+| labeldistance | E                        |       |
+| labelfontsize | E                        |       |
+| style         |                          |       |
+| shape         | N                        |       |
+
+common style:
+- solid
+- dashed
+- dotted
+- bold
+
+node style:
+- rounded
+- diagonals
+- filled
+- striped
+- wedged
+
+Edge style: just common style.
+
+Cluster style
+- rounded
+- filled
+- striped
+
+Node shape (some):
+- box
+- ellipse
+- oval
+- circle
+- diamond
+- plaintext
+
+
+* CMD
+#+begin_example sh
+dot -Tpng -o xxx.png xxx.dot
+# automatic generate output filename based on input name
+dot -Tpng -O xxx.dot
+#+end_example
+
+Popular output format:
+- png
+- pdf
+- svg

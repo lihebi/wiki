@@ -45,7 +45,7 @@
 - [[file:gnus.org][Gnus]]
 - [[file:golf.org][Golf]]
 - [[file:gprof.org][Gprof]]
-- [[file:dot.org][Graphviz/Dot]]
+- [[file:graphviz.org][Graphviz/Dot]]
 - [[file:guitar.org][Guitar]]
 - [[file:haskell.org][Haskell]]
 - [[file:hebi.org][Hebi]]

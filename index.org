@@ -110,7 +110,7 @@ best by doing refactoring. [[file:git.org][git]] is a preferred VCS.
 Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide the ultimate
 way to create academic figures.  [[file:markdown.org][markdown]] is not recommanded from
 me. Instead I use [[file:org.org][Org Mode]] extensively.  [[file:doxygen.org][Doxygen]] generates good
-documents and [[file:uml.org][UML]] figures using [[file:dot.org][Graphviz/Dot]].
+documents and [[file:uml.org][UML]] figures using [[file:graphviz.org][Graphviz]].
 
 * Misc
 Apart from building software, I also enjoy making hardware, including
