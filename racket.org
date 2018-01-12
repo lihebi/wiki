@@ -1,4 +1,7 @@
 #+TITLE: Racket
+
+A separate [[file:racket-lib.org][racket-lib]] file describes some interesting libraries.
+
 * TODO racket blog
 A lot of good reading, a good way to pass time.
 

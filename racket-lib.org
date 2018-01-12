@@ -1,0 +1,167 @@
+#+TITLE: Racket Libraries
+
+* Drawing libraries
+- metapict: https://github.com/soegaard/metapict
+- rosetta: https://github.com/aptmcl/rosetta/tree/master
+  - this one is for design 2/3d models, and seems broken and not in
+    official support.
+- 2htdp/image: in teachpack
+- racket/draw: bare-bone, object-oriented, not so interesting
+- pict-lib pict: this one is pretty good, functional. It was in
+  slideshow
+
+
+* 2htdp/image
+This is teachpack of How to design program version 2.  It provides
+several basic images, rotation, scale, flip, overlay.
+
+Other interesting packages in this pack:
+- 2htdp/planetcute contains many images
+
+
+** Common Concepts
+The length is measured in terms of pixels, angle means degree. When
+using names, both string and symbol are acceptable, and
+case-insensitive.
+
+Mode can be ='solid= or ='outline=. The string format is also
+supported. Solid fills, outline only draws the outside line. A integer
+between 0 and 255 instead will indicate the transparency.
+
+Color can be name or color structure. If the name is not recognized,
+no error is reported, and black is used. The complete list (plus
+=transparent=) is in the document of =color-database<%>=. This is an
+interface, defined in =racket/draw=.
+
+The color structure is
+#+begin_src racket
+(struct color (red green blue alpha))
+#+end_src
+
+
+In many places, the color also accepts a pen. =pen= is a structure. It
+seems only for drawing lines, so outline mode will support it. Its
+definition is
+
+#+begin_src racket
+(struct pen (color width style cap join))
+#+end_src
+
+- style :: solid, dot, long-dash, short-dash, dot-dash
+- cap :: round, projecting, butt
+- join :: round, bevel, miter
+
+When doing alignment, you can use pinhole, only if all the images have
+a pinhole. You can add pinhole to image by
+- center-pinhole image
+- put-pinhole x y image
+- clear-pinhole
+
+And retrieve pinhole by
+- pinhole-x
+- pinhole-y
+
+
+** basic shape
+- shape
+  - =(circle radius mode color)=
+  - =(ellipse width height mode color)=
+  - triangle
+    - =(triangle side-length mode color)=
+    - right-triangle
+    - isosceles-triangle
+    - triangle/sss
+  - square x
+  - rectangle x y
+  - rhombus x θ
+  - star
+    - star x
+    - star-polygon
+    - radial-star
+  - polygon
+    - regular-polygon
+    - polygon
+    - add-polygon
+    - scene+polygon
+- line
+  - =(line x y color)=: draw a line from (0,0) to (x,y).
+  - =(add-line image x1 y1 x2 y2 color)=: add line to image, from
+    (x1,y1) to (x2,y2)
+  - =add-curve=
+  - =add-solid-curve=
+- text
+  - =(text string font-size color)=
+  - =text/font=: this will use a complete font specification,
+    including
+    - face: which font name
+    - family: default, script, modern, etc
+    - style: normal, italic
+    - weight: normal, bold, light
+    - underline?: #t #f
+
+
+** Overlay
+- =overlay= accepts a sequence of images, with the first being on
+  top. Images are aligned on their center.
+- =overlay/align x-place y-place= controls where to align the images.
+  - x: left, right, middle, center, pinhole
+  - y: top, bottom, middle, center, baseline, pinhole
+- =overlay/offset i1 x y i2=: moves i2 by (x,y) compared to (0,0),
+  thus to down right
+- =overlay/align/offset= combines both options
+- =overlay/xy=: what's the difference from offset?
+- =overlay/pinhole=
+
+There's also an =underlay= version that does the reverse order, for
+all above.
+
+- =beside= accepts images, and placing them in horizontal row, aligned
+  on their centers
+- =beside/align y=
+- =above=: in a vertical row
+- =above/align x=
+
+
+** scene
+Typically you place images on a scene. If an image is placed (using
+those place functions) or add lines (using scene+XXX) on scene, it is
+cropped based on the size of scene. You can still compose the image by
+overlay or add-line, but those does not respect the size of scene.
+
+- =empty-scene x y color=
+- =place-image image x y scene=: the (x,y) is according to the
+  top-left corner of scene
+- =place-image/align image=
+- =place-images=: just a list of images and a list of positions
+- =place-images/align=
+- =scene+line=: add a line to the scene
+- =scene+curve=
+
+** transform
+- =rotate angle image=
+- =scale factor image=
+- =scale/xy=: using different factor for x and y
+- =flip-horizontal image=
+- =flip-vertical image=
+- =crop x y width height image=
+- =crop/align=
+- =frame image=: return an image with a black frame around the
+  /bounding box/ of the it. Even if the image might be a circle, the
+  bounding box is still rectangle.
+- =color-frame color image=
+
+
+** bitmap
+You can load a bit map file by =(bitmap filename)=, or =(bitmap/url
+url)= to download from web. For a vector image you created in racket,
+you can "freeze" it to bitmap by =freeze image=.
+
+Finally, you can save image to file by
+- =save-image image filename [width height]=: png
+- =save-svg-image image filename [width height]=: svg
+
+** properties
+- image-width
+- image-height
+- image-baseline
+
