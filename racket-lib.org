@@ -10,6 +10,42 @@
 - pict-lib pict: this one is pretty good, functional. It was in
   slideshow
 
+* graph
+This is a generic graphic library.  graph is defined through a generic
+interface =gen:graph=, supporting the following methods:
+- has-vertex?
+- has-edge?
+- vertex=?
+- add-vertex!
+- remove-vertex!
+- rename-vertex!
+- add-edge!
+- remove-edge!
+- get-vertices
+- in-vertices
+- get-neighbors
+- in-neighbors
+- get-edges
+- in-edges
+- edge-weight
+- transpose
+- graph-copy
+- graph-union!
+
+This actually is mostly not functional.
+
+To construct a graph, use =directed-graph= or =undirected-graph= with
+list of edges represented as list of vertex, with first being the
+source, rest being target. These functions seems only support single
+target.
+
+The library let you define vertex and edge properties, just like those
+in boost library. You can do bfs or dfs, shortest path, graph
+coloring, maximum flow.
+
+Finally, you can call =graphviz= to convert the graph to a string of
+dot format. It cannot output a =pict=.
+
 
 * 2htdp/image
 This is teachpack of How to design program version 2.  It provides
