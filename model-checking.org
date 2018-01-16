@@ -1,6 +1,7 @@
 #+TITLE: Model Checking
 
-* Kripke Structure
+* Kripke Structure (KS)
+** syntax
 1. S: set of states
 2. T: transitions: \subsetof SxS
    - /left total/: forall s, xists s', s,s' \in T. I.e. every state
@@ -37,3 +38,24 @@ phi is the /formula/, i.e. the aV(b^c) thing, in propositional logic.
 - F: Finally in a state
 - G: Globally in all states
 - U: until
+** semantic
+It means, states of KS where the given CTL formula is satisfied.
+
+Given KS M and some state s in M
+- $M,s \models true$: always true
+- $M,s \not\models false$
+- M,s \models p iff p \in L(s) where L is the label function
+- M,s \not\models \phi iff \phi \not\in L(s) ??
+- M,s \models AX \phi iff \forall \pi \in Path(s) \pi[1] \models
+  \phi, where Path(s) is all possible paths start from s, and \pi[i]
+  means the i-th item on the path.
+
+In temporal logic, future starts from right now. So
+- $M,s \models AF \phi$, iff $\forall \pi \in Path(s), \exists i \ge 0,
+  \pi[i] \models \phi$. Pay attention to the $i \ge 0$.
+- $M,s \models AG \phi$, iff $\forall \pi \in Path(s), \forall i \ge 0, \pi[i] \models \phi$
+
+- M,s \models A(\phi_1 \union \phi_2) iff there is a state that phi_2
+  satisfy, the before it on the path, phi_1 always holds.
+  - iff $\forall \pi \in Path(s), \exists i \ge 0, \pi[i] \models
+    \phi_2 \wedge \forall j < i, \pi[j] \models \phi_1$
