@@ -201,3 +201,43 @@ Finally, you can save image to file by
 - image-height
 - image-baseline
 
+
+* Networking
+** HTML parsing
+The package is =html-parsing=. It has only one function, =html->xexp=.
+
+The xexp is a list like this:
+
+#+begin_example
+(*TOP* (html (head (title) (title "whatever"))
+  (body "\n"
+    (a (@ (href "url")) "link"))))
+#+end_example
+
+The xexp needs to use =sxml= (needs install) package to
+parse. =sxpath= is a function for XPath like query. Use like this
+#+begin_src racket
+((sxpath '(html body table tr td a @ (*or* href title)))
+ table)
+#+end_src
+
+sxpath itself returns a function, apply that function on an xexp data,
+a list will be returned for matched results.
+1. the xexp must begin with =*TOP*=, the query result will not have
+   it. So if you want to parse it again, construct it by =`(*TOP* ,x)=
+2. the xpath starts from root (html)
+3. you can use ='(// table)= to query tables at arbitrary level
+
+** URL & HTTP
+require the package =net/url= (needs install) and
+=net/url-string=. First, construct a url by =string->url=, then, open
+input port by =get-pure-port=, this is using =GET= method. The port
+can be used as input, e.g. =port->string=. How to download binary
+file, like pdf? It should be bytes streaming, so maybe
+- copy-port in out
+- port->types then write-bytes
+
+
+The =call/input-url URL connect handle= will call handle on the port,
+and close the port on return. The connect is a procedure,
+e.g. =get-pure-port=.
