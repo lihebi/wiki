@@ -13,6 +13,8 @@ http://www.nhplace.com/kent/Papers/Technical-Issues.html
 Lisp-1 has seperate namespace for functions and variables, while
 Lisp-2 only have one universal namespace.
 
+Lisp-1 includes Elisp, common lisp. All scheme are lisp-2.
+
 
 * fold & unfold
 
@@ -38,6 +40,18 @@ for-each loop and use a catamorphism to break it down into whatever
 state you wish to modify.
 #+end_quote
 
+
+* Car & Cdr
+#+BEGIN_QUOTE
+The names CAR and CDR derive from the history of Lisp.  The original
+Lisp implementation ran on an IBM 704 computer which divided words into
+two parts, called the “address” part and the “decrement”; CAR was an
+instruction to extract the contents of the address part of a register,
+and CDR an instruction to extract the contents of the decrement.  By
+contrast, “cons cells” are named for the function ‘cons’ that creates
+them, which in turn was named for its purpose, the construction of
+cells.
+#+END_QUOTE
 
 * Reference
 - Ron Garret: Why Lisp: http://blog.rongarret.info/2015/05/why-lisp.html

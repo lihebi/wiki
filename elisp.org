@@ -1,372 +1,178 @@
 #+TITLE: Emacs Lisp
 
-#+BEGIN_QUOTE
-The names CAR and CDR derive from the history of Lisp.  The original
-Lisp implementation ran on an IBM 704 computer which divided words into
-two parts, called the “address” part and the “decrement”; CAR was an
-instruction to extract the contents of the address part of a register,
-and CDR an instruction to extract the contents of the decrement.  By
-contrast, “cons cells” are named for the function ‘cons’ that creates
-them, which in turn was named for its purpose, the construction of
-cells.
-#+END_QUOTE
-* Evaluation
-The read and evaluate is /seperate/. For example, =(1 2 3)= is a list, and can be read by lisp interpreter as an object: a list.
-But try to evalute it in emacs results in error. It is not because emacs cannot read it.
-It can, but it tries to evaluate it using a list form, which checks the car of list and treat it as a function. Of course '1' is not a function.
+In emacs lisp intro, the Robert J. Chassell quoted the following.
 
-There's a form called /self-evaluating form/. It evaluate to itself.
-For example, the number, the string, evaluates to itself.
+#+begin_quote
+I prefer to learn from reference manuals.  I “dive into” each
+paragraph, and “come up for air” between paragraphs.
 
-** quoting
-From the elisp info page:
-#+BEGIN_QUOTE
-The special form ‘quote’ returns its single argument, as written,
-without evaluating it.  This provides a way to include constant symbols
-and lists, which are not self-evaluating objects, in a program.  (It is
-not necessary to quote self-evaluating objects such as numbers, strings,
-and vectors.)
-#+END_QUOTE
-
-The expression =\'print= means read it without evaluation. So the following expression makes sense:
-#+BEGIN_SRC elisp
-(eval (list 'prin1 '1))
-#+END_SRC
-
-Note that =(quote x)= and ='x= are equivalent.
-
-** backquoting
-It is identical to quoting except that it allows to evaluate part of the object.
-The special marker =,= can be used:
-
-#+BEGIN_SRC elisp
-  `(a list of ,(+ 2 3) elements)
-  ; -> (a list of 5 elements)
-#+END_SRC
-
-If the partial evaluation returns a list, but you want to *splice* it with some other elements into a list, you can do it neatly with =,@=:
-
-#+BEGIN_SRC elisp
-  (setq some-list '(2 3))
-  `(1 ,@some-list 4 ,@some-list)
-  ;; -> (1 2 3 4 2 3)
-#+END_SRC
-
-Without this feature, you have to write some hard to understand code:
-#+BEGIN_SRC elisp
-  (cons 1 (append some-list '(4) some-list))
-  ;; -> (1 2 3 4 2 3)
-#+END_SRC
+When I get to the end of a paragraph, I assume that that subject is
+done, finished, that I know everything I need (with the possible
+exception of the case when the next paragraph starts talking about it
+in more detail).  I expect that a well written reference manual will
+not have a lot of redundancy, and that it will have excellent pointers
+to the (one) place where the information I want is.
+#+end_quote
 
 
-* Basic
-** Interactive
-- =print= :: print the object in quotes, with a newline before and after it
+
+* IO
+- =print= :: print the object in quotes, with a newline before and
+             after it
 - =prin1= :: print the object in quotes without newlines
 - =princ= :: print the object without quotes, without newlines
 - =message=
 
-** Symbol
- - defvar
- - defun
- - defmacro
+* Define
+- defvar
+- defun
+- defmacro
 
- A symbol can /not/ be both a function and macro, but it can be a variable and a function at the same time.
 
-*** property list
- A symbol can have a property list ...
- - =get symbol property= ::
- - =put symbol property value= ::
- - =symbol-plist symbol= :: return the p-list
- - =setplist symbol plist= ::
-*** Variable
- Dynamic binding: in the defun, we can refer to free variable. When calling the defun in different environment, it will get the variable from them.
- This is used by default.
+* Symbol
+Since elisp is lisp-1, a symbol can be both variable and a function at
+the same time.  Macros and functions use the same namespace.
 
- #+BEGIN_SRC elisp
-   (defvar x -99)
-   (defun getx () x)
-   (let ((x 1)) (getx)) ; -> 1
-   (getx) ; -> -99
- #+END_SRC
 
- Lexical is also introduced as optional feature.
+A symbol can have a property list.
+- =get symbol property= ::
+- =put symbol property value= ::
+- =symbol-plist symbol= :: return the p-list
+- =setplist symbol plist= ::
+ 
+Elisp is using dynamic binding by default.  Lexical is also introduced
+as optional feature.
 
 
 * Regular Expression
 ** syntax
 *** basics
-| symbol     | description                         |
-|------------+-------------------------------------|
-| /          | <                                   |
-| =.=          | match anything except a newline     |
-| =*=          |                                     |
-| =+=          |                                     |
-| =?=          |                                     |
-| =*?=, =+?=, =??= | non-greedy, match the smallest part |
-| =[]=         |                                     |
-| =[^]=        |                                     |
-| =^=          |                                     |
-| =$=          |                                     |
 
-*** Character classes
-Use the double =[[]]= form. E.g. =[[:ascii:]]=, and also the negative writes =[^[:ascii:]]=.
+You can use basic =.*+?=, as well as non-greedy counter part =*?=,
+=+?=, =??=.
 
-| symbol | description        |
-|--------+--------------------|
-| /      | <                  |
-| =ascii=  | 0-127              |
-| =alnum=  | letter or digit    |
-| =alpha=  | letter             |
-| =blank=  | space and tab      |
-| =cntrl=  | ASCII control char |
-| =digit=  | 0-9                |
-| =lower=  | lower-case         |
-| =upper=  | upper-case         |
-| =punct=  | punctuation        |
-| =space=  | whitespace         |
-| =word=   | =\w=                 |
+Bracket is special in elisp regex. Character classes can be used
+inside =[]=. E.g. =[[:ascii:]]=.  Possible values include
+- ascii: 0-127
+- alnum: letter or digit
+- alpha: letter
+- blank: space and tab
+- digit: 0-9
+- lower: lower case
+- upper
+- punct
+- space: white space
+- word: same as =\w=
 
-*** Backslash
-Backslash is also used in elisp read syntax. So when you want one =\= in the string, you need to write double.
+Parenthesis and braces are not special, thus can be used
+literally. When using for grouping, they need to be escaped for
+capturing, otherwise it is literal. Non-capturing group is also
+supported by =\(?:\)=. =\1= for back reference.
 
-| symbol    | description                                                       |
-|-----------+-------------------------------------------------------------------|
-| /         | <                                                                 |
-| =\1= (pipe) | either one of two expressions. Can be used in capturing group     |
-| =\{\}=      | ={}= counter part                                                   |
-| =\(\)=      | capturing group                                                   |
-| =\(?:\)=    | non-capturing group                                               |
-| =\(?NUM:\)= | numbered capturing group.. If conflict numbers, last one will win |
-| =\DIGIT=    | back reference                                                    |
-|-----------+-------------------------------------------------------------------|
-| =\w=        |                                                                   |
-| =\W=        |                                                                   |
-| =\b=        |                                                                   |
-| =\B=        |                                                                   |
-|-----------+-------------------------------------------------------------------|
-
-*** Syntax code
-=\sCODE= can be used to refer to any character "whose syntax is CODE".
-=\SCODE= is the negative form.
-See the "Syntax Class Table" chapter of elisp manual for details.
-
-| symbol    | description |
-|-----------+-------------|
-| /         | <           |
-| =\s-=       | whitespace  |
-| =\s[space]= | whitespace  |
-| =\sw=       | =\w=          |
-| =\s.=       | punctuation |
+Back slash some code has special meanings. e.g. =\w= =\b=. The uppercase is
+negation.
+- =\w=: word
+- =\b=: 
+- =\s-=: whitespace
+- =\sw=: \w
+- =\s.=: punctuation
 
 ** constructing
-- =regexp-quote string= :: return a regular expression, whose only exact match is string.
-  =(regexp-quote "^The cat$")= returns ="\\^The cat\\$"=. It is useful for example:
-
-#+BEGIN_SRC elisp
-  (re-search-forward
-   (concat "\\s-" (regexp-quote string) "\\s-"))
-#+END_SRC
-
-- =regexp-opt strings= :: return an /efficient/ regular expression, that will matches any of the strings supplied.
+- =regexp-quote= :: return a regular expression, whose only exact
+                    match is string.
+- =regexp-opt= :: return an /efficient/ regular expression, that will
+                  matches any of the strings supplied.
 
 ** Searching
-- =re-search-forward regexp= ::
-- =re-search-backward regexp= ::
-- =string-match regexp string= :: returns the index of the start of the first match. It will set the /Match Data/
-- =string-match-p regexp string= :: same as =string-match= except it does not modify /Match Data/.
+The mostly used functions are =re-search-forward= and backward. It
+search in the buffer. You can also search in a string by
+=string-match= or =string-match-p=. They will set /match data/.  
 
-accessing the match data
-- =match-string count= :: count is the index, with 0 to the the entire match
-- =match-beginning count= :: return the beginning index of the match
-- =match-end count= ::
+After search, you can retrieve the previous match data by
+=match-string= and =match-string-no-property= (for clean string). You
+can also use =match-beginning= and =match-end= to get the position of
+the match instead of content.
 
-replacing
-- =replace-regexp-in-string regexp rep string= :: return a modified copy. replace all of matches.
+=replace-regexp-in-string= replaces all matches in a string.
 
 * Type
-- =(eq OBJ1 OBJ2)= :: Return t if the two args are the same Lisp object. It is faster than =equal=.
-- =(equal O1 O2)= :: Return t if two Lisp objects have similar structure and contents. So it does /comparison only/.
-- ~(=)~ :: true if all arguments are equal. Only works for numbers
-- ~(string=)~ :: compare two strings
-** number
-- =(expt 2 8)= :: 2^8
+=eq=, =equal=, ~=~, ~string=~ are available.
 
-** string
-- =make-string count character= :: make string by duplicating characters
-- =substring string start &optional end= :: substring
-- =concat &rest sequences= ::
-- =split-string string &optional separators= :: =split-string-default-separators= is ="[ \f\t\n\r\v]+"=
+* Numeric function
+- =expt=: exponential
 
-conversion:
-- =number-to-string number= ::
-- =string-to-number string= ::
-- =char-to-string character= ::
-- =string-to-char string= :: returns the first character in string
+* string
+Creating string
+- =substring=
+- =concat=
+- =split-string=
 
-case:
-- =downcase string-or-char= ::
-- =upcase string-or-char= ::
-- =capitalize string-to-char= ::
+Converting:
+- =number-to-string=
+- =string-to-number=
+- =char-to-string=
+- =string-to-char=: returns the first character in string
 
-** cons cell
-This is a pair of slots, each of them can hold anything.
-A list is a list of cons cells, in which each cdr is the "address" next list.
+Casing:
+- downcase
+- upcase
+- capitalize
 
-A /dotted pair notation/ is a more general syntax of a cons cell.
-It is written as =(A . B)=.
-It is more general because the cdr can also hold anything.
-As an example, =(1 2 3)= is the same as =(1 . (2 . (3 . nil)))=.
+* list
+List is defined as the last cdr to be =nil=.  If the last is not nil,
+it is called /dotted list/ instead of /improper list/.
 
-** list
-If the CDR of a list’s last cons cell is some value other than ‘nil’,
-we call the structure a "dotted list",
-since its printed representation would use dotted pair notation.
+- append: the interesting part is, all arguments except the last one
+  are copied.  If you want to force copy the last one as well, add a
+  =nil= as the last of append.
+- reverse
 
-*** construct
-- =cons obj1 obj2= :: if obj2 is a list, this is called "cons obj1 onto the list"
-- =list &rest OBJECTS= :: create a list
-- =make-list length obj= :: make a list of length, in which each cell holds the /same/ object (=eq=)
-- =append &rest SEQUENCES= :: concatenate some lists into one list.
-  The last one is usually a list, all arguments except the last one are copied.
-  If want to force copy everything, add a =nil= as the last of append.
-- =reverse list= :: reverse the list by copying
-- =number-sequence from to= :: the list of =[from,to]=, inclusive
+list generation:
+- number-sequence: inclusive from a to b
 
-*** access
-- =car= ::
-- =cdr= ::
-- =car-safe= ::
-- =cdr-safe= ::
-- =pop= :: return the cdr of the list, and also remove it from the list
-- =nth n list= :: get the nth element, starting from 0
-- =nthcdr n list= :: execute cdr n times
-- =last list= ::
-- =length= ::
+Apart from =car= and =cdr=, elisp has =car-safe= and =cdr-safe=, that,
+if the argument is not a cons cell, return nil.  =nth=, =nthcdr=,
+=last= are available.
 
-- =caar= :: car car, 11
-- =card= :: car cdr, 12
-- =cdar= :: cdr car, 21
-- =cddr= :: cdr cdr, 22
-
-*** modify
 /destructive/ means the cdr of the cons cells are modified.
 
-- =push element listname= :: like cons it onto the list, but save it as listname, i.e. modify the variable
-- =add-to-list symbol element= :: cons element onto the list if it is not there.
-  So the following is equivalent: =(add-to-list 'var value)= and =(or (member value var) (setq var (cons value var)))=
-- =setcar cons obj= ::
-- =setcdr cons obj= ::
-- =sort list predicate= :: this rearrange the cdrs of the list, so, /destructive/!
-  Examples:
-#+BEGIN_SRC elisp
-(setq nums '(1 3 2 6 5 4 0))
-(sort nums '<) ; accending
-#+END_SRC
+=pop= and =push= is destructive. =pop= will return the car of the
+list. =push= is the counter part for =cons= onto the
+list. =add-to-list= only adds if the element is not there
+already. There are also very bare-bone functions =setcar= and
+=setcdr=. Note that =sort= is also destructive.
 
-** set
-We use list as set, by ignoring the order ...
-=append= to combine two set, then =delete-dups= to remove duplication ...
+List can be, of course, used as set. =member= does predicate, =remove=
+removes item from set, =delete= destructively removes. They use
+=equal=, but have =eq= counter parts obviously. Finally, =delete-dups=
+remove duplication.
 
-- =memq obj list= :: whether obj is a member of list, using =eq=
-- =delq obj list= :: destructively remove all elements =eq= to obj.
-- =rmq obj list= :: return a copy of list with all obj removed
-- =member= :: =equal= counter-part
-- =member-ignore-case= :: for string
-- =delete= :: =equal= counter-part
-- =remove= :: =equal= counter-part
-- =delete-dups= :: use =equal=
-** association list
-This is a special list, each element is a key-value pair.
-#+BEGIN_SRC elisp
-(setq alist-of-colors
-  '((rose . red) (lily . white) (buttercup . yellow)))
-#+END_SRC
+Association list is same as scheme, a list of pairs. =assoc= can be
+used to retrieve by =car=, while =rassoc= retrieve by =cdr=.
 
-- =assoc KEY aLIST= :: the first element of LIST whose car =equal= KEY.
-- =rassoc value alist= :: compare the cdrs instead of cars
-- =assq KEY aLIST= :: the first element of LIST whose car =eq= KEY.
-- =rassq= :: =eq= counter-part
+Property list is a flat list. The odd elements are property name, and
+the even elements are values.  The property names /must/ be unique.
+The order of the "pairs" does not matter. =plist-get= and =plist-put=
+modify the list. =plist-member= is useful because it can distinguish
+the missing property and the property with value "nil"
 
-- =copy-alist alist= :: two-level deep copy
-- =assq-delete-all key alist= :: delete all elements whose car =eq= key
-- =rassq-delete-all value alist= :: cdr counter-part
-- =(assoc-string KEY LIST &optional CASE-FOLD)= :: =assoc= for string. if =CASE-FOLD= is =non-nil=, case is ignored.
+* Sequence
+Sequence is more general than list, specifically it also covers array.
+=elt= is used to retrieve from sequence by position. =copy-sequence=
+creates new sequence, but the elements are not copied.
 
-** property list
-It is a flat list. The odd elements are property name, and the even elements are values.
-#+BEGIN_SRC elisp
-(pine cones numbers (1 2 3) color "blue")
-#+END_SRC
+Array is fixed length sequence, can be vector or string. =make-vector=
+or =vector= constructs vector, and =aref= and =aset= access it.
 
-It can be structured as
-
-| property | value   |
-|----------+---------|
-| pine     | cones   |
-| numbers  | (1 2 3) |
-| color    | "blue"  |
-
-The property names /must/ be unique.
-The order of the "pairs" does not matter.
-
-- =plist-get plist property= ::
-- =plist-put plist property value= ::
-- =lax-plist-get= :: =equal= counterpart
-- =lax-plist-put= :: =equal= counterpart
-- =plist-member plist property= :: this is useful because it can distinguish the missing property and the property with value "nil"
-
-** sequence
-#+BEGIN_EXAMPLE
-               _____________________________________________
-              |                                             |
-              |          Sequence                           |
-              |  ______   ________________________________  |
-              | |      | |                                | |
-              | | List | |             Array              | |
-              | |      | |    ________       ________     | |
-              | |______| |   |        |     |        |    | |
-              |          |   | Vector |     | String |    | |
-              |          |   |________|     |________|    | |
-              |          |  ____________   _____________  | |
-              |          | |            | |             | | |
-              |          | | Char-table | | Bool-vector | | |
-              |          | |____________| |_____________| | |
-              |          |________________________________| |
-              |_____________________________________________|
-
-#+END_EXAMPLE
-
-- =length sequence= ::
-- =elt sequence index= :: returns the element of SEQUENCE at index
-- =copy-sequence seq= :: the sequence is new, but the elements are not.
-
-** array
-It is fixed length sequence.
-*** constructing
-- =make-vector length object= :: create vector
-- =vector &rest objects= :: create vector
-*** accessing
-- =aref array index= :: getter
-- =aset array index object= :: setter
-
-** hash table
-construct
-- =(make-hash-table)= ::
-
-access
-- =gethash key table= ::
-- =puthash key value table= ::
-- =remhash key table= :: remove
-- =clrhash table= :: remove all
-- =maphash function table= :: call function once for each of the element in table. The function should accept two arguments: key and value
-other
-- =hash-table-count table= :: return number of entries
-
+* Hash Table
+=make-hash-table= constructs a table, and access by =gethash=,
+=puthash=, =remhash=, =clrhash=. Hash table can be counted by
+=hash-table-count= instead of =length=, iterated by =maphash= instead
+of =map=.
 
 * Function
-** define
-- =defun name args body ...= ::
+Functions are defined by =defun name (arg ...) body ...=.
+
 
 ** Calling
 Usually put the function name as the car of the list will call it.
@@ -635,5 +441,87 @@ Also, select test by this:
       (goto-char (point-min))
       (when (re-search-forward "<frame src=\"\\(http[[:ascii:]]*?\\)\"")
         (match-string 1))))
+#+END_SRC
+
+
+* Emacs Related
+
+** Buffer related
+- =with-temp-buffer=
+  =(with-temp-buffer &rest BODY)= Create a temporary buffer, and evaluate BODY there like =progn=.
+
+- =(insert-file-contents FILENAME &optional VISIT BEG END REPLACE)=: Insert contents of file FILENAME after point.
+- =(secure-hash ALGORITHM OBJECT &optional START END BINARY)=: the object can be a buffer.
+  This can be used to compare if a file has changed.
+- =(current-buffer)=: Return the current buffer as a Lisp object.
+- =(message FORMAT-STRING &rest ARGS)=: Display a message at the bottom of the screen.
+
+
+** File System Related
+*** Traversing
+#+BEGIN_SRC elisp
+(directory-files DIRECTORY &optional FULL MATCH NOSORT)
+#+END_SRC
+
+Return a list of names of files in DIRECTORY.
+
+Usage example:
+#+BEGIN_SRC elisp
+(bib-files (directory-files bib-dir t ".*\.bib$"))
+#+END_SRC
+
+*** Predicates
+=directory-files= will throw error if the directory does not exist.
+So a safe way is to check if the directory exists first.
+This predicate does this:
+#+BEGIN_SRC elisp
+(file-exists-p FILENAME)
+#+END_SRC
+Directory is also a file.
+
+Other predicates includes:
+#+BEGIN_EXAMPLE
+file-readable-p
+file-executable-p
+file-writable-p
+file-accessible-directory-p
+#+END_EXAMPLE
+
+** Other
+- =(defalias SYMBOL DEFINITION &optional DOCSTRING)=: Set SYMBOL's function definition to DEFINITION.
+  E.g. =(defalias 'helm-bibtex-get-value 'bibtex-completion-get-value)=,
+  serves as a temporary patch for =helm-bibtex= update its API to =bibtex-completion=
+
+*** make-obsolete-variable
+=(make-obsolete-variable OBSOLETE-NAME CURRENT-NAME WHEN &optional ACCESS-TYPE)=
+
+Make the byte-compiler warn that OBSOLETE-NAME is obsolete.
+
+=helm-bibte= used it when it refactored the "helm" part off into a module,
+to support different backend other than =helm=.
+As a result, most =helm-bibtex-= prefixes are changed to =bibtex-completion-= ones.
+But they want the end user's configuration will not break,
+and at the same time warn them to update to the new name.
+Here's the code, and the last line is what actually uses the function.
+The actual effect is the user's configuration will be marked as warning,
+the mini-buffer will describe the obsolete detail.
+
+#+BEGIN_SRC elisp
+  (cl-loop
+   for var in '("bibliography" "library-path" "pdf-open-function"
+                "pdf-symbol" "format-citation-functions" "notes-path"
+                "notes-template-multiple-files"
+                "notes-template-one-file" "notes-key-pattern"
+                "notes-extension" "notes-symbol" "fallback-options"
+                "browser-function" "additional-search-fields"
+                "no-export-fields" "cite-commands"
+                "cite-default-command"
+                "cite-prompt-for-optional-arguments"
+                "cite-default-as-initial-input" "pdf-field")
+   for oldvar = (intern (concat "helm-bibtex-" var))
+   for newvar = (intern (concat "bibtex-completion-" var))
+   do
+   (defvaralias newvar oldvar)
+   (make-obsolete-variable oldvar newvar "2016-03-20"))
 #+END_SRC
 

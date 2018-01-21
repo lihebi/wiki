@@ -7,10 +7,6 @@
 It makes no sense to go through the long research again when I forget
 something, so I created this wiki.
 
-The structure of the wiki is basically one page per topic, except some
-large ones having sub-topics. The index of the pages is on this page
-only. It should contain entries to all pages.
-
 * The Workbench
 # #+BEGIN_QUOTE
 # Sharpening your axe will not delay your job of cutting wood.
@@ -39,9 +35,7 @@ make) a better emacs-integrated browser.
 
 There seems to be less than 1% developers are using *[[file:emacs.org][Emacs]]*. Well,
 this is good, we want to way way way above the
-average [fn:above-the-average]. There're tons of [[file:emacs-plugins.org][Emacs Plugins]] out
-there thanks to the power of lisp. To properly use emacs, refer to the
-page [[file:elisp.org][Emacs Lisp]] and a dedicated page for th [[file:elisp-emacs.org][Emacs Part of Elisp]].
+average [fn:above-the-average].
 
 * Language
 

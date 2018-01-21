@@ -1,6 +1,9 @@
 #+TITLE: Emacs
 
-A separate page for [[file:gnus.org][Gnus]].
+- [[file:gnus.org][Gnus]]
+- [[file:emacs-plugins.org][Emacs Plugins]]
+- [[file:elisp.org][Emacs Lisp]]
+- [[file:elisp-emacs.org][Emacs Part of Elisp]]
 
 * Mail
 To start a mail, use =compose-mail (C-x m)=. This will drop you to a

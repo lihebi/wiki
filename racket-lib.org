@@ -235,7 +235,7 @@ input port by =get-pure-port=, this is using =GET= method. The port
 can be used as input, e.g. =port->string=. How to download binary
 file, like pdf? It should be bytes streaming, so maybe
 - copy-port in out
-- port->types then write-bytes
+- port->bytes then write-bytes
 
 
 The =call/input-url URL connect handle= will call handle on the port,
