@@ -95,28 +95,30 @@ the match instead of content.
 
 =replace-regexp-in-string= replaces all matches in a string.
 
-* Type
-=eq=, =equal=, ~=~, ~string=~ are available.
+* Lisp Common Sense
+=eq=, =equal=, ~=~ are available.
 
-* Numeric function
-- =expt=: exponential
+Numeric function:
+- comparison: =max=, =min=, =abs=
+- rounding: =truncate=, =floor=, =ceiling=, =round=
+- arithmetic: =%=, =mod=
+- bit-wise: =lsh=, =ash=, =logand=, =logior=, =logxor=, =lognot=
+- math: =expt=, =exp=, =sin=, =cos=, =log=, =sqrt=
+- random: =random=
+
+
 
 * string
-Creating string
-- =substring=
-- =concat=
-- =split-string=
+Creating string by =make-string=. Most likely we are creating from
+existing strings, e.g. =substring=, =concat=, =split-string=.  String
+are compared using ~string=~, =string<= (no =string>=?).  Converted by
+=number-to-string=, =string-to-number=, and casing operations
+=downcase=, =upcase=, =capitalize=.
 
-Converting:
-- =number-to-string=
-- =string-to-number=
-- =char-to-string=
-- =string-to-char=: returns the first character in string
-
-Casing:
-- downcase
-- upcase
-- capitalize
+Of course, the most powerful string construction function is
+formating, with =foramt=, and =format-message=. The format string
+follows C style though, using =%s= as printed representation
+(=princ=), =%S= for =prin1=, =%c= for character, 
 
 * list
 List is defined as the last cdr to be =nil=.  If the last is not nil,
@@ -446,7 +448,7 @@ Also, select test by this:
 
 * Emacs Related
 
-** Buffer related
+** Buffer
 - =with-temp-buffer=
   =(with-temp-buffer &rest BODY)= Create a temporary buffer, and evaluate BODY there like =progn=.
 
@@ -455,6 +457,150 @@ Also, select test by this:
   This can be used to compare if a file has changed.
 - =(current-buffer)=: Return the current buffer as a Lisp object.
 - =(message FORMAT-STRING &rest ARGS)=: Display a message at the bottom of the screen.
+
+There will be many buffers in an Emacs session, and the
+=current-buffer= returns the current one, which is the default target
+for most commands. When you want to make something interesting to some
+other buffer, you will need to =set-buffer= to set that buffer
+current. You will likely want to switch back to the original buffer
+after those operations, for that, don't use =set-buffer= to set back,
+because it is not error-safe. Instead, use =save-current-buffer=, or
+better =with-current-buffer=. =with-temp-buffer= don't need a provided
+buffer object, but creates a temporary one. The temporary buffer will
+be killed at the end of execution of body. All of these 3 form does
+not display the buffer, just make it current.
+
+A buffer has a name, retrieved by =buffer-name=. The name can be set
+using =rename-buffer=. Buffers can be obtained by name via
+=get-buffer=.  Buffers are also likely to be associated with a file,
+and the non-directory file name is =buffer-file-name=. You can also
+get the buffer using the file name via =get-file-buffer=. Since it
+just the filename, there must be multiple ones, and this function
+returns the first.
+
+To create a buffer, use =get-buffer-create=, which returns the new
+buffer, or an existing buffer. It does not make that buffer current.
+Create a new unique buffer name by =generate-new-buffer-name=. It is
+not typically directly used though. The function =generate-new-buffer=
+uses that function to generate new name (by post-fixing <N>), if the
+provided name is in use.
+
+Obtain all the live buffers using =buffer-list=. The order of list
+matters. The newly created buffer is added to the end of list, the
+current displayed buffer moves to the front. When a buffer is buried,
+it is moved to the end. =other-buffer= returns the first in the list
+that is not current one. =last-buffer= returns the last (end) in the
+list. =bury-buffer= and =unbury-buffer= moves a buffer to the end and
+switch buffer to the last buffer respectively. A buffer is killed by
+=kill-buffer=, in which case it is removed from the list.
+
+** Position
+
+A position is the index in a buffer. There of course will be a
+character before and one after the position. When we say "at
+position", we mean after position. Position in a buffer starts from 1,
+while position in a string starts from 0.
+
+The point is the current cursor position. =point= returns the current
+point, =point-min= and =point-max= returns the beginning and end
+point.
+
+There are many commands to move point. =goto-char= moves by position,
+and all other commands build upon it. I'm omitting the opposite
+version, e.g. forward v.s. backward, up v.s. down., beginning v.s. end
+- moves by characters: =forward-char=
+- moves by word: =forward-word=
+- buffer: =beginning-of-buffer= moves to =point-min=
+- line: =beginning-of-line= and =end-of-line=, =forward-line= and
+  =backward-line=
+- screen: you can also count the current vertical screen lines, and
+  move the corresponding lines accordingly.
+- balanced expression: =forward-list=, =up-list=, =forward-sexp=,
+  =end-of-defun=
+- skipping: =skip-chars-forward= skips over a list of chars
+  represented by a pattern string. It is like regular expression, but
+  is put implicitly inside brackets. Thus you can use for example
+  ="a-zA-Z"=.
+
+It is useful to temporarily move to some position, do some tasks, and
+move back. It is called /execursion/, and is done via
+=save-execursion=.
+
+Narrowing works with two positions. =narrow-to-region= does the
+narrowing, and =widen= undoes it. This creates the following effects:
+0. determine the accessible portion of the buffer, but don't alter the
+   position of the actual buffer.
+1. The point cannot move outside the positions
+2. no texts outside are displayed
+3. most (?) functions refuse to operate on outside text
+
+
+** Marker
+A marker has two component: the buffer it is in, and the position in
+the buffer. They can be retrieved by =marker-position= and
+=marker-buffer=.
+
+The position is updated automatically when the text changes. The
+invariant is the surrounding two characters. The updating of marker
+position takes time, especially there are a lot of them. Thus, remove
+the marker if you know you won't use if any more.
+
+You can make a marker by 4 functions, which differs only its initial
+point. =make-marker=, =point-marker=, =point-min-marker=,
+=point-max-marker=. You can also =copy-markder= from existing one. A
+marker can be moved by =set-marker=.
+
+There's one special marker, designated /the mark/, *whose position* is
+returned by =mark=. To return the actual marker, use =mark-marker=,
+but this is dangerous, try to avoid it. The mark is mainly used to
+provide a default region for a command. The text between point and the
+mark is called /the region/. The beginning and end of it can be
+obtained by =region-beginning= and =region-end=. When using
+=(interactive)= to define a command, the ="r"= code will give the
+command two numeric values as the (point) and the mark, the smaller
+first. This region is used for most region based command by
+default.
+
+Some command will set the mark, and when it does this, it will
+typically save the old mark on the /mark ring/.  =set-mark= set the
+position of the mark, but it is not commonly used, because it discard
+the previous mark. Instead, =push-mark= and =pop-mark= handles the
+mark ring automatically.
+
+** Process
+Elisp can create async or sync processes. There are three primitives
+to create subprocess: =make-process= for async, =call-process= and
+=call-process-region= for sync. All others are built upon them.
+
+To get a list of current live async processes, use
+=list-processes=. This seems to be for display purpose, and
+=process-list= seems to return process objects. You can also get
+process by its name via =get-process=. Process information can be
+retrieved by =process-command=, =process-id=, =process-name=,
+=process-status=, =process-live-p=, =process-type=,
+=process-exit-status=.
+
+You also want to communicate with the subprocess: either send input,
+receive output, or send signals. To send string as input, use
+=process-send-string=, =process-send-region=, =process-send-eof=. To
+send signals, use =interrupt-process=, =kill-process=, =quit-process=,
+=stop-process=, =continue-process=, or the general one
+=signal-process=.
+
+The output of a subprocess is inserted into a associated buffer,
+called the /process buffer/. This buffer serves two purposes: receive
+the output, and kill the process by kill the buffer. =process-buffer=
+returns the buffer with a particular process, and =get-buffer-process=
+returns the process object associated with the buffer. The position to
+insert is determined by the process mark, which is always set to the
+end of the buffer. You can set process buffer by =set-process-buffer=.
+
+Network connection is also represented by a process object, but it is
+not a child process, has no process id, cannot be killed or sent
+signal. You can only send and receive data, or close the
+connection. =make-network-process= creates network connection. It
+seems to be a primitive, able to create TCP, UDP, or a
+server. Alternatively, =open-network-stream= creates TCP specifically.
 
 
 ** File System Related
