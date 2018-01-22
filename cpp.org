@@ -1,5 +1,15 @@
 #+TITLE: C++
 
+According to [[http://harmful.cat-v.org/software/c++/linus][Linus]],
+don't use C++
+
+#+begin_quote
+Quite frankly, even if the choice of C were to do *nothing* but keep
+the C++ programmers out, that in itself would be a huge reason to use
+C.
+#+end_quote
+
+
 * Emacs Rtags
 
 Install rtags by =rtags-install= with prompt location. Setup the PATH
