@@ -14,40 +14,62 @@ not have a lot of redundancy, and that it will have excellent pointers
 to the (one) place where the information I want is.
 #+end_quote
 
-
-
 * IO
-- =print= :: print the object in quotes, with a newline before and
-             after it
-- =prin1= :: print the object in quotes without newlines
-- =princ= :: print the object without quotes, without newlines
-- =message=
+=princ= is for human, it print object without quotes. =print= is the
+most verbose, print quotes and newlines. =prin1= omit the newlines.
+If you just evaluate the print, the result is the object being
+printing, so the echo area will have two copy of the object.
 
-* Define
-- defvar
-- defun
-- defmacro
+=message= accepts only string, and used inclusively on echo area.
 
 
 * Symbol
 Since elisp is lisp-1, a symbol can be both variable and a function at
 the same time.  Macros and functions use the same namespace.
-
-
-A symbol can have a property list.
-- =get symbol property= ::
-- =put symbol property value= ::
-- =symbol-plist symbol= :: return the p-list
-- =setplist symbol plist= ::
  
-Elisp is using dynamic binding by default.  Lexical is also introduced
-as optional feature.
+Elisp use nil in three ways: the symbol, the logical false, and the
+empty list.
+
+Elisp also has ~#'~, but instead of syntax, it is the read syntax of
+quoting for function, i.e. =function=.
+
+Elisp by default uses *dynamic binding* and dynamic extent for local
+variables. This means, the variable refers to the most recent local
+binding, and a binding exists all the way as long as the binding form
+is executing (e.g. body of let). =setq= works on the most recent
+binding.
+
+Thus, when using a local dynamic binding, always make sure (by
+yourself, unfortunately) the variable is bound. When really using
+global variable, *declare* it at the top, via =defvar= and
+=defconst=. =defvar= will initialize the variable if it is originally
+/void/, while =defconst= will unconditionally initialize it. Other
+than that, there's no difference, the compiler will not complain if
+you changed the constant. The variable will be marked as "special",
+meaning that it will always have dynamic binding.  There's a third way
+to create global binding, the =defcustom=. It is used to create
+/customizable variable/, also called /user option/. It is special in
+that, it is shown in customize interface, and the =defcustom= will
+specify how it should be displayed, and what values to take.
+
+On the other hand, lexical scope establish lexical binding, and has
+indefinite extent. This means the variable has to refer to a binding
+that is lexical written in scope. The binding is available even
+outside the execution of the binding form, and construct a closure.
+To enable lexical binding, you have to set buffer-local variable
+=lexical-binding= to non-nil. Even after this, special variables are
+still dynamic binding.
+
+Emacs supports another binding, called buffer-local binding. As name
+suggests, the binding is in effect when that buffer is the current
+buffer, and goes out of effect when it is not. This is most useful in
+major modes. Two ways can make buffer-local
+variable. =make-local-variable= set the variable to local to current
+buffer, while =make-variable-buffer-local= set a variable buffer-local
+in all buffers.
 
 
 * Regular Expression
-** syntax
-*** basics
-
 You can use basic =.*+?=, as well as non-greedy counter part =*?=,
 =+?=, =??=.
 
@@ -69,21 +91,20 @@ literally. When using for grouping, they need to be escaped for
 capturing, otherwise it is literal. Non-capturing group is also
 supported by =\(?:\)=. =\1= for back reference.
 
-Back slash some code has special meanings. e.g. =\w= =\b=. The uppercase is
-negation.
+Back slash some code has special meanings. e.g. =\w= =\b=. The
+uppercase is negation.
 - =\w=: word
 - =\b=: 
 - =\s-=: whitespace
 - =\sw=: \w
 - =\s.=: punctuation
 
-** constructing
-- =regexp-quote= :: return a regular expression, whose only exact
-                    match is string.
-- =regexp-opt= :: return an /efficient/ regular expression, that will
-                  matches any of the strings supplied.
+When constructing regexp that match string literals, you can use
+=regexp-quote= and =regexp-opt= to avoid getting specially
+interpreted. =regexp-quote= returns a regular expression, whose only
+exact match is string. =regexp-opt= returns an /efficient/ regular
+expression, that will matches any of the strings supplied.
 
-** Searching
 The mostly used functions are =re-search-forward= and backward. It
 search in the buffer. You can also search in a string by
 =string-match= or =string-match-p=. They will set /match data/.  
@@ -93,9 +114,9 @@ After search, you can retrieve the previous match data by
 can also use =match-beginning= and =match-end= to get the position of
 the match instead of content.
 
-=replace-regexp-in-string= replaces all matches in a string.
+Finally, =replace-regexp-in-string= replaces all matches in a string.
 
-* Type
+* Common
 =eq=, =equal=, ~=~, ~string=~ are available.
 
 * Numeric function
@@ -156,6 +177,10 @@ The order of the "pairs" does not matter. =plist-get= and =plist-put=
 modify the list. =plist-member= is useful because it can distinguish
 the missing property and the property with value "nil"
 
+A symbol can have a property list. It has a simpler syntax, =get= and
+=put= with the symbol as argument. =symbol-plist= can retrieve the
+plist from symbol, =setplist= gives a plist to a symbol.
+
 * Sequence
 Sequence is more general than list, specifically it also covers array.
 =elt= is used to retrieve from sequence by position. =copy-sequence=
@@ -171,59 +196,69 @@ or =vector= constructs vector, and =aref= and =aset= access it.
 of =map=.
 
 * Function
-Functions are defined by =defun name (arg ...) body ...=.
+Functions are defined by following.  To specify optional argument, use
+=&optional= before all optional arguments. Collect rest arguments by
+putting =&rest= before the *final* argument.  A lambda expression
+evaluates to a function object.
+
+#+begin_example elisp
+(defun name (var ...) body ...)
+(lambda (arg ...) body ...)
+(required-var ...
+   [&optional op-var ...]
+   [&rest rest-var])
+#+end_example
+
+=apply= append the arguments into a list, and call the function with
+the splice of list as arguments. The last argument must be a
+list. =funcall= just call with the rest arguments.
+
+=mapcar= is the typical map, return the list. =mapc= is used for side
+effect. =mapconcat= is a shorthand for concatenate the result as a
+string.
 
 
-** Calling
-Usually put the function name as the car of the list will call it.
-If you want to *compute which function to execute* at runtime, use =funcall=:
-If you want to *compute the arguments* at runtime, use =apply=:
+A function with =(interactive)= is a /command/, i.e. it can be
+executed with M-x. This apply to both defun and lambda. Although
+interactive is often used without argument, it can actually do very
+interesting staff. It basically defines what kind of arguments the
+user should provide to the command. Most likely, it is a multi-line
+string containing key code of what kind of values to expect, and
+prompt string. The numeric prefix argument "p" is just one of them,
+and it can differentiate =C-u= prefix of the command.
 
-- =funcall function &rest arguments= ::
-- =apply function &rest arguments= :: same as =funcall=, but the /last/ of arguments is a list, and will be expanded into many arguments instead of a list.
 
-** Mapping family
-- =mapcar function sequence= :: execute function on each element of sequence, and return the list of results.
-- =mapc function sequence= :: same as =mapcar= except it returns the =sequence=, with the intention to collect side effect.
-- =mapconcat function sequence separator= :: execute function on elements of sequence. The results must be strings, and will be concatenated and returned.
+* Macro
+=defmacro name (args) body...=
 
-** Anonymous functions
-It has three forms:
-- =lambda args body...= ::
-- =function function-object= :: returns the function without evaluating it. It is the "quote" for function
-- =#'= :: this is the read syntax for the above =function= special form. You see, it is indeed the "quote" for the function.
-
-** Macro
-Macro does not evaluate its arguments. It put the arguments /as is/ and put them into the macro body to form an expression.
-The expression is then evaluated for result.
-- =defmacro name args body...= ::
+The macro is very simple: leave the arguments /as is/ and put them
+into the macro body to form an expression. The expression is then
+evaluated for result.
 
 * Control Structure
+Sequential structure has =progn=, =prog1=, =prog2=.
 
-** Sequential
-- =progn forms...= :: return the result of final form
-- =prog1 form1 forms...= :: return the result of form1
-- =prog2 form1 form2 forms...= :: return the result of form2
-** Conditional
-- =if condition then-form else-forms...= ::
-- =when condition then-forms...= ::
-- =unless condition forms...= ::
-- =cond clause...= :: the clause must be a list: =(condition body-forms...)=.
-  It is not exactly the "case" statement, because the condition is evaluted to true or false.
-  Any remaining forms are /ignored/.
-- =pcase EXP BRANCH1 BRANCH2 BRANCH3...= :: this is more like the "case" statement. The EXP is first evaluted and compare with the car of each branches.
-  The branch must be of the form =(UPATTERN BODY-FORMS...)=.
+=if=, =when=, =unless=, =not=, =and=, =or= are common.
 
-*** logical computation
-- =not=
-- =and=
-- =or=
+=cond= takes the following form
+#+begin_example
+(cond (condition body ...) ...)
+#+end_example
 
-** Loop
-- =while condition forms...= ::
-- =dolist (var list [result]) body...= :: execute body for each element of list, with the bound of var to the current element and result for return.
-- =dotimes (var count [result]) body...= :: execute body for each index of =[0,count)=, with var bound to the index, and result bound for return.
+=pcase= takes
+#+begin_example
+(pcase exp (pat code ...) ...)
+#+end_example
 
+Loops takes follows. There's no mention what is the return of
+while. =dolist= does return the value of result, defaults to
+nil. =dotimes= bind var to =[0,count)=.
+
+#+begin_example
+(while condition forms ...)
+(dolist (var list [result]) body ...)
+(dotimes (var count [result]) body ...)
+#+end_example
 
 
 * Packages
