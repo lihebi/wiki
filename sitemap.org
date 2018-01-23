@@ -106,6 +106,7 @@
 - [[file:signal.org][Unix Signal Handling]]
 - [[file:code-surfer.org][Usage of Code Surfer]]
 - [[file:vpn.org][VPN]]
+- [[file:README.org][Wiki Repo]]
 - [[file:windows.org][Windows]]
 - [[file:wood.org][Wood Working]]
 - [[file:x11.org][X11]]
