@@ -1,5 +1,190 @@
 #+TITLE: Git
 
+* Server
+
+There are several protocols. The smart HTTP protocol seems to be the
+way to go, because it supports both anonymous and authentication.
+
+But local and SSH is easy. For local, you can just clone using the
+=/abs/path/to/file= as URL. For ssh, use
+=user@server:/path/to/proj.git=.
+
+Now let me talk about setting up smart HTTP with lighttpd and cgit.
+
+in =/etc/lighttpd/lighttpd.conf=
+
+#+begin_example conf
+server.port             = 80
+server.username         = "http"
+server.groupname        = "http"
+
+server.document-root    = "/srv/http"
+
+server.modules += ( "mod_auth", "mod_cgi", "mod_alias", "mod_setenv" )
+
+alias.url += ( "/git" => "/usr/lib/git-core/git-http-backend" )
+$HTTP["url"] =~ "^/git" {
+  cgi.assign = ("" => "")
+  setenv.add-environment = (
+  "GIT_PROJECT_ROOT" => "/srv/git",
+  "GIT_HTTP_EXPORT_ALL" => ""
+  )
+}
+$HTTP["querystring"] =~ "service=git-receive-pack" {
+        include "git-auth.conf"
+}
+$HTTP["url"] =~ "^/git/.*/git-receive-pack$" {
+        include "git-auth.conf"
+}
+
+# alias.url += ( "/cgit" => "/usr/share/webapps/cgit/cgit.cgi" )                                           
+# alias.url += ( "/cgit" => "/usr/lib/cgit/cgit.cgi" )                                                     
+url.redirect += ("^/$" => "/cgit/")
+$HTTP["url"] =~ "^/cgit" {
+    server.document-root = "/usr/share/webapps"
+    server.indexfiles = ("cgit.cgi")
+    cgi.assign = ("cgit.cgi" => "")
+    mimetype.assign = ( ".css" => "text/css" )
+}
+#+end_example
+
+=/etc/lighttpd/git-auth.conf=
+
+#+begin_example
+auth.require = (
+        "/" => (
+                "method" => "basic",
+                "realm" => "Git Access",
+                "require" => "valid-user"
+               )
+)
+
+auth.backend = "plain"
+auth.backend.plain.userfile = "/etc/lighttpd-plain.user"
+#+end_example
+
+In =/etc/lighttpd-plain.user=
+#+begin_example
+hebi:myplainpassword
+#+end_example
+
+My =/etc/cgitrc=:
+#+begin_example
+#
+# cgit config
+#
+
+# css=/cgit.css
+# logo=/cgit.png
+
+# Following lines work with the above Apache config
+#css=/cgit-css/cgit.css
+#logo=/cgit-css/cgit.png
+
+# Following lines work with the above Lighttpd config
+css=/cgit/cgit.css
+logo=/cgit/cgit.png
+
+# if you do not want that webcrawler (like google) index your site
+robots=noindex, nofollow
+
+# if cgit messes up links, use a virtual-root. For example has cgit.example.org/ this value:
+# virtual-root=/cgit
+
+
+# Include some more info about example.com on the index page
+# root-readme=/var/www/htdocs/about.html
+root-readme=/srv/http/index.html
+
+#
+# List of repositories.
+# This list could be kept in a different file (e.g. '/etc/cgitrepos')
+# and included like this:
+#   include=/etc/cgitrepos
+#
+
+clone-url=http://git.lihebi.com/git/$CGIT_REPO_URL.git
+readme=:README.org
+readme=:README.md
+readme=:readme.md
+readme=:README.mkd
+readme=:readme.mkd
+readme=:README.rst
+readme=:readme.rst
+readme=:README.html
+readme=:readme.html
+readme=:README.htm                                                                             
+readme=:readme.htm                                                                             
+readme=:README.txt                                                                             
+readme=:readme.txt                                                                             
+readme=:README                                                                                 
+readme=:readme
+
+section=hebi
+
+repo.url=hebicc
+repo.path=/srv/git/hebicc.git
+repo.desc=Hebi CC
+
+repo.url=cgit/hebicc
+repo.path=/srv/git/hebicc.git
+repo.desc=Hebi CC
+
+repo.url=test
+repo.path=/srv/git/test.git
+repo.desc=Test
+
+repo.url=pdf
+repo.path=/srv/git/pdf.git
+repo.desc=pdf
+
+
+# The next repositories will be displayed under the 'extras' heading
+section=extras
+
+
+repo.url=baz
+repo.path=/pub/git/baz.git
+repo.desc=a set of extensions for bar users
+
+repo.url=wiz
+repo.path=/pub/git/wiz.git
+repo.desc=the wizard of foo
+
+
+repo.url=foo
+repo.path=/pub/git/foo.git
+repo.desc=the master foo repository
+repo.owner=fooman@example.com
+repo.readme=info/web/about.html
+
+# Add some mirrored repositories
+section=mirrors
+
+repo.url=git
+repo.path=/pub/git/git.git
+repo.desc=the dscm
+
+# For a non-bare repository
+# repo.url=MyOtherRepo
+# repo.path=/srv/git/MyOtherRepo/.git
+# repo.desc=That's my other git repository
+
+# scan-path=/srv/git/
+#+end_example
+
+The =/srv/git= must be of group =http=, and the group write mask must
+be set for push.
+
+
+I can clone via =http://git.lihebi.com/git/repo.git=. The cgit page is
+at =http://git.lihebi.com/cgit=.
+
+In practice, I cannot push a lot of pdf files, it seems to be the
+problem of lighttpd configuration for max body size, but haven't look
+into that yet. Cloning does not have such problem though.
+
+
 * Configuration
 
 #+BEGIN_EXAMPLE
