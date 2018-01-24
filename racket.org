@@ -1041,6 +1041,15 @@ To make a parameter, simply:
 (aaa) ; => 3
 #+END_SRC
 
+Parameters are often used by parameterize it in some content, instead
+of set directly.
+
+#+begin_example
+(parameterize ([param value-expr] ...)
+  body ...+)
+#+end_example
+
+
 Future (=racket/future=)
 - =future thunk=: return the future. It will not run, until touch it.
 - =touch f=: blockingly run the future f, and return the result. After
