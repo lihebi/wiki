@@ -1,10 +1,12 @@
 #+TITLE: Model Checking
 
+The book: cite:2004-Book-Huth-Logic
+
 * Kripke Structure (KS)
 ** syntax
 1. S: set of states
 2. T: transitions: \subsetof SxS
-   - /left total/: forall s, xists s', s,s' \in T. I.e. every state
+   - /left total/: forall s, exists s', s,s' \in T. I.e. every state
      has an outgoing edge.
 3. L: labeling function, e.g. busy, non-busy. S->P(AP): P: powerset,
    AP: set of propositions
