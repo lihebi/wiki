@@ -10,6 +10,121 @@
 - pict-lib pict: this one is pretty good, functional. It was in
   slideshow
 
+* pict-lib
+** Constructors
+- text
+- hline, vline
+- frame
+- ellipse, circle, filled-ellipse, disk
+- rectangle, filled-rectangle
+- rounded-rectangle
+- filled-rounded-rectangle
+- bitmap: read a bitmap image
+- arrow, arrowhead
+
+Use pin to create lines connecting picts
+- pin-line, pin-arrow-line, pin-arrows-line: add lines onto a pict. It
+  finds positions in the src and dst picts, and can set angle to
+  create curve
+
+
+*** More constructors
+- cloud
+- file-icon
+- standard-fish
+- jack-o-lantern
+- angel-wing
+- desktop-machine
+- thermometer
+- face, face*
+
+Balloon annotation
+
+- wrap-balloon
+- pin-wrap-balloon
+- pin-balloon
+- balloon
+- filled-flash
+- outline-flash
+
+code
+- typeset-code
+- code
+- define-code
+- code-align: align code with pict
+- codeblock-pict: a block of code, seems to respect #lang option
+  inside the code string, to decide lexer
+
+code parameters
+- current-code-font
+- current-code-tt
+- current-code-line-sep
+- current-comment-color
+- current-keyword-color
+- current-id-color
+- current-literal-color
+- current-const-color
+- current-base-color
+- current-reader-forms: this should be able to define language
+- current-keyword-list
+- current-const-list
+- current-literal-list
+- code-colorize-enabled
+- code-italic-underscore-enabled
+- code-scripts-enabled
+
+
+
+** Combiners
+- various of append
+  - syntax: v and h, then alignment
+  - vl, vc, vr, ht, htl, hc, hbl, hb
+  - v and h for vertical and horizontal
+  - t,b for top, bottom
+  - l,c,r for left, center, right
+- superimpose
+  - Syntax: horizontal alignment, vertical alignment
+  - lt,ltl,lc,lbl,lb,ct,ctl,cc,cbl,cb,rt,rtl,rc,rbl,rb
+  - l,c,r for left, center, and right
+  - t,b for top and bottom
+- pin
+  - pin-over
+  - pin-under
+- table
+** Adjusters
+- scale, scale-to-fit, scale/improve-new-text
+- rotate
+- ghost: does not draw (invisible), but use the size
+- cellophane: make is semi-transparent
+- clip, inset/clip
+- freeze: to bitmap
+
+The followings can be used to specify parameters
+- linewidth
+- linestyle
+- colorize
+- black-and-white
+** Bounding box
+- inset
+- clip-decent
+- lift-above-baseline
+- drop-below-ascent
+- baseless
+- refocus: focus on the top most sub-pict
+- panorama: enclose all sub-picts
+- use-last, use-last*
+
+** Pict finder
+- with -find suffix
+  - lt,ltl,lc,lbl,lb,ct,ctl,cc,cbl,cb,rt,rtl,rc,rbl,rb
+
+** Tree layout
+tree-layout creates a layout containing edges. The layout can be
+rendered to pict by
+- naive-layered (seems to be good)
+- binary-tidier
+- hv-alternating
+
 * graph
 This is a generic graphic library.  graph is defined through a generic
 interface =gen:graph=, supporting the following methods:
