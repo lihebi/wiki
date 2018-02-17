@@ -219,8 +219,8 @@ Style:
 %% after using courier, the font here will be much better
 \usepackage{listings}
 \usepackage{courier}
-\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
-
+\lstset{basicstyle=\footnotesize\ttfamily\bfseries,breaklines=true}
+\lstset{xleftmargin=0.4\linewidth}
 %% none, left
 \lstset{numbers=left, numberstyle=\tiny}
 \lstset{stringstyle=\ttfamily}
