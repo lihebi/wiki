@@ -61,3 +61,84 @@ In temporal logic, future starts from right now. So
   satisfy, the before it on the path, phi_1 always holds.
   - iff $\forall \pi \in Path(s), \exists i \ge 0, \pi[i] \models
     \phi_2 \wedge \forall j < i, \pi[j] \models \phi_1$
+
+* NuSMV
+** Language
+A SMV model is specified by several modules, like functions. There
+must be one module named =main= without formals, and is executed by
+the interpreter.
+
+Module can takes formals, which are call-by-reference when
+instantiates with actual parameters. A module must be instantiated, in
+VAR declaration, to be reused. It is through using the module inside
+the type of variable. An optional =process= can be used here to
+specify asynchronous behavior. This is deprecated, and modeling of
+asynchronous will have to be resolved at a higher level. You can
+reference the components using dot notation, and the variable support
+very permissive forward declaration, you can use arbitrary dot
+notation as long as it is valid by some declaration in some time.
+
+Each module has several variable and defines. Variables are states. It
+is declared with its type, like
+- =boolean=
+- =1..5=: integers must be ranged
+- =array 2..5 of boolean=: array must be defined with the subscription
+  range as well as inside type
+- signed/unsigned word[3]: vector of bits (booleans).
+
+However, defines are macros, substituted when appear in
+expression. Thus it is real time, and can also refer to next
+expression in its definition.
+
+Each module also has a =ASSIGN= block for specifying changes. It can
+be either a =init= or =next= expression. Inside the assignment, the
+RHS will be either a value, or a set, which means LHS can be EITHER
+ONE inside the set. =next= cannot be nested, but next can be applied
+to an expression, which is syntax sugar for apply next for each
+variables inside the expression.
+
+Besides =case=, tenary operator =cond?expr:expr= can be used for
+simple conditions.
+
+FAIRNESS is used to restrict attention only to good execution paths,
+i.e. the good execution paths must be available in the future
+/infinitely often/.
+
+Finally, a SPEC can be given, using !, ->, &, |, EG, EX, EF, AG, AX,
+AF, EU, AU, etc.
+
+** Interactive Run
+Run interactively by =NuSMV -int=. The following commands are
+available.
+
+*** General
+- help
+- history
+- quit
+- reset
+- set [name] [value]
+- source <file>: execute sequences of commands from a file, separated
+  by semi-colon.
+
+*** Reading models
+- read_model -i [model-file]
+- show_vars: show variables and defines
+- write_order -o [order-file]
+- build_model
+- go: equivalent to read_model, flatten_hierarchy, encode_variables,
+  build_flat_model, build_model
+- process_model -i [model-file]: build model and check SPEC
+
+*** Model checking
+- compute_reachable
+- print_reachable_states
+- check_fsm
+- check_ctlspec -p "ctl-expr [IN context]"
+- check_ltlspec -p "ltl-expr [IN context]"
+
+- pick_state -i: interactively pick initial state
+- simulate
+- execute_traces
+- goto_state
+- print_current_state
+- show_traces
