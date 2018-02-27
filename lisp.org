@@ -58,3 +58,6 @@ cells.
   - the idea is that, the power of lisp comes the the minimal syntax
     of representing the code
 
+- Robert Strandh: what is wrong with lisp: http://metamodular.com/Essays/wrong.html
+- Kent Pitman on Genera vs. Emacs:
+  https://groups.google.com/forum/?hl=en#!topic/comp.lang.lisp/XpvUwF2xKbk%5B101-125%5D
