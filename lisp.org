@@ -6,6 +6,25 @@ There's a [[http://hyperpolyglot.org/lisp][page]] for corresponding APIs of comm
 emacs lisp.
 
 
+* Why Lisp?
+As Peter Norvig put in [[https://github.com/norvig/paip-lisp][Paradigms of Artificial Intelligence Programming]]
+
+- adapt the language to your prolem
+  - you can make DSL for your specific topic
+  - support whatever programming style by just defining some macros
+  - the basic and universal data structure: list
+- developing lisp is fast
+  - dynamic, define function during running
+  - REPL
+
+#+begin_quote
+There is a myth that Lisp is "special-purpose" languages, while
+languages like Pascal and C are "general purpose". Actually, just the
+reverse is true.
+#+end_quote
+
+
+
 * Lisp-1 vs. Lisp-2
 
 http://www.nhplace.com/kent/Papers/Technical-Issues.html
