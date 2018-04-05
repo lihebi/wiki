@@ -72,6 +72,28 @@ them, which in turn was named for its purpose, the construction of
 cells.
 #+END_QUOTE
 
+
+* The right thing vs. Worse is better [fn:1]
+These are two software design philosophies. The key different is:
+- The right thing: interface should be simple
+- Worse is better: implementation should be simple
+
+#+begin_quote
+The worse-is-better philosophy means that implementation simplicity
+has highest priority, which means Unix and C are easy to port on such
+machines.
+
+Unix and C are the ultimate computer viruses.
+
+The code will be portable because it is written on top of a virus.
+
+The good news is that in 1995 we will have a good operating system and
+programming language; the bad news is that they will be Unix and C++.
+#+end_quote
+
+
+[fn:1] http://www.dreamsongs.com/WIB.html
+
 * Reference
 - Ron Garret: Why Lisp: http://blog.rongarret.info/2015/05/why-lisp.html
   - the idea is that, the power of lisp comes the the minimal syntax
