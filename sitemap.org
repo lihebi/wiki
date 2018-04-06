@@ -138,3 +138,5 @@
   - [[file:recitation/recite-nov-28.org][Recitation Nov28]]
 - subdir
   - [[file:subdir/test.org][test]]
+- thinking
+  - [[file:thinking/README.org][Thinking Tmp]]
