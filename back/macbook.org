@@ -1,0 +1,214 @@
+#+TITLE: Macbook
+
+* Install Arch Linux on Macbook
+** UPDATE
+Stopped because I want to buy DPT-RP1 for paper reading. That thing
+does not work on Linux. I'm going to use the VNC through docker
+solution.
+** Reinstall OS X
+Although I can download image and burn to disk, I found the internet
+recovery is convenient.
+
+When booting, hold Cmd-Option-R, then erase the disk, and reinstall
+the latest Mac OS.
+
+| key                | desc                                                   |
+|--------------------+--------------------------------------------------------|
+| cmd-R              | reinstall the latest OS that was installed on this mac |
+| option-cmd-R       | upgrade to latest OS for this mac                      |
+| shift-option-cmd-R | reinstall the OS that comes with the mac               |
+
+** Partition
+It is recommanded to keep archlinux with OS X, because only OS X can
+install firmware updata, adjust start up sound, etc.
+
+Partition the disk on OS X.
+- run Disk Utility
+- select the drive, click partition
+- add new partition by pressing +. The partition will be reformated in
+  Arch, so type does not matter.
+
+Inside arch, run cgdisk, and delete the partition. When creating the
+first partition, add 128MiB gab by typing +128M when =cgdisk= asks for
+it.
+
+For simplicity, creating one partition is fine. The swap partition can
+be replaced by a swap file. Do not use LVM because
+- hard to set up right
+- need to load a module when booting, otherwise the =/dev/mapper/...=
+  address is not resolved.
+
+The mac EFI partition can be directly used. Thus you only need to
+create one partition for the root system. Mount the EFI partition and
+chroot will be just fine. The grub bootloader in arch will add files
+to the EFI partition, so next time you start your computer, arch will
+be default. Pressing =option= while booting can enter macOS.
+
+*** Install rEFInd
+rEFInd is used to give options to boot to macOS or linux.
+
+Download and run refind-install. The SIP must be disabled first. To do that:
+
+reboot and hold Cmd-R to enter recovery mode. Then open terminal from utility menu and type
+#+BEGIN_EXAMPLE
+csrutil disable
+#+END_EXAMPLE
+
+Reboot. To enable it, follow the same process with command:
+#+BEGIN_EXAMPLE
+csrutil enable
+#+END_EXAMPLE
+
+*** Wifi
+The wifi chipset of my 2013 late macbook pro is BCM4360. It is
+supported by =broadcam-wl= or =broadcam-wl-dksm= driver. The former is
+in AUR, need to recompile each time kernel is updated, thus do not use
+it. The later one is from official repo, and will get updated
+automatically.
+
+Load the module by =modprobe wl=.
+
+I'm using =wicd-client= to manage the wifi. You need the following packages:
+- =wpa_suppliant=
+- =wicd=
+- =wicd-gtk=
+
+Run =wicd-client= to configure (no need root). Make sure =dhcpcd= is
+NOT active, they conflict with each other.
+
+* Wifi on Debian
+
+** wireless driver for mac
+*** Debian Installation on mac:
+
+1. Use DVD because it has =dkms= package, used for Broadcam wireless chipset.
+2. Clean install Mac OS
+3. Reboot, Cmd-R to boot into recover, partition two more partitions for debian and swap.
+4. Use unetbootin to create Debian USB stick
+5. Install Debian normally, but use the pre-defined partition! Use
+   ext-4 and mount at =/=
+
+
+
+*** wireless
+- https://wiki.debian.org/MacBook/Wireless
+- https://wiki.debian.org/wl
+#+BEGIN_EXAMPLE
+iwconfig
+#+END_EXAMPLE
+
+if the wlan card shows up, it is good, otherwise:
+
+#+BEGIN_EXAMPLE
+update-pciids # if necessary; run as root, to update PCI database
+lspci | grep -E "Atheros|Broadcom" # Finds card
+#+END_EXAMPLE
+
+Note: for 4360, there're actually two chipsets: =14E4:4360= and =14E4:43A0=, the first one does not have a driver, the second one can use =wl= (broadcom-sta-dkms).
+To see which one (http://unix.stackexchange.com/questions/175810/how-to-install-broadcom-bcm4360-on-debian-on-macbook-pro):
+#+BEGIN_EXAMPLE
+lspci -vnn | grep -i net
+#+END_EXAMPLE
+
+
+My macbook shows BCM4360, I installed from outside:
+#+BEGIN_EXAMPLE
+b43-fwcutter
+dkms
+broadcom-sta-dkms
+#+END_EXAMPLE
+
+Install from USB stick needs:
+1. mount
+2. =apt-cdrom -m -d /path/to/mount add=
+   make sure the mount actually mounted, and the entries in =/etc/apt/sources.list= correct.
+   When installing, it is still needed to mount to =/media/cdrom=.
+
+After making the wireless working, put in the sources.list:
+#+BEGIN_EXAMPLE
+deb http://ftp.us.debian.org/debian jessie main
+deb-src http://ftp.us.debian.org/debian jessie main
+#+END_EXAMPLE
+
+Then run
+#+BEGIN_EXAMPLE
+modprobe -r b44 b43 b43legacy ssb brcmsmac bcma
+modprobe wl
+#+END_EXAMPLE
+
+Then, config wifi:
+make sure the =iwconfig= shows the card information (something with wlan0 xxx).
+
+At this point, just use =wicd= (available on DVD-2) and you will be fine.
+The following "manual interface" way is OK for IASTATE wifi because it does not require password, but for a WPA encrypted one, it does not work.
+In this case, =wpa_supplicant= is needed, but I didn't make it work.
+In a word, just use =wicd=.
+=wicd= is a daemon, install and start, make sure you only have =lo= loopback entry in =/etc/network/interfaces=.
+
+#+BEGIN_EXAMPLE
+apt-get install wicd
+systemctl restart wicd
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+ip a
+iwconfig
+ip link set wlan0 up
+# scan wifi
+iwlist scan
+#+END_EXAMPLE
+
+Add to =/etc/network/interfaces=: (see also =man interfaces=, =man wireless=)
+#+BEGIN_EXAMPLE
+# my wifi device
+auto wlan0
+iface wlan0 inet dhcp
+        wireless-essid [ESSID] (IASTATE)
+        wireless-mode [MODE] (Master)
+#+END_EXAMPLE
+
+finally, =ifup= and =ifdown= toggle the wifi.
+The =auto wlan0= in the config file will start it after boot.
+
+But =auto wlan0= will make the boot very slow, so use =allow-hotplug wlan0= instead. This will result in a fast boot, while also give you internet.
+But, after suspension, the network is dead unless =ifdown wlan0 && ifup wlan0=.
+
+
+
+Optionally, =NetworkManager= service can also be used. The package is =network-manager=, the front end is =network-manager-gnome=, but I didn't find a way to invoke it.
+
+
+*** Resume wireless after suspend
+
+http://askubuntu.com/questions/761180/wifi-doesnt-work-after-suspend-after-16-04-upgrade
+
+Originally the wifi does not work after suspension.
+I need to do
+#+BEGIN_EXAMPLE
+ifdown wlan0
+ifup wlan0
+#+END_EXAMPLE
+
+TODO Now I think this automatic approach might work:
+
+=/etc/systemd/system/wifi-resume.service=
+#+BEGIN_EXAMPLE
+#/etc/systemd/system/wifi-resume.service
+#sudo systemctl enable wifi-resume.service
+[Unit]
+Description=Restart networkmanager at resume
+After=suspend.target
+After=hibernate.target
+After=hybrid-sleep.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/systemctl restart network-manager.service
+
+[Install]
+WantedBy=suspend.target
+WantedBy=hibernate.target
+WantedBy=hybrid-sleep.target
+#+END_EXAMPLE
+
+

@@ -1,7 +1,5 @@
 #+TITLE: Debian Setup
 
-* Vanilla
-
 * Basic System
 ** The sources.list file, add:
    #+BEGIN_EXAMPLE
@@ -127,39 +125,3 @@ graphicsmagick
      6. (ql:quickload "clx-truetype")
      6. run (xft:cache-fonts) once
 
-** Add to sudo
-#+BEGIN_QUOTE
-usermod -aG sudo hebi
-#+END_QUOTE
-
-pull from git repository:
-- dothebi
-- emacs.d
-- info
-
-** default setting
-#+BEGIN_EXAMPLE
-update-alternative --config x-terminal-emulator
-update-alternative --config x-www-browser
-#+END_EXAMPLE
-
-** git setup
-#+BEGIN_EXAMPLE
-git config --global user.name "Hebi Li"
-git config --global user.email "lihebi.com@gmail.com"
-git config --global credential.helper cache
-git config --global push.default simple
-#+END_EXAMPLE
-
-
-** wallpaper setup
-#+BEGIN_EXAMPLE
-feh --bg-fill /path/to/wallpaper.suffix
-#+END_EXAMPLE
-
-** Other staff
-https://github.com/kiwanami/emacs-edbi
-You need to install the perl servers:
-#+BEGIN_EXAMPLE
-cpan RPC::EPC::Service DBI DBD::SQLite DBD::Pg DBD::mysql
-#+END_EXAMPLE
