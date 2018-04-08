@@ -1,6 +1,24 @@
 #+TITLE: C
 
-* Tmp
+* Function
+** Variable arguments
+include =stdarg.h=
+
+- type: =va_list=
+- macros
+  - va_start
+  - va_arg
+  - va_end
+  - va_copy
+
+#+begin_src c
+type va_arg(va_list ap, type);
+void va_copy(va_list dest, va_list src);
+void va_end(va_list ap);
+void va_start(va_list ap, parmN);
+#+end_src
+
+* Operations
 =~= yields one's complement of an integer, i.e. sets 1 to 0 and 0 to 1
 for all bits.
 
@@ -124,266 +142,391 @@ The common use-case is
 
 * Standard Libraries
 
-** DONE stdio.h
-- types:
-  - =size_t=
-  - FILE
+=stdio.h= defines basic input and output operations, including
+- File IO: fclose, fflush, fopen, freopen
+- Standard IO: printf, scanf, fprintf, fscanf
+- Character IO: fgetc, fgets, fputc, fputs
+- File RW: fread, fwrite, fgetpos, fseek, fsetpos, ftell, rewind
 
-Macro: =NULL=
+=stdlib.h=
+- Conversion: atof, atoi, atol, strtod, strtol
+- Random: rand, srand
+- Memory: calloc, free, malloc, realloc
+- other: abort, exit, getenv, system
+- arithmetic: abs, div
 
-#+begin_src haskell
-remoev :: String -> Int
-rename :: String -> String -> Int
-tmpfile :: () -> FILE
-tmpnam :: String -> String
-fclose :: FILE -> Int
-fflush :: FILE -> Int
-fopen :: String -> Mode -> FILE
-freopen :: String -> Mode -> FILE -> FILE
--- TODO setvbuf
-fprintf :: FILE -> FormatString -> Int
-fscanf :: FILE -> FormatString -> Int
-printf :: FormatString -> Int
-snprintf :: String -> Int -> FormatString -> Int
-sprintf ::  String -> FormatString -> Int
-sscanf :: String -> FormatString -> Int
+=ctype.h= mapping of characters, including isalpha, isblank, iscntrl,
+isdigit, isgraph, islower, isprint, ispunct, isspace, isupper,
+isxdigitl, tolower, toupper.
+
+=signal.h= provides =signal= and =raise=
+
+=math.h= provides
+- trigonometric functions: acos, asin, atan, atan2, cos, sin, tan, and
+  also
+- computation: exp, log, log10, hypot, pow, sqrt
+- scaling: ceil, floor, round, trunc
+
+=string.h=
+- Copy: memcpy, memmove, strcpy, strncpy, strcat, strncat
+- Compare: memcmp, strcmp, strncmp
+- Search: memchr, strchr, strrchr, strstr, strtok (tokenize)
+- Other: memset, strerror, strlen
+
+=time.h=: clock, difftime, mktime, time, asctime, ctime, gmtime,
+strftime
+
+=setjmp.h= defines the macro =setjmp=, type =jmp_buf=, function
+=longjmp=.
+
+** POSIX Headers
+- =dirent.h=: closedir, opendir, readdir, seekdir, telldir
+- =fcntl.h=: creat, fcntl, open, openat
+- =sys/stat.h=: chmod, fchmod, fstat, mkdir, mkfifo, mknod, stat, umask
+
+* Unix Programming
+
+** socket
+
+*** API
+
+~socket~
+
+#+begin_src C
+// domain: AF_INET(IPv4), AF_INET6(IPv6)
+// type: SOCK_STREAM, SOCK_DGRAM
+// protocol: end-to-end protocol. IPPROTO_TCP, IPPROTO_UDP
+int socket(int domain, int type, int protocol);
 #+end_src
 
-character IO
-fgetc :: FILE -> Int
-fgets :: String -> Int -> FILE -> String
-fputc :: Int -> FILE -> Int
-fputs :: String -> FILE -> Int
-getc :: 
-#+begin_src c
-int fgetc(FILE *stream);
-char *fgets(char *s, int n, FILE *stream);
-int fputc(int c, FILE *stream)
-int fputs (char *s, FILE *stream)
-int getc(FILE *stream)
-int getchar(void)
-char *gets(char *s)
-putc
-puts
-ungetc
+~inet_pton~
+
+#+begin_src C
+// src: "192.168.1.1"
+// dst: *数字
+inet_pton(int addressFamily, const char *src, void *dst);
 #+end_src
 
-- File
-  - fgetc
-  - fgets
-  - fputc
-  - fputs
-- stdin
-  - getc
-  - getchar
-  - gets
-  - putc
-  - putchar
-  - puts
-- Put Back
-  - ungetc
-- Low-level
-  - fread
-  - fwrite
-  - fgetpos
-  - fseek
-  - fsetpos
-  - ftell
-  - rewind
-  - clearerr
-  - feof
-  - ferror
-  - perror
-** ctype.h
-mapping of characters.
+~inet_ntop~
 
-#+begin_src haskell
-isalpha :: Int -> Bool
-isblank :: Int -> Bool
-iscntrl :: Int -> Bool
-isdigit :: Int -> Bool
-isgraph :: Int -> Bool
-islower :: Int -> Bool
-isprint :: Int -> Bool
-ispunct :: Int -> Bool
-isspace :: Int -> Bool
-isupper :: Int -> Bool
-isxdigit :: Int -> Bool
-tolower :: Int -> Int
-toupper :: Int -> Int
-#+end_src
-** signal.h
-
-#+begin_src haskell
-signal :: Int -> Func -> ()
-raise :: Int -> Int
-#+end_src
-** math.h
-First, trigonometric functions. The f-suffix is =float=, l-suffix is
-=long double=
-#+begin_src haskell
-acos :: Double -> Double
-asin :: Double -> Double
-atan :: Double -> Double
-atan2 :: Double -> Double -> Double
-cos :: Double -> Double
-sin :: Double -> Double
-tan :: Double -> Double
+#+begin_src C
+// 数字 => "192.168.1.1"
+// socklen_t: INET_ADDRSTRLEN IPv4可能最长的结果字符串（字节）
+const char *inet_ntop(int addressFamily, const void *src, char *dst, socklen_t dstBytes);
 #+end_src
 
-#+begin_src haskell
-exp :: Double -> Double
-log :: Double -> Double
-log10 :: Double -> Double
-hypot :: Double -> Double -> Double -- sqrt (x^2 + y^2)
-pow :: Double -> Double -> Double
-sqrt :: Double -> Double
-ceil :: Double -> Double
-floor :: Double -> Double
-round :: Double -> Double
-trunc :: Double -> Double
-#+end_src
-** stdlib.h
-- Conversion
-  - atof
-  - atoi, atol, atoll
-  - strtod, strtof, strtold
-  - strtol, strtoll, strtoul, strtoull
-- Random
-  - rand
-  - srand
-- Memory
-  - calloc
-  - free
-  - malloc
-  - realloc
-- other
-  - abort
-  - exit
-  - getenv
-  - system
-- arithmetic
-  - abs
-  - div
-** string.h
-- Copy
-  - memcpy
-  - memmove
-  - strcpy
-  - strncpy
-  - strcat
-  - strncat
-- Compare
-  - memcmp
-  - strcmp
-  - strcoll: seems to be strcmp with locale
-  - strncmp
-  - strxfrm: also some sort of strcmp
-- Search
-  - memchr
-  - strchr
-  - strrchr
-  - strstr
-  - strtok: tokenize
-- Other
-  - memset
-  - strerror
-  - strlen
-** time.h
+~htons~
 
-Types
-- clock_t
-- time_t
-- struct tm
-
-functions
-- clock
-- difftime
-- mktime
-- time
-- asctime
-- ctime
-- gmtime
-- strftime
-
-** Simple Ones
-*** assert.h
-Make the macro =assert= available.
-*** complex.h
-This works with complex arithmetic. Not interesting.
-
-*** errno.h
-Error reporting macros. Not interesting
-*** fenv.h
-For floating point environment. Not interesting.
-*** float.h
-Seems to contain nothing.
-*** inttypes.h
-It includes =stdint.h= and extend it. Not interesting
-*** iso646.h
-Macros for logical comparators. E.g. =and= for =&&=.
-*** limits.h
-Nothing interesting.
-*** locale.h
-Formatting of numerical values. Locale related. Not interesting.
-
-*** setjmp.h
-Defines the macro =setjmp=, type =jmp_buf=, function =longjmp=.
-
-*** stdarg.h
-Variable arguments.
-
-- type: =va_list=
-- macros
-  - va_start
-  - va_arg
-  - va_end
-  - va_copy
-
-#+begin_src c
-type va_arg(va_list ap, type);
-void va_copy(va_list dest, va_list src);
-void va_end(va_list ap);
-void va_start(va_list ap, parmN);
+#+begin_src C
+// convert hostshort from host byte order to network byte order.
+uint16_t htons(unit16_t hostshort);
 #+end_src
 
-*** stdbool.h
-macro =bool= expands to =_Bool=. Also defines =true= =false= as macros.
+~connect~
 
-*** stddef.h
-- macros: =NULL=
+#+begin_src C
+// foreignAddr: (struct sockaddr *)&[sockaddr_in]
+// addressLength: sizeof(struct sockaddr_in);
+int connect(int socket, const struct sockaddr *foreignAddress, socklen_t addressLength);
+#+end_src
 
-*** stdint.h
-Nothing
-*** tgmath.h
-Generic math. Nothing interesting.
+**** Server
 
-*** wchar.h
-Wide character. Nothing special.
-*** wctype.h
+~bind~
 
-* POSIX Headers
-** dirent.h
-type:
-- DIR
+#+begin_src C
+int bind(int socket, struct sockaddr *localAddress, socklen_t addressSize);
+#+end_src
 
-Function
-- closedir
-- opendir
-- readdir
-- seekdir
-- telldir
-** fcntl.h
-- creat
-- fcntl
-- open
-- openat
-** sys/stat.h
-- chmod
-- fchmod
-- fstat
-- mkdir
-- mkfifo
-- mknod
-- stat
-- umask
+~listen~
+
+#+begin_src C
+// 告诉TCP实现允许来自客户的连接
+// 调用之前，任何连接请求被无声拒绝
+int listen(int socket, int queueLimit);
+#+end_src
+
+~accept~
+
+#+begin_src C
+// 使套接字队列中的下一条连接出队。若队列空，则阻塞。
+int accept(int socket, struct sockaddr *clientAddress, socklen_t *addressLength);
+// 正确的使用方式：
+struct sockaddr_storage address;
+socklen_t addrLength = sizeof(address);
+int clntSock = accept(sock, &address, &addressLength);
+// 其中结构体定义如下
+struct sockaddr_storage {
+  sa_familiy_t
+  ... // Padding and fields to get correct length and allignment
+}; // 通用地址存储器
+#+end_src
+
+~send~
+
+#+begin_src C
+// 默认阻塞到发送了所有的数据为止。
+// 返回：发送的字节数
+// flags：改变默认行为。默认为0.
+ssize_t send(int socket, const void *msg, size_t msgLength, int flags);
+#+end_src
+
+~recv~
+
+#+begin_src C
+// 默认阻塞到至少传输了一些字节为止。
+// 返回：接受的字节数
+ssize_t recv(int socket, void *rcvBuffer, size_t bufferLength, int flags);
+#+end_src
+
+*** Code Snippets
+
+**** TCP client
+
+#+begin_src C
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h> // for memset
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h> // for IPPROTO_TCP
+#include <unistd.h> // for close. use `man close`
+#include <arpa/inet.h>
+
+#define BUFFER_SIZE 30
+
+int main() {
+
+  // 创建socket
+  int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  // 构造servAddr
+  char *servIP = "127.0.0.1";
+  in_port_t servPort = 8080;
+  struct sockaddr_in servAddr;
+  memset(&servAddr, 0, sizeof(servAddr));
+  servAddr.sin_family = AF_INET;
+  // IP地址格式转换
+  inet_pton(AF_INET, servIP, &servAddr.sin_addr.s_addr);
+  servAddr.sin_port = htons(servPort);
+
+  // 建立连接
+  connect(sock, (struct sockaddr *)&servAddr, sizeof(servAddr));
+
+  char str[] = "Hello";
+  size_t size = strlen(str);
+  // 发送数据
+  send(sock, str, size, 0);
+
+  char buffer[BUFFER_SIZE];
+  // 接收返回的数据，放到buffer里
+  recv(sock, buffer, BUFFER_SIZE-1, 0);
+
+  // 关闭socket
+  close(sock);
+
+}
+
+#+end_src
+
+**** TCP server
+
+#+begin_src C
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h> // for memset
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h> // for IPPROTO_TCP
+#include <unistd.h> // for close. use `man close`
+
+#define BUFSIZE 30
+
+void handle(int clntSock) {
+  char buffer[BUFSIZE];
+  // 从client端socket接收数据，存入buffer，返回接受长度。一次只收BUFSIZE个字节。
+  ssize_t numBytesRcvd = recv(clntSock, buffer, BUFSIZE, 0);
+  // 循环接收直到收完为止。
+  while(numBytesRcvd>0) {
+    // 将接收到的buffer，send到client端buffer
+    send(clntSock, buffer, numBytesRcvd, 0);
+    // 接着接收没收完的。
+    numBytesRcvd = recv(clntSock, buffer, BUFSIZE, 0);
+  }
+  // 关闭socket
+  close(clntSock);
+}
+
+int main(){
+  // 创建socket
+  int servSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  // 构造servAddr
+  in_port_t servPort = 8080;
+  struct sockaddr_in servAddr;
+  memset(&servAddr, 0, sizeof(servAddr));
+  servAddr.sin_family = AF_INET;
+  servAddr.sin_addr.s_addr = htonl(INADDR_ANY); // any incoming interface
+  servAddr.sin_port = htons(servPort);
+
+  // socket绑定到servAddr
+  bind(servSock, (struct sockaddr *)&servAddr, sizeof(servAddr));
+
+  // 监听socket
+  listen(servSock, 5);
+
+  for(;;) {
+    struct sockaddr_in clntAddr;
+    socklen_t clntAddrLen = sizeof(clntAddr);
+    // 接受socket来的请求，把来的socket存入clntSock
+    int clntSock = accept(servSock, (struct sockaddr *)&clntAddr, &clntAddrLen);
+    // 处理之
+    handle(clntSock);
+  }
+}
+#+end_src
+
+
+
+
+* Debugging
+
+** backtrace(3)
+
+#+BEGIN_SRC C
+#include <stdio.h>
+#include <execinfo.h>
+
+#include <stdlib.h>
+
+void handler(char *caller) {
+  void *array[10];
+  size_t size;
+  printf("Stack trace start for %s\n", caller);
+  size = backtrace(array, 10);
+  backtrace_symbols_fd(array, size, 2);
+  printf("Stack Trace End\n");
+}
+
+void car() {
+  handler("char()");
+  printf("continue");
+}
+
+void baz() {car();}
+void bar() { baz();}
+void foo() {bar();}
+
+int main(int argc, char **argv) {
+  foo();
+}
+#+END_SRC
+
+compile:
+#+BEGIN_EXAMPLE
+gcc -g -rdynamic a.c
+#+END_EXAMPLE
+
+Output:
+#+BEGIN_EXAMPLE
+Stack trace start for char()
+./b.out(handler+0x33)[0x400969]
+./b.out(car+0xe)[0x4009a2]
+./b.out(baz+0xe)[0x4009c1]
+./b.out(bar+0xe)[0x4009d1]
+./b.out(foo+0xe)[0x4009e1]
+./b.out(main+0x19)[0x4009fc]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf5)[0x7ffff7a52b45]
+./b.out[0x400869]
+Stack Trace End
+continue
+#+END_EXAMPLE
+
+** -finstrument-funcitons
+See gcc options.
+
+#+BEGIN_QUOTE
+Generate instrumentation calls for entry and exit to functions. Just after function entry and just before function exit, the following profiling functions are called with the address of the current function and its call site. (On some platforms, __builtin_return_address does not work beyond the current function, so the call site information may not be available to the profiling functions otherwise.)
+          void __cyg_profile_func_enter (void *this_fn,
+                                         void *call_site);
+          void __cyg_profile_func_exit  (void *this_fn,
+                                         void *call_site);
+#+END_QUOTE
+
+trace.c:
+#+BEGIN_SRC C
+#include <stdio.h>
+#include <time.h>
+
+static FILE *fp_trace;
+
+void __attribute__ ((constructor))
+trace_begin (void)
+{
+  fp_trace = fopen("trace.out", "w");
+}
+
+void __attribute__ ((destructor))
+trace_end (void)
+{
+  if (fp_trace != NULL) {
+    fclose(fp_trace);
+  }
+}
+
+void __cyg_profile_func_enter (void *func, void *caller) {
+  if (fp_trace != NULL) {
+    fprintf(fp_trace, "e %p %p %lu\n", func, caller, time(NULL));
+  }
+}
+
+void __cyg_profile_func_exit(void *func, void *caller) {
+  if (fp_trace != NULL) {
+    fprintf(fp_trace, "x %p %p %lu\n", func, caller, time(NULL));
+  }
+}
+#+END_SRC
+
+a.c:
+#+BEGIN_SRC C
+#include <stdio.h>
+#include <string.h>
+void foo() {
+  printf("foo\n");
+}
+int main() {
+  foo();
+}
+#+END_SRC
+
+Compile:
+#+BEGIN_EXAMPLE
+gcc -finstrument-functions -g -c -o a.o a.c
+gcc -c -o trace.o trace.c
+gcc a.o trace.o -o a.out
+./a.out
+#+END_EXAMPLE
+
+The =trace.out= will be generated:
+#+BEGIN_EXAMPLE
+e 0x4006c8 0x7ffff7a52b45 1470343711
+e 0x400696 0x4006e7 1470343711
+x 0x400696 0x4006e7 1470343711
+x 0x4006c8 0x7ffff7a52b45 1470343711
+#+END_EXAMPLE
+
+For those addrees:
+#+BEGIN_EXAMPLE
+nm a.out | grep 4006c8
+addr2line -f -e a.out 0x4006c8 | head -1 # function name
+addr2line -s -e a.out 0x4006c8 # filename:linum
+#+END_EXAMPLE
+
+** Callgrind
+
+#+BEGIN_EXAMPLE
+valgrind --tool=callgrind ./a.out
+#+END_EXAMPLE
+
+Open another terminal and callgrind_control -b to see the trace.
+The program must be running.
