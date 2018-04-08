@@ -1,0 +1,108 @@
+* Windows
+- Check CPU and GPU status and temperature: http://cpuid.com
+- Monitoring system status: MSI Afterburner
+
+
+The alfred for windows, open source!
+- wox
+
+They have plugins, for example the google translate plugin.
+But it is awkward to use: =tr en zh hello=
+
+** AutoHotKeys
+This is a scripting software on Windows.
+
+- Install autohotkey
+- right click and create a file =xxx.ahk=.
+- right click and run it
+
+To automatically run it at startup, put the shortcuts to them into the
+startup folder:
+
+#+BEGIN_EXAMPLE
+C:\Users\Hebi Li\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+#+END_EXAMPLE
+
+Creating shortcut is:
+1. Ctrl-C
+2. Paste shortcut
+
+
+** Sample scripts
+
+Natural scrolling
+#+BEGIN_SRC
+; Reverse Scrolling Script by How-To Geek
+
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+WheelUp::
+ Send {WheelDown}
+Return
+
+WheelDown::
+ Send {WheelUp}
+Return
+#+END_SRC
+
+
+Mapping from capslock to ctrl
+#+BEGIN_SRC 
+Capslock::Ctrl
+#+END_SRC
+
+Rotate.ahk:
+#+BEGIN_EXAMPLE
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+; #Warn  ; Enable warnings to assist with detecting common errors.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+; this is a comment
+; #n::Run Notepad
+
+; normal rotation
+#n::Run D:\tools\display.exe /rotate:0
+; portrait rotation
+#m::Run D:\tools\display.exe /rotate:90
+#+END_EXAMPLE
+
+
+** Wake Timer
+
+My computer wake up 10 secs after I asked it to sleep, and I want to
+know why.  Use this command:
+
+#+BEGIN_EXAMPLE
+powercfg -lastwake
+#+END_EXAMPLE
+
+The output shows the type of wakeup is /Wake Timer/ and source is
+=VBoxSVC.exe=.
+
+Solution: power setting -> advanced setting -> more advanced setting
+-> sleep -> allow wake timers -> disable
+
+
+** Partition Management
+When deleting recovery partition of the second hard disk, you cannot
+simply delete it. You need to search and open =diskpart=, then run
+
+#+BEGIN_EXAMPLE
+list partition
+select partition 1
+list volume
+list partition
+select partition 0
+delete partition
+#+END_EXAMPLE
+
+this might fail with "cannot delete a protected partition without the
+force protected parameter". Then you need:
+
+#+BEGIN_EXAMPLE
+delete partition override
+#+END_EXAMPLE
+
