@@ -1,8 +1,41 @@
-#+TITLE: SQL
+#+TITLE: Query Language
 
-SQL is VERY sensitive with the terminating colon!
+ 
+* XPath
+ * tag
+ * ~*~: all child elements
+ * ~.~: current node. Used mostly at the beginning of the path to indicate it is a relative path.
+ * ~//~: all subelements
+ * ~..~: parent element
+ * ~[@attr]~: have attribute
+ * ~[@attr='value']~
+ * ~[tag]~: select all elements that have a child named tag
+ * ~[position]~: position can be integer(1 is the first) or ~last()~ or ~last()-1~
 
-* Emacs Babels
+predicates(expressions with square brackets) must be preceded by a:
+
+ * tag name
+ * asterisk ~*~
+ * another predicate
+
+position predicate must be preceded by a tag name.
+
+or:
+
+#+begin_src text
+//tag1|//tag2/tag22
+#+end_src
+
+* CSV
+- fields/columns separated by the comma character
+- records/rows terminated by newlines.
+- header is optional, so special care is needed when importing.
+- Any field /may/ be quoted with double quotes.
+- Fields containing a /comma/ should be quoted by double quotes.
+
+* SQL
+
+** Emacs Babels
 There're two babels: =sqlite= and =sql=. The SQL babel works for a RDBMS like MySQL.
 But a file-based sqlite database is easier to use, so we talk about =sqlite= babel here.
 
@@ -43,8 +76,8 @@ insert into greeting values('Hello', 'world!');
 select * from greeting;
 #+END_SRC
 
-* Basic Statements
-** create & insert & delete
+** Basic Statements
+*** create & insert & delete
 #+BEGIN_SRC sqlite
   create table greeting(one varchar(10), two varchar(10));
   insert into greeting values('Hello', 'world!');
@@ -55,7 +88,7 @@ select * from greeting;
   delete from tablename; -- same as:
   delete * from tablename;
 #+END_SRC
-** select
+*** select
 #+BEGIN_SRC sqlite
   select * from tablename;
   select col1,col2 from tablename;
@@ -72,14 +105,14 @@ select * from greeting;
   select * from tablename limit 3;
 #+END_SRC
 
-** Aliasing
+*** Aliasing
 #+BEGIN_SRC sqlite
 SELECT o.OrderID, o.OrderDate, c.CustomerName
 FROM Customers AS c, Orders AS o
 WHERE c.CustomerName="Around the Horn" AND c.CustomerID=o.CustomerID;
 #+END_SRC
 
-* SQLite
+** SQLite
 This is a file-based database.
 There's no server, every read and write goes into the ordinary file.
 
@@ -92,7 +125,7 @@ Some useful ones:
 
 
 
-** C interface
+*** C interface
 
 - #include <sqlite3.h>
 

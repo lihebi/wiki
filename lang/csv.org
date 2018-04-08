@@ -1,7 +1,0 @@
-#+TITLE: CSV file
-
-- fields/columns separated by the comma character
-- records/rows terminated by newlines.
-- header is optional, so special care is needed when importing.
-- Any field /may/ be quoted with double quotes.
-- Fields containing a /comma/ should be quoted by double quotes.

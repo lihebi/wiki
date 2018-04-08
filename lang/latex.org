@@ -261,9 +261,6 @@ Style arbitrary content:
 
 
 
-** tikz
-see [[file:tikz.org][tikz]]
-
 ** ulem
 - uline :: regular underline
 - uuline :: double underline
@@ -285,6 +282,1024 @@ see [[file:tikz.org][tikz]]
 \todo[noline]{comment}
 \todo[inline]{inline comment}
 #+END_SRC
+
+
+* Tikz
+
+** Hacks
+When fitting figure, if you put text direclty into the fitted node, it
+will not be vertically centered. Instead, create a new node at the
+(node.center), and put text in it.
+
+** FAQ
+Use ~scale=0.5, transform shape~ to scale
+
+** Code Structure
+First, use the package
+#+BEGIN_SRC latex
+  \usepackage{tikz}
+#+END_SRC
+
+Then load libraries
+#+BEGIN_SRC latex
+  \usetikzlibrary{shapes.multipart}
+#+END_SRC
+
+Optionally some settings (TODO). Except =\tikzset= command, all other
+command should be put inside tikzpicture.
+#+BEGIN_SRC latex
+  \tikzset{>=latex}
+  \tikzset{grid/.style={gray,very thin,opacity=1}}
+#+END_SRC
+
+
+To start a tikzpicture, you start the ={tikzpicture}= environment. It
+is suitable to be put inside a ={figure}= env. This also means, if it
+is not put inside a figure, it can actually be used as an inline
+image. The baseline is the center of current line, and you can use
+=/tikz/baseline= option to lower or raise it. This option is evaluted
+at the end of drawing, thus have access to the node names defined. It
+can also access the outmost =current bounding box=.
+#+BEGIN_SRC latex
+  \begin{figure*}[ht]
+    \centering
+    \begin{tikzpicture}[options]
+    \end{tikzpicture}
+    \caption{}
+    \label{}
+  \end{figure*}
+#+END_SRC
+
+=\tikz= command; is the same as begin and end =tikzpicture=, and put
+command inside. At the end of this environment, tikz makes a guess
+about the bounding box, which is updated whenever it encounters a
+coordinate. This may be imprecise.
+
+Finally, the background is transparent. In order to set to something
+else, you need the =background= package.
+
+# The most common errors for tikz are:
+# - miss semicolon
+# - miss curly braces
+# - miss include tikz library
+** Parameters (options)
+The options are the same as using =\tikzset{options}=. Sometimes there
+needs not a value, and it is interpreted like this:
+- If key is a color, ~color=key~ is processed
+- if key contains a /dash/, ~arrows=key~ is processed
+- if key is a name of a shape, ~shape=key~ is processed.
+
+They are specified in =key=value= pairs.
+
+- =color=: a color can be the name (list TODO) or using xcolor
+  extension, (color1!30!color2), where color2 is optional.
+- =line width=. Expect a dimension. The following are /standalone/
+  options, specifying to line width
+  - =ultra thin=
+  - =very thin=
+  - =semithick=
+  - =thick=
+  - =very thick=
+  - =ultra thick=
+- Patterns
+  - =solid=
+  - =dotted=, =densely dotted=, =loosely dotted=
+  - =dashed=, =densely dashed=, =loosely dashed=
+  - =dash dot=, densely .., loosely ..
+  - =dash dot dot=, densely .., loosely ..
+  - =double=<core color>=
+  - =double distance=<dimension>=
+
+Path can be decorated, given =decorate= and
+~decoration=<name>~. Possible names:
+- =zigzag=
+
+
+*** Scope
+Parameters can have scope. It is introduced by ={scope}= invironment,
+taking the parameters as options,
+i.e. ~\begin{scope}[key=value]~. Scopes can be nested, and have
+lexcial scope. The top level ={tikzpicture}= env also acts like a
+scope.
+
+There's also a =every scope= option to install styless for every
+scope.
+
+The =scopes= package provide an easier way to specify scopes, using
+just ={[options] ...}=. This is pretty useful for inside-path
+scoping. One line scope command is also available as
+=\scoped[options]<path command>=.
+
+*** Styles
+Another way to group code together is to define a style. Like =help
+lines= style. Styles are defined as an option, e.g.
+#+BEGIN_EXAMPLE
+my style/.style={draw=red, fill=red!20}
+#+END_EXAMPLE
+The =.style= means "these keys should not be applied immediately, but
+rather a definition". Later reference to it is same as written the key
+values literally.
+
+There seems not to be a way to inherit a style, but rather, you can
+~.append style~. The appended style is added to the end, and the last
+style will win. There's also a ~.prefix style~ but not useful in this
+case. The content of style can be parameterized, by =#n= where n
+starts from 1. It seems that it will be replaced literally.
+
+#+BEGIN_SRC latex
+outline/.style={draw=#1, fill=#1!50},
+outline/.default=black
+#+END_SRC
+
+Note 2 things:
+1. the lexer is actually pretty good
+2. can use default value (s?)
+
+Use it as ~outline=blue~
+
+** Coordinates
+The general syntax is
+#+BEGIN_EXAMPLE
+([options] <coordinate spec>)
+#+END_EXAMPLE
+
+Options are optional, and coordinate spec can be any one of the
+system. The options includes
+- =xshift=3cm=
+- =shift=(x,y)=
+
+The Systems. /Inside/ each value, the arithmetic operations can be
+used. All numbers can accept the following unit (pt, cm, TODO), and if no unit
+is provided, it uses the coordinate system setting.
+
+- =(x,y)=: xy-corredinate
+- =(30:1cm)=: 1cm in the 30 degress direction.
+- =(x,y,z)=: 3d
+
+Node is also often used for specify a coordinate. The implicit way is
+- =(a)=
+- =(a.north)=
+- =(a.10)=: 10 degree angle
+*** Intersection
+
+Yet another way is to use /perpendicular/ coordinate system. This
+calculate the intersection.
+- =(2,1 |- 3,4)=: yield 2,4
+- =(3,4 -| 2,1)=
+
+A more general way to find intersection of two pathes is to use
+=intersections= library (TODO).
+
+*** Relative position
+- =++(x,y)=: You can also use relative position.  means shift to the
+  /last point/ used.
+- =+(x,y)=: similar to ++ but does not change the /last point/
+
+Note that the scoping will not localize the position, thus to make a
+local part "local", you can use the =/tikz/current point is local=
+option.
+
+*** calc
+The package =calc= provide calculation for coordinates. The general
+syntax is:
+#+BEGIN_EXAMPLE
+([options] $<coordinate computation$)
+#+END_EXAMPLE
+
+The coordinate computation is roughly
+#+BEGIN_EXAMPLE
+compute ::= A [+-] A [+-] A ...
+A ::= <factor>*<coordinate><modifiers>
+#+END_EXAMPLE
+
+Note that the <coordinate> must be surounded by =()=.  Modifiers can
+be:
+- partway modifier: =!number!angle:<second coordinate>=,
+  e.g. =(1,2)!.75!(3,4)=. angle: is optional
+- distance modifiers: =!dimension!angle:<second coordinate>=. This
+  differs with partway that it is a concrete distance (like 1cm)
+  instead of a percentage.
+- projection modifiers: =(a)!(b)!(c)= means draw a line between a-c,
+  and project b onto c, get the intersection point.
+
+** Path
+Path is a list of path operations. The coordinates can be =cycle=, literally.
+Before each operation, options can be given. The option will apply to
+ALL following path operations.
+- =rounded corners=
+- =sharp corners=
+- ~color=red~
+
+There's a style set point as =/tikz/every path=.
+
+Here are a list of all operations:
+- move-to: =(a)=
+- line-to:
+  - straight line: =-- (a)=
+  - horizontal and vertical line: =-|(a)= and =|-(a)=
+- curve-to: =..controls<c>and<d>..(a)=
+  - =and<d>= is optional.
+- rectangle: =rectangle (a)=
+- circle and ellipse =circle[<options>]=
+  - the options are mandary. Set a =radius=. If set =x radius= and =y
+    radius= differently, it will be a ellipse.
+- arc operation: =arc[<options>]=: TODO
+- grid operation: =grid[<options>](a)=: add a grid filling the
+  rectangle. Options include step, xstep, ystep. The typically used
+  style is =help lines=.
+#+BEGIN_EXAMPLE
+\draw [help lines] (0,0) grid (3,2)
+#+END_EXAMPLE
+- parabola TODO
+- sin/cos TODO
+- svg TODO
+- plot
+- to path operation: =to[<options>]<nodes>(a)=: nodes are the label
+  nodes, there's a =every to= style option to style it. Options
+  include =in= and =out= to set the degree of the in and out lines.
+- foreach operation
+  - =foreach<variables>[<options>] in {values} {<path commands>}=
+  - E.g. =foreach \x in {1,...,3} {--(\x,1) -- (\x,0)}= This is
+    weired.
+- let operation: seems to bind variable to coordinates.
+- scoping operation: ={}=
+- node and edge operation (Separate)
+- graph operation
+- pic operation
+
+** Actions (on path)
+*** Draw
+- =\draw=: =\draw= is an abbreviation for =\path[draw]=. It will draw
+  the entire path if this option appear /anywhere/ inside the
+  path. The ~draw=color~ will specify the color.
+- =\fill=: only for closed path. abbrev for =\path[fill]=. =\filldraw=
+  is abbrev for =\path[fill,draw]=.
+  - fill=<color>
+  - pattern=<name> TODO list of patterns
+    - dots
+    - bricks
+  - pattern color=<color>
+- =\shade=: similarly there're =\shade= and =\shadedraw=
+*** Clip
+- =\clip=: does NOT have =\clipdraw= because it seems not making
+  sense. If you want, use =\path[draw,clip]= explicitly
+
+clip can be nested, and the clipped area will be in effect for the
+subsequent path. Those path will not affect the picture size. The only
+way to end the clip is to close the scope. Thus scope is typically
+used to create local clip, and clip is typically the first path in a
+scope.
+
+*** Bounding box
+A path can be used as a bounding box. It can be used in two ways, make
+it smaller or bigger.
+
+Smaller
+#+BEGIN_EXAMPLE latex
+  Letf\begin{tikzpicture}
+  \draw[use as bounding box] (2,0) rectangle (3,1);
+  \draw (1,0) -- (4.75);
+  \end{tikzpicture}Right
+#+END_EXAMPLE
+
+The second draw will be out of the box of this picture, and strike
+through the text.
+
+Bigger
+#+BEGIN_EXAMPLE latex
+Left
+\begin{tikzpicture}
+\useasboundingbox (0,0) rectangle (3,1);
+\fill (0.75, .25) cicle (.5cm);
+\end{tikzpicture}
+Right
+#+END_EXAMPLE
+
+The bounding box is larger than the filled circle, so the text will be
+further apart.
+
+There's a node =current bounding box=, which has the shape of
+rectangle. For a single path, there's also a node called =current path
+bounding box=. The tikzpicture env also supports a =trim left= (which
+has a default of 0pt) and =trim right=. It will trim the bounding box,
+not the figure.
+
+** Arrow
+Use the library =arrows.meta=.
+
+Precoditions:
+- have specified =arrows= or its short form (it must have a /dash/)
+  (just put -> inside the path option)
+- the tips must be valid
+- [C] do not use clip
+- [C] the path is not closed
+
+Possible arrow specification (=startspec-endspec=) (arrows={xxx} is
+the full spec):
+- ->
+- >-Stealth: the first > actually change the tail of the arrow
+- -{Stealth[red]}: the red is applied to arrow tip. The option is
+  inside the brackets, and multiple options can be provided,
+  e.g. length, width, scale, scale length, scale width, color, fill,
+  line width, round, sharp
+
+*** TODO Bending and flexing
+*** TODO arrow tips
+
+** Node
+Nodes are intended for putting text. They cannot be easily nested.  A
+node is created by a path operation, similar to other path operations,
+but node is not part of the path itself. A node has a shape, drawing a
+node means draw the shape.
+
+The full syntax of the node:
+#+BEGIN_EXAMPLE
+node <foreach> [<options>] (<name>) at (<coordinate>) {<content>}
+#+END_EXAMPLE
+
+Everything between node and ={}= is optional, and the order does not
+matter except foreach. The node will be put at the current point,
+unless =at= presents. A node can have a name for future reference. It
+is given by ~name=<name>~ option, or by =node(name){text}=.
+
+
+*** Options
+Options are only applied to the node itself, possible options are:
+- =draw=
+- =fill=
+- =shape=rectangle=, =circle=, =ellipse=
+- =behind path=
+- =in front of path=
+- =inner sep=: set the following together
+  - =inner xsep=
+  - =inner ysep=
+- =outer sep=: set the following together
+  - =outer xsep=
+  - =outer ysep=
+- =minimum size=: set the following together
+  - =minimum height=
+  - =minimum width=
+*** Foreach
+Foreach works like this: the following creates three nodes.  You can
+also nest the loops.
+#+BEGIN_EXAMPLE
+\tikz \draw (0,0) node foreach \x in {1,2,3} at (\x,0) {\x};
+\tikz \draw (0,0) node foreach \x in {1,2,3} foreach \y in {1,2,3} at (\x,0) {\x};
+#+END_EXAMPLE
+
+*** Style
+The style hooks are =every node= and =every circle node=, =every
+rectangle node=, etc.
+
+The scope will not influence the lexical scope of the node names. Thus
+we can use another option =name prefix= and =name suffix= so that
+every node names inside the scope will be renamed under the hood.
+
+*** TODO Multi-part node
+*** Node Text
+Options
+- ~text=<color>~
+- ~node font=<font command>~
+- ~font=<font command>~: font command can be =\small=, etc.
+- =align=: set the alignment. This also enables multiple line text.
+  - =left=
+  - =flush left= (use hyphen to break words)
+  - =right=
+  - =flush right=
+  - =center=
+  - =flush center=
+  - =justify= (use variable spacing)
+  - =none=
+- =text width=
+- =text height=
+- =text depth=: seems useless
+
+*** Node Positioning
+It uses anchor. The default is the center of the node. Possible anchors
+- =north= =east= =south= =west=
+- =base=, =center=
+
+This is good enough, but the author thinks it is not intuitive enough,
+thus he came up with some suger:
+- =above=, =below=, =left=, =right=
+- =centered=
+
+**** TODO positioning
+For more advanced placement, there's a library called
+=positioning=. This package actually redefines the above, etc, thus
+loading this package will make the program behaves differently. The
+detail seems to be interesting.
+
+*** Fitting
+This fits the scenario that you want a box that is just big enough to
+hold something. You need to load the =fit= library.
+
+You create a node, give fit as an option with the value of several
+nodes.
+#+BEGIN_EXAMPLE
+\node[fit=(a) (b) (c)]
+#+END_EXAMPLE
+
+**** TODO how to get several boxes to hold several things, but those boxes are of same size and aligned?
+*** Place on a line
+These continue the node options
+- =pos=<fraction>=
+  - =midway=: same as pos=0.5
+  - =near start= 0.25
+  - =near end= 0.75
+  - =very near start= 0.125
+  - =very near end= 0.875
+  - =at start= 0
+  - =at end= 1
+- ~auto=<direction>~: direction can be =left=, =right=
+- =swap=: swap left and right. The short alias is ='=
+- =sloped=: the text will be aligned with the line or on the tangent
+  to the curve
+
+*** Label & Pin
+This is used to add a node of text /next to another node/.
+
+- ~label=[<options>]<angle>:<text>~
+  - the angle can be the following, if it is not specified, the value
+    of =label position= is used.
+    - a number as degree
+    - anchor like =north=
+    - =above=, =below=, =left=, =right=
+  - =absolute= is a style. It will change the meaning of angle
+  - =label distance=
+  - =every label=: a style placeholder
+
+- ~pin=[<options>]<angle>:<text>~: it is very similar to label, the only
+  difference is that it adds a line between the two nodes
+  - =pin distance=
+  - =every pin=
+  - =pin position=
+  - =every pin edge=
+  - =pin edge=
+
+The quotes syntax is very useful. It is in the library =quotes=. This
+must be placed /inside the option of a node/. The format is
+#+BEGIN_EXAMPLE
+"<text>"<options>
+#+END_EXAMPLE
+
+options don't need to be surrounded by curly braces, unless there's a
+comma in it (because the comma should mean the next option for the
+/node/). If the text has comma or colon, it MUST be surrounded by
+curly braces, like ="{hello, world}"=. This should be limitation of
+parser.
+
+- =quotes mean label=
+- =quotes mean pin=
+- =every label quotes=
+- =every pin quotes=
+- =node quotes mean=
+
+*** TODO 17.12 Edge and from here
+** Pic
+You can define some shape, and then reuse it at any place a node can
+appear. But the pic itself cannot be referenced. But the node inside
+pic can be referenced.
+
+You define a pic by
+#+BEGIN_EXAMPLE
+\tikzset {
+mypic/.pic = {
+\draw (-3mm, 0) to [bend left] (0,0) to [bend left] (3mm,0);
+}
+}
+#+END_EXAMPLE
+
+Reuse it by
+#+BEGIN_EXAMPLE
+\tikz \draw (1,1) -- (2,2) pic {mypic} -- (3,2) pic {mypic};
+#+END_EXAMPLE
+
+The pic syntax is
+#+BEGIN_EXAMPLE
+pic [<options>] {<pic type>}
+#+END_EXAMPLE
+
+You can also draw some inline pics. Note that you still need the curly
+brace, but leave it empty.
+#+BEGIN_EXAMPLE
+\tikz \pic [pics/code={\draw ...;}] {}
+#+END_EXAMPLE
+
+Pic can have actions, too, like
+- ~color=red~
+- =draw=
+- =fill=
+
+Finally, to style pic, you can use =every pic=. You can use quote
+syntax inside the option of pic, too.
+
+** Graph
+The graph system is syntax suger for nodes, for the sake of creating a
+lot of similar nodes. The =\graph= command is sure a DSL, /extending/
+the DOT syntax. To use it, load the =graphs= library.
+
+=graph= is actually a path command, and =\graph= is abbrev for =\path
+graph=. Thus it can be used anywhere on path that expect =--=. The
+styling hook is =every graph=. The syntax:
+
+#+BEGIN_EXAMPLE
+graph [<options>] <group spec>
+#+END_EXAMPLE
+
+Options can be:
+- ~nodes=<options>~: these options are applied to nodes, multiple
+  options require enclosing curly braces.
+- ~edges=<options>~: edge options
+- =edge=: alias for =edges=
+- ~edge node=<node spec>~: if this presents, it will cause a node to
+  be added implicitly to each edge, placed next to it. A node spec is
+  nothing special, just a =node [options] {text}=.
+- ~edge label=<text>~: abbrev for ~edge node=node[auto]{text}~
+- ~edge label'=<text>~: abbrev for ~edge node=node[auto,swap]{text}~
+
+*** Specs
+**** Group Spec
+#+BEGIN_EXAMPLE
+<group spec> ::= {[options] <chain spec> [,;] <chain spec> ...}
+<chain spec> ::= <node spec> <edge spec> <node spec> ...
+<edge spec> ::= [-> | -- | <- | <-> | -!-] [<options>]
+#+END_EXAMPLE
+
+Options will be local to the group.
+
+The chain spec are seperated by comma or semicolon, they are
+equivalent.  A chain is a list of nodes seperated by edge, where 5
+types of edge is availabe. The last one means no edge is desired, this
+is useful in =simple= graph. As opposite to =multi= graph, in =simple=
+graph there's only one edge (latter win) between two nodes. These are
+graph options.
+
+Foreach can be used inside a group spec at any place of a chain
+spec. Each of the iteration will create a chain spec, separated by
+comma. Macros can also be used here.
+
+#+BEGIN_EXAMPLE
+\foreach \i in {1,2,3} {
+  a\i -> {x_\i, y_\i}
+}
+#+END_EXAMPLE
+
+The edge spec options can be:
+- ~left anchor=<anchor>~: use =east=, =west=, etc. It is the anchor of
+  the source.
+- ~right anchor=<anchor>~
+
+**** Node Spec
+#+BEGIN_EXAMPLE
+<node spec> ::= <direct> | <reference> | <group spec>
+<direct> ::= <node name> / <text> [<options>]
+<reference> ::= (<node name> | <node set name>)
+#+END_EXAMPLE
+If the node starts with open paren, it is treated as a reference to a
+existing node or set. If it starts with open brace, it is a
+group. Otherwise it is a direct.
+
+For a direct node, if the node name contains special symbols, it must
+be quoted by double quotes. The slash and text is optional, in which
+case the /simple/ name is used (very likely to be the node
+name). Otherwise, the text is shown in the node.
+
+Typically if a node name is already created, it will use that. The
+behavior is controled by some group options.
+- ~use existing node=<true or false>~
+- ~fresh nodes=<true or false>~: all nodes are created, the repeated
+  nodes are named by appending a ='=. This new name can be used as
+  reference to this node.
+- ~number nodes=<start number=1>~: same as fresh nodes, but repeated
+  names are renamed by append a space and an increasing number.
+- ~name=<text>~: it is a prefix added to all nodes, separated by
+  space. Prefixes can be nested.
+
+The nodes also accept following options:
+- ~as=<text>~: use text as shown in the node
+- =empty nodes=: node text will be empty
+- =math nodes=: the node name used as text will be treated as math
+  (but without requiring the dollar sign) when shown.
+
+For a reference node, it is simple. But you can create a node set. The
+set must be created manually, before you can add nodes into the
+set. Create the set by the following option:
+- ~/tikz/new set=<set name>~: Create a set. unlike most of graph
+  options (which start from =/tikz/graphs=), this is under the root
+  tikz name. That means it is intended to be used outside the group
+  env.
+- ~/tikz/set=<set name>~: add the current node to the already defined
+  set
+
+Finally, the =<group spec>= in the syntax means that a group spec can
+appear at whatever places a node spec can be.
+
+
+*** Edge
+The edge option can accept quotes.
+
+- ~edge quotes=<options>~: abbrev for ~every edge quotes/.style~
+- =edge quotes center=: abbrev for setting ~edge quotes={anchor=center}~
+- =edge quotes mid=
+
+A good trick is to specify a graph structure first, and then specify
+the edges to be colored. The nodes will not be recreated.
+
+When connecting with groups, there're multiple edges. You can specify
+a single edge by add options to the node.
+- ~target edge style=<options>~: abbrev => options=
+- ~target edge clear~: abbrev =clear >=
+- ~target edge node=<node spec>~
+- ~source edge style=<options>~: abbrev =< options=
+- ~source edge clear~: abbrev =clear <=
+- ~source edge node=<node spec>~
+
+*** Coloring
+The color is logical color. Some predefined color including =source=
+and =target=. These are used by connecting groups. You can use =not
+source= and =not target= on some nodes to remove them from the list,
+thus they will not be connected. Another color class is =all= which
+reference to all nodes. You can also create classes, but I don't
+currently need this feature.
+
+When joining groups, you can use =complete bipartite= for the
+connecting edge option. This is called graph operator, the effect is
+to connect the each =source= and each =target=. Note that the =source=
+and =target= are the color classes of the nodes, used by =complete
+bipartite= by default. You can change it.
+
+E.g. create color class
+#+BEGIN_EXAMPLE
+color class=red, color class=green
+#+END_EXAMPLE
+
+Set the nodes to color class, and connect them.
+#+BEGIN_EXAMPLE
+{[red] a b c} -- [complete bipartite={red}{green}]
+{[green] d e f}
+#+END_EXAMPLE
+
+*** Node placement
+The idea of graph is to make the positioning automatic. Thus we have
+some algorithm to use.
+
+- grow up, down, left, right
+- branch up, down, left, right
+- grid placement
+
+We also have some positioning that takes the node size into
+consideration.
+- grow right/left/up/down sep
+- branch up/down/left/right sep
+
+We also have circular placement
+- clockwise
+- counterclockwise
+
+For the levels, we can give them styles at once.
+#+BEGIN_EXAMPLE
+level 1/.style={...}
+#+END_EXAMPLE
+
+# #+BEGIN_SRC latex
+# \graph [grow down, branch right] {
+#   root -> {left, right -> {child, child}}
+# };
+# #+END_SRC
+
+
+** Tree
+The node syntax can also be used to draw a tree. A node can be
+followed by any number of children, each introduced by keyword
+=child=. The children are also nodes, thus they can have children
+using the same syntax. Trees have a set of options (TODO).
+
+child must follow a full node, or another child. The syntax of child:
+#+BEGIN_EXAMPLE
+child ::= child [<options>] foreach <variables> in {<values>} {<child path>}
+#+END_EXAMPLE
+
+The foreach staff makes this seems complex, while it is not at
+all. Apart from child keyword, everything is optional, including the
+={<child path>}=, in which case an empty node is added. Foreach has a
+special keyword, and the repeatition will start from the preceeding
+child keyword, i.e. the whole thing shown above.
+
+The child path does not have a formal syntax, so allow me make
+one up
+
+#+BEGIN_EXAMPLE
+<child path> ::= <child> <child path> | <node spec>
+#+END_EXAMPLE
+
+Multiple children can be specified, in which case they are
+siblings. Each child should only have one node. Tikz will give a name
+for each children as <parent>-N where N starts from 1. This naming
+system is nested. The child can also be manually named, using (name),
+and this node will not have the automatic naming. However, the rest of
+the nodes will still have the same counting names, as if this node
+also counts.
+
+*** Styling
+Rules
+- option before root: apply to the whole tree
+- option after root: apply to root node only
+- option before child: apply to all children from here
+- option after child: apply to this child and its children
+- option after node: apply to this node only
+
+Some hooks
+- every child
+- every child node
+- level <number>
+
+*** Placement
+The following options can be specified multiple times for each portion
+of the tree.
+- level distance
+- sibling distance
+- grow=direction: direction can be a degree, or down,up,left,right;
+  north,east,etc.
+
+A special option for use after the =child= is =missing=. It will leave
+the space, but don't draw the node. A special styling of edge is to
+put =edge from parent[<options>]= right after a node, styling the
+coming edge.
+
+
+*** forest
+
+
+** Matrix
+Matrix is actually a node with =matrix= as option. The =\matrix= is
+abbrev for =\path node [matrix]=.
+
+A matrix consists of rows of cells. Inside each row, columns are
+seperated by =&=. Rows end with =\\=, even for the last one. Each cell
+picture is a light weight drawing canvas. It need not to be a node. It
+can be multiple nodes, a drawing path, etc.
+
+The alignment defaults to the origin of the cell picture, i.e. for
+both row and column, origin of the cell pictures are aligned. The
+origin /seems/ to be similar to the center of the node.  Eash node can
+have =left= and =right= option, to change the alignment.
+
+The separation of the rows and columns are controlled by ~column
+sep=<spacing list>~ and ~row sep=<spacing list>~, where spacing list
+is =1cm= or =1cm, between origin= or =1cm, between borders=. The =&=
+and =\\= can also take options, but only spacing list. This will
+specify the spacing for the next separation.
+
+*** Styling
+- ~every cell={<row>}{<column>}~: this is a style hook. The row and
+  column are optional.
+  - ~cells=<options>~: abbrev for ~every cell/.append style=<options>~
+  - ~nodes=<options>~: abbrev for ~every node/.append style=<options>~
+- ~column <number>~: style for the column
+  - =every odd column=
+  - =every even column=
+- =row <number>=: style for the row
+  - =every odd row=
+  - =every even row=
+- =row <number>  column <number>=: more specific
+
+*** Anchoring
+- ~matrix anchor=<anchor>~: this anchor will only apply to the matrix
+- ~anchor=<anchor>~: apply to both matrix and cells
+
+** Data Visualization
+Use the library =datavisualization=.
+
+The syntax:
+#+BEGIN_EXAMPLE
+\datavisualization[options] <data spec>;
+#+END_EXAMPLE
+
+This command must be inside tikzpicture env, and the prefix is
+=/tikz/data visulization=. Thus, the common tikz command like =red=
+cannot be used. You have another set of options to use.
+
+Options must have at least the following two components:
+- axis
+- visualizers
+
+=data spec= is similar to path, it contains sequence of keywords with
+their own parameters.
+
+Other commands include:
+- scope
+- info
+
+*** Axis system
+You can specify axis system manually, but typically just choose from
+one of the pre-defined systems.
+- scientific axes
+- school book axes
+
+#+BEGIN_SRC
+\datavisualization [
+  scientific axes,
+  all axis={grid},
+  x axis = {attribute=time, label, length=2.5cm, ticks=few},
+  y axix = {attribute=colname2, label={$x^2$}},
+  visualize as smooth line
+] data {
+  time, colname2
+  1,2
+  3,4
+}
+#+END_SRC
+
+ticks can be
+- few
+- some
+- many
+
+There are also absolute positioning and several positioning
+strategies. There are also styling options for ticks and grid.
+
+*** Provide data
+Use =data= command.
+
+#+BEGIN_EXAMPLE
+data [<option>] {<inline data>}
+#+END_EXAMPLE
+
+This command, used inside =data spec=, give data. The whole ~{<inline
+data>}~ is optional. If present, it is used. Otherwise, option specify
+the file to read, by ~read from file=<filename>~ option.
+
+#+BEGIN_EXAMPLE
+data {
+  x,y
+  1,1
+  2,2
+  ...
+}
+#+END_EXAMPLE
+
+
+#+BEGIN_EXAMPLE
+data point[<options>]
+#+END_EXAMPLE
+
+specify one single data point, options
+- x
+- y
+
+#+BEGIN_EXAMPLE
+data group [<options>] {<name>} = {<data spec>}
+data group [<options>] {<name>} += {<data spec>}
+data group [<options>] {<name>}
+#+END_EXAMPLE
+
+1. define a group of data points
+2. extend a group
+3. use a group
+
+This is for reuse some data points.
+
+*** Visualizers
+Specified in options.
+- visualize as smooth line
+- visualize as scatter
+
+You may use multiple visualizers. Then you want to use different
+colors, provide legends.
+
+Using these without parameter will use =line= and =scatter= as
+default set name.
+
+- visualize as line,
+- visualize as scatter
+- visualize as smooth line
+
+Use these to specify particular set name.
+#+BEGIN_EXAMPLE
+visualize as line=sin,
+visualize as line=cos
+#+END_EXAMPLE
+
+This also has a sugar syntax:
+#+BEGIN_EXAMPLE
+visualize as line/.list={sin, cos}
+#+END_EXAMPLE
+
+To specify which data belong to which visualizer, you have two ways.
+
+#+BEGIN_EXAMPLE
+data {
+  x,y,set
+  0,0,sin
+  1,1,cos
+}
+#+END_EXAMPLE
+
+Or
+#+BEGIN_EXAMPLE
+data [set=sin] {
+}
+data [set=cos] {
+}
+#+END_EXAMPLE
+
+The second one is obviously better in most cases.
+
+After defining the visualizer with different name, you can set style
+to it by just assign options to the name.
+
+#+BEGIN_EXAMPLE
+sin={<options>}
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+style={<style options>}
+#+END_EXAMPLE
+
+Style options:
+- red
+- densely dotted
+- mark=x
+
+Apart from style option, you also has legend option. Legend is
+actually automatically added.
+#+BEGIN_EXAMPLE
+legend={below, rows=2},
+sin={label in legend={text=$x^2$}},
+style sheet=strong colors
+#+END_EXAMPLE
+
+*** Style sheets & Legends
+style sheet values:
+
+Color
+- strong colors
+- vary hue
+- shades of blue
+- shades of red
+- gray scale
+
+Line
+- vary thickness
+- vary dashing
+
+Scatter
+- cross marks
+
+A very good idea is to put label or pin directly inside the graph, for
+that, for each visualizer defined, assign the =label in data= or =pin
+in data= with proper text and style.
+
+#+BEGIN_EXAMPLE
+sin={label in data={text=$x^2$, when=y is 1, text colored}}
+#+END_EXAMPLE
+
+It will place x^2 at the point of y=1, with the same color as the
+sin line.
+
+For =pin in data=, you have also =pin length= and =pin angle= options.
+
+Now back to legend placement, it can be (alias in parenthesis):
+- east outside (right)
+- north east outside
+- south east outside
+- west outside (left)
+- north west outside
+- south west outside
+- north outside (above)
+- south outside (below)
+
+Inside placement is also supported
+- south east inside
+- east inside
+- ...
+
+Can also relative to data points
+- right of=<data point>: e.g. right of={x=1,y=2}
+- above right of=<data point>
+- above of
+- above left of
+- left of
+- below left of
+- below of
+- below right of
+
+The text of legend can be styled as well.
+
+
+
+** TODO Packages
+*** shapes.multipart
+#+BEGIN_SRC latex
+\usetikzlibrary{shapes.multipart}
+#+END_SRC
+
+It adds to the node following options:
+#+BEGIN_EXAMPLE
+mynode/.style={split, rectangle split parts=2}
+#+END_EXAMPLE
+
 
 
 * Bibliography

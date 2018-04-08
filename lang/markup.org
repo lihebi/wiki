@@ -1,12 +1,15 @@
-#+TITLE: Org Mode
-#+TAGS: @work @home(h)
+#+TITLE: MarkUp Language
 
-* Structure
-** Drawer
+
+* Org Mode
+
+
+** Structure
+*** Drawer
 The heading can have a drawer, meaning it is hidden by default.
 Under a headline, use =:DRAWERNAME:= and =:END:= to denote the beginning and end.
 =C-c C-x d= also creates drawer easily. If region is active, move the region to a drawer.
-** Footnote
+*** Footnote
 Footnote can be of these format:
 - =[fn:1] some text=
 - =[fn:name]=
@@ -18,7 +21,7 @@ There should be two empty lines after the footnote definition.
 =C-c C-c= jump to definition or back to reference;
 =C-c '= :: edit the footnote in a seperate buffer.
 
-** Headings
+*** Headings
 - Moving around ::
   =C-c C-n= :: next heading
   =C-c C-p= :: previous heading
@@ -32,7 +35,7 @@ There should be two empty lines after the footnote definition.
   =M-h= marks current tree.
   It is very useful to narrow the subtree using =C-x n s= and widen it back by =C-x n w=.
 
-* Agenda
+** Agenda
 It is very convenient to use =org-capture= to quickly write down a
 task to a pre-specified org file, and return from this
 interruption. After that, use =org-refile= (=C-c C-w=) to organize the
@@ -76,7 +79,7 @@ file.
   You can still set deadline and schedule using the same binding.
   Clocking in and out becomes =I= and =O=, and cancel with =X=.
 
-* Tags
+** Tags
 Tags can be the variable name plus =@= is available.
 Every heading can have tags at the end of it. Use =:tag1:tag2:= syntax.
 Tags will be inherited by default for the subtrees.
@@ -98,7 +101,7 @@ Tags will be inherited by default for the subtrees.
 
 # ** search
 # - =C-c / m= :: construct sparse tree based on tag
-* Properties
+** Properties
 Similar to tags, we can also set the property, the key value pairs.
 It is inside the =PROPERTY= drawer. Each line is a property, where key is surrounded with =:=, and value after it.
 Property is not inherited by default.
@@ -122,8 +125,8 @@ Property is not inherited by default.
 # Search uses the same =C-c / m=.
 
 
-* Exporting
-** bibliography
+** Exporting
+*** bibliography
 Normally you only need:
 #+BEGIN_EXAMPLE
 bibliographystyle:plain
@@ -132,8 +135,8 @@ bibliography:/home/hebi/github/bibliography/hebi/tools.bib
 
 It remains to be seen how to put a set of default bib file instead of specifying this ugly file.
 
-** Latex Exporting
-*** doc class & options
+*** Latex Exporting
+**** doc class & options
 
  #+begin_example
  #+LATEX_CLASS: fse
@@ -143,7 +146,7 @@ It remains to be seen how to put a set of default bib file instead of specifying
  #+INCLUDE: "appendix.org" :minlevel 1
  #+end_example
 
-*** appendix
+**** appendix
  #+begin_example
  #+LaTeX: \appendix
 
@@ -153,13 +156,13 @@ It remains to be seen how to put a set of default bib file instead of specifying
  #+INCLUDE: "appendix-valgrind-exp.org" :minlevel 1
  #+end_example
 
-*** code listing
+**** code listing
 #+BEGIN_EXAMPLE
 #+ATTR_LATEX: :options frame=shadowbox
 #+END_EXAMPLE
 
 
-** Beamer
+*** Beamer
 The header setup:
 #+BEGIN_EXAMPLE
 #+STARTUP: beamer
@@ -187,12 +190,12 @@ The =***= will becomes block.
 These blocks can utilize the horizontal space.
 
 #+BEGIN_EXAMPLE
-*** Octave code						      :BMCOL:B_block:
+**** Octave code                                              :BMCOL:B_block:
     :PROPERTIES:
     :BEAMER_col: 0.45
     :BEAMER_env: block
     :END:
-*** The output						      :BMCOL:B_block:
+**** The output                                               :BMCOL:B_block:
     :PROPERTIES:
     :BEAMER_col: 0.4
     :BEAMER_env: block
@@ -201,13 +204,13 @@ These blocks can utilize the horizontal space.
 #+END_EXAMPLE
 
 
-* Table
+** Table
 #+begin_example org
 #+TBLFM: $4=$2/10
 #+TBLFM: $4=$2*100/$3
 #+TBLFM: $4=(round $4)
 #+end_example
-* Image
+** Image
 =[[./image]]=
 
 - org-toggle-inline-image
@@ -221,11 +224,222 @@ The width is defined by =org-image-actual-width=
 
 Use =#+ATTR_HTML: :width 300px= to set the html export size.
 
-* org-ref
-*** Commands
+** org-ref
+**** Commands
 - =C-c ]=: insert citation, typically with helm: =org-ref-helm-insert-cite-link=
 
-**** Navigation in the bib file
+***** Navigation in the bib file
 - =M-n= :: next entry
 - =M-p= :: previous entry
 
+
+* Markdown
+title
+#+begin_example
+# xxx ## xxx
+#+end_example
+
+cite
+#+begin_example
+> xxx
+#+end_example
+
+#+begin_example
+*italic* **bold**
+_italic_ __bld__
+#+end_example
+
+Image & link
+
+#+begin_example
+[link name](http://www.lihebi.com)
+![image name](http://xx.jpg)
+[link name][url]
+[url]: http://xxx.xxx
+#+end_example
+
+
+
+
+
+* UML
+
+** Plantuml
+
+*** Installation
+Set the path in =org-plantuml-jar-path= variable in emacs.
+=C-c C-c= to evaluate it, and =C-c C-x C-v= (=org-toggle-inline-image=) to show the image inline.
+
+The block line:
+#+BEGIN_EXAMPLE
+#+BEGIN_SRC plantuml :file wikitmp_plantuml.png :exports results
+#+END_EXAMPLE
+
+*** Class Diagram
+#+BEGIN_SRC plantuml :file wikitmp_class_diagram.png :exports both
+abstract class AbstractClass {
+  field
+  Method()
+  .. Seperators ..
+  #ProtectedField
+  ==
+  -PrivateMethod()
+  __
+  +PublicMethod()
+  ~PackagePrivateField
+  --
+  {static} StaticField
+  {abstract} AbstractMethod()
+}
+class Concrete
+class Single << (S,#FF7700) Singleton >>
+
+Single "A side note" <|-- "B side note" Concrete : extension
+AbstractClass --* Concrete : Composition,\nmultiline
+AbstractClass --o Single : Aggregation
+AbstractClass -- Single : just a line
+AbstractClass ..|> Single : dotted, with arrow >
+note left of AbstractClass : note left of A, can be\n<b>top,bottom,left,right</b>
+
+
+#+END_SRC
+
+*** Sequence Diagram
+Sequence Diagram is used to describe the communication of /participants/.
+The message can be sent to myself.
+
+#+BEGIN_SRC plantuml :file wikitmp_sequence.png :exports both
+title: Some Title
+'this is a comment
+participant Alice
+actor Bob
+database DB
+
+Alice -> Bob : label on arrow
+Alice <-- Bob : dotted arrow
+note right: a note
+
+== seperator ==
+Alice -[#red]> DB : red arrow
+...5 minutes later...
+Alice -[#0000ff]-> Cindy : the color #0000ff
+...
+Bob -> Cindy
+Bob -> Bob : self-messaging
+
+note left
+        multiple
+        line
+        note
+end note
+
+note left of Alice #cyan
+        multi-line
+        note
+        left of Alice,
+        in background cyan
+end note
+
+note left of Bob: Bob is an "actor"
+note left of DB: DB is a "database"
+note left of Cindy: Cindy is anonymous
+
+note over Alice: note over Alice
+#+END_SRC
+
+
+* Graphviz/Dot
+
+** Language
+A graphviz source start from either =graph= or =digraph=. In graph,
+you need to use =--= for edges, while in =digraph=, use =->= instead.
+An optional =strict= means there's no duplicated edges (previous will be
+removed).
+
+Statements are separated by semicolon. Typically there are node stmt,
+edge stmt, and subgraph to group statements.
+
+#+begin_example
+graph :: [strict] (graph | digraph) [ID] '{' stmt_list '}'
+subgraph :: [subgraph [ID] ] '{' stmt_list '}'
+#+end_example
+
+#+begin_example
+stmt_list :: stmt ';' stmt_list
+stmt :: node_stmt | edge_stmt | attr_stmt | ID '=' ID | subgraph
+#+end_example
+
+Attributes can be associated with node, edge, graph, subgraph, or
+cluster of subgraph. It is a list of key=value pairs. The =attr_stmt=
+is meant for setting style for the whole subgraph.
+#+begin_example
+attr_stmt :: (graph | node | edge) attr_list
+attr_list :: '[' (ID = ID) + ']'
+#+end_example
+
+If you only want to apply attr to node, you should write the node_stmt
+separately, otherwise it will be applied on the edges.
+#+begin_example
+edge_stmt :: (node_id | subgraph) (->|--) (node_id | subgraph) + [attr_list]
+node_stmt :: node_id [attr_list]
+#+end_example
+
+A subgraph is a cluster, if its name has prefix =cluster=.
+
+
+** Attributes
+- attribute: https://graphviz.gitlab.io/_pages/doc/info/attrs.html
+- Color names: https://graphviz.gitlab.io/_pages/doc/info/colors.html
+
+| name          | used by (NEC by default) | value |
+|---------------+--------------------------+-------|
+| color         |                          |       |
+| fillcolor     |                          |       |
+| fontcolor     |                          |       |
+| fontsize      |                          |       |
+| label         |                          |       |
+| labeldistance | E                        |       |
+| labelfontsize | E                        |       |
+| style         |                          |       |
+| shape         | N                        |       |
+
+common style:
+- solid
+- dashed
+- dotted
+- bold
+
+node style:
+- rounded
+- diagonals
+- filled
+- striped
+- wedged
+
+Edge style: just common style.
+
+Cluster style
+- rounded
+- filled
+- striped
+
+Node shape (some):
+- box
+- ellipse
+- oval
+- circle
+- diamond
+- plaintext
+
+
+** CMD
+#+begin_example sh
+dot -Tpng -o xxx.png xxx.dot
+# automatic generate output filename based on input name
+dot -Tpng -O xxx.dot
+#+end_example
+
+Popular output format:
+- png
+- pdf
+- svg

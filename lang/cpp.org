@@ -1658,6 +1658,587 @@ utils::split(std::string s, std::string delim) {
  istream& getline (istream& is, string& str); // new line
  #+end_src
 
+** STL
+
+** Functional
+
+*** hash
+=unordered_set= require to hash the items, but std::pair does not have a hash to apply.
+#+BEGIN_SRC C++
+  struct my_hash {
+    inline std::size_t operator() (const std::pair<int, int> &p) const {
+      std::hash<int> hasher;
+      return hasher(p.first) ^ hasher(p.second);
+    }
+  };
+  std::unordered_set<std::pair<int, int>, my_hash> s;
+#+END_SRC
+** Containers
+*** Comparison
+| container | time complexity                                     | iterator validity                               |
+| /         | <                                                   | <                                               |
+|-----------+-----------------------------------------------------+-------------------------------------------------|
+| ~vector~  | constant at beginning, linear in middle and end     | Memory allocate; Insert at beginning and middle |
+| ~deque~   | constant at beginning and end, linear in the middle | All insertions; Erase in middle.                |
+| ~set~     |                                                     | erase invalidates the element removed           |
+
+**** convert set to vector
+=std::copy= doesn't add elements to the container into which you are inserting: it can't; it only has an iterator into the container.
+Because of this, if you pass an output iterator directly to =std::copy=, you must make sure it points to a range that is at least large enough to hold the input range.
+
+=std::back_inserter= creates an output iterator that calls push_back on a container for each element, so each element is inserted into the container.
+Alternatively, you could have created a sufficient number of elements in the std::vector to hold the range being copied.
+#+BEGIN_SRC C++
+// method 1
+std::copy(input.begin(), input.end(), std::back_inserter(output));
+// method 2
+// note that std::copy will NOT allocate memory
+// so make sure the vector is large enough before copy
+std::vector<double> output(input.size());
+std::copy(input.begin(), input.end(), output.begin());
+// method 3
+std::vector<double> output(input.begin(), input.end()); 
+#+END_SRC
+
+reference: http://stackoverflow.com/questions/5034211/c-copy-set-to-vector
+
+*** vector
+Time complexity: constant time insertion or removal at the end, linear at the beginning or middle.
+
+Iterator invalidity: Memory will be allocated automatically, which, when happens, invalidates all iterators.
+Reserve() causes a reallocation manually.
+inserting or deleting an element in the middle of a vector invalidates all iterators that point to elements /following the insertion or deletion point/.
+
+The initiation of vector can have the following forms:
+#+begin_src C++
+// ONLY WITH C++11, compile with flag =-std=c++11=
+// 1
+vector<int> v {1,2,3};
+// 2
+int row,col;
+vector< vector<int> > heights(row, vector<int>(col));
+// 3
+char init[] = "1111";
+vector<char> v(init, end(init)-1); // remove '\0'
+#+end_src
+
+Reserve() causes a reallocation manually.
+The main reason for using reserve() is efficiency: if you know the capacity to which your vector must eventually grow,
+then it is usually more efficient to allocate that memory all at once rather than relying on the automatic reallocation scheme.
+The other reason for using reserve() is so that you can control the invalidation of iterators
+
+Do not use =vector<bool>=.
+It actually not store bool,
+but proxy object, as the design to save space.
+
+*** set
+Set has the important property that inserting a new element into a set does not invalidate iterators that point to existing elements.
+Erasing an element from a set also does not invalidate any iterators, except, of course, for iterators that actually point to the element that is being erased.
+
+**** unordered_set
+- Use hash, Constant complexity.
+- no specific order guarantee
+
+*** map
+The map is usually used as the following example:
+#+begin_src C++
+map<int,int> m;
+m[2]=3;
+m[3]=4;
+for(map<int,int>::iterator it=m.begin;it!=m.end();it++) {
+  it->first;
+  it->second;
+}
+#+end_src
+
+In a map, when using =[]= operator, the item will be inserted and init to default value for that type, e.g. 0 for a =int=.
+
+**** =multimap=
+=multimap= do not have =[]= operator!
+The following is an example for the usage of =multimap=:
+#+begin_src C++
+std::multimap<char,int> mymm;
+
+mymm.insert(std::pair<char,int>('a',10));
+mymm.insert(std::pair<char,int>('b',20));
+mymm.insert(std::pair<char,int>('b',30));
+mymm.insert(std::pair<char,int>('b',40));
+mymm.insert(std::make_pair('c',50));
+mymm.insert(std::pair<char,int>('c',60));
+mymm.insert(std::pair<char,int>('d',60));
+
+std::cout << "mymm contains:\n";
+for (char ch='a'; ch<='d'; ch++)
+{
+  std::pair <std::multimap<char,int>::iterator, std::multimap<char,int>::iterator> ret;
+  ret = mymm.equal_range(ch);
+  std::cout << ch << " =>";
+  for (std::multimap<char,int>::iterator it=ret.first; it!=ret.second; ++it) {
+    std::cout << ' ' << it->second;
+  }
+}
+
+// maybe it is helpful to just document some usage example
+multimap<int, int> mm;
+mm.emplace(3, 8); // using std::pair constructor
+for (auto elem : mm) {
+  mm.first; // 3
+  mm.second; // 8
+}
+auto range = mm.equal_range(3);
+for (auto it=mm.begin();it!=mm.end();++it) {
+  it->first; // 3
+  it->second; // 8
+}
+#+end_src
+
+**** unordered_map
+- Use hash, constant complexity
+- no specific order guarantee
+
+*** deque
+=deque= refers to /Double Ended Queue/.
+It differs from =vector= in the sense that the insertion at the front is constant time.
+Like =vector=, insertion in the end is constant, and insertion in the middle is =n=.
+
+Iterator Validity:
+ * Insert (including push_front and push_back) invalidates all iterators that refer to a deque.
+ * Erase in the middle of a deque invalidates all iterators that refer to the deque.
+ * Erase at the beginning or end of a deque (including pop_front and pop_back) invalidates an iterator only if it points to the erased element.
+
+*** pass to legacy API
+**** vector
+#+begin_src C++
+vector<int> v;
+void func(const int* pi, size_t num);
+// wrong, the size of v may be 0
+func(&v[0], v.size());
+if (!v.empty()) {
+  func(&v[0], v.size());
+}
+#+end_src
+
+do not use =v.begin()= instead of =&v[0]=, because:
+
+ * v.begin() is a iterator, not always a pointer
+ * =&*v.begin()= is same as =&v[0]=, but ...
+
+Note, the legacy API should not add/remove items,
+because no way for the container to know the size.
+
+**** String
+Only vectors are guarnteed to have the same underlying memory layout as arrays.
+String not.
+
+ * data for strings is not guaranteed to be stored in contiguous memory.
+ * is not guaranteed to be null terminated
+
+so put the data into a =vector<char>= first, and use vector trick.
+
+** Algorithms
+*** comparison function
+
+
+Always have comparison functions return false for equal values.
+
+#+begin_src C++
+set<int, less_equal<int> > s;
+s.insert(10);
+s.insert(10);
+#+end_src
+
+check equivalence:
+
+#+begin_src C++
+!(10A<=10B) && !(10B<=10A);
+!true && !true
+false
+#+end_src
+
+a easy-to-made error:
+
+#+begin_src C++
+bool operator()(const string* ps1, const string* ps2) onst {
+  return !(* ps1<* ps2); // always pay attention to negative
+}
+#+end_src
+
+
+
+
+*** Algorithm
+
+**** ~count~ & ~count_if~
+ #+begin_src C++
+ template< class InputIt, class T >
+ typename iterator_traits<InputIt>::difference_type
+ count(
+   InputIt first,
+   InputIt last,
+   const T &value
+ );
+ template< class InputIt, class UnaryPredicate >
+ typename iterator_traits<InputIt>::difference_type
+ count_if(
+   InputIt first,
+   InputIt last,
+   UnaryPredicate p
+ );
+ #+end_src
+
+**** ~std::find~
+
+ Returns an iterator to the first element in the range [first,last) that compares equal to val. If no such element is found, the function returns last.
+
+ #+begin_src C++
+ template<class InputIterator, class T>
+ InputIterator find (InputIterator first, InputIterator last, const T& val)
+ {
+   while (first!=last) {
+     if (*first==val) return first; //*
+     ++first;
+   }
+   return last;
+ }
+ #+end_src
+
+**** ~std::find_if~
+
+ Returns an iterator to the first element in the range [first,last) for which pred returns true. If no such element is found, the function returns last.
+
+ #+begin_src C++
+ template<class InputIterator, class UnaryPredicate>
+ InputIterator find_if (InputIterator first, InputIterator last, UnaryPredicate pred)
+ {
+   while (first!=last) {
+     if (pred(* first)) return first;
+     ++first;
+   }
+   return last;
+ }
+ #+end_src
+
+ for example
+
+ #+begin_src C++
+ template <typename T>
+ class is_greater_than
+ {
+ public:
+   is_greater_than (const T & n)
+   : value(n)
+ {}
+
+   bool operator() (const T & element) const
+ {
+   return element > value;
+ }
+
+ private:
+   T value;
+ };
+ #+end_src
+
+ use here:
+
+ #+begin_src C++
+ find_if (values.begin(), values.end(), is_greater_than<int> (5)) != values.end();
+ #+end_src
+
+**** for
+
+ #+begin_src C++
+ vector<int> v;
+ for (auto i : v) {
+   // do with i
+ }
+ #+end_src
+
+ here ~auto~ means ~vector<int>::value_type~.
+
+ is equal-valent to:
+
+ #+begin_src C++
+ vector<int> v;
+ for (std::vector<int>::const_iterator it=v.begin();it!=v.end();it++) {
+   auto i=*it; //*
+   // do with i
+ }
+ #+end_src
+
+**** ~std::for_each~
+
+ #+begin_src C++
+ void myfunction (int i) {  // function:
+   std::cout << ' ' << i;
+ }
+
+ struct myclass {           // function object type:
+   void operator() (int i) {std::cout << ' ' << i;}
+ } myobject;
+
+ std::vector<int> myvector;
+
+ for_each (myvector.begin(), myvector.end(), myfunction);
+ for_each (myvector.begin(), myvector.end(), myobject);
+ for_each (v.begin(),v.end(),[](int i) { cout<<i; });
+ #+end_src
+
+**** ~mem_fun~
+ #+begin_src C++
+ list<Widget*> lpw;
+ for_each(
+   lpw.begin(),
+   lpw.end(),
+   // because the test is the member function of Widget
+   // and we want to call it on all for_each item.
+   // If no mem_fun, it can not compile
+   mem_fun(&Widget::test)
+ );
+ #+end_src
+
+ TODO:
+
+  * ptr_fun
+  * mem_fun_ref
+
+**** ~std::move~
+ ~#include <utility>~
+
+ transfer ownership of the assets and properties of an object directly without having to copy them when the argument is an rvalue.
+
+ moved-from object is left in a valid but unspecified state
+
+ #+begin_src C++
+ std::string foo = "foo-string";
+ std::string bar = "bar-string";
+ std::vector<std::string> myvector;
+ myvector.push_back (foo);                    // copies. foo remain.
+ myvector.push_back (std::move(bar));         // moves. bar contain unspecified value.
+ #+end_src
+
+ #+begin_src C++
+ int main()
+ {
+   std::string str = "Hello";
+   std::vector<std::string> v;
+
+   // uses the push_back(const T&) overload, which means
+   // we'll incur the cost of copying str
+   v.push_back(str);
+   std::cout << "After copy, str is \"" << str << "\"\n";
+
+   // uses the rvalue reference push_back(T&&) overload,
+   // which means no strings will be copied; instead, the contents
+   // of str will be moved into the vector.  This is less
+   // expensive, but also means str might now be empty.
+   v.push_back(std::move(str));
+   std::cout << "After move, str is \"" << str << "\"\n";
+
+   std::cout << "The contents of the vector are \"" << v[0]
+   << "\", \"" << v[1] << "\"\n";
+
+   // string move assignment operator is often implemented as swap,
+   // in this case, the moved-from object is NOT empty
+   std::string str2 = "Good-bye";
+   std::cout << "Before move from str2, str2 = '" << str2 << "'\n";
+   v[0] = std::move(str2);
+   std::cout << "After move from str2, str2 = '" << str2 << "'\n";
+ }
+ #+end_src
+
+ Possible output:
+
+ #+begin_src text
+ After copy, str is "Hello"
+ After move, str is ""
+ The contents of the vector are "Hello", "Hello"
+ Before move from str2, str2 = 'Good-bye'
+ After move from str2, str2 = 'Hello'
+ #+end_src
+
+**** not1
+ #+begin_src C++
+ template< class Predicate >
+ std::unary_negate<Predicate> not1(const Predicate& pred);
+ template< class Predicate >
+ constexpr std::unary_negate<Predicate> not1(const Predicate& pred);
+ #+end_src
+
+ not1 is a helper function to create a function object that returns the complement of the unary predicate function passed.
+
+ example:
+
+ #+begin_src C++
+ struct LessThan7 : std::unary_function<int, bool>
+ {
+   bool operator()(int i) const { return i < 7; }
+ };
+ std::not1(LessThan7());
+ std::function<int(int)> less_than_9 = [](int x){ return x < 9; };
+ std::not1(less_than_9);
+ #+end_src
+
+**** reverse
+
+ #+begin_src C++
+ reverse(v.begin(), v.end());
+ #+end_src
+
+**** sort
+
+ Do not use ~qsort~ for some unknown reason..
+
+ faster to slower:
+
+ 1. partition
+ 2. stable_partition
+ 3. nth_element
+ 4. partial_sort
+ 5. sort
+ 6. stable_sort
+
+ stable means the order of equal element is guaranteed to maintain.
+
+***** ~partition~
+ The returned iterator is middle.
+ From first to middle, the predicate is true.
+ From middle to last, the predicate is false.
+
+ API:
+
+ #+begin_src C++
+ template< class BidirIt, class UnaryPredicate >
+ BidirIt partition(
+   BidirIt first,
+   BidirIt last,
+   UnaryPredicate p
+ );
+ template< class ForwardIt, class UnaryPredicate >
+ ForwardIt partition(
+   ForwardIt first,
+   ForwardIt last,
+   UnaryPredicate p
+ );
+ #+end_src
+
+
+***** ~nth_element~
+ The first n elements in the container are best, but not sorted.
+
+ API:
+
+ #+begin_src C++
+ template< class RandomIt >
+ void nth_element(
+   RandomIt first,
+   RandomIt nth,
+   RandomIt last
+ );
+ template< class RandomIt, class Compare >
+ void nth_element(
+   RandomIt first,
+   RandomIt nth,
+   RandomIt last,
+   Compare comp
+ );
+ #+end_src
+
+***** ~partial_sort~
+ The first n elements in the container are the best, and in order.
+
+ API:
+
+ #+begin_src C++
+ template< class RandomIt >
+ void partial_sort(
+   RandomIt first,
+   RandomIt middle,
+   RandomIt last
+ );
+ template< class RandomIt, class Compare >
+ void partial_sort(
+   RandomIt first,
+   RandomIt middle,
+   RandomIt last,
+   Compare comp
+ );
+ #+end_src
+
+ example:
+
+ #+begin_src C++
+ partial_sort(
+   v.begin(),
+   v.begin()+20,
+   v.end(),
+   compare
+ );
+ #+end_src
+
+**** transform
+
+ #+begin_src C++
+ template< class InputIt, class OutputIt, class UnaryOperation >
+ OutputIt transform(
+   InputIt first1,
+   InputIt last1,
+   OutputIt d_first,
+   UnaryOperation unary_op
+ );
+ template< class InputIt1, class InputIt2, class OutputIt, class BinaryOperation >
+ OutputIt transform(
+   InputIt1 first1,
+   InputIt1 last1,
+   InputIt2 first2,
+   OutputIt d_first,
+   BinaryOperation binary_op
+ );
+ #+end_src
+
+ ~std::transform~ applies the given function to a range and stores the result in another range, beginning at d_first.
+
+
+** Idioms
+*** erase-remove idiom
+To erase certain elements in a container, the =remove= and =remove_if= is provided in =<algorithm>=.
+Algorithms operate on a range of elements denoted by two forward iterators, they have no knowledge of the underlying container or collection.
+Thus, no elements are actually removed from the container.
+Rather, all elements which don't fit the remove criteria are brought together to the front of the range, in the same relative order.
+The remaining elements are left in a valid, but unspecified, state.
+So, after using =remove=, the =size()= of the container is unchanged.
+To actually remove those, it should be used together with the =erase()= member function of the container.
+
+When the =remove= function is done, remove returns an iterator pointing one element past the last unremoved element.
+So the erase is used as follows:
+
+#+BEGIN_SRC C++
+v.erase( std::remove( v.begin(), v.end(), 5 ), v.end() ); 
+#+END_SRC
+
+However, this is not the case for =map= and =set=.
+#+BEGIN_QUOTE
+In simple associative containers, where the elements are the keys, the elements are completely immutable;
+the nested types iterator and const_iterator are therefore the same.
+#+END_QUOTE
+That means the =iterator= and =const_iterator= are actually the same for =set= and =map=.
+The /erase-remove idiom/ cannot be used here.
+Rather, it should use the following loop:
+
+#+BEGIN_SRC C++
+  typedef std::set::iterator set_iter; 
+  for( set_iter it = s.begin(); it != s.end(); /* blank */ ) {
+    if( some_condition() ) {
+      // s.erase( it++ );       // Note the subtlety here
+      // I think this is better, erase return iterator to the next element
+      it = s.erase(it);
+    }
+    else {
+      ++it;
+    }
+   }
+#+END_SRC
+
 
 * Other
 ** Tips
@@ -2080,6 +2661,479 @@ reference to typeinfo for xxx.
 *** In c++ table, the =?:= is also in 14 cell
 
 * 3rd Party Library
+** Pugixml
+** load
+
+*** parse result
+
+#+begin_src C
+struct xml_parse_result {
+  xml_parse_status status;
+  ptrdiff_t offset;
+  xml_encoding encoding;
+
+  operator bool() const;
+  const char* description() const;
+};
+#+end_src
+
+xml_parse_status
+
+ * status_ok
+ * status_file_not_found
+ * ...
+
+*** parse options
+The usual bitwise arithmetics: `mask | flag` and `mask & ~flag`.
+
+ * parse_trim_pcdata: off. if the leading and trailing whitespace are to be removed.
+ * parse_ws_pcdata: off. if PCDATA nodes that consist only of whitespace are to be sustained.
+ * parse_minimal: all options turned off
+ * parse_default
+ * parse_full
+
+
+*** Load
+**** from file
+API:
+
+#+begin_src C
+xml_parse_result xml_document::load_file(
+  const char* path,
+  unsigned int options = parse_default,
+  xml_encoding encoding = encoding_auto
+);
+#+end_src
+
+example
+
+#+begin_src C
+pugi::xml_document doc;
+pugi::xml_parse_result result = doc.load_file("tree.xml");
+#+end_src
+
+**** from memory
+API:
+
+#+begin_src C
+// immutable buffer
+xml_parse_result xml_document::load_buffer(
+  const void* contents,
+  size_t size,
+  unsigned int options = parse_default,
+  xml_encoding = encoding_auto
+);
+// equivalent with call load_buffer with size strlen(contents)
+// null terminated string
+xml_parse_result xml_document::load_string(
+  const char_t* contents,
+  unsigned int options = parse_default
+);
+#+end_src
+
+examples:
+
+#+begin_src C
+const char source[] = "<hello>world</hello>";
+size_t size = sizeof(source);
+pugi::xml_parse_result result = doc.load_buffer(source, size);
+
+pugi::xml_parse_result result = doc.load_string("<hello>world</hello>");
+#+end_src
+
+**** from IO streams
+API:
+
+#+begin_src C
+xml_parse_result xml_document::load(
+  std::istream& stream,
+  unsigned int options = parse_default,
+  xml_encoding encoding = encoding_auto
+);
+#+end_src
+
+example:
+
+#+begin_src C
+std::ifstream stream("a.xml");
+pugi::xml_parse_result result = doc.load(stream);
+#+end_src
+
+** read
+
+if some node doesn't have name or value,
+the function will return "".
+
+node:
+
+#+begin_src C
+const char_t* xml_node::name() const;
+const char_t* xml_node::value() const;
+// value of the first child with type node_pcdata or node_cdata
+const char_t* xml_node::child_value() const;
+// wrapper for child(name).child_value()
+const char_t* xml_node::child_value(const char_t* name) const;
+#+end_src
+
+attr:
+
+#+begin_src C
+const char_t* xml_attribute::name() const;
+const char_t* xml_attribute::value() const;
+// as_xx
+int xml_attribute::as_int(int def = 0) const;
+unsigned int xml_attribute::as_uint(unsigned int def = 0) const;
+double xml_attribute::as_double(double def = 0) const;
+float ...
+bool ...
+long long ...
+unsigned long long ...
+#+end_src
+
+xml_text:
+
+#+begin_src C
+xml_text xml_node::text() const;
+xml_node xml_text::data() const;
+#+end_src
+
+if the node is `node_pcdata` or `node_cdata`, return the node's data.
+else, return the first child node of `node_pcdata` or `node_cdata`.
+
+API:
+
+#+begin_src C
+bool xml_text::empty() const;
+// equal to text.data().value()
+const char_t* xml_text::get() const;
+bool xml_text::set(const char_t* rhs);
+#+end_src
+
+as_xx:
+
+#+begin_src C
+const char_t* xml_text::as_string(const char_t* def = "") const;
+int xml_text::as_int(int def = 0) const;
+unsigned int xml_text::as_uint(unsigned int def = 0) const;
+double xml_text::as_double(double def = 0) const;
+float xml_text::as_float(float def = 0) const;
+bool xml_text::as_bool(bool def = false) const;
+long long xml_text::as_llong(long long def = 0) const;
+unsigned long long xml_text::as_ullong(unsigned long long def = 0) const;
+#+end_src
+
+#+begin_src C
+bool xml_text::set(int rhs);
+bool xml_text::set(unsigned int rhs);
+bool xml_text::set(double rhs);
+bool xml_text::set(float rhs);
+bool xml_text::set(bool rhs);
+bool xml_text::set(long long rhs);
+bool xml_text::set(unsigned long long rhs);
+xml_text& xml_text::operator=(const char_t* rhs);
+xml_text& xml_text::operator=(int rhs);
+xml_text& xml_text::operator=(unsigned int rhs);
+xml_text& xml_text::operator=(double rhs);
+xml_text& xml_text::operator=(float rhs);
+xml_text& xml_text::operator=(bool rhs);
+xml_text& xml_text::operator=(long long rhs);
+xml_text& xml_text::operator=(unsigned long long rhs);
+#+end_src
+** modify
+
+*** set
+#+begin_src C
+bool xml_node::set_name(const char_t* rhs);
+bool xml_node::set_value(const char_t* rhs);
+bool xml_attribute::set_name(const char_t* rhs);
+bool xml_attribute::set_value(const char_t* rhs);
+#+end_src
+
+attribute can use different type other than string:
+
+#+begin_src C
+bool xml_attribute::set_value(int rhs);
+bool xml_attribute::set_value(unsigned int rhs);
+bool xml_attribute::set_value(double rhs);
+bool xml_attribute::set_value(float rhs);
+bool xml_attribute::set_value(bool rhs);
+bool xml_attribute::set_value(long long rhs);
+bool xml_attribute::set_value(unsigned long long rhs);
+xml_attribute& xml_attribute::operator=(const char_t* rhs);
+xml_attribute& xml_attribute::operator=(int rhs);
+xml_attribute& xml_attribute::operator=(unsigned int rhs);
+xml_attribute& xml_attribute::operator=(double rhs);
+xml_attribute& xml_attribute::operator=(float rhs);
+xml_attribute& xml_attribute::operator=(bool rhs);
+xml_attribute& xml_attribute::operator=(long long rhs);
+xml_attribute& xml_attribute::operator=(unsigned long long rhs);
+#+end_src
+*** add/remove
+node:
+
+#+begin_src C
+xml_node xml_node::append_child(xml_node_type type = node_element);
+xml_node xml_node::prepend_child(xml_node_type type = node_element);
+xml_node xml_node::insert_child_after(xml_node_type type, const xml_node& node);
+xml_node xml_node::insert_child_before(xml_node_type type, const xml_node& node);
+// node_element with tagname name
+xml_node xml_node::append_child(const char_t* name);
+xml_node xml_node::prepend_child(const char_t* name);
+xml_node xml_node::insert_child_after(const char_t* name, const xml_node& node);
+xml_node xml_node::insert_child_before(const char_t* name, const xml_node& node);
+#+end_src
+
+attr:
+
+#+begin_src C
+xml_attribute xml_node::append_attribute(const char_t* name);
+xml_attribute xml_node::prepend_attribute(const char_t* name);
+xml_attribute xml_node::insert_attribute_after(const char_t* name, const xml_attribute& attr);
+xml_attribute xml_node::insert_attribute_before(const char_t* name, const xml_attribute& attr);
+#+end_src
+
+remove:
+
+#+begin_src C
+bool xml_node::remove_attribute(const xml_attribute& a);
+bool xml_node::remove_attribute(const char_t* name);
+bool xml_node::remove_child(const xml_node& n);
+bool xml_node::remove_child(const char_t* name);
+#+end_src
+
+example:
+
+#+begin_src C
+// delete all nodes with specified name
+while (node.remove_child("tool"));
+#+end_src
+
+more examples:
+
+#+BEGIN_SRC cpp
+node.append_attribute("type").set_value("1");
+node.append_child(pugi::node_pcdata).set_value("Content");
+#+END_SRC
+
+*** clone
+node:
+
+#+begin_src C
+xml_node xml_node::append_copy(const xml_node& proto);
+xml_node xml_node::prepend_copy(const xml_node& proto);
+xml_node xml_node::insert_copy_after(const xml_node& proto, const xml_node& node);
+xml_node xml_node::insert_copy_before(const xml_node& proto, const xml_node& node);
+#+end_src
+
+attr:
+
+#+begin_src C
+xml_attribute xml_node::append_copy(const xml_attribute& proto);
+xml_attribute xml_node::prepend_copy(const xml_attribute& proto);
+xml_attribute xml_node::insert_copy_after(
+  const xml_attribute& proto,
+  const xml_attribute& attr
+);
+xml_attribute xml_node::insert_copy_before(
+  const xml_attribute& proto,
+  const xml_attribute& attr
+);
+#+end_src
+
+*** move node
+copy the node and remove the origin.
+But this is expensive.
+The following API avoid that.
+
+#+begin_src C
+xml_node xml_node::append_move(const xml_node& moved);
+xml_node xml_node::prepend_move(const xml_node& moved);
+xml_node xml_node::insert_move_after(const xml_node& moved, const xml_node& node);
+xml_node xml_node::insert_move_before(const xml_node& moved, const xml_node& node);
+#+end_src
+
+
+** traversal
+
+node:
+
+#+begin_src C
+xml_node xml_node::parent() const;
+xml_node xml_node::first_child() const;
+xml_node xml_node::last_child() const;
+xml_node xml_node::next_sibling() const;
+xml_node xml_node::previous_sibling() const;
+xml_node xml_node::root() const;
+// tag name
+xml_node xml_node::child(const char_t* name) const;
+xml_node xml_node::next_sibling(const char_t* name) const;
+xml_node xml_node::previous_sibling(const char_t* name) const;
+// find by attr
+xml_node xml_node::find_child_by_attribute(
+  const char_t* name,
+  const char_t* attr_name,
+  const char_t* attr_value
+);
+xml_node xml_node::find_child_by_attribute(
+  const char_t* attr_name,
+  const char_t* attr_value
+);
+#+end_src
+
+attr:
+
+#+begin_src C
+xml_attribute xml_node::first_attribute() const;
+xml_attribute xml_node::last_attribute() const;
+xml_attribute xml_attribute::next_attribute() const;
+xml_attribute xml_attribute::previous_attribute() const;
+// tag name
+xml_attribute xml_node::attribute(const char_t* name) const;
+#+end_src
+
+Attributes do not have a link to their parent nodes because of memory consumption reasons.
+
+*** range based loop(C++11)
+#+begin_src C
+implementation-defined-type xml_node::children() const;
+implementation-defined-type xml_node::children(const char_t* name) const;
+implementaiton-defined-type xml_node::attributes() const;
+#+end_src
+
+example
+
+#+begin_src C
+for (pugi::xml_node tool : tools.children("Tool")) {
+  // ...
+}
+#+end_src
+
+*** iterators
+API:
+
+#+begin_src C
+class xml_node_iterator;
+class xml_attribute_iterator;
+
+typedef xml_node_iterator xml_node::iterator;
+iterator xml_node::begin() const;
+iterator xml_node::end() const;
+
+typedef xml_attribute_iterator xml_node::attribute_iterator;
+attribute_iterator xml_node::attributes_begin() const;
+attribute_iterator xml_node::attributes_end() const;
+#+end_src
+
+example
+
+#+begin_src C
+for (pugi::xml_node_iterator it=tools.begin();it!=tools.end();it++) {
+  // it->xxx
+}
+#+end_src
+
+*** xml_tree_walker
+API:
+
+#+begin_src C
+class xml_tree_walker {
+public:
+  virtual bool begin(xml_node& node);
+  virtual bool for_each(xml_node& node) = 0;
+  virtual bool end(xml_node& node);
+  int depth() const;
+};
+bool xml_node::traverse(xml_tree_walker& walker);
+#+end_src
+
+ * `begin` is called with root
+ * `for_each` is called for all nodes in Depth First Order, except root.
+ * `end` is called with root
+
+if `begin`, `end`, or any of `for_each` return false,
+the traversal terminates and return false.
+
+example
+
+#+begin_src C
+struct simple_walker : pugi::xml_tree_walker {
+  virtual bool for_each(pugi::xml_node& node) {
+    // node
+    return true; // continue
+  }
+};
+simple_walker walker;
+doc.traverse(walker);
+#+end_src
+
+*** simple path
+#+begin_src C
+string_t xml_node::path(char_t delimiter = '/') const;
+xml_node xml_node::first_element_by_path(
+  const char_t* path,
+  char_t delimiter = '/'
+);
+#+end_src
+
+path can be relative or absolute(start with delimiter).
+
+** xpath
+
+*** types
+`xpath_node` can be either a node or an attribute.
+
+#+begin_src C
+xml_node xpath_node::node() const;
+xml_attribute xpath_node::attribute() const;
+xml_node xpath_node::parent() const;
+#+end_src
+
+`xpath_node_set`
+
+#+begin_src C
+xpath_node xpath_node_set::first() const;
+const xpath_node& xpath_node_set::operator[](size_t index) const;
+size_t xpath_node_set::size() const;
+bool xpath_node_set::empty() const;
+#+end_src
+
+*** query
+#+begin_src C
+// equal to select_nodes().first()
+xpath_node xml_node::select_node(
+  const char_t* query,
+  xpath_variable_set* variables = 0
+) const;
+xpath_node_set xml_node::select_nodes(
+  const char_t* query,
+  xpath_variable_set* variables = 0
+) const;
+// precompiled version
+xpath_node xml_node::select_node(const xpath_query& query) const;
+xpath_node_set xml_node::select_nodes(const xpath_query& query) const;
+#+end_src
+
+**** precompiled query
+constructor:
+
+#+begin_src C
+explicit xpath_query::xpath_query(
+  const char_t* query,
+  xpath_variable_set* variables = 0
+);
+#+end_src
+
+API:
+
+#+begin_src C
+bool xpath_query::evaluate_boolean(const xpath_node& n) const;
+double xpath_query::evaluate_number(const xpath_node& n) const;
+string_t xpath_query::evaluate_string(const xpath_node& n) const;
+// equal to node.select_nodes()
+xpath_node_set xpath_query::evaluate_node_set(const xpath_node& n) const;
+// equal to node.select_node()
+xpath_node xpath_query::evaluate_node(const xpath_node& n) const;
+#+end_src
 
 ** RapidJson
 
