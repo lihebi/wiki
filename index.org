@@ -1,61 +1,58 @@
 #+TITLE: Hebi's Personal Wiki
 #+OPTIONS: toc:nil
 
-# #+BEGIN_QUOTE
-# the palest ink is better than the best memory.
-# #+END_QUOTE
 It makes no sense to go through the long research again when I forget
 something, so I created this wiki.
 
 * The Workbench
-# #+BEGIN_QUOTE
-# Sharpening your axe will not delay your job of cutting wood.
-# #+END_QUOTE
-
-It's ok to have something "just works", but it would be a sad story if
-it is something you extensively use. It might be because you are not
-aware of a better way, i.e. a cognition issue. Paul Graham had a /Blub
-Paradox/ [fn:above-the-average] about that.
 
 Although I would definitely go for it if the lisp machines are still
-available, a [[file:linux.org][Linux]] distribution also gets the job done. Since it is a
-/workbench/, you might want to consider [[file:archlinux.org][ArchLinux]] because of the
-rolling release. In my mind, all other distributions are for specific
-purpose, like servers [[file:centos.org][CentOS]], [[file:debian.org][Debian]] due that they are "stable"
-because they care so much about backward compatibility.
+available, a [[file:linux.org][Linux]] distribution also gets the job
+done. Since it is a /workbench/, you might want to consider
+[[file:archlinux.org][ArchLinux]] because of the rolling release. In
+my mind, all other distributions are for specific purpose, like
+servers [[file:centos.org][CentOS]], [[file:debian.org][Debian]] due
+that they are "stable" because they care so much about backward
+compatibility.
 
-The [[file:posix.org][POSIX]] standard is what makes linux and all versions of unix feel
-at home.  [[file:docker.org][docker]] creates machines to play with very cheaply.  
+The [[file:posix.org][POSIX]] standard is what makes linux and all
+versions of unix feel at home.  [[file:docker.org][docker]] creates
+machines to play with very cheaply.
 
-For software, I use [[file:stumpwm.org][StumpWM]] as my [[file:x11.org][X11]] window manager because it is the
-tiling one written in lisp. When connecting to remote server, use [[file:tmux.org][Tmux]]
-for session management. [[file:conkeror.org][conkeror]] used to be my default browser but I go
-back to chromium because the performance. I still hope to see (or
-make) a better emacs-integrated browser.
+For software, I use [[file:stumpwm.org][StumpWM]] as my
+[[file:x11.org][X11]] window manager because it is the tiling one
+written in lisp. When connecting to remote server, use
+[[file:tmux.org][Tmux]] for session
+management. [[file:conkeror.org][conkeror]] used to be my default
+browser but I go back to chromium because the performance. I still
+hope to see (or make) a better emacs-integrated browser.
 
-There seems to be less than 1% developers are using *[[file:emacs.org][Emacs]]*. Well,
-this is good, we want to way way way above the
-average [fn:above-the-average].
+There seems to be less than 1% developers are using
+*[[file:emacs.org][Emacs]]*. Well, this is good, we want to way way
+way above the average [fn:above-the-average].
 
 * Language
 
 If the workbench is something we work on, the language is the tool we
 are using. There is probably also less than 1% developers are using
-[[file:lisp.org][lisp]], well, the history from computing is only just more than half a
-century, there are plenty of time for people to realize they made a
-big mistake to deviate from the lost wisdom. The main lisp dialects
-are *[[file:common-lisp.org][Common Lisp]]* and scheme (*[[file:racket.org][Racket]]* is my favorite).  [[file:clojure.org][Clojure]] is
-based on JVM and the authors are advertising it a lot. [[file:prolog.org][Prolog]] is
-similar to lisp.
+[[file:lisp.org][lisp]], well, the history from computing is only just
+more than half a century, there are plenty of time for people to
+realize they made a big mistake to deviate from the lost wisdom. The
+main lisp dialects are *[[file:common-lisp.org][Common Lisp]]* and
+scheme (*[[file:racket.org][Racket]]* is my favorite).
+[[file:clojure.org][Clojure]] is based on JVM and the authors are
+advertising it a lot. [[file:prolog.org][Prolog]] is similar to lisp.
 
 
-*[[file:haskell.org][Haskell]]* completes the part of a properly typed language. [[file:ml.org][ML]] is
-strongly typed, impure, eager evaluation one.
+*[[file:haskell.org][Haskell]]* completes the part of a properly typed
+language. [[file:ml.org][ML]] is strongly typed, impure, eager
+evaluation one.
 
-It is beneficial for a 3rd langauge to be low level.  The legacy [[file:c.org][C]] is
-small and elegent. It is a good /start point/ if you want to learn
-serious compilers. C comes with [[file:c-lib.org][C standard library]]. C is tightly
-related to Unix features, for example [[file:signal.org][Signal Handling]] for C.
+It is beneficial for a 3rd langauge to be low level.  The legacy
+[[file:c.org][C]] is small and elegent. It is a good /start point/ if
+you want to learn serious compilers. C comes with [[file:c-lib.org][C
+standard library]]. C is tightly related to Unix features, for example
+[[file:signal.org][Signal Handling]] for C.
 
 Some newer languages can be interesting, but I haven't got time to
 look into yet. Of course there are tons of new languages coming up,
@@ -63,52 +60,68 @@ most of which is reinventing some small (and not so important) part of
 lisp. Those will not be documented for sure.  For system programming,
 a recent alternative to C is [[file:rust.org][Rust]].
 
-*That's it*, stop from here! That's all language you need. The following
-contents are just for a reference of old writings.
+*That's it*, stop from here! That's all language you need. The
+following contents are just for a reference of old writings.
 
-[[file:cpp.org][C++]] is the language that achieve a good balance between performance
-and morden features. It even continues to offer many fancy
-features. C++ has a lot of libraries.  [[file:stl.org][Standard Template Library(STL)]]
-defines containers and its algorithms.  The most functionalities not
-specified in the standard librareis can often be found in [[file:boost.org][Boost]].  Some
-[[file:cpp-lib.org][3rd-party C++ Libraries]] that is small enough to put into one page.
-[[file:pugixml.org][Pugixml]] is Data processing libraries for xml.  Use [[file:google-test.org][Google Test]] for
-unit testing.  Debugging using [[file:gdb.org][GDB]], of course. Here are some [[file:c-debug.org][C
-debugging techniques]]. [[file:unix.org][Unix Programming]] Interface. 
+[[file:cpp.org][C++]] is the language that achieve a good balance
+between performance and morden features. It even continues to offer
+many fancy features. C++ has a lot of libraries.
+[[file:stl.org][Standard Template Library(STL)]] defines containers
+and its algorithms.  The most functionalities not specified in the
+standard librareis can often be found in [[file:boost.org][Boost]].
+Some [[file:cpp-lib.org][3rd-party C++ Libraries]] that is small
+enough to put into one page.  [[file:pugixml.org][Pugixml]] is Data
+processing libraries for xml.  Use [[file:google-test.org][Google
+Test]] for unit testing.  Debugging using [[file:gdb.org][GDB]], of
+course. Here are some [[file:c-debug.org][C debugging
+techniques]]. [[file:unix.org][Unix Programming]] Interface.
 
 [[file:java.org][Java]] is dying for 20 years.
 
-Scripting. [[file:./shell.org][shell]] concept and all [[file:shell-utils.org][shell utilities]] is
-specified in POSIX standard.  [[file:awk.org][awk]] and [[file:sed.org][sed]] can make really elegent
-scripts for simple tasks.  [[file:regex.org][Regular Expression]] is very important in
-almost all unix scripting tasks. Moving to some more modern ones, I
-found [[file:python.org][python]] now is pretty easy to use thanks to the pretty complete
-[[file:python-std-lib.org][python standard libraries]] and it [[file:python-3rd-lib.org][python 3rd party libraries]], although
-I'm stronly against using the stupid indent as part of syntax.  [[file:r.org][R]] is
-very good at processing data, runs natively inside emacs.
+Scripting. [[file:./shell.org][shell]] concept and all
+[[file:shell-utils.org][shell utilities]] is specified in POSIX
+standard.  [[file:awk.org][awk]] and [[file:sed.org][sed]] can make
+really elegent scripts for simple tasks.  [[file:regex.org][Regular
+Expression]] is very important in almost all unix scripting
+tasks. Moving to some more modern ones, I found
+[[file:python.org][python]] now is pretty easy to use thanks to the
+pretty complete [[file:python-std-lib.org][python standard libraries]]
+and it [[file:python-3rd-lib.org][python 3rd party libraries]],
+although I'm stronly against using the stupid indent as part of
+syntax.  [[file:r.org][R]] is very good at processing data, runs
+natively inside emacs.
 
 * Architecture
 This section contains computer architecture (TODO), compiler
 infrustructure, as well as programming paradigms and design patterns.
 
-The area of [[file:compiler.org][compiler]] is interesting and pretty hard.  Some misc staff
-for real-world [[file:compiler-impl.org][compiler implementation]].  [[file:make.org][make]], [[file:cmake.org][cmake]], [[file:autoconf.org][autoconf]] makes
-the ecosystem of compilation.  Profiling of you code by [[file:gcov.org][gcov]],
-[[file:gprof.org][gprof]]. When building compiler tools for [[file:program-analysis.org][Program Analysis]], [[file:llvm.org][LLVM]] and
-[[file:clang.org][Clang]] toolchain can make it pretty easy.
+The area of [[file:compiler.org][compiler]] is interesting and pretty
+hard.  Some misc staff for real-world
+[[file:compiler-impl.org][compiler implementation]].
+[[file:make.org][make]], [[file:cmake.org][cmake]],
+[[file:autoconf.org][autoconf]] makes the ecosystem of compilation.
+Profiling of you code by [[file:gcov.org][gcov]],
+[[file:gprof.org][gprof]]. When building compiler tools for
+[[file:program-analysis.org][Program Analysis]],
+[[file:llvm.org][LLVM]] and [[file:clang.org][Clang]] toolchain can
+make it pretty easy.
 
-Faminilar with [[file:design-pattern.org][Design Pattern]] when coding, and this can be learned
-best by doing refactoring. [[file:git.org][git]] is a preferred VCS.
+Faminilar with [[file:design-pattern.org][Design Pattern]] when
+coding, and this can be learned best by doing
+refactoring. [[file:git.org][git]] is a preferred VCS.
 
 * Writing
-Writing documentation, [[file:latex.org][latex]] is fantastic. [[file:tikz.org][tikz]] provide the ultimate
-way to create academic figures.  [[file:markdown.org][markdown]] is not recommanded from
-me. Instead I use [[file:org.org][Org Mode]] extensively.  [[file:doxygen.org][Doxygen]] generates good
-documents and [[file:uml.org][UML]] figures using [[file:graphviz.org][Graphviz]].
+Writing documentation, [[file:latex.org][latex]] is
+fantastic. [[file:tikz.org][tikz]] provide the ultimate way to create
+academic figures.  [[file:markdown.org][markdown]] is not recommanded
+from me. Instead I use [[file:org.org][Org Mode]] extensively.
+[[file:doxygen.org][Doxygen]] generates good documents and
+[[file:uml.org][UML]] figures using [[file:graphviz.org][Graphviz]].
 
 * Misc
 Apart from building software, I also enjoy making hardware, including
-working on my [[file:miata.org][Miata]] and making some [[file:wood.org][wood]] stuff.
+working on my [[file:miata.org][Miata]] and making some
+[[file:wood.org][wood]] stuff.
 
 
 
