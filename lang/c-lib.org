@@ -1,4 +1,22 @@
 #+TITLE: C Library
+* random
+
+#+BEGIN_SRC C
+srand(time(0));
+
+int rand_int(int low, int high) {
+  assert(high >= low);
+  int a = rand();
+  return a % (high - low + 1) + low;
+}
+
+
+bool rand_bool() {
+  int a = utils::rand_int(1, 2);
+  if (a == 1) return true;
+  else return false;
+}
+#+END_SRC
 
 * math
 

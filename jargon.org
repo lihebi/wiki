@@ -5,3 +5,13 @@
 - ESR: Eric Steven Raymond
 
 - ELI5: explain like I'm 5
+
+* Marshalling vs Serialization
+Both of them convert an object to a data format suitable to read
+back. Serialization is a /subset/ of marshalling, i.e. any
+serializable object is also marshallable. Marshalling also records the
+code base, e.g. when reading back, the class definition of the object
+might need to be loaded.
+
+Marshalling seems to be used often in remote servers.
+

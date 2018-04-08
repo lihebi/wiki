@@ -1,5 +1,0 @@
-#+TITLE: BackUp
-** Speech synthesis, text-to-speech
-   http://www.ibm.com/watson/developercloud/doc/text-to-speech/
-   https://github.com/zenorocha/voice-elements
-   https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#tts-section

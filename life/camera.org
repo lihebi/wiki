@@ -1,0 +1,8 @@
+#+TITLE: Camera
+
+* camera
+- Card camera
+- Single lens reflex (SLR) camera :: start from 1990
+- digital single-lens reflex camera (digital SLR or DSLR) :: not mirrorless camera, start from 2000
+- mirrorless camera :: start from 2010, https://en.wikipedia.org/wiki/Mirrorless_interchangeable-lens_camera
+- Advanced Photo System type-C (APS-C) :: a sensor format, lens format
