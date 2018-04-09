@@ -1,0 +1,104 @@
+#+TITLE: Lisp Index Page
+
+This is the lisp index page, containing general staff for lisp.
+
+There's a [[http://hyperpolyglot.org/lisp][page]] for corresponding APIs of common lisp, racket, clojure,
+emacs lisp.
+
+
+* Why Lisp?
+As Peter Norvig put in [[https://github.com/norvig/paip-lisp][Paradigms of Artificial Intelligence Programming]]
+
+- adapt the language to your prolem
+  - you can make DSL for your specific topic
+  - support whatever programming style by just defining some macros
+  - the basic and universal data structure: list
+- developing lisp is fast
+  - dynamic, define function during running
+  - REPL
+
+#+begin_quote
+There is a myth that Lisp is "special-purpose" languages, while
+languages like Pascal and C are "general purpose". Actually, just the
+reverse is true.
+#+end_quote
+
+
+
+* Lisp-1 vs. Lisp-2
+
+http://www.nhplace.com/kent/Papers/Technical-Issues.html
+
+Lisp-1 has seperate namespace for functions and variables, while
+Lisp-2 only have one universal namespace.
+
+Lisp-1 includes Elisp, common lisp. All scheme are lisp-2.
+
+
+* fold & unfold
+
+#+begin_quote
+In academic functional programming literature, folds are often called
+catamorphisms, unfolds are often called anamorphisms, and the
+combinations of the two are often called hylomorphisms. They're
+interesting because any for-each loop can be represented as a
+catamorphism. To convert from a loop to a foldl, package up all
+mutable variables in the loop into a data structure (records work well
+for this, but you can also use an algebraic data type or a list). The
+initial state becomes the accumulator; the loop body becomes a
+function with the loop variables as its first argument and the
+iteration variable as its second; and the list becomes, well, the
+list. The result of the fold function is the new state of all the
+mutable variables.
+
+Similarly, every for-loop (without early exits) can be represented as
+a hylomorphism. The initialization, termination, and step conditions
+of a for-loop define an anamorphism that builds up a list of values
+for the iteration variable to take. Then, you can treat that as a
+for-each loop and use a catamorphism to break it down into whatever
+state you wish to modify.
+#+end_quote
+
+
+* Car & Cdr
+#+BEGIN_QUOTE
+The names CAR and CDR derive from the history of Lisp.  The original
+Lisp implementation ran on an IBM 704 computer which divided words into
+two parts, called the “address” part and the “decrement”; CAR was an
+instruction to extract the contents of the address part of a register,
+and CDR an instruction to extract the contents of the decrement.  By
+contrast, “cons cells” are named for the function ‘cons’ that creates
+them, which in turn was named for its purpose, the construction of
+cells.
+#+END_QUOTE
+
+
+* The right thing vs. Worse is better [fn:1]
+These are two software design philosophies. The key different is:
+- The right thing: interface should be simple
+- Worse is better: implementation should be simple
+
+#+begin_quote
+The worse-is-better philosophy means that implementation simplicity
+has highest priority, which means Unix and C are easy to port on such
+machines.
+
+Unix and C are the ultimate computer viruses.
+
+The code will be portable because it is written on top of a virus.
+
+The good news is that in 1995 we will have a good operating system and
+programming language; the bad news is that they will be Unix and C++.
+#+end_quote
+
+
+[fn:1] http://www.dreamsongs.com/WIB.html
+
+* Reference
+- Ron Garret: Why Lisp: http://blog.rongarret.info/2015/05/why-lisp.html
+  - the idea is that, the power of lisp comes the the minimal syntax
+    of representing the code
+
+- Robert Strandh: what is wrong with lisp: http://metamodular.com/Essays/wrong.html
+- Kent Pitman on Genera vs. Emacs:
+  https://groups.google.com/forum/?hl=en#!topic/comp.lang.lisp/XpvUwF2xKbk%5B101-125%5D

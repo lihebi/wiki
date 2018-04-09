@@ -1,0 +1,2011 @@
+#+TITLE: Linux
+
+* Installation
+On windows, you need =unetbootin=. On linux:
+
+#+BEGIN_EXAMPLE
+dd bs=4M if=/path/to/archlinux.iso of=/dev/sdx && sync
+# restore
+dd count=1 bs=512 if=/dev/zero of=/dev/sdx && sync
+#+END_EXAMPLE
+
+On Mac:
+#+BEGIN_EXAMPLE
+hdiutil convert -format UDRW -o ~/path/to/target.img ~/path/to/ubuntu.iso
+diskutil list, insert usb, diskutil list => /dev/disk1
+diskutil unmountDisk /dev/diskN
+sudo dd if=/path/to/downloaded.img of=/dev/rdiskN bs=1m
+diskutil eject /dev/diskN
+#+END_EXAMPLE
+
+Create MacOS LiveUSB
+#+BEGIN_EXAMPLE
+sudo /Applications/Install\ OS\ X\ Mavericks.app/Contents/Resources/createinstallmedia \
+--volume /Volumes/Untitled \
+--applicationpath /Applications/InstallXXX.app \
+--nointeraction
+#+END_EXAMPLE
+
+* Network
+When using docker container, host system cannot resolve the name of
+container to the specific IP. I have to specify it manually. To
+resolve a name to IP address, you can add it into
+=/etc/hosts=. E.g. at the end of the file, add:
+
+#+BEGIN_EXAMPLE
+172.18.0.2 srcml-server-container
+#+END_EXAMPLE
+
+In Arch, =ifconfig= is in =net-tools= package, and is deprecated. Use
+=ip= instead:
+
+#+begin_example
+ip addr show <dev>
+ip link # show links
+ip link show <dev>
+#+end_example
+
+** Wireless Networking
+
+*** General DHCPCD
+DHCP is not enabled by default. It is the philloshophy for Arch:
+installing a package will not enable any service. Enable it by;
+
+#+BEGIN_EXAMPLE
+systemctl enable dhcpcd
+#+END_EXAMPLE
+
+
+*** iw
+- iw dev: list dev
+- iw dev <interface> link: show status
+- ip link set <interface> up: up the interface
+- ip link show <interface>: if you see <UP> in the output, the interface is up
+- iw dev interface scan: scan for network
+- iw dev <interface> connect "SSID": connect to open network
+
+*** wpa_supplicant
+=iw= can only connect to public network. This is used to connect
+WPA2/WEP encrypted network.
+
+**** Configuration
+The config file (e.g. =/etc/wpa_supplicant/example.conf=) can be
+generated in two ways: using =wpa_cli= or =use wpa_passphrase=.
+=wpa_cli= is interactive, and has commands =scan=, =add_network=,
+=save_config=.
+
+#+begin_example
+wpa_passphrase MYSSID <passphrase> > /path/to/example.conf
+#+end_example
+
+Inside this file, there's a network section. The =ssid= is a quoted
+SSID name, while =psk= is unquoted encrypted phrase. The psk can also
+be quoted clear password.  If the network is open, you can use
+=key_mgmt=NONE= in place of =psk=
+
+**** Connect
+#+begin_example
+wpa_supplicant -B -i <interface> -c <(wpa_passphrase <MYSSID> <passphrase>)
+#+end_example
+connect to a WPA/WEP protected network
+- -b: fork into background
+- -i interface
+- -c: path to configuration file. 
+
+Alternatively, you can use the config file
+#+begin_example
+wpa_supplicant -B -i <interface> -c /path/to/example.conf
+#+end_example
+
+**** Obtain IP
+After this, you need to get IP address by the "usual" way, e.g.
+#+begin_example
+dhcpcd <interface>
+#+end_example
+
+It seems that we should enable the service:
+- wpa_supplicant@<interface>
+- dhcpcd@<interface>
+
+Also, dhcpcd has a hook that can launch wpa_supplicant implicitly.
+
+**** To Sum Up
+Find the interface by =iw dev=. Say it is =wlp4s0=.
+
+Create config file =/etc/wpa_supplicant/wpa_supplicant-wlp4s0.conf=:
+
+#+begin_example
+  network={
+          ssid="MYSSID"
+          psk="clear passwd"
+          psk=fjiewjilajdsf8345j38osfj
+  }
+
+  network={
+          ssid="2NDSSID"
+          key_mgmt=NONE
+  }
+#+end_example
+
+Enable =wpa_supplicant@wlp4s0= and =dhcpcd@wlp4s0= (or just =dhcpcd=)
+
+
+To change another wifi, kill the server and use another one
+#+begin_example
+sudo killall wpa_supplicant
+wpa_supplicant -B -i wlp4s0 -c /path/to/wifi.conf
+#+end_example
+
+
+
+** VPN
+*** L2tp, IPSec
+#+BEGIN_EXAMPLE
+apt-get purge "lxc-docker*"
+apt-get purge "docker.io*"
+apt-get update
+apt-get install apt-transport-https ca-certificates gnupg2
+sudo apt-key adv \
+       --keyserver hkp://ha.pool.sks-keyservers.net:80 \
+       --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+deb https://apt.dockerproject.org/repo debian-jessie main
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+apt-get update
+apt-cache policy docker-engine
+apt-get update
+apt-get install docker-engine
+service docker start
+docker run hello-world
+
+#+END_EXAMPLE
+
+https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/clients.md
+https://hub.docker.com/r/fcojean/l2tp-ipsec-vpn-server/
+
+#+BEGIN_EXAMPLE
+docker pull fcojean/l2tp-ipsec-vpn-server
+
+#+END_EXAMPLE
+
+vpn.env
+
+#+BEGIN_EXAMPLE
+VPN_IPSEC_PSK=<IPsec pre-shared key>
+VPN_USER_CREDENTIAL_LIST=[{"login":"userTest1","password":"test1"},{"login":"userTest2","password":"test2"}]
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+modprobe af_key
+docker run \
+    --name l2tp-ipsec-vpn-server \
+    --env-file ./vpn.env \
+    -p 500:500/udp \
+    -p 4500:4500/udp \
+    -v /lib/modules:/lib/modules:ro \
+    -d --privileged \
+    fcojean/l2tp-ipsec-vpn-server
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+docker logs l2tp-ipsec-vpn-server
+docker exec -it l2tp-ipsec-vpn-server ipsec status
+#+END_EXAMPLE
+
+*** OpenVPN
+
+**** Server Setup
+https://github.com/kylemanna/docker-openvpn
+It is very interesting to use docker this way.
+
+The persisit is the storage, which is mounted on /etc/openvpn, serving
+as the configuration.  Each time, create a new docker container
+mounting the same storage. Each step write to the configuration.
+
+#+BEGIN_EXAMPLE
+OVPN_DATA="ovpn-data-example"
+docker volume create --name $OVPN_DATA
+docker run -v $OVPN_DATA:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://VPN.SERVERNAME.COM
+docker run -v $OVPN_DATA:/etc/openvpn --rm -it kylemanna/openvpn ovpn_initpki
+#+END_EXAMPLE
+
+It is easy to run the server itself. This time use -d option to make
+it a daemon.
+#+BEGIN_EXAMPLE
+docker run -v $OVPN_DATA:/etc/openvpn -d -p 1194:1194/udp --cap-add=NET_ADMIN kylemanna/openvpn
+#+END_EXAMPLE
+
+It is also easy to create certificate on-the-go. For that, create new
+container to create and retrieve the certificate.
+
+#+BEGIN_EXAMPLE
+docker run -v $OVPN_DATA:/etc/openvpn --rm -it kylemanna/openvpn easyrsa build-client-full CLIENTNAME nopass
+docker run -v $OVPN_DATA:/etc/openvpn --rm kylemanna/openvpn ovpn_getclient CLIENTNAME > CLIENTNAME.ovpn
+#+END_EXAMPLE
+
+**** Client Setup
+On arch, copy hebi.ovpn to /etc/openvpn/client/hebi.conf. Then the
+service openvpn-client@hebi will be available for systemd. On ubuntu,
+the path is /etc/openvpn/hebi.conf, with service openvpn@hebi.
+Start the service will forward traffic.
+
+It is likely that you can connect, can ping any IP address, but cannot
+resolve names. You can even use =drill @8.8.8.8 google.com= to resolve
+the name on the way.
+
+The trick is to push resolv conf of local machine to remote. First
+install =openresolv= and (aur) =openvpn-update-resolv-conf=. Add the
+following to the end of hebi.conf file:
+
+#+BEGIN_EXAMPLE
+script-security 2
+up /etc/openvpn/update-resolv-conf
+down /etc/openvpn/update-resolv-conf
+#+END_EXAMPLE
+
+For ubuntu the openvpn package already contains the file. Just modify
+the conf file.
+
+
+* App
+
+** mplayer
+Interactive controls:
+- Forward/Backward: LEFT/RIGHT (10s), UP/DOWN (1m), PGUP/PGDWN (10m)
+- Playback speed: =[]= (10%), ={}= (50%), backspace (reset)
+- =/*=: volume
+
+When changing the speed, the pitch changed. To disable this, start
+mplayer by =mplayer -af scaletempo=.  To stretch the images to full
+screen, pass the =-zoom= option when starting.
+
+** youtube-dl
+When downloading a playlist, you can make the template to number the
+files
+#+BEGIN_EXAMPLE
+youtube-dl -o "%(playlist_index)s-%(title)s.%(ext)s" <playlist_link>
+#+END_EXAMPLE
+
+Download music only:
+#+BEGIN_EXAMPLE
+youtube-dl --extract-audio --audio-format flac <url>
+#+END_EXAMPLE
+
+** chrome extensions
+- =html5outliner=: give you a toc of the page. VERY NICE!
+- =markdown here= :: render for email
+- =unblockyouku=
+- =adblock=
+- =sight= & =syntaxtic= :: syntax highlighter
+
+** VNC
+I use tigervnc because it seems to be fast.
+
+- vncpasswd: set the password
+- vncserver&: start the server.
+  - It is started in :1 by default, so connect it with
+    =vncviewer <ip>:1=
+  - On mac, the docker bridge network does not work, so you cannot
+    connect to the contianer by IP addr. In this case, map the
+    port 5901. 5900+N is the default VNC port.
+  - vncserver -kill :1 will kill the vncserver
+  - vncserver :2 will open :2
+
+** Remove viewer
+
+The lab machines are accessed via spice. The client for spice is
+virt-viewer. It can be installed through package manager. The actual
+client is called remote-viewer, which is shipped with virt-viewer. So
+the command to connect to the .vv file: =remove-viewer console.vv=.
+
+** mpd
+music play daemon
+
+To start:
+#+BEGIN_EXAMPLE
+mkdir -p ~/.config/mpd
+cp /usr/share/doc/mpd/mpdconf.example ~/.config/mpd/mpd.conf
+mkdir ~/.mpd/playlists
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE conf
+# Required files
+db_file            "~/.mpd/database"
+log_file           "~/.mpd/log"
+
+# Optional
+music_directory    "~/music"
+playlist_directory "~/.mpd/playlists"
+pid_file           "~/.mpd/pid"
+state_file         "~/.mpd/state"
+sticker_file       "~/.mpd/sticker.sql"
+
+# uncomment pulse audio section
+audio_output {
+	type		"pulse"
+	name		"My Pulse Output"
+}
+#+END_EXAMPLE
+
+Start mpd by:
+#+BEGIN_EXAMPLE
+systemctl --user start mpd
+systemctl --user enable mpd
+#+END_EXAMPLE
+
+The client cantata can be used to create list. stumpwm-contrib has a
+mpd client. mpc is a command line client.
+
+
+** fontforge
+How I made the WenQuanYi Micro Hei ttf font (clx-truetype only
+recognizes ttf, not ttc):
+
+- input: ttc file
+- Tool: fontforge
+
+Open ttc file, select one, generate font, choose truetype
+The validation failed, but doesn't matter
+
+** tmux
+#+BEGIN_SRC shell
+# start a new session, with the session name set to "helium"
+tmux new -s helium
+# attach, and the target is "helium"
+tmux a -t helium
+#+END_SRC
+
+
+Some default commands (all after prefix key):
+- !: break the current pane into another window
+- =:=: prompt command
+- q: briefly display pane index (1,2,etc)
+
+
+Commands
+- select-layout even-horizontal: balance window horizontally
+- last-window: jump to last active window
+- new-window
+- detach
+
+* Window System
+
+** xkill
+Kill all Xorg instances
+#+begin_example
+pkill -15 Xorg
+#+end_example
+
+If using kill:
+#+begin_example
+ps -ef | grep Xorg # find the pid
+kill -9 <PID>
+#+end_example
+
+The xkill is not working properly, giving me "unable to find display"
+error.
+
+** Display Manager
+Install xdm. It will use the file =$HOME/.xsession=, so
+#+BEGIN_EXAMPLE
+ln -s $HOME/.xinitrc $HOME/.xsession
+#+END_EXAMPLE
+
+Change default desktop environment:
+- GNome: gdm
+- KDE: kdm
+- lxfe: lightdm
+
+Change (three approaches):
+1. edit =/etc/X11/default-display-manager=: I think we'd better use update-alternative
+2. =sudo dpkg-reconfigure gdm=
+3. =update-alternatives --config x-window-manage=
+** screen
+
+Multi screen, stumpwm detect as one.  Install =xdpyinfo=. It is used
+to detect the heads.
+
+check the screen resolution:
+#+BEGIN_EXAMPLE
+xdpyinfo | grep -B 2 resolution
+#+END_EXAMPLE
+
+Multiple Display:
+
+#+BEGIN_EXAMPLE
+# Mirror display
+sudo xrandr --output HDMI-2 --same-as eDP-1
+sudo xrandr --output HDMI-2 --off
+#+END_EXAMPLE
+
+Rotate
+#+BEGIN_EXAMPLE
+xrandr --output HDMI-1 --rotate left
+#+END_EXAMPLE
+
+Chagne resolution
+#+BEGIN_EXAMPLE
+xrandr --output HDMI-1 --mode 1920x1080
+#+END_EXAMPLE
+
+** cursor
+Install xcursor-themes:
+#+BEGIN_EXAMPLE
+aptitude install xcursor-themes
+aptitude show xcursor-themes # here it will output the themes name
+#+END_EXAMPLE
+
+In =.Xresources=:
+#+BEGIN_EXAMPLE
+Xcursor.theme: redglass
+#+END_EXAMPLE
+
+** Natural Scrolling
+
+The old solution is to swap the pointer button "4" and "5", by
+=xmodmap= or =xinput=:
+
+#+BEGIN_EXAMPLE
+xmodmap -e "pointer = 1 2 3 4 5"
+xinput --set-button-map 10 1 2 3 5 4
+#+END_EXAMPLE
+
+The 10 is the id, to find it out, run xinput without argument.
+
+But this way is deprecated, as of chromium 49 and above, it does not work any more.
+So use the xinput way to /set the property/:
+
+#+BEGIN_EXAMPLE
+xinput set-prop 10 "libinput Natural Scrolling Enabled" 1
+#+END_EXAMPLE
+
+I'm using logitech G900 and the property might be different. It works!
+
+Not sure if the xinput command should be run each time the system
+boots. That would be hard for specifying ID.
+
+The detail is, you can do this:
+
+#+BEGIN_EXAMPLE
+xinput # show a list of devices
+xinput list-props <ID> # list of properties
+xinput set-prop <deviceID> <propID> <value>
+#+END_EXAMPLE
+
+** ratpoison
+
+This is actually a wonderful WM.  To start:
+
+#+BEGIN_EXAMPLE
+aptitude install ratpoison
+#+END_EXAMPLE
+
+In =.xinitrc=:
+
+#+BEGIN_EXAMPLE
+exec ratpoison
+#+END_EXAMPLE
+
+- =C-t ?= to show the help
+
+actually =C-t= is the prefix of every command, =C-g= to abort.
+- =C-t :=: type command
+- =C-t !=: run shell command
+- =C-t .=: open menu
+- =C-t c=: open terminal
+
+
+HOWEVER, this is pretty old, and it cause the screen to go brighter
+and darker back and force.  Fortunately the stumpwm is very like this
+one, but
+1. actively maintained on github.
+2. written in common lisp
+
+
+
+** StumpWM
+
+*** Installation
+In order to use =ttf-fonts= module, the lisp =clx-truetype= package needs to be installed.
+Install the slime IDE for emacs, install quicklisp, then install it using quicklisp.
+Follow the description in lisp wiki page.
+
+**** A better way to install stumpwm
+- This seems a better way to install stumpwm =(ql:quickload
+  "stumpwm")=
+But this require the .xinitrc to be
+#+BEGIN_EXAMPLE
+exec sbcl --load /path/to/startstump
+#+END_EXAMPLE
+with startstump
+#+BEGIN_EXAMPLE
+(require :stumpwm)
+(stumpwm:stumpwm)
+#+END_EXAMPLE
+
+**** Live Debugging
+To debug it live, you might need this in .stumpwmrc:
+#+BEGIN_SRC lisp
+  (in-package :stumpwm)
+
+  (require :swank)
+  (swank-loader:init)
+  (swank:create-server :port 4004
+                       :style swank:*communication-style*
+                       :dont-close t)
+#+END_SRC
+
+The above wont work unless swank is installed:
+#+BEGIN_EXAMPLE
+(ql:quickload "swank")
+#+END_EXAMPLE
+
+The port is actually interesting. Here it is set to 4004, and the
+slime in Emacs defaults to 4005, thus they wont mess up. The trick to
+connect to stumpwm is to use =slime-connect= and put 4004 for the port
+prompt.
+
+So acutally if you just want to live debug, just install swank and
+#+BEGIN_EXAMPLE
+(require 'swank)
+(swank:create-server)
+#+END_EXAMPLE
+
+# (ql:quickload :swank)
+Note lastly that to install using quickload, you need permission. So
+
+#+BEGIN_EXAMPLE
+sudo sbcl --load /usr/lib/quicklisp/setup
+#+END_EXAMPLE
+
+To test if it works, you should be able to switch to stumpwm namespace
+and operate the window, like this:
+
+#+BEGIN_EXAMPLE
+(in-package :stumpwm)
+(stumpwm:select-window-by-number 2)
+#+END_EXAMPLE
+
+*** General
+
+Same as ratpoison:
+- ~C-t C-h~: show help
+- ~C-t !~: run shell command
+- ~C-t c~ terminal
+- ~C-t e~: open emacs!
+- ~C-t ;~: type a command
+- ~C-t :~: eval
+- ~C-t C-g~: abort
+- ~C-t a~: display time
+- ~C-t t~: send C-t
+- ~C-t m~: display last message
+
+**** Get Help
+- ~C-t h k~: from key binding to command: =describe-key=
+- ~C-t h w~: from command to key binding: =where-is=
+- ~C-t h c~: describe command
+- ~C-t h f~: describe function
+- ~C-t h v~: describe variable
+
+- =mode-line=: start mode-line
+
+*** Window
+- ~C-t n~
+- ~C-t p~
+- ~C-t <double-quote>~
+- ~C-t w~ list all windows
+- ~C-t k~ kill current frame (K to force quit)
+- ~C-t #~ toggle mark of current window
+
+
+*** Frame
+- ~C-t s~: hsplit
+- ~C-t S~: vsplit
+- ~C-t Q~: kill other frames, only retains this one
+- ~C-t r~: resize, can use =C-n=, =C-p= interactively
+- ~C-t +~: balance frame
+- ~C-t o~: next frame
+- ~C-t -~: show desktop
+
+Other commands
+- =remove-split= :: to remove the current frame
+- =fclear= :: clear the current frame, show the desktop
+
+To resize frames interactively, =C-t r= and then use the arrows.
+
+*** Groups
+Shortcuts:
+- ~C-t g c~: create: =gnew=. Also available for float: =gnew-float=
+- ~C-t g n~: next
+- ~C-t g o~: =gother=
+- ~C-t g p~: previous
+- ~C-t g <double-quote>~: interactively select groups: =grouplist=
+- ~C-t g k~: kill current group, move windows to next group: =gkill=
+- ~C-t g r~: rename current group: =grename=
+- ~C-t G~: display all groups and their windows
+- ~C-t g g~: show list of group
+- ~C-t g m~: move current window to group X
+- ~C-t g <d>~: go to group <d>
+
+
+*** Configuration
+
+#+BEGIN_EXAMPLE
+(stumpwm:define-key stumpwm:*root-map* (stumpwm:kbd "C-z") "echo Zzzzz...")
+#+END_EXAMPLE
+
+
+* System Management
+** Power Management
+Power management is done through =systmed= can handle it, by =acpid=.
+The configure file is =/etc/systemd/logind.conf=.  =man logind.conf=
+for details.  /hibernate/ will save to disk, while /suspend/ save to
+ram.  Both of them will resume to the current status.
+
+#+BEGIN_EXAMPLE
+HandlePowerKey=hibernate
+HandleLidSwitch=suspend
+#+END_EXAMPLE
+
+** Booting
+
+The grub2 menu configure file is located at =/boot/grub/grub.cfg=.  It
+is generated by =/usr/sbin/update-grub= (8) using templates from
+=/etc/grub.d/*= and settings from =/etc/default/grub=.
+
+The default run level is 2 (multi-user mode), corresponding to
+=/etc/rc2.d/XXX= scripts. Those scripts starts with "S" or "K" meaning
+=start= or =stop= sent to =systemd= utility.  Those scripts are symbol
+linked to =../init.d/xxx=.  By default there's no difference between
+level 2 to 5. Run level 0 means half, S means single user mode, 6
+means reboot.
+
+** User Management
+The account will use the values on command line, *plus* the default
+value for system. A group will also be created by default.
+
+- =-g GROUP=: specify the initial login group. Typically *just ignore*
+  this, the default value will be used.
+- =-G group1,group2,...=: additional groups. You might want: =video=,
+  =audio=, =wheel=
+- =-m=: create home if it does not exists
+- =-s SHELL=: use this shell. Typically just ignore this, the system
+  will choose for you.
+
+** File Management
+
+*** Swap File
+
+A swap file can also be used as swap memory. When doing linking, the
+=ld= might fail because of lack of memory.
+
+Check the current swap:
+#+BEGIN_EXAMPLE
+swapon -s
+#+END_EXAMPLE
+
+Create swap file:
+#+BEGIN_EXAMPLE
+dd if=/dev/zero of=/path/to/extraswap bs=1M count=4096
+mkswap /path/to/extraswap
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+swapon /path/to/extraswap
+swapoff /path/to/extraswap
+#+END_EXAMPLE
+
+This will not be in effect after reboot. To automatically swap it on, in =/etc/fstab=
+#+BEGIN_EXAMPLE
+/path/to/extraswap none swap sw 0 0
+#+END_EXAMPLE
+*** Back Up & Syncing
+
+=rsync= commnad is used to sync from source to destination. It does
+not perform double way transfer. It decides a change if either of
+these happens:
+- size change
+- last-modified time
+
+*** MIME
+check the MIME of a file.
+#+BEGIN_EXAMPLE
+file --mime /path/to/file
+#+END_EXAMPLE
+
+On debian, the mapping from suffix to MIME type is =/etc/mime.types=.
+
+Create default application for =xdg-open=
+#+BEGIN_EXAMPLE
+mkdir ~/.local/share/applications
+xdg-mime default firefox.desktop application/pdf
+#+END_EXAMPLE
+
+~/.local/share/applications/mimeapps.list
+#+BEGIN_EXAMPLE
+[Default Applications]
+application/pdf=firefox-esr.desktop
+#+END_EXAMPLE
+
+=/usr/share/applications/*.desktop= are files define for each
+application.
+
+On Debian, you can also do this:
+#+BEGIN_EXAMPLE
+update-alternative --config x-terminal-emulator
+update-alternative --config x-www-browser
+#+END_EXAMPLE
+
+
+
+
+** LVM
+
+** Monitor the system information
+#+BEGIN_EXAMPLE
+lvs
+vgs
+pvs
+df -h
+vgdisplay
+lvdisplay /dev/debian-vg/home
+#+END_EXAMPLE
+
+** Extending a logical volume
+#+BEGIN_EXAMPLE
+lvextend -L10G /dev/debian-vg/tmp # to 10G
+lvextend -L+1G /dev/debian-vg/tmp # + 1G
+resize2fs /dev/debian-vg/tmp
+#+END_EXAMPLE
+
+
+** Reduce a logical volume
+The home is 890G.
+
+#+BEGIN_EXAMPLE
+umount -v /home
+# check
+e2fsck -ff /dev/debian-vg/home
+resize2fs /dev/debian-vg/home 400G
+lvreduce -L -490G /dev/debian-vg/home
+lvdisplay /dev/debian-vg/home
+resize2fs /dev/debian-vg/home
+mount /dev/debian-vg/home /home
+#+END_EXAMPLE
+
+
+* Arch Linux
+** Installation
+
+
+*** Verify UEFI
+Nowadays (start from 2017) Arch only supports 64 bits ... and seems to
+prefer UEFI .. Fine
+
+First, verify the boot mode to be UEFI by checking
+the following folder exists
+#+BEGIN_EXAMPLE
+ls /sys/firmware/efi/efivars
+#+END_EXAMPLE
+
+*** System clock
+#+BEGIN_EXAMPLE
+timedatectl set-ntp true
+#+END_EXAMPLE
+
+*** Partition
+#+BEGIN_EXAMPLE
+parted /dev/sda mklabel gpt
+parted /dev/sda mkpart ESP fat32 1MiB 513MiB
+parted /dev/sda set 1 boot on
+parted /dev/sda mkpart primary linux-swap 513MiB 5GiB
+parted /dev/sda mkpart primary ext4 5GiB 100%
+#+END_EXAMPLE
+
+This creates
+- sda1 :: =/boot= the EFI System Partition (ESP), swp, and a root
+- sda2 :: swap
+- sda3 :: =/=
+
+Format:
+#+BEGIN_EXAMPLE
+mkfs.fat -F32 /dev/sda1
+mkfs.ext4 /dev/sda3
+#+END_EXAMPLE
+
+Mount
+#+BEGIN_EXAMPLE
+mount /dev/sda3 /mnt
+mkdir /mnt/boot
+mount /dev/sda1 /mnt/boot
+#+END_EXAMPLE
+
+
+*** Select mirror
+look into =/etc/pacman.d/mirrorlist= and modify if necessary. The order
+matters. The file will be copied to new system.
+
+*** Install base system
+#+BEGIN_EXAMPLE
+pacstrap /mnt base
+#+END_EXAMPLE
+
+*** chroot
+#+BEGIN_EXAMPLE
+genfstab -U /mnt >> /mnt/etc/fstab
+arch-chroot /mnt
+#+END_EXAMPLE
+
+*** Configure
+Now we are in the new system.
+
+#+BEGIN_EXAMPLE
+ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
+hwclock --systohc
+#+END_EXAMPLE
+
+Uncomment =en_US.UTF-8 UTF-8= inside =/etc/locale.gen= and run
+#+BEGIN_EXAMPLE
+locale-gen
+#+END_EXAMPLE
+
+Set =LANG= in =/etc/locale.conf=
+
+#+BEGIN_EXAMPLE
+LANG=en_US.UTF-8
+#+END_EXAMPLE
+
+Set hostname in =/etc/hostname=
+#+BEGIN_EXAMPLE
+myhostname
+#+END_EXAMPLE
+
+Set root password
+#+BEGIN_EXAMPLE
+passwd
+#+END_EXAMPLE
+
+Install grub
+#+BEGIN_EXAMPLE
+pacman -S grub efibootmgr
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=myarch
+grub-mkconfig -o /boot/grub/grub.cfg
+#+END_EXAMPLE
+
+Before reboot, it is good to make sure the network will work, by
+installing some networking packages:
+- =dialog=
+- =wpa_suppliant=
+- =iw=
+
+Now reboot
+
+
+*** Config
+Install the packages, and config the system using my scripts:
+- setup-quicklisp
+- setup-git
+
+
+*** Dual boot with Windows
+The only difference is that, you do not need to create the EFI boot
+partition, but use the existing one. Just mount it to boot. The rest
+is the same.
+
+** Pacman
+Option
+- S :: sync, a.k.a install
+- Q :: query
+
+Parameter:
+- s :: search
+- y :: fetch new package list. Usually use with =u=
+- u :: update all packages
+- i :: more information
+- l :: location of files
+
+Typical usage:
+- Syu :: update whole system
+- S :: install package
+- R :: remove package
+- Rs :: remove package and its unused dependencies
+- Ss :: search package
+- Qi :: show description of a package
+
+- --noconfirm :: use in script
+- --needed :: do not install the installed again
+
+Pacman will store all previously downloaded packages. So when you find
+your /var/cache/pacman so big, consider clean them up using:
+
+#+BEGIN_EXAMPLE
+paccache -rk 1
+#+END_EXAMPLE
+
+** AUR
+Have to search through its web interface. Find the git download link
+and clone it. It is pullable.
+
+Go into the folder and
+#+BEGIN_EXAMPLE
+makepkg -si
+#+END_EXAMPLE
+
+=-s= alone will build it, with =i= to install it after build. The
+dependencies are automatically installed if can be found by pacman. If
+it is also on AUR, you have to install manually.
+
+The md5sum line can be skipped for some package. Just replace the
+md5sum value inside the quotes with ='SKIP'=.
+
+* CentOS
+On installing a new instance of CentOS, issue the following commands:
+
+#+BEGIN_SRC shell
+# check the sshd status
+# should use opensshd
+service status sshd
+# add user, -m means create home folder
+useradd -m myname
+# oh, wait, I forget to add myself to wheel
+# -a means append, if no -a, the -G will accept a comma separated list, overwrite the previous setting
+usermod -aG wheel myname
+#+END_SRC
+
+* Debian
+
+** Package
+- =/etc/apt/sources.list=
+- =/var/cache/apt/archives/=
+
+=netselect-apt= to select the fastest source!
+
+dist-upgrade
+#+BEGIN_SRC sh
+cp /etc/apt/sources.list{,.bak}
+sed -i -e 's/ \(stable\|wheezy\)/ testing/ig' /etc/apt/sources.list
+apt-get update
+apt-get --download-only dist-upgrade
+# Dangerous
+apt-get dist-upgrade
+#+END_SRC
+
+- =dpkg-reconfigure= reconfigure a installed package
+- =defconf-show= show the current configuration of a package
+
+Another part is the =main=.  If you want some 3rd party contributor
+packages, add =contrib= after =main=.  If you further want some
+non-free packages, add also =non-free=.
+
+
+** Configuration
+*** update-alternatives
+Options:
+- =--config=: show options and select configuration interactively
+- =--display=: show the options
+
+Some examples:
+- =update-alternatives --config desktop-background=
+
+
+
+* Docker
+
+Install =docker= package and start the service by
+#+BEGIN_EXAMPLE
+systemctl start docker
+systemctl enable docker
+#+END_EXAMPLE
+
+We can build Debian image easily on Arch:
+
+#+BEGIN_EXAMPLE
+mkdir jessie-chroot
+# debootstrap jessie ./jessie-chroot http://http.debian.net/debian/
+# cd jessie-chroot
+# tar cpf - . | docker import - debian
+# docker run -t -i --rm debian /bin/bash
+#+END_EXAMPLE
+
+Re-launch a stopped container can be done by =docker start
+<container>= and will be detached by default if it is run by that.
+
+You can assign a name to the container so that you can better remember
+and reference it.
+
+** Compose
+It is installed seperately with docker.
+
+It must be run inside the folder containing =docker-compose.yml=
+
+Commands
+- docker-compose up: up the service. It will not exit. Use C-c to exit
+  and the =docker-compose down= command will be sent.
+  - The second time you up the compose, it will not up, but update
+    current. If all current are up to date, nothing will happen.
+- docker-compose up -d: up the service and exit. You need to shutdown
+  it maually
+- docker-compose down: shutdown the services
+
+A sample compose file:
+#+BEGIN_SRC yaml
+version: '2'
+services:
+  srcml-server-container:
+    image: "lihebi/srcml-server"
+  helium:
+    image: "lihebi/arch-helium"
+    tty: true
+    volumes:
+      - data:/data
+  benchmark-downloader:
+    # this is used to download benchmarks to the shared volume
+    image: "lihebi/benchmark-downloader"
+    tty: true
+    volumes:
+      - data:/data
+volumes:
+  # create a volume with default
+  data:
+#+END_SRC
+
+*** service
+A service is a container. Setting tty to true to prevent it from
+stopping. That is the same effect when you pass =-t= to =docker run=.
+
+The containers can be seen by docker ps, with names prefixed and
+suffixed by =compose_XXX_1=
+
+Change to the container will not preserve after the compose down. The
+containers will be deleted. Next up will create new containers.
+
+*** TODO volumes
+Under any volume, if =external= option is set to =true=, docker
+compose will find it outside, and signal error if it does not exist.
+
+*** TODO network
+Once the compose is up, docker create a bridge network called
+=compose_default=. All services (containers) are attached to that.
+
+** Network
+- docker network ls
+- docker network inspect <network-name>
+
+** Volume
+A volume must be locally available if you create a =local= volume.
+*** Create Volume
+You can create a volume like this:
+#+BEGIN_EXAMPLE
+docker volume create hello
+#+END_EXAMPLE
+
+Volumes can also be created upon creating a container.
+
+*** Mount volume to a container
+You have to mount at the time you create the container. You cannot
+remount anything to it without commiting it to an image and create
+again. 
+
+#+BEGIN_EXAMPLE
+docker run -v /mnt <image>
+docker run -v my-named-vol:/mnt <image>
+docker run -v /absolute/path/to/host/local/path:/mnt/in/container <image>
+#+END_EXAMPLE
+
+If only inner path is provided, the volume will still be created, but
+with a long named directory under =/var/lib/docker/volumes=.
+
+*** Manipulate Volume
+The volumes will never be automatically deleted, even if the container is deleted.
+
+**** TODO Will it be updated or not?
+
+#+BEGIN_EXAMPLE
+docker volume inspect <volume-full-name>
+docker volume ls
+docker volume prune # remove all unused volumes
+#+END_EXAMPLE
+
+
+
+** General operations
+
+- docker images :: list images
+- docker images <name> :: list images whose name is "name" (can have different) tags
+- docker run [option] <image> /bin/bash :: run a *fresh* container based on the image.
+  - -i :: interactive
+  - -d :: detach (opposite to -i)
+  - -t :: assign a tty. Even when using -d, you need this.
+  - -p <port> :: export the port <port> of the container. The host
+                 port will be randomly assigned. Running =docker ps=
+                 will show the port binding information.  If the port
+                 is not set when running a container, you have to
+                 commit it, and run it again to assign a port or
+                 another port.
+  - -v /volumn :: create a mount at /volumn
+  - -v /local/dir:/mnt :: mount local dir to the /mnt in
+       container. The default is read-write mode, if you want read
+       only, do this: =-v /local/dir:/mnt:ro=. The local dir must be
+       ABSOLUTE path.
+- docker exec <ID> echo "hello" :: run some command with arguments on the already run container <ID>
+  - ID can be the UUID or container name
+  - you can use -it as well, e.g. docker exec -it <ID> /bin/bash
+- docker start <ID> :: start an already stopped container
+- docker diff <ID> :: show the difference made from the base image
+- docker commit <ID> lihebi/my-container :: create a new image based on the container <ID>
+- docker login :: login so that you can push
+- docker push lihebi/my-container :: push to docker hub
+- docker pull lihebi/my-container :: pull from the internet
+
+Alternatively, you can write a Dockerfile to specify how to build a image.
+
+#+BEGIN_EXAMPLE
+FROM ubuntu 15.04
+RUN ech o"hello" > /tmp/newfile
+#+END_EXAMPLE
+
+In the folder containing Dockerfile, run to build the image:
+#+BEGIN_EXAMPLE
+docker build -t my-ubuntu .
+#+END_EXAMPLE
+
+use --no-cache to avoid using cache
+
+- docker history <image> :: show which layers are used to create <image>
+
+*** Docker stop
+docker stop will send SIGTERM to the app, then wait for it to stop. The default wait time is 10 seconds. You can change this by
+#+BEGIN_EXAMPLE
+docker stop -t 1 <container-ID>
+#+END_EXAMPLE
+This will change the timeout to be 1 second.
+
+The reason for a container to resist stopping may be it ignores the
+SIGTERM request. Python did this, so for a python program, you should
+handle this signal yourself:
+#+BEGIN_SRC python
+  import sys
+  import signal
+
+  def handler(signum, frame):
+      sys.exit(1)
+
+  def main():
+      signal.signal(signal.SIGTERM, hanlder)
+      # your app
+#+END_SRC
+
+
+Next thing is the entry point and commands. If you use shell form, it
+is started by sh -c, and shell will not pass the signal to the app
+either. So change it to json form.
+
+Finally, =docker stop= tries to terminate the app gracefully by
+sending SIGTERM, you can choose to force kill using =docker kill=
+
+** Remove sudo
+#+BEGIN_EXAMPLE
+sudo groupadd docker
+sudo gpasswd -a ${USER} docker
+sudo service docker restart
+newgrp docker
+#+END_EXAMPLE
+
+** Dockerfile
+
+I'm trying a docker file for srcml container. 
+#+BEGIN_EXAMPLE
+FROM debian
+RUN apt-get -y update & apt-get install -y libarchive-dev libcurl4-openssl-dev
+RUN wget http://131.123.42.38/lmcrs/beta/srcML-Ubuntu14.04-64.deb srcml.deb
+RUN dpkg -i srcml.deb
+#+END_EXAMPLE
+
+*** Commands
+- FROM: a base image
+- ENV key=value
+- ADD: =ADD <src> .. <dst>= The difference from copy:
+  - ADD allows src to be url
+  - ADD will decompress an archive
+- COPY: =COPY <src> .. <dst>= all srcs on the local machine will be
+  copied to dst in the image. The src can use wildcards. The src
+  cannot be out of the current build directory, e.g. =..= is not
+  valid.
+- USER: =USER daemon= The USER instruction sets the user name or UID
+  to use when running the image and for any RUN, CMD and ENTRYPOINT
+  instructions that follow it in the Dockerfile.
+- WORKDIR: The WORKDIR instruction sets the working directory for any
+  RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow it in
+  the Dockerfile
+  - if it does not exist, it will be created
+  - it can be used multiple times, if it is relative, it is relative
+    to the previous WORKDIR
+- ENTRYPOINT ["executable", "param1", "param2"]: configure the
+  container to be run as an executable.
+
+
+
+** TODO Docker hub
+When pushing and pulling, what exactly happens?
+
+#+BEGIN_EXAMPLE
+docker tag local-image lihebi/my-image
+docker push lihebi/my-image
+#+END_EXAMPLE
+
+** Tricks
+Stop all containers
+#+BEGIN_QUOTE
+docker stop $(docker ps -a -q)
+#+END_QUOTE
+
+Remove all containers (will not remove non-stopped ones, but give errors)
+#+BEGIN_QUOTE
+docker rm $(docker ps -a -q)
+#+END_QUOTE
+
+
+** Trouble Shooting
+*** I have to type double C-p to take effect
+=C-p C-q= is the default binding for detaching a container. This
+blocks C-p, I have to type it twice, must change.  In
+=~/.docker/config.json=, add:
+
+#+BEGIN_EXAMPLE
+{
+"detachKeys": "ctrl-],ctrl-["
+}
+#+END_EXAMPLE
+
+Restart docker daemon to take effect. This can also be set by
+=--detach-keys= option.
+
+
+*** Docker exec tty is not a real tty
+I cannot connect to emacs server through emacsclient -t, and error
+message is terminal is not found. You can not open tmux also. But the
+problem does not appear when using docker run command.
+
+The solution is when starting a exec command, use script to run bash:
+
+#+BEGIN_EXAMPLE
+docker exec -it my-container script -q -c "/bin/bash" /dev/null
+docker exec -it my-container env TERM=xterm script -q -c "/bin/bash" /dev/null
+#+END_EXAMPLE
+
+The TERM is not necessary here because in my case docker always set it
+to xterm. I actually change it to screen-256color in my bashrc file to
+get the correct colors.
+
+
+* Unix Programming
+
+[[http://pubs.opengroup.org/onlinepubs/9699919799/][POSIX]] defines
+ the operating system interface. The starndard contains volumes:
+- Base Definition: convention, regular expression, headers
+- System Interfaces: system calls
+- Shell & Utilities: shell command language and shell utilities
+- Rationale
+
+I found most of them are not that interesting, except Base Definition
+section 9 regular expression. This definition is used by many shell
+utilities such as awk.
+
+** Low-level IO
+*** open
+#+BEGIN_SRC C
+int open(const char *filename, int flags[, mode_t mode])
+#+END_SRC
+
+Create and return a file descriptor.
+*** close
+#+BEGIN_SRC C
+int close(int filedes)
+#+END_SRC
+- file descriptor is deallocated
+- if all file descriptors associated with a pipe are closed, any
+  unread data is discarded.
+Return
+- 0 on success, -1 on failure
+
+*** read
+#+BEGIN_SRC C
+ssize_t read(int filedes, void *buffer, size_t size)
+#+END_SRC
+- read /up to/ size bytes, store result in buffer.
+Return
+- number of bytes actually read.
+- return 0 means EOF
+
+*** write
+#+BEGIN_SRC C
+ssize_t write(int filedes, const void *buffer, size_t size)
+#+END_SRC
+
+- write up to size bytes from buffer to the file descriptor.
+Return
+- number of bytes actually written
+- -1 on failure
+
+*** fdopen
+#+BEGIN_SRC C
+FILE *fdopen(int filedes, const char *opentype)
+#+END_SRC
+
+from file descriptor, get the stream
+
+*** fileno
+#+BEGIN_SRC C
+int fileno(FILE *stream)
+#+END_SRC
+
+from stream to file descriptor
+
+*** fd_set
+This is a bit array.
+- FD_ZERO(&fdset): initialise fdset to empty
+- FD_CLR(fd, &fdset): remove fd from the set
+- FD_SET(fd, &fdset): add fd to the set
+- FD_ISSET(fd, &fdset): return non-0 if fd is in set
+*** select - synchronous I/O multiplexing
+#+BEGIN_SRC C
+int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *errorfds, struct timeval *timeout)
+#+END_SRC
+
+Block until at least one fd is true for specific condition, unless timeout.
+
+Params
+- nfds: the range of file descriptors to be tested. Should be the
+  largest one in the sets + 1. But just pass =FD_SETSIZE=.
+- readfds: watch for read. can be NULL.
+- writefds: watch for write. can be NULL.
+- errorfds: watch for error. can be NULL.
+- timeout:
+  - NULL: no timeout, block forever
+  - 0: return immediately. Used for test file descriptors
+Return:
+- if timeout, return 0
+- the sets are modified. Those in sets are those ready
+- return the number of ready file descriptors in all sets
+
+#+BEGIN_SRC C
+int fd;
+// init fd
+
+fd_set set;
+FD_ZERO(&set)
+FD_SET(fd, &set);
+
+struct timeval timeout;
+timeout.tv_sec = 1;
+timeout.tv_usec = 0;
+
+select(FD_SETSIZE, &set, NULL, NULL, &timeout);
+#+END_SRC
+
+*** sync
+#+BEGIN_SRC C
+void sync(void) // sync all dirty files
+int fsync(int filedes) // sync only that file
+#+END_SRC
+
+*** dup
+You can create a new descriptor to refer to the same file. They
+- share file position
+- share status flag
+- seperate descriptor flags
+
+#+BEGIN_SRC C
+int dup(int old)
+// same as
+fcntl(old, F_DUPFD, 0)
+#+END_SRC
+
+Copy old to the first available descriptor number.
+
+#+BEGIN_SRC C
+int dup2(int old, int new)
+// same as
+close(new)
+fcntl(old, F_DUPFD, new)
+#+END_SRC
+
+If old is invalid, it does nothing (does not close =new=)!
+
+** Date and Time
+- calendar time: absolute time, e.g. 2017/6/29
+- interval: between two calendar times
+- elapsed time: length of interval
+- amount of time: sum of elapsed times
+- period: elapsed time between two events
+- CPU time: like calendar time, but relative to process, i.e. when the
+  process run on CPU
+- Processor time: amount of time a CPU is in use.
+
+*** struct timeval
+- time_t tv_sec: seconds
+- long int tv_usec: micro seconds, must be less than 1 million
+
+*** struct timespec
+- time_t tv_sec
+- long int tv_nsec: nanoseconds. Must be less than 1 billion
+
+*** difftime
+#+BEGIN_SRC C
+double difftime (time_t time1, time_t time0)
+#+END_SRC
+
+*** time_t
+On GNU it is long int. It should be the seconds elapsed since 00:00:00
+Jan 1 1970, Coordinated Universal Time.
+
+get current calenddar time:
+#+BEGIN_SRC C
+time_t time(time_t *result)
+#+END_SRC
+
+*** alarm
+**** struct itimerval
+- struct timeval it_interval: 0 to send alarm once, non-zero to send every interval
+- struct timeval it_value: time left to alarm. If 0, the alarm is disabled
+**** setitimer
+#+BEGIN_SRC C
+int setitimer(int which, const struct itimerval *new, struct itimerval *old)
+#+END_SRC
+- which: ITIMER_REAL, ITIMER_VIRTUAL, ITIMER_PROF
+- new: set to new
+- old: if not NULL, fill with old value
+
+**** getitimer(int which, struct itimerval *old)
+get the timer
+
+**** alarm
+#+BEGIN_SRC C
+unsigned int alarm(unsigned int seconds)
+#+END_SRC
+To cancel existing alarm, use alarm(0).
+Return:
+- 0: no previous alarm
+- non-0: the remaining value of previous alarm
+
+#+BEGIN_SRC C
+  unsigned int
+  alarm (unsigned int seconds)
+  {
+    struct itimerval old, new;
+    new.it_interval.tv_usec = 0;
+    new.it_interval.tv_sec = 0;
+    new.it_value.tv_usec = 0;
+    new.it_value.tv_sec = (long int) seconds;
+    if (setitimer (ITIMER_REAL, &new, &old) < 0)
+      return 0;
+    else
+      return old.it_value.tv_sec;
+  }
+#+END_SRC
+
+** Process
+Three steps
+- create child process
+- run an executable
+- coordinate the results with parent
+*** system
+#+BEGIN_SRC C
+int system(const char *command)
+#+END_SRC
+- use =sh= to execute, and search in $PATH
+- return -1 on error
+- return the status code for the child
+*** getpid
+- pid_t getpid(void): return PID of current process
+- pid_t getppid(void): PID of parent process
+
+*** fork
+#+BEGIN_SRC C
+pid_t fork(void)
+#+END_SRC
+
+return
+- 0 in child
+- child's PID in parent
+- -1 on error
+*** pipe
+#+BEGIN_SRC C
+int pipe(int filedes[2])
+#+END_SRC
+
+- Create a pipie and puts the filedes[0] for reading, filedes[1] for writing
+Return:
+- 0 on success, -1 on failure
+
+*** exec
+#+BEGIN_SRC C
+int execv (const char *filename, char *const argv[])
+int execl (const char *filename, const char *arg0, ...)
+int execve (const char *filename, char *const argv[], char *const env[])
+int execle (const char *filename, const char *arg0, ..., char *const env[])
+int execvp (const char *filename, char *const argv[])
+int execlp (const char *filename, const char *arg0, ...)
+#+END_SRC
+
+- execv: the last of argv array must be NULL. All strings are null-terminated.
+- execl: argv are seperated, the last one must be NULL
+- execve: provide env
+- execle
+- execvp: find filename in $PATH
+- execlp
+
+*** wait
+This should be used in parent process.
+
+#+BEGIN_SRC C
+pid_t waitpid(pid_t pid, int *status_ptr, int options)
+#+END_SRC
+
+- pid:
+  - positive: the pid for a child process
+  - -1 (WAIT_ANY): any child process
+  - 0 (WAIT_MYPGRP): any child process that has the same /process group ID/ as the parent
+  - -pgid (any other negative value): any child process having the
+    /process group ID/ as gpid
+- options: OR of the following
+  - WNOHANG: no hang: the parent process should not wait
+  - WUNTRACED: report stopped process as well as the terminated ones
+- return: PID of the child process that is reporting
+#+BEGIN_SRC C
+pid_t wait(int *status_ptr)
+#+END_SRC
+
+=wait(&status)= is same as =waitpid(-1, &status, 0)=
+
+**** Status
+The signature is =int NAME(int status)=.
+- WIFEXITED: if exited: return non-0 if child terminated normally with exit
+- WEXITSTATUS: exit status: if above true, this is the low-order 8
+  bits of the exit code
+- WIFSIGNALED: if signaled: non-0 if the process terminated because it
+  receives a signal that was not handled
+- WTERMSIG: term sig: if above true, return that signal number
+- WCOREDUMP: core dump: non-0 if the child process terminated and
+  produce a core dump
+- WIFSTOPPED: if stopped: if the child process stopped
+- WSTOPSIG: stop sig: if above true, return the signal number that
+  cause the child to stop
+
+***** TODO What is the difference between terminate and stop?
+
+
+** Unix Signal Handling
+
+*** Ordinary signal handling
+  The handling of ordinary signals are easy:
+
+  #+BEGIN_SRC C
+  #include <signal.h>
+  static void my_handler(int signum) {
+    printf("received signal\n");
+  }
+
+  int main() {
+    struct sigaction sa;
+    sa.sa_handler = my_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_SIGINFO;
+    // this segv does not work
+    sigaction(SIGSEGV, &sa, NULL);
+    // this sigint will work
+    sigaction(SIGINT, &sa, NULL);
+  }
+  #+END_SRC
+
+*** SIGSEGV handling
+**** Motivation
+   The reason that I want to handle the =SIGSEGV= is that I want to get the coverage from =gcov=.
+   Gcov will not report any coverage information if the program terminates by receiving some signals.
+   Fortunately we can explicitly ask gcov to dump it by calling =__gcov_flush()= inside the handler.
+   I confirmed this can work for ordinary signal handling.
+
+   #+BEGIN_SRC C
+  // declaring the prototype of gcov
+  void __gcov_flush(void);
+
+  void myhanlder() {
+    __gcov_flush();
+  }
+   #+END_SRC
+
+   After experiment, I found:
+   1. address sanitizer cannot work with this handling. AddressSanitizer will hijact the signal, and maybe output another signal.
+   2. Even if I turned off address sanitizer, and the handler function is executed, the coverage information is still not able to get.
+      This possibly because the handler is running on a different stack.
+
+
+**** a new stack
+   However, handling the SIGSEGV is challenging.
+   The above will not work [fn:1].
+
+   #+BEGIN_QUOTE
+   By default, when a signal is delivered, its handler is called on the same stack where the program was running.
+   But if the signal is due to stack overflow, then attempting to execute the handler will cause a second segfault.
+   Linux is smart enough not to send this segfault back to the same signal handler, which would prevent an infinite cascade of segfaults.
+   Instead, in effect, the signal handler does not work.
+   #+END_QUOTE
+
+   Instead, we need to make a new stack and install the handler on that stack.
+
+   #+BEGIN_SRC C
+  #include <signal.h>
+  void sigsegv_handler(int signum, siginfo_t *info, void *data) {
+    printf("Received signal finally\n");
+    exit(1);
+  }
+
+  #define SEGV_STACK_SIZE BUFSIZ
+
+  int main() {
+    struct sigaction action;
+    bzero(&action, sizeof(action));
+    action.sa_flags = SA_SIGINFO|SA_STACK;
+    action.sa_sigaction = &sigsegv_handler;
+    sigaction(SIGSEGV, &action, NULL);
+
+
+    stack_t segv_stack;
+    segv_stack.ss_sp = valloc(SEGV_STACK_SIZE);
+    segv_stack.ss_flags = 0;
+    segv_stack.ss_size = SEGV_STACK_SIZE;
+    sigaltstack(&segv_stack, NULL);
+
+    char buf[10];
+    char *src = "super long string";
+    strcpy(buf, src);
+  }
+   #+END_SRC
+
+
+
+**** libsigsegv
+   I also tried another library, the libsigsegv [fn:2].
+   I followed two of their methods, but I cannot make either work.
+   The code lists here as a reference:
+
+   #+BEGIN_SRC C
+  #include <signal.h>
+  #include <sigsegv.h>
+  int handler (void *fault_address, int serious) {
+    printf("Handler triggered.\n");
+    return 0;
+  }
+  void stackoverflow_handler (int emergency, stackoverflow_context_t scp) {
+    printf("Handler received\n");
+  }
+  int main() {
+    char* mystack; // don't know how to use
+    sigsegv_install_handler (&handler);
+    stackoverflow_install_handler (&stackoverflow_handler,
+                                   mystack, SIGSTKSZ);
+  }
+   #+END_SRC
+
+
+
+
+
+
+[fn:1] https://rethinkdb.com/blog/handling-stack-overflow-on-custom-stacks/
+[fn:2] https://www.gnu.org/software/libsigsegv/
+
+
+** pThread
+
+
+#+BEGIN_SRC cpp
+#include <pthread.h>
+pthread_create (thread, attr, start_routine, arg)
+pthread_exit (status)
+pthread_join (threadid, status)
+pthread_detach (threadid)
+#+END_SRC
+
+*** Create threads
+If main() finishes before the threads it has created, and exits with
+pthread_exit(), the other threads will continue to execute. Otherwise,
+they will be automatically terminated when main() finishes.
+
+#+BEGIN_SRC cpp
+  #define NUM_THREADS     5
+
+  struct thread_data{
+    int  thread_id;
+    char *message;
+  };
+
+  int main() {
+    pthread_t threads[NUM_THREADS];
+    struct thread_data td[NUM_THREADS];
+
+    int rc;
+    int i;
+
+    for( i=0; i < NUM_THREADS; i++ ){
+      td[i].thread_id = i;
+      td[i].message = "This is message";
+      rc = pthread_create(&threads[i], NULL, PrintHello, (void *)&td[i]);
+      if (rc){
+        cout << "Error:unable to create thread," << rc << endl;
+        exit(-1);
+      }
+    }
+    pthread_exit(NULL);
+  }
+#+END_SRC
+
+*** Join and Detach
+
+#+BEGIN_SRC cpp
+  int main () {
+    int rc;
+    int i;
+	
+    pthread_t threads[NUM_THREADS];
+    pthread_attr_t attr;
+    void *status;
+
+    // Initialize and set thread joinable
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+    for( i=0; i < NUM_THREADS; i++ ){
+      cout << "main() : creating thread, " << i << endl;
+      rc = pthread_create(&threads[i], &attr, wait, (void *)i );
+		
+      if (rc){
+        cout << "Error:unable to create thread," << rc << endl;
+        exit(-1);
+      }
+    }
+
+    // free attribute and wait for the other threads
+    pthread_attr_destroy(&attr);
+	
+    for( i=0; i < NUM_THREADS; i++ ){
+      rc = pthread_join(threads[i], &status);
+		
+      if (rc){
+        cout << "Error:unable to join," << rc << endl;
+        exit(-1);
+      }
+		
+      cout << "Main: completed thread id :" << i ;
+      cout << "  exiting with status :" << status << endl;
+    }
+
+    cout << "Main: program exiting." << endl;
+    pthread_exit(NULL);
+  }
+#+END_SRC
+
+
+
+** Other
+sleep
+#+BEGIN_SRC C
+#include <unistd.h>
+unsigned int sleep(unsigned int seconds); // seconds
+int usleep(useconds_t useconds); // microseconds
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
+#+END_SRC
+
+* Shell Utilities
+- sort -k 4 -n
+- tee
+#+begin_src sh
+  for name in data/github-bench/*; do 
+      echo "===== $name"\
+          | tee -a log.txt; { time helium --create-cache $name; } 2>&1\
+          | tee -a log.txt; done
+#+end_src
+
+Another example: redirect output of time
+#+BEGIN_EXAMPLE
+{ time sleep 1 ; } 2> time.txt
+{ time sleep 1 ; } 2>&1 | tee -a time.txt
+#+END_EXAMPLE
+
+
+- xz: a general-purpose data compression tool
+- cpio: copy files between archives and directories
+
+- shuf: random number generation
+#+BEGIN_SRC shell
+shuf -i 1-100 -n 1
+#+END_SRC
+- =bc= calculator
+
+- grep: -i (case insensitive), -n (show line number), -v (inverse), -H
+  (show file name)
+
+- xargs: consume the standard output, and integrate result with new
+  command:
+
+#+begin_src shell
+find /etc -name '*.conf' | xargs ls -l
+# the same as:
+ls -l ~find ...~
+#+end_src
+
+- ~time <command>~: # the total user and system time consumed by the shell and its children
+- ~column~: formats its input into multiple columns. ~mount | column -t~
+- ~dd~: ~dd if=xxx.iso of=/dev/sdb bs=4m; sync~
+- ~convert~: ~convert xxx.jpg -resize 800 xxx.out.jpg # 800x<height>~
+- ~nl~: ~nl <filename>~ 添加行号。输出到stdout
+- ~ln~: ~ln -s <target> <linkname>~ 记忆：新的东西总要最后才发布。
+- ~ls~: order: ~-r~ reverse; ~-s~ file size; ~X~ extension; ~-t~ time
+
+
+** Patch System
+Create a patch (notice the order: old then new):
+#+BEGIN_EXAMPLE
+diff -u hello.c hello_new.c > hello.patch
+diff -Naur /usr/src/openvpn-2.3.2 /usr/src/openvpn-2.3.4 > openvpn.patch
+#+END_EXAMPLE
+
+To apply a patch
+#+BEGIN_EXAMPLE
+patch -p3 < /path/to/openvpn.patch
+patch -p1 <patch -d /path/to/old/file
+#+END_EXAMPLE
+
+the number after =p= indicates how many the leading slashes are skipped when find the old file
+
+To reverse (un-apply) a patch:
+
+#+BEGIN_EXAMPLE
+patch -p1 -R <patch
+#+END_EXAMPLE
+
+This works as if you swapped the old and new file when creating the patch.
+
+** tr: translate characters
+
+tr <string1> <string2>
+
+the characters in string1 are translated into the characters in string2
+where the first character in string1 is translated into the first character in string2 and so on.  If string1 is longer than string2,
+the last character found in string2 is duplicated until string1 is exhausted.
+
+characters in the string can be:
+
+any characters will represent itself if not:
+
+ * ~\\octal~: A backslash followed by 1, 2 or 3 octal digits
+ * ~\n~, ~\t~
+ * ~a-z~: inclusive, ascending
+ * ~[:class:]~: space, upper, lower, alnum
+  - if ~[:upper:]~ and ~[:lower:]~ appears in the same relative position, they will correlate.
+
+** uniq: report or filter out repeated lines in a file
+Repeated lines in the input will not be detected if they are not adjacent,
+so it may be necessary to sort the files first.
+
+ * ~uniq -c~: Precede each output line with the count of the number of
+   times the line occurred in the input, followed by a single
+   space. You can then comtine this with =sort -n=
+ * ~-u~: Only output lines that are not repeated in the input.
+ * ~-i~: Case insensitive comparison of lines.
+
+** Find
+#+begin_src shell
+find . -type f -name *.flac -exec mv {} ../out/ \;
+#+end_src
+Copy file based on find, and take care of quotes and spaces:
+#+begin_src shell
+find CloudMusic -type f -name "*mp3" -exec cp "{}" all_music \;
+#+end_src
+
+- find
+#+BEGIN_EXAMPLE
+find ~/data/fast/pick-master/ -name '*.[ch]'
+#+END_EXAMPLE
+
+
+
+* Trouble Shooting
+** Cannot su root
+When su cannot change to root, run
+#+BEGIN_EXAMPLE
+chmod u+s /bin/su
+#+END_EXAMPLE
+
+** in docker, cannot open chromium
+#+BEGIN_QUOTE
+failed to move to new namespace: PID namespaces supported, Network
+namespace supported, but failed: errno = Operation not permitted.
+#+END_QUOTE
+
+Solution
+#+BEGIN_EXAMPLE
+chromium --no-sandbox
+#+END_EXAMPLE
+** Encoding
+When converting MS windows format to unix format, you can use emacs
+and call =set-buffer-file-coding-system= and set to unix.  Or you can
+use =dos2unix=, perhaps by
+
+#+BEGIN_EXAMPLE
+find . -name *.java | xargs dos2unix
+#+END_EXAMPLE
+
+** Cannot open shared library
+
+On =CentOS=, the default =LD_LIBRARY_PATH= does not contains the
+=/usr/local/lib=.  The consequence is the =-lpugi= and =-lctags= are
+not recognized because they are put in that directory.  Set it, or
+edit =/etc/ld.conf.d/local.conf= and add the path.  After that, run
+=ldconf= as root to update the database.
+
+
+** auto expansion error for latex font
+when compiling latex using acmart template, auto expansion error is
+reported.
+
+Solution:
+#+BEGIN_EXAMPLE
+mktexlsr # texhash
+updmap-sys
+#+END_EXAMPLE
+
+Reference: https://github.com/borisveytsman/acmart/issues/95
+
+** time not up-to-date
+Although I set the right timezone (check by =timedatectl=), the clock
+is still incorrect. To fix that, install =ntp= package and run
+
+#+BEGIN_EXAMPLE
+sudo ntpd -qg
+#+END_EXAMPLE
+
+** backlight on TP25
+For regular laptops, using debian
+
+#+BEGIN_EXAMPLE
+cat /sys/class/backlight/intel_backlight/max_brightness
+cat /sys/class/backlight/intel_backlight/brightness
+
+echo 400 > /sys/class/backlight/intel_backlight/brightness
+#+END_EXAMPLE
+
+But on Archlinux, on TP25, The =xorg-xbacklight= is not working. The
+drop-in replacement =acpilight= (aur) does.
+
+To setup for video group users to adjust backlight, place a file
+=/etc/udev/rules.d/90-backlight.rules=
+
+#+begin_example
+SUBSYSTEM=="backlight", ACTION=="add", \
+  RUN+="/bin/chgrp video %S%p/brightness", \
+  RUN+="/bin/chmod g+w %S%p/brightness"
+#+end_example
+
+The command is still =xbacklight=.
+** xinit won't start
+
+On Debian, when I =dist-upgrade= Debian 8 Jessie to 9 Stretch,
+the =startx= stop working.
+I try install a Debian 9 from its own image, and still the same result.
+The error message says:
+#+BEGIN_QUOTE
+vesa cannot read int vect
+screen found but none leave a usable configuration
+xf86enableioports failed to set iopl for i/o
+#+END_QUOTE
+
+The trick is you need:
+#+BEGIN_EXAMPLE
+chomd u+s /usr/bin/xinit
+#+END_EXAMPLE

@@ -1,0 +1,532 @@
+#+TITLE: C
+
+* Function
+** Variable arguments
+include =stdarg.h=
+
+- type: =va_list=
+- macros
+  - va_start
+  - va_arg
+  - va_end
+  - va_copy
+
+#+begin_src c
+type va_arg(va_list ap, type);
+void va_copy(va_list dest, va_list src);
+void va_end(va_list ap);
+void va_start(va_list ap, parmN);
+#+end_src
+
+* Operations
+=~= yields one's complement of an integer, i.e. sets 1 to 0 and 0 to 1
+for all bits.
+
+* Type
+Tips for primitive types
+- When using =char=, you must indicate whether it is signed or
+  unsigned, because the default is system dependent.
+- Most likely, =long= is same as =int=. So when you want a large
+  number, use =long long=.
+
+=sizeof= is *compile-time* operator. It has two forms: =sizeof
+object=, =sizeof(type name)=.
+
+Structure is of form =struct [tag] {};=.  This is a structure
+definition. The tag is optional. If no tag, it just announce a
+template of structure type, and nothing happens. If has tag, the tag
+can be used later to refer to just this structure (scope??). Since it
+is a type, it can define some variables just at the same time.
+
+Initializers for structure is a list of initializers for each of the
+members, surrounded by braces. For automatic variables, the
+initializer can also be assignment from just another value of the same
+structure type.
+** storage class & linkage type
+Internal and external are relative to a function. /Internal/ to a
+function includes the arguments and variables defined inside the
+function. Internal variables are /automatic variables/, because they
+are allocated to temporary storage, and get out of space when the
+function returns.
+
+/External/ to a function refers to the external variables and
+functions. All functions must be external, because C does not allow
+definition of functions inside function. By default, external
+variables and functions have the property that, all references by the
+*same name*, even if compiled separately in separate files, will refer
+to the same thing. This is called /external linkage/. To change the
+linkage type, use =static= to limit an external variable or function
+inside this file.
+
+The /scope/ of a name is the part of program within which the name can
+be used. Scope of an automatic variable is the body of the
+function. The scope of an external variable or function lasts from the
+point it is *declared* to the end of the file.  If a function or
+variable is not in scope, it must be declared before usage. This is
+done by a =extern= keyword. The declaration only *announces* the
+properties of it, while the definition allocate the storage. There
+must be only one definition of an external variable among all files
+that make up the program. Array size must be specified in the
+definition, but optional to an =extern= declaration. Initialization of
+an external variable goes only with the definition.
+
+For a /non-automatic variable/ (including static variables and
+external variables), the initialization is done once only,
+*conceptually* before the program starts executing. If no initializer,
+it is initialized to 0. If has, the initializer must be a *constant
+expression*. On the other hand, an /automatic variable/ is initialized
+every time the function or block is entered, and the initializer can
+be *any expression*, this is just a shorthand for assignment
+statement. If there's no initializer, the default value is
+*undefined*. An array can be initialized by assigning a list of
+initializers enclosed in braces separated by commas, and the length,
+when omitted, can be computed by the length of the initializers. If
+there are fewer initializers than the size, the rest will be
+initialized to 0, even for automatic variables. A string constant can
+serve as an initializer array of characters.
+
+/Extern "C"/ makes a function-name in C++ have 'C' linkage, i.e.
+compiler will not mangle the function name. C++ can overload function
+names, thus internally the compiler cannot just use function name to
+refer to the function. It add argument/parameter type information to
+the name used for linkage. However, C does not allow function
+overloading, thus C compiler expect just the original name, but
+couldn't find one because the name is modified. Thus, when you state
+that a function has extern "C" linkage in C++, the C++ compiler does
+not modify it, thus it is suitable to use in C code.
+
+It can be applied to either an individual declaration or definition,
+or a whole block of code.
+
+#+begin_src C
+extern "C" void foo(int);
+extern "C" {
+   void g(char);
+   int i;
+}
+#+end_src
+
+** register
+A register declaration /advises/ the compiler that this variable will
+be heavily used.
+
+** restrict
+The restrict keyword is a declaration of *intent given by the
+programmer* to the compiler.  It says that for the lifetime of the
+pointer, only it or a value directly derived from it (such as
+pointer + 1) will be used to access the object to which it points.
+This limits the effects of pointer aliasing, aiding optimizations.  If
+this intention is not followed and the object is accessed by an
+independent pointer, this will result in undefined behavior.
+
+** volatile
+The keyword tells the compiler that the value of the variable may
+change at any time.  It may change unexpectedly, so DO NOT optimize
+the code when you compiler think it would not change.
+
+It is most commonly to declare a pointer to be volatile, and most
+likely you do not intent to declare the place it points to be
+volatile.
+
+#+begin_src C
+volatile int foo;
+volatile uint8_t *pReg;
+int * volatile p; // very rare
+volatile int * volatile p; // very rare
+#+end_src
+
+The common use-case is
+1. The register's value may change by hardware.
+2. global variables modified by interrupt
+3. global variables accessed by multiple threads
+
+* Standard Libraries
+
+=stdio.h= defines basic input and output operations, including
+- File IO: fclose, fflush, fopen, freopen
+- Standard IO: printf, scanf, fprintf, fscanf
+- Character IO: fgetc, fgets, fputc, fputs
+- File RW: fread, fwrite, fgetpos, fseek, fsetpos, ftell, rewind
+
+=stdlib.h=
+- Conversion: atof, atoi, atol, strtod, strtol
+- Random: rand, srand
+- Memory: calloc, free, malloc, realloc
+- other: abort, exit, getenv, system
+- arithmetic: abs, div
+
+=ctype.h= mapping of characters, including isalpha, isblank, iscntrl,
+isdigit, isgraph, islower, isprint, ispunct, isspace, isupper,
+isxdigitl, tolower, toupper.
+
+=signal.h= provides =signal= and =raise=
+
+=math.h= provides
+- trigonometric functions: acos, asin, atan, atan2, cos, sin, tan, and
+  also
+- computation: exp, log, log10, hypot, pow, sqrt
+- scaling: ceil, floor, round, trunc
+
+=string.h=
+- Copy: memcpy, memmove, strcpy, strncpy, strcat, strncat
+- Compare: memcmp, strcmp, strncmp
+- Search: memchr, strchr, strrchr, strstr, strtok (tokenize)
+- Other: memset, strerror, strlen
+
+=time.h=: clock, difftime, mktime, time, asctime, ctime, gmtime,
+strftime
+
+=setjmp.h= defines the macro =setjmp=, type =jmp_buf=, function
+=longjmp=.
+
+** POSIX Headers
+- =dirent.h=: closedir, opendir, readdir, seekdir, telldir
+- =fcntl.h=: creat, fcntl, open, openat
+- =sys/stat.h=: chmod, fchmod, fstat, mkdir, mkfifo, mknod, stat, umask
+
+* Unix Programming
+
+** socket
+
+*** API
+
+~socket~
+
+#+begin_src C
+// domain: AF_INET(IPv4), AF_INET6(IPv6)
+// type: SOCK_STREAM, SOCK_DGRAM
+// protocol: end-to-end protocol. IPPROTO_TCP, IPPROTO_UDP
+int socket(int domain, int type, int protocol);
+#+end_src
+
+~inet_pton~
+
+#+begin_src C
+// src: "192.168.1.1"
+// dst: *数字
+inet_pton(int addressFamily, const char *src, void *dst);
+#+end_src
+
+~inet_ntop~
+
+#+begin_src C
+// 数字 => "192.168.1.1"
+// socklen_t: INET_ADDRSTRLEN IPv4可能最长的结果字符串（字节）
+const char *inet_ntop(int addressFamily, const void *src, char *dst, socklen_t dstBytes);
+#+end_src
+
+~htons~
+
+#+begin_src C
+// convert hostshort from host byte order to network byte order.
+uint16_t htons(unit16_t hostshort);
+#+end_src
+
+~connect~
+
+#+begin_src C
+// foreignAddr: (struct sockaddr *)&[sockaddr_in]
+// addressLength: sizeof(struct sockaddr_in);
+int connect(int socket, const struct sockaddr *foreignAddress, socklen_t addressLength);
+#+end_src
+
+**** Server
+
+~bind~
+
+#+begin_src C
+int bind(int socket, struct sockaddr *localAddress, socklen_t addressSize);
+#+end_src
+
+~listen~
+
+#+begin_src C
+// 告诉TCP实现允许来自客户的连接
+// 调用之前，任何连接请求被无声拒绝
+int listen(int socket, int queueLimit);
+#+end_src
+
+~accept~
+
+#+begin_src C
+// 使套接字队列中的下一条连接出队。若队列空，则阻塞。
+int accept(int socket, struct sockaddr *clientAddress, socklen_t *addressLength);
+// 正确的使用方式：
+struct sockaddr_storage address;
+socklen_t addrLength = sizeof(address);
+int clntSock = accept(sock, &address, &addressLength);
+// 其中结构体定义如下
+struct sockaddr_storage {
+  sa_familiy_t
+  ... // Padding and fields to get correct length and allignment
+}; // 通用地址存储器
+#+end_src
+
+~send~
+
+#+begin_src C
+// 默认阻塞到发送了所有的数据为止。
+// 返回：发送的字节数
+// flags：改变默认行为。默认为0.
+ssize_t send(int socket, const void *msg, size_t msgLength, int flags);
+#+end_src
+
+~recv~
+
+#+begin_src C
+// 默认阻塞到至少传输了一些字节为止。
+// 返回：接受的字节数
+ssize_t recv(int socket, void *rcvBuffer, size_t bufferLength, int flags);
+#+end_src
+
+*** Code Snippets
+
+**** TCP client
+
+#+begin_src C
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h> // for memset
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h> // for IPPROTO_TCP
+#include <unistd.h> // for close. use `man close`
+#include <arpa/inet.h>
+
+#define BUFFER_SIZE 30
+
+int main() {
+
+  // 创建socket
+  int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  // 构造servAddr
+  char *servIP = "127.0.0.1";
+  in_port_t servPort = 8080;
+  struct sockaddr_in servAddr;
+  memset(&servAddr, 0, sizeof(servAddr));
+  servAddr.sin_family = AF_INET;
+  // IP地址格式转换
+  inet_pton(AF_INET, servIP, &servAddr.sin_addr.s_addr);
+  servAddr.sin_port = htons(servPort);
+
+  // 建立连接
+  connect(sock, (struct sockaddr *)&servAddr, sizeof(servAddr));
+
+  char str[] = "Hello";
+  size_t size = strlen(str);
+  // 发送数据
+  send(sock, str, size, 0);
+
+  char buffer[BUFFER_SIZE];
+  // 接收返回的数据，放到buffer里
+  recv(sock, buffer, BUFFER_SIZE-1, 0);
+
+  // 关闭socket
+  close(sock);
+
+}
+
+#+end_src
+
+**** TCP server
+
+#+begin_src C
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h> // for memset
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h> // for IPPROTO_TCP
+#include <unistd.h> // for close. use `man close`
+
+#define BUFSIZE 30
+
+void handle(int clntSock) {
+  char buffer[BUFSIZE];
+  // 从client端socket接收数据，存入buffer，返回接受长度。一次只收BUFSIZE个字节。
+  ssize_t numBytesRcvd = recv(clntSock, buffer, BUFSIZE, 0);
+  // 循环接收直到收完为止。
+  while(numBytesRcvd>0) {
+    // 将接收到的buffer，send到client端buffer
+    send(clntSock, buffer, numBytesRcvd, 0);
+    // 接着接收没收完的。
+    numBytesRcvd = recv(clntSock, buffer, BUFSIZE, 0);
+  }
+  // 关闭socket
+  close(clntSock);
+}
+
+int main(){
+  // 创建socket
+  int servSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  // 构造servAddr
+  in_port_t servPort = 8080;
+  struct sockaddr_in servAddr;
+  memset(&servAddr, 0, sizeof(servAddr));
+  servAddr.sin_family = AF_INET;
+  servAddr.sin_addr.s_addr = htonl(INADDR_ANY); // any incoming interface
+  servAddr.sin_port = htons(servPort);
+
+  // socket绑定到servAddr
+  bind(servSock, (struct sockaddr *)&servAddr, sizeof(servAddr));
+
+  // 监听socket
+  listen(servSock, 5);
+
+  for(;;) {
+    struct sockaddr_in clntAddr;
+    socklen_t clntAddrLen = sizeof(clntAddr);
+    // 接受socket来的请求，把来的socket存入clntSock
+    int clntSock = accept(servSock, (struct sockaddr *)&clntAddr, &clntAddrLen);
+    // 处理之
+    handle(clntSock);
+  }
+}
+#+end_src
+
+
+
+
+* Debugging
+
+** backtrace(3)
+
+#+BEGIN_SRC C
+#include <stdio.h>
+#include <execinfo.h>
+
+#include <stdlib.h>
+
+void handler(char *caller) {
+  void *array[10];
+  size_t size;
+  printf("Stack trace start for %s\n", caller);
+  size = backtrace(array, 10);
+  backtrace_symbols_fd(array, size, 2);
+  printf("Stack Trace End\n");
+}
+
+void car() {
+  handler("char()");
+  printf("continue");
+}
+
+void baz() {car();}
+void bar() { baz();}
+void foo() {bar();}
+
+int main(int argc, char **argv) {
+  foo();
+}
+#+END_SRC
+
+compile:
+#+BEGIN_EXAMPLE
+gcc -g -rdynamic a.c
+#+END_EXAMPLE
+
+Output:
+#+BEGIN_EXAMPLE
+Stack trace start for char()
+./b.out(handler+0x33)[0x400969]
+./b.out(car+0xe)[0x4009a2]
+./b.out(baz+0xe)[0x4009c1]
+./b.out(bar+0xe)[0x4009d1]
+./b.out(foo+0xe)[0x4009e1]
+./b.out(main+0x19)[0x4009fc]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf5)[0x7ffff7a52b45]
+./b.out[0x400869]
+Stack Trace End
+continue
+#+END_EXAMPLE
+
+** -finstrument-funcitons
+See gcc options.
+
+#+BEGIN_QUOTE
+Generate instrumentation calls for entry and exit to functions. Just after function entry and just before function exit, the following profiling functions are called with the address of the current function and its call site. (On some platforms, __builtin_return_address does not work beyond the current function, so the call site information may not be available to the profiling functions otherwise.)
+          void __cyg_profile_func_enter (void *this_fn,
+                                         void *call_site);
+          void __cyg_profile_func_exit  (void *this_fn,
+                                         void *call_site);
+#+END_QUOTE
+
+trace.c:
+#+BEGIN_SRC C
+#include <stdio.h>
+#include <time.h>
+
+static FILE *fp_trace;
+
+void __attribute__ ((constructor))
+trace_begin (void)
+{
+  fp_trace = fopen("trace.out", "w");
+}
+
+void __attribute__ ((destructor))
+trace_end (void)
+{
+  if (fp_trace != NULL) {
+    fclose(fp_trace);
+  }
+}
+
+void __cyg_profile_func_enter (void *func, void *caller) {
+  if (fp_trace != NULL) {
+    fprintf(fp_trace, "e %p %p %lu\n", func, caller, time(NULL));
+  }
+}
+
+void __cyg_profile_func_exit(void *func, void *caller) {
+  if (fp_trace != NULL) {
+    fprintf(fp_trace, "x %p %p %lu\n", func, caller, time(NULL));
+  }
+}
+#+END_SRC
+
+a.c:
+#+BEGIN_SRC C
+#include <stdio.h>
+#include <string.h>
+void foo() {
+  printf("foo\n");
+}
+int main() {
+  foo();
+}
+#+END_SRC
+
+Compile:
+#+BEGIN_EXAMPLE
+gcc -finstrument-functions -g -c -o a.o a.c
+gcc -c -o trace.o trace.c
+gcc a.o trace.o -o a.out
+./a.out
+#+END_EXAMPLE
+
+The =trace.out= will be generated:
+#+BEGIN_EXAMPLE
+e 0x4006c8 0x7ffff7a52b45 1470343711
+e 0x400696 0x4006e7 1470343711
+x 0x400696 0x4006e7 1470343711
+x 0x4006c8 0x7ffff7a52b45 1470343711
+#+END_EXAMPLE
+
+For those addrees:
+#+BEGIN_EXAMPLE
+nm a.out | grep 4006c8
+addr2line -f -e a.out 0x4006c8 | head -1 # function name
+addr2line -s -e a.out 0x4006c8 # filename:linum
+#+END_EXAMPLE
+
+** Callgrind
+
+#+BEGIN_EXAMPLE
+valgrind --tool=callgrind ./a.out
+#+END_EXAMPLE
+
+Open another terminal and callgrind_control -b to see the trace.
+The program must be running.

@@ -1,0 +1,12 @@
+#+TITLE: Functional Programming
+
+* Map Reduce
+map and reduce are from functional programming. Map is just map,
+reduce has another familiar name called /fold/.
+
+The Map-reduce framework does not just borrow the name. Its
+contribution is scalability and fault-tolerance.
+
+The steps:
+1. map: produce data by filtering, and emit the data (marshalling)
+2. reduce: fold

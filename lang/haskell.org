@@ -1,0 +1,562 @@
+#+TITLE: Haskell
+
+* Concept
+** strictness
+In a strict language, the arguments to a function are always evaluated
+before it is invoked.  In a non-strict language, the arguments are not
+evaluated until their values are *actually* required.  As a result, if
+during the evaluation of the arguments, run-time error occurs, the
+strict language will crash, but the non-strict program might finish
+peacefully.
+
+Scheme is strict, while Haskell is non-strict.
+
+* Lexical
+** Names
+There are six kinds of names:
+- (value) variables
+- (value) constructors
+- type variables
+- type constructors
+- type classes
+- module names
+
+There are two constraints on naming:
+- lower-case vs upper-case
+  - variables and type variables must begin with *lowercase* letter or
+    underscore
+  - other 4 kinds of names must begin with *uppercase* letter
+- in the same scope, *type constructor and type class* must not be the
+  same
+** Comment
+Pretty flexible, but just use
+- =--= for line comment
+- ={- XXX -}= for block comment
+** layout
+Haskell support two style of programming, possibly mixed: using
+explicit braces and semicolons, or use indention. The rule is pretty
+straight forward.
+
+The layout rule takes effect whenever *the open brace is omitted*
+after keywords *=where=*, *=let=*, *=do=*, *=of=*. If it is not
+omitted, nothing happens, the indention will not matter at all. The
+indention of the next lexeme is remembered, and *the omitted open
+brace is inserted*. In the subsequent lines:
+- if the indention is larger, nothing inserted, i.e. it is same as
+  writing on the previous line
+- if the indention is the same, a semicolon is inserted
+- if the indention is smaller, a close brace is inserted, and the
+  layout rule ends
+
+
+* Expression
+conditional
+#+begin_src haskell
+if e1 then e2 else e3
+case e1 of { True -> e2; False -> e3}
+#+end_src
+
+List
+#+begin_src haskell
+[e1,e2,...,ek]
+e1:(e2:(...(ek:[])))
+#+end_src
+
+Tuple
+#+begin_src haskell
+(e1,...,ek)
+#+end_src
+
+enumerations (note the =..= is an operator)
+#+begin_src haskell
+[e1..]
+[e1,e2..]
+[e1..e3]
+[e1,e2..e3]
+#+end_src
+
+list comprehension: Each of q_i is a qualifier, can have three
+forms. These qualifiers are *nested*. The first is pattern matching
+that matches =pat= against a *list expression* (thus called
+/generator/), the second create local bindings, the third a boolean
+guard. Pattern matching creates lambda bound, while let creates
+lexical bounds.
+
+#+begin_src haskell
+[e | q1,...,qn]
+#+end_src
+
+#+begin_example
+pat <- exp
+let decls
+exp
+#+end_example
+
+Let expression introduces a nested, lexically-scoped
+mutually-recursive (letrec) list of /declarations/.
+
+#+begin_src haskell
+let {d1;...;dn} in e
+#+end_src
+
+case expression matches =e= against a list of patches. But if a
+pattern matched, the body is not a single expression, but seems to be
+another round of matching. Each match is a list of guard expression
+separated by vertical bar (note *the first vertical bar is
+mandatory*). Each guard expression is a list of actual guards. Only if
+all the actual guards succeed, the guard expression succeeds. The
+corresponding expression is the result. Seems that the top-level
+patterns and the match guards have the same semantic, i.e. if one
+fail, try the next one.
+
+#+begin_src haskell
+case e of {p1 match1; ... ; pn matchn}
+match ::= | gs1 -> e1 | gs2 -> e2 | ...
+gs ::= guard1, guard2, ...
+guard ::= p <- e
+guard ::= let decls
+guard ::= boolean guard
+#+end_src
+
+do expression seems to be exclusively used in monad. It is a syntax
+sugar of /bind/ operation.
+#+begin_example haskell
+do x <- f; g x = f >>= (\x -> g x)
+#+end_example
+
+Expression type-signature is a notation for human only. The compiler
+does not need to know it, because it infers the type signature. Of
+course the compiler will complain if they do not match. Thus, the
+expression with type-signature simply evaluates to the expression.
+
+The declared type may be more specific than the principal type derived
+from exp, but *it is an error that the declared type is more
+general*. But, it seems that, if we declare a more general type
+signature *before* the use of the type (thus before the inference), it
+is OK.
+
+#+begin_src haskell
+exp :: [context =>] type
+#+end_src
+
+Pattern matching match pattern against values, and construct bounds.
+
+1. matching =var= against a value =v= always succeed, and bounds =var= to =v=
+2. matching =~apat= against a value =v= always succeed. This is called
+   a irrefutable pattern, means I force it to match, don't give me
+   error. The error will occur when the matched bindings are
+   evaluated.
+3. wildcard pattern =_= against any value always succeed
+4. matching =con pat= where =con= is a type constructor (defined by
+   =newtype=), the value must also be =con v= to succeed
+5. matching =con pat1 ... patn= where =con= is a data constructor
+   (defined by =data=), the value must also be =con v1 ... vn= with
+   the same constructor to succeed. The variables are bound.
+6. [ ] fields
+7. matching numeric, character, or string literal will only succeed if
+   the value is that literal.
+8. match =var@apat= will basically match =apat= against =v=, but
+   introduce additional bound =var= for the whole =v=.
+
+#+begin_quote
+Pattern matching is a way of destructuring an algebraic data type,
+selecting a code clause based on its constructor and then binding the
+components to variables.
+#+end_quote
+
+
+* Declaration
+Actually there are two categories of declarations: type and
+binding. So first we need to figure out what is type in Haskell.
+
+There are two /kinds/ of types, namely =*= and =*->*=. In Haskell, a
+type variable is assumed to be universally qualified, i.e. $a
+\rightarrow a$ means $\forall a . a \rightarrow a$.
+
+Type context indicates the membership of a type variable to some type
+classes. The context is often written as ~cx => t~.
+
+The type that best describe an expression is its /principal type/.
+
+
+** Data Types (=type=, =newtype=, =data=)
+This is called /polymorphic types/: =(forall a)[a]= denotes the family
+of types, for each type a, the type "list of a". Identifiers such as a
+above are called /type variables/, and are uncapitalized to
+distinguish them from specific types such as =Int=.  This is called
+/parametric polymorphism/, useful to define families of types by
+universally quantifying them.
+
+=data= declares an algebraic datatype.  The following declares a new
+/type constructor/ T, with zero or more /data constructors/ (or just
+/constructor/) K1 to Kn.
+#+begin_src haskell
+data cx => T u1 ... uk = K1 t ... t | ... | Kn t ... t
+#+end_src
+
+=type= introduces a new type that is equivalent to the old one. This
+is called /Type Synonym/.
+
+#+begin_src haskell
+type T u1 ... uk = t
+#+end_src
+
+=newtype= introduces a new type whose representation is the same as
+old one. This seems very similar to type synonyms. But this is called
+/renaming/. It is introduced by the form
+#+begin_src haskell
+newtype cx => T u1 ... uk = N t
+#+end_src
+
+The difference:
+- =newtype= *creates a distinct type* that must be explicitly coerced
+  to or from the original type
+- =newtype= can be used to define recursive types.
+- New instance can be defined for a =newtype=, but may not be defined
+  for a type synonym.
+
+** Type Classes (=class=, =instance=, =default=)
+This is /ad hoc polymorphism/. Compared to /parametric polymorphism/,
+it quantifies over some smaller set of types, e.g. those that can be
+compared for equality.  It seems that type classes are defining some
+constrained set of types for some type, e.g. a subset of Integers.  It
+defines not a type, but rather expresses a constraint on a type. The
+constraint is called a /context/. The context is placed at the front
+of type expressions.
+
+The =class= declares a new /type class/ (or just /class/). It will
+together define a set of methods that all instance of this class must
+support. You have two ways to define the instance relationship:
+through an explicit =instance= declaration, or use =deriving= to embed
+it into the =class= declaration.
+
+#+begin_src haskell
+class cx => C u where
+  op :: cx => t -- cdecl 1
+  infixr 7 'op' -- cdecl 2
+  op = ... -- cdecl 3
+#+end_src
+
+This introduces a class named C, with super class from =cx=. As shown
+in the example, there are three kinds of decls. First is a method
+declaration. This only declares the type signature of the method.
+
+Second is a /fixity declaration/. It has the following grammar, with
+integer be 0 to 9, where 9 is the highest precedence. I'm not sure why
+op needs to be quoted (or is it a quote?) though.
+
+The third declaration is a default class method for any of the method
+declared.
+
+Finally, a =instance= introduce an instance T of a class C. T is a
+type constructor, and cannot be a type synonym. This is called a /C-T
+instance declaration/.
+
+#+begin_src haskell
+instance cx => C (T u1 ... uk) where {d}
+#+end_src
+
+Since =instance= only declares the relationship, the type T still
+needs to be defined. It is also possible to declare the instance
+relationship together with the declaration of type. Specifically
+=newtype= and =data= can have an optional =deriving= sub-form for
+that. Omitting it is equivalent to writing an empty deriving instance
+=deriving ()=.
+
+#+begin_src haskell
+data ... deriving C
+newtype ... deriving C
+#+end_src
+
+** nested declarations
+This type of declaration denotes those that can be nested inside =let=
+or =where=.
+
+First is type signature declaration
+#+begin_src haskell
+var1, ..., varn :: cx => t
+#+end_src
+
+Then the fixity declaration
+#+begin_src haskell
+(infixl | infixr | infix) [integer] ops
+#+end_src
+
+Function binding is a list of bindings. They are used to match
+different patterns of parameters.  Each match is very similar to the
+match in =case= expression, but instead use ~=~ instead of ~->~.
+
+#+begin_src haskell
+foo p1 ... pn match
+foo p1 ... pn match
+...
+match ::= | gs1 = e1 | gs2 = e2 | ...
+gs ::= guard1, guard2, ...
+guard ::= p <- e
+guard ::= let decls
+guard ::= boolean guard
+#+end_src
+
+Basically, it is semantically equivalent to this case statement:
+
+#+begin_src haskell
+x = \x1, ..., xk -> case (x1, ..., xk) of
+    p1 ... pn match
+    p1 ... pn match
+#+end_src
+
+Finally, we have pattern binding decl. The form can be:
+#+begin_src haskell
+-- simple form
+p = e
+-- general form
+p | gs1 = e1
+  | gs2 = e2
+  ...
+#+end_src
+
+This is semantically equivalent to
+#+begin_src haskell
+p = let decls in
+    case () of
+      () | gs1 -> e1
+      () | gs2 -> e2
+      ...
+#+end_src
+
+
+* Predefined classes
+Here just literally copy the definition of those types.
+
+Basic types
+#+begin_src haskell
+  -- bool
+  data  Bool  =  False | True deriving
+                               (Read, Show, Eq, Ord, Enum, Bounded)
+  -- string
+  type  String  =  [Char]
+  -- list
+  data  [a]  =  [] | a : [a]  deriving (Eq, Ord)
+  -- unit
+  data  () = () deriving (Eq, Ord, Bounded, Enum, Read, Show)
+  data  Maybe a     =  Nothing | Just a  deriving (Eq, Ord, Read, Show)
+  data  Either a b  =  Left a | Right b  deriving (Eq, Ord, Read, Show)
+  data  Ordering    =  LT | EQ | GT deriving
+                                    (Eq, Ord, Bounded, Enum, Read, Show)
+  class  Bounded a  where
+      minBound, maxBound :: a
+#+end_src
+
+Eq is pretty canonical
+#+begin_src haskell
+  class  Eq a  where
+        (==), (/=)  ::  a -> a -> Bool
+        x /= y  = not (x == y)
+        x == y  = not (x /= y)
+  class  (Eq a) => Ord a  where
+     compare              :: a -> a -> Ordering
+     (<), (<=), (>=), (>) :: a -> a -> Bool
+     max, min             :: a -> a -> a
+
+     compare x y | x == y    = EQ
+                 | x <= y    = LT
+                 | otherwise = GT
+
+     x <= y  = compare x y /= GT
+     x <  y  = compare x y == LT
+     x >= y  = compare x y /= LT
+     x >  y  = compare x y == GT
+
+     -- Note that (min x y, max x y) = (x,y) or (y,x)
+     max x y | x <= y    =  y
+             | otherwise =  x
+     min x y | x <= y    =  x
+             | otherwise =  y
+#+end_src
+
+Read and Show
+#+begin_src haskell
+  type  ReadS a = String -> [(a,String)]
+  type  ShowS   = String -> String
+
+  class  Read a  where
+      readsPrec :: Int -> ReadS a
+      readList  :: ReadS [a]
+      -- ... default decl for readList given in Prelude
+
+  class  Show a  where
+      showsPrec :: Int -> a -> ShowS
+      show      :: a -> String
+      showList  :: [a] -> ShowS
+
+      showsPrec _ x s   = show x ++ s
+      show x            = showsPrec 0 x ""
+      -- ... default decl for showList given in Prelude
+#+end_src
+
+Enumerator is a classical example of laziness
+
+#+begin_src haskell
+  class  Enum a  where
+      succ, pred     :: a -> a
+      toEnum         :: Int -> a
+      fromEnum       :: a -> Int
+      enumFrom       :: a -> [a]            -- [n..]
+      enumFromThen   :: a -> a -> [a]       -- [n,n'..]
+      enumFromTo     :: a -> a -> [a]       -- [n..m]
+      enumFromThenTo :: a -> a -> a -> [a]  -- [n,n'..m]
+#+end_src
+
+Of course we have the Monad:
+#+begin_example haskell
+  class  Functor f  where
+      fmap    :: (a -> b) -> f a -> f b
+  class  Monad m  where
+      (>>=)   :: m a -> (a -> m b) -> m b
+      (>>)    :: m a -> m b -> m b
+      return  :: a -> m a
+      fail    :: String -> m a
+
+      m >> k  =  m >>= \_ -> k
+      fail s  = error s
+#+end_example
+
+* Monad
+
+
+A monad is a way to structure computations in terms of values and
+sequences of computations using those values.
+
+#+begin_quote
+It is useful to think of a monad as a strategy for combining
+computations into more complex computations.
+#+end_quote
+
+#+begin_quote
+In general, use >> if the actions don't return a value, >>= if you'll
+be immediately passing that value into the next action, and
+do-notation otherwise.
+#+end_quote
+
+
+** Three Components of monad
+A monad is *a type constructor*, a function called *=return=*, and a
+combinator function called *bind* or ~>>=~. These three elements work
+together to encapsulate a strategy for combining computations to
+produce more complex computations.
+
+the monad *type constructor* defines a type of computation, the
+*return function* creates primitive values of that computation type
+and *~>>=~* combines computations of that type together to make more
+complex computations of that type.
+
+** Type constructor
+A type constructor is a parameterized type definition used with
+polymorphic types.
+
+** Using class
+To define a monad, you basically need the three components. You can do
+it from scratch, but a better idea is through the use of class
+=Monad=.
+
+#+begin_src haskell
+class Monad m where
+    (>>=)  :: m a -> (a -> m b) -> m b
+    return :: a -> m a
+#+end_src
+
+There's a /do notation/ that can be used with a monad. It is a
+syntactic sugar that "provides a simple, imperative-style notation for
+describing computations with monads"
+
+Apart from these two operations, the =Monad= class also has two more
+operations: =fail= and =>>=. They are optional. Use =fail= if you want
+to have different behavior for failure. The =>>= function is a
+convenience operator that "used to bind a monadic computation that
+does not require input from the previous computation in the sequence."
+It is defined in terms of >>=:
+
+#+begin_src haskell
+  (>>) :: m a -> m b -> m b
+  m >> k = m >>= (\_ -> k)
+#+end_src
+
+So the full version should be
+#+begin_src haskell
+  class Monad m where
+    (>>=)  :: m a -> (  a -> m b) -> m b
+    (>>)   :: m a ->  m b         -> m b
+    return ::   a                 -> m a
+    fail   :: String -> m a
+#+end_src
+
+** the monad laws
+All instances of Monad should obey the following equations, called
+/Monad Laws/:
+
+#+begin_example
+return a >>= k                  =  k a
+m        >>= return             =  m
+m        >>= (\x -> k x >>= h)  =  (m >>= k) >>= h
+#+end_example
+
+1. return is a *left-identity* with respect to >>=
+2. return is a *right-identity* with respect to >>=
+3. a kind of *associativity* law for >>=
+
+Any type constructor with return and bind operators that satisfy the
+three monad laws is a monad.
+
+The compiler, however, does not check these laws.
+
+** A different expression of Monad Laws
+1. create a description of a computation that will produce
+   (a.k.a. "return") a given Haskell value, and
+2. combine (a.k.a. "bind") a computation description with a reaction
+   to it
+   - a pure Haskell function that is set to receive a
+     computation-produced value (when and if that happens) and return
+     another computation description, using or dependent on that value
+     if need be
+   - creating a description of a combined computation that will feed
+     the original computation's output through the reaction while
+     automatically taking care of the particulars of the computational
+     process itself.
+
+
+** One Way Monad
+The IO monad is a familiar example of a one-way monad in
+Haskell. Because you can't escape from the IO monad, it is impossible
+to write a function that does a computation in the IO monad but whose
+result type does not include the IO type constructor. This means that
+any function whose result type does not contain the IO type
+constructor is guaranteed not to use the IO monad. Other monads, such
+as List and Maybe, do allow values out of the monad. So it is possible
+to write functions which use these monads internally but return
+non-monadic values.
+
+The wonderful feature of a one-way monad is that it can support
+side-effects in its monadic operations but prevent them from
+destroying the functional properties of the non-monadic portions of
+the program.
+
+* Reference
+- [X] Haskell wiki: https://wiki.haskell.org
+- [X] Haskell wiki book: https://en.wikibooks.org/wiki/Haskell
+- [X] Write yourself a scheme: https://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours
+- [X] The tutorial: https://www.haskell.org/tutorial/index.html
+- [X] language specification: https://wiki.haskell.org/Language_and_library_specification
+- [X] GHC: https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/
+- [X] Cabal: package management https://www.haskell.org/cabal/
+
+** Parsers
+- [X] Parsec Parser: https://hackage.haskell.org/package/parsec
+  - [X] megaparsec: This is a fork of parsec https://hackage.haskell.org/package/megaparsec
+- [X] Happy parser: https://www.haskell.org/happy/
+- [X] Alex: https://www.haskell.org/alex/
+- [X] Earley: believe it or not, this is a new one. https://hackage.haskell.org/package/Earley
+- attoparsec: another combinator, but seems not feature
+  rich. https://github.com/bos/attoparsec
+- trifecta: this is yet another combinator. But seems to be out of
+  date and buggy? https://github.com/ekmett/trifecta/
+- parsers: also combinator. https://hackage.haskell.org/package/parsers
