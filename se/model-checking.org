@@ -1,66 +1,143 @@
 #+TITLE: Model Checking
 
-The book: cite:2004-Book-Huth-Logic
+Model checking cite:2004-Book-Huth-Logic is based on /temporal
+logic/. Models M are transition systems, and properties $\phi$ are
+formulas in temporal logic. /Model checking/ is the process of
+computing an answer to the question whether $M,s \models \phi$ holds.
 
-* Kripke Structure (KS)
-** syntax
+The model is typically modeled as /Kripke Structure (KS)/.
 1. S: set of states
-2. T: transitions: \subsetof SxS
+2. T: transitions: $\subset SxS$
    - /left total/: forall s, exists s', s,s' \in T. I.e. every state
      has an outgoing edge.
 3. L: labeling function, e.g. busy, non-busy. S->P(AP): P: powerset,
    AP: set of propositions
 
-- Computation model :: pick a state, and unfold (infinite because of
-     left total) all transitions. It is a tree. Thus it is also called
-     /computation tree model/.
-- Path :: ordered sequence of states in the computation model (also
-          infinite)
-- Computation Tree Temporal Logic (CTL)
+There are two types of temporal logic, the Linear-time Temporal Logic
+(LTL) and Computation Tree Logic (CTL).
 
-phi is the /formula/, i.e. the aV(b^c) thing, in propositional logic.
+* Linear-time Temporal Logic
+LTL has the basic operations, including $\neg$, $\wedge$, $\vee$,
+$\rightarrow$. In addition, it has /temporal connectives/ X (next), F
+(future), G (globally), U (until), W (weak-until), R (release).
+Operators have priority and associativity.
+- unary bind most tightly, including $\neg$, X, F, G
+- U, R, W
+- $\wedge$ and $\vee$
+- Lastly, the $\rightarrow$
 
-#+begin_example
-\phi :: true | false |
-        AP (atom proposition) |
-        \not \phi | \phi \vee \phi | \phi \hedge \phi
-        AX phi
-        EX phi
-        AF phi
-        EF
-        AG
-        EG
-        A (phi U phi)
-        E (phi U phi)
-#+end_example
+A path $\pi$ in LTL is an *infinite* sequence of states (starting from
+the initial state?). The suffix $\pi^3$ means dropping the path first
+two states.
 
-- E: Exists a path
-- A: along All path
-- X: in the neXt state
-- F: Finally in a state
-- G: Globally in all states
-- U: until
-** semantic
-It means, states of KS where the given CTL formula is satisfied.
+The semantic of LTL formulas:
+- Basic:
+  - $\pi \models \top$: true
+  - $\pi \models \bot$: false
+  - $\pi \models p$ iff $p \in L(s_1)$
+- Simple operators including $\neg$, $\wedge$, $\vee$ have intuitive
+  semantics
+- $\pi \models \phi_1 \rightarrow \phi_2$ iff $\pi \models \phi_2$
+  whenever $\pi \models \phi_1$. +In other words, $\pi \models
+  \phi_1$, otherwise $\pi \models \phi_2$+. *This is very different
+  from CTL arrows*.
+- Simple connectives including X,G,F have intuitive semantics
+- $\pi \models \phi U \psi$ iff *$\phi$ holds until some point, $\psi$
+  holds*
+- $\pi \models \phi W \psi$: the weak until is closely related to
+  until. It contains the semantic of until, but also *allow $\phi$ to
+  hold in all states*. So something like $W = U \vee G$
+- $\pi \models \phi R \psi$: this is similar (but not dual) to weak
+  until: it says *$\psi$ holds until some point, $\phi$ holds*. Or,
+  $\psi$ holds all the time.
 
-Given KS M and some state s in M
-- $M,s \models true$: always true
-- $M,s \not\models false$
-- M,s \models p iff p \in L(s) where L is the label function
-- M,s \not\models \phi iff \phi \not\in L(s) ??
-- M,s \models AX \phi iff \forall \pi \in Path(s) \pi[1] \models
-  \phi, where Path(s) is all possible paths start from s, and \pi[i]
-  means the i-th item on the path.
+In temporal logic, future starts from right now.
 
-In temporal logic, future starts from right now. So
-- $M,s \models AF \phi$, iff $\forall \pi \in Path(s), \exists i \ge 0,
-  \pi[i] \models \phi$. Pay attention to the $i \ge 0$.
-- $M,s \models AG \phi$, iff $\forall \pi \in Path(s), \forall i \ge 0, \pi[i] \models \phi$
+Putting the LTL formula into model checking problem, we have that,
+$M,s \models \phi$ iff for *every* execution path $\pi \models \phi$.
 
-- M,s \models A(\phi_1 \union \phi_2) iff there is a state that phi_2
-  satisfy, the before it on the path, phi_1 always holds.
-  - iff $\forall \pi \in Path(s), \exists i \ge 0, \pi[i] \models
-    \phi_2 \wedge \forall j < i, \pi[j] \models \phi_1$
+LTL formulas $\phi$ and $\psi$ are equivalent, written as $\phi \equiv
+\psi$, iff both hold or not hold for *all* models. We have several
+equivalent classes:
+- $\neg (\phi \wedge \psi) \equiv \neg \phi \vee \neg \psi$
+- *F and G are dual of each other*: $\neg G \phi \equiv F \neg \phi$
+- *X is dual of itself*: $\neg X \phi \equiv X \neg \phi$
+- *U and R are dual of each other*: $\neg (\phi U \psi) \equiv \neg \phi
+  R \neg \psi$
+- *F distributes over $\vee$, G distributes over $\wedge$*: $F(\phi \vee
+  \psi) \equiv F\phi \vee F\psi$
+- Actually F and G can be expressed by U and R: $F\phi \equiv \top U
+  \phi$, $G\phi \equiv \bot R \phi$
+- The relation of strong and weak until, as we stated informally
+  before, can be expressed as equivalent class as well:
+  - $\phi U \psi \equiv \phi W \psi \wedge F \psi$
+  - $\phi W \psi \equiv \phi U \psi \vee G \phi$
+- Lastly, W and R are similar to each other, thus, we can express
+  - $\phi W \psi \equiv \psi R (\phi \vee \psi)$
+  - $\phi R \psi \equiv \psi W (\phi \wedge \psi)$
+
+Since many of the connectives are equivalent, the question is, what is
+the adequate set of connectives? Here is the conclusion:
+- X is completely orthogonal, thus X must be in
+- Actually, any one of U,R,W (actually should also includes G,F) can
+  be used to get others, simply look at the equivalent classes and the
+  dual relationships.
+- We are assuming free use of negation. One useful thought is the
+  adequate set without using negation.
+
+* Computation Tree Logic
+
+In the model context, LTL implicitly *quantifies universally* over all
+paths. Thus, we can only specify whether a property is satisfied on
+all path, or on one path (by checking the negation of the property),
+but cannot express the mix of universal and existential path, because
+*the complement formula still has a mix*. Thus, we need CTL.
+
+The /Computation model/ pick a state, and unfold (infinite because of
+left total) all transitions. It is a tree. Thus it is also called
+/computation tree model/.
+
+A /path/ is a ordered sequence of states in the computation model
+(also infinite).
+
+The connectives are different from those of LTL, where there are
+X,F,G,U,W,R. The counter parts in CTL always have a A (always) or E
+(exists) prefix, so:
+- AX,EX
+- AF,EF
+- AG,EG
+- AU, EU
+- We don't model W and R here
+
+The priority is similar to those of LTL.
+
+The semantic of CTL is encoded like this. Note that instead of a path,
+we are modeling the whole model, i.e. all path.
+- Basic
+  - $M,s \models \top: always true
+  - $M,s \models \bot$: false
+  - $M,s \models p$ iff $p \in L(s)$
+- Simple connectives including X,G,F have intuitive semantics
+- $M,s \models \phi_1 \rightarrow \phi_2$ iff $M,s \models \phi_1$ or
+  $M,s \models \phi_2$. Note: this seems to be exactly the same as
+  $M,s \models \phi_1 \vee \phi_2$, and is substantially different
+  from that of LTL.
+- Other connectives have intuitive semantics
+
+Two CTL formula are equivalent if they have same value in *any state
+in any model*. Similar to LTL:
+- AF and EG are dual: $\neg AF \phi \equiv EG \neg \phi$
+- EF and AG are dual: $\neg EF \phi \equiv AG \neg \phi$
+- AX and EX are dual: $\neg AX \phi \equiv EX \neg \phi$
+- F can still be expressed by U, no matter AF or EF:
+  - $AF \phi \equiv A (\top U \phi)$
+  - $EF \phi \equiv E (\top U \phi)$
+
+According to the above equivalent classes, we can easily find the
+adequate set:
+- one of AX,EX
+- one of EG, AF, AU
+- EU (shouldn't this be one of EU,EF?)
 
 * NuSMV
 ** Language
