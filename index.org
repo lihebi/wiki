@@ -4,6 +4,8 @@
 It makes no sense to go through the long research again when I forget
 something, so I created this wiki.
 
+# [[file:sitemap.org][sitemap]]
+
 * The Workbench
 
 Although I would definitely go for it if the lisp machines are still
