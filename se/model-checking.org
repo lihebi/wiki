@@ -219,3 +219,21 @@ available.
 - goto_state
 - print_current_state
 - show_traces
+
+* Spin
+
+Running of spin.
+
+According to the [[http://spinroot.com/spin/Man/Spin.html][man page of
+spin]], running =spin xxx.pml= will run a random simulation of the
+model. 
+- Running options: Given =-n<number>= will set a seed,
+  i.e. deterministic run. =-i= can run interactively, select choice to
+  take.
+- Printing options: =-c= print out graphical results. =-g= show global
+  variable at each time step. =-s= and =-r= prints the send and
+  receive messages. They are also included in the =-c= option.
+- =-run= will generate, compile and run the verifier, and check the
+  LTL formula.
+
+[[http://spinroot.com/spin/Man/promela.html][The reference page]].
