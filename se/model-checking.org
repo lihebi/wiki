@@ -139,6 +139,58 @@ adequate set:
 - one of EG, AF, AU
 - EU (shouldn't this be one of EU,EF?)
 
+
+* Ordered Binary Decision Diagram (OBDD)
+
+A boolean function of n arguments is a function from $\{0,1\}^n$ to
+$\{0,1\}$. Such boolean functions can be modeled intuitively by truth
+table, but is space-inefficient. The propositional formulas are
+better, but still hard to decide equivalence (require exponential
+time).
+
+/Binary Decision Diagram (BDD)/ is a way to represent boolean
+functions. It is a /Directed Acyclic Graph (DAG)/. A node is called
+terminal if it has no outgoing edges. All other nodes are terminal
+node. In BDD, all terminal nodes are labeled either 0 or 1. All
+non-terminal nodes are labeled by a variable. Each variable node $x$
+has two outgoing edges, one dashed taken when $x=0$, one solid taken
+when $x=1$.
+
+We need to reduce BDD to as simple as possible. There are three kinds
+of reductions. A BDD is called /reduced/ if optimization C1-C3 cannot
+be performed.
+- C1: there should be exactly one 0 and 1
+- C2: if both outgoing edges goes to the same node, this node should
+  be removed.
+- C3: if two nodes have identical subBDDs (defined as the part of BDD
+  below a given node), they should be merged into one.
+
+We say a BDD has an ordering of variable $x_1,...,x_n$ if along all
+path, this order is not violated. When operations are performed on two
+OBDDs, we usually require they to have /compatible variable ordering/,
+i.e. the order should not conflict with each other. In general, the
+ordering is very important in terms of the size of OBDD. But the book
+does not mention what are the heuristics to decide the ordering.
+
+We have the theorem that, the reduced OBDD of a function is unique (I
+think given the ordering, i.e. from the original OBDD). It also means
+that, if we apply the reductions C1-C3 to an OBDD until reduced, the
+results are always the same, no matter what order we applied the
+reduction. This is called the /canonical form/ of the OBDD.
+
+The algorithm reduce works like this:
+- Initially, assign label #0 to terminal 0, #1 to terminal 1
+- From bottom to up, check
+  - C2: if the node's outgoing edge points to the same label, assign
+    it that label, i.e. remove it.
+  - C3: if there is another node that is already labeled, and this
+    node has the same two outgoing structure, use that label
+  - Otherwise, assign a new label
+
+There seems to have another algorithm apply that compose two OBDDs.
+
+
+
 * NuSMV
 ** Language
 A SMV model is specified by several modules, like functions. There
