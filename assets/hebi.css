@@ -22,7 +22,7 @@ a:hover {
 /* @media all and (max-width:830px){html {font-size: 12px;}} */
 /* @media all and (max-width:740px){html {font-size: 11px;}} */
 body {
-    max-width: 1024px;
+    max-width: 700px;
     margin: auto;
     padding: 1em;
     /* text-align: left; */
