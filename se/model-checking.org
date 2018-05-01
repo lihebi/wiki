@@ -91,7 +91,10 @@ In the model context, LTL implicitly *quantifies universally* over all
 paths. Thus, we can only specify whether a property is satisfied on
 all path, or on one path (by checking the negation of the property),
 but cannot express the mix of universal and existential path, because
-*the complement formula still has a mix*. Thus, we need CTL.
+*the complement formula still has a mix*. Thus, we need CTL. As a side
+note, there are properties that can be specified in LTL but not in
+CTL. For example the fairness can be specified in LTL via $GFp
+\rightarrow \phi$, but cannot be specified in CTL.
 
 The /Computation model/ pick a state, and unfold (infinite because of
 left total) all transitions. It is a tree. Thus it is also called
