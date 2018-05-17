@@ -16,7 +16,9 @@ The model is typically modeled as /Kripke Structure (KS)/.
 There are two types of temporal logic, the Linear-time Temporal Logic
 (LTL) and Computation Tree Logic (CTL).
 
-* Linear-time Temporal Logic
+* Temporal Logic
+
+** Linear-time Temporal Logic (LTL)
 LTL has the basic operations, including $\neg$, $\wedge$, $\vee$,
 $\rightarrow$. In addition, it has /temporal connectives/ X (next), F
 (future), G (globally), U (until), W (weak-until), R (release).
@@ -85,16 +87,132 @@ the adequate set of connectives? Here is the conclusion:
 - We are assuming free use of negation. One useful thought is the
   adequate set without using negation.
 
-* Computation Tree Logic
+*** Model checking algorithm and Buchi Automata
+
+The basic strategy is to construct an automata for checking the
+negation of the formula. The automata is known as /tableau/ in this
+context. A trace in this automata corresponds to a path $\pi$ in
+LTL. This automata is designed such that, for all paths, $\pi \models
+\phi$ iff the trace of $\pi$ is accepted by the automata.
+
+A brief introduction to automata. The /finite state machine/ (or
+/finite automation/) has finite number of states, and the input is a
+finite string. There are some states as accepting states. The machine
+accepts an input if the state finally transit into accepting state.
+
+An /\omega-automation/ (or /stream automation/) is a variant of finite
+automation, but working with infinite strings as input, thus
+\omega-automation does not stop. Since it does not stop, the
+acceptance is characterized by acceptance conditions, rather than
+simple states. An \omega-automation can be deterministic or
+non-deterministic. There are several versions of \omega-automation,
+differs only in the acceptance conditions. Like other types of
+automata, the input accepted by the automata is called its language.
+
+
+/Buchi automata/ is one type of \omega-automation.  A Buchi automata
+accepts an input if there exists a run of the automation that visits
+at least one of the final states infinitely often. The language of
+Buchi automata is \omega-regular language, the infinite version of
+regular language.
+
+There are algorithms to translate a LTL to an equivalent Buchi
+automata, thus checking of LTL can be modeled as the acceptance of
+the corresponding Buchi automata.
+
+BA: Buchi automata defined over a alphabet \Sigma.  BA = (Q, Q0,
+\Sigma, \Delta, F)
+- Q:  set of states 
+- Q0: set of start states \subseteq Q
+- \Sigma: alphabet (edge labels)
+- \Delta: edge relation \subseteq Q \times \Sigma \Q
+  (q, a, q') \in \Delta implies there exists an edge from state
+  q to state q' and the edge is labeled with a. 
+- F: set of final states \subseteq Q
+
+A run \rho of BA over an infinte string \sigma is defined as follows:
+\rho: N --> Q is a function that maps natural numbers to states in the
+BA such that
+- \rho(0) \in Q0  - the 0-th mapping belongs to some start state
+- (\rho(i) \sigma[i] \rho(i+1)) \in \Delta 
+
+A run describes the sequence of states in the BA which when traversed
+starting from a start state results in consumption of the symbols
+in the input string. 
+
+Accepting Run: Given a \rho over a string \sigma
+
+\begin{eqnarray}
+inf(\rho) & = & { q | \text{q appears infinitely often in} \rho } \\
+& = & \exists q. \forall i \geq 0.\exists j \geq i.rho(j) = q.
+\end{eqnarray}
+
+There exists a q in BA that appears infinitely often in the run over
+the given string.
+
+- A run \rho over a string \sigma is accepting iff 
+  inf(\rho) \cap F \neq \emptyset. 
+- A string is accepted by BA iff there exists an 
+  accepting run \rho.
+
+Given a BA, the language of BA is the set of all strings that are
+accepted by the BA. This set is denoted by L(BA).
+
+/Generalized Buchi Automata (GBA)/ is defined as
+
+$$GBA = (Q, Q0, \Sigma, \Delta, F)$$ 
+
+where F is a set of sets. That is F = {F1, F2, . . ., Fn}.
+
+Acceptance condition: An accepting run \rho is such that \forall i \in
+[1..n]: inf(\rho) \cap F_i \neq \emptyset.  In other words, in each
+Fi, there exists some state that appears infinitely many times in the
+accepting run.
+
+An algorithm from Kripke Structure to Buchi Automata.  The objective:
+given one or more start states in Kripke structure (S, S0, T, L),
+construct a Buchi automata whose language is the set of infinite paths
+in KS starting from S0.
+
+Construction: 
+
+$$B_KS = (S \cup {i}, {i}, Bool(AP), \Delta, S \cup {i})$$
+
+where
+- Bool(AP): boolean combination of atomic propositions
+  that describe the states in KS.
+  (in general can be infinite but as we will see, the
+   set for a specific KS is going to be finite)
+- \Delta is edge relation as follows:
+  * i -a-> s  if s \in S0 and forall p \in L(s) 
+                              forall q \not\in L(s): a = (\land p) \land (\land q)
+  * s -a-> s' if s -> s' \in T and forall p \in L(s') 
+                                   forall q \not\in L(s'): a = (\land p) \land (\land q)  
+
+Note: all the states in the KS are considered a final state and i is
+the start state which has an edge to every state in S0.  Therefore,
+any infinite path starting from i is described over the sequence
+propositional logic formulas that hold in sequence of states in the
+KS path. 
+
+The formal Model Checking algorithm of LTL can finally be described
+using the Buchi automata.  Given a KS, construct the corresponding
+B_KS.  Given a property in LTL \varphi, construct the Buchi automata
+corresponding to its negation $B\neg\varphi$. We can claim that: if
+there exists a path in $B_{KS}$ that is accepted by the
+$B\neg\varphi$, then KS does not satisfy $\varphi$.  The algorithm
+will be to construct $L(B_{KS}) \cap L(B\neg\varphi)$ using $B_{KS}$
+\times B\neg\varphi, and check for emptiness.
+
+
+** Computation Tree Logic (CTL)
 
 In the model context, LTL implicitly *quantifies universally* over all
 paths. Thus, we can only specify whether a property is satisfied on
 all path, or on one path (by checking the negation of the property),
 but cannot express the mix of universal and existential path, because
-*the complement formula still has a mix*. Thus, we need CTL. As a side
-note, there are properties that can be specified in LTL but not in
-CTL. For example the fairness can be specified in LTL via $GFp
-\rightarrow \phi$, but cannot be specified in CTL.
+*the complement formula still has a mix*. Thus, we need CTL.
+
 
 The /Computation model/ pick a state, and unfold (infinite because of
 left total) all transitions. It is a tree. Thus it is also called
@@ -141,7 +259,92 @@ adequate set:
 - one of AX,EX
 - one of EG, AF, AU
 - EU (shouldn't this be one of EU,EF?)
+*** Model Checking Algorithm and Fixed point
+The algorithm is basically a labeling algorithm, and when the labeling
+is finished, simply look into the labels for the models satisfying the
+formula.
 
+The simple cases are handled directly:
+- $\top$, $\bot$, $\phi$
+- EX(\phi)
+- EU(\phi)
+- EG(\phi) or AF(\phi)
+
+Other connectives call the checking recursively:
+- $\neg \phi$, $\phi_1 \vee \phi_2$, $\phi_1 \wedge \phi_2$
+- $\phi_1 \rightarrow \phi_2$: return $\neg \phi_1 \vee \phi_2$
+- All other connectives
+
+There are two functions
+- $pre_\exists(Y)$: all states /can/ a transition to Y in the next step
+- $pre_\forall(Y)$: all states that /can only/ make transitions to
+  Y. Since every state can make transitions, so there must be at least
+  one such transition.
+
+We also denote the set of states satisfying $\phi$ as $[[\phi]]$.
+
+The model checking algorithm need to use fixed point to compute the
+result.  Let S be a set of all states, and $|S|=n+1$, F be a function
+$P(S)\rightarrow P(S)$. F is said to be /monotone/ iff $X \subset Y$
+implies $F(X) \subset F(Y)$ for all subsets X and Y of S. X is called
+a /fixed point/ of F iff $F(X) = X$. $F^i(X)$ means apply F i times on
+X.
+
+#+begin_quote
+A monotone function always have a /least fixed point/ and a /greatest
+fixed point/. If F is a monotone function, then $F^{n+1}(\emptyset)$
+is the least fixed point, and F^{n+1}(S) is the greatest fixed point.
+#+end_quote
+
+
+
+
+** Comparison Between CTL and LTL
+CTL and LTL both have expressiveness power than another. In CTL we can
+quantify the path, thus very easy to see the power of CTL. But in LTL
+we can express a single formula and have it valid for all path. For
+example, $Fp \rightarrow Fq$ cannot be expressed in CTL.  Also, the
+fairness can be specified in LTL via $GFp \rightarrow \phi$, but
+cannot be specified in CTL.
+
+
+* Probabilistic Model Checking
+System-behavior has three basic types.
+1. Deterministic where the evolution of the system from one state to
+   another is determined internally. For each state, there is exactly
+   one evolution.
+2. Non-deterministic. The evolution of the system from one state to
+   another depends on external factors, whose behavior is unknown. As
+   a result, each state may evolve in many different ways. Analysis
+   should consider all possibilities.
+3. Probabilistic. The evolution of the system from one state to
+   another depends on external factors, whose behavior is specified in
+   probabilistic terms. Each state may evolve in different ways with
+   different probabilities. Non-deterministic systems are /not/
+   probabilistic systems where every evolution from each state is
+   equally probable.
+
+Probabilistic Kripke Structure is defined as follows (also called
+/Discrete Time Markov Chain (DTMC)/):
+
+- PS = (S, S0, T, L) 
+- S:  finite set of states
+- S0 \subseteq S: set of start states
+- T: S X S -> [0, 1] such that
+  1. \forall s. \exists s': T(s, s') > 0  
+  2. \forall s. \Sum_s' T(s, s') = 1  
+  3. \forall \pi: path, T(\pi[i], \pi[i+1]) depends solely on \pi[i]
+- L: S -> powerset of Atomic propositions
+
+The probability of a finite path is product of the probability of all
+transitions on the path. We denote all finite paths starting from a
+state $s$ as $path(s)$, then we can compute /the probability of all
+finite paths from a state/, i.e. $P(path(s))$, as the sum of the
+probabilities of all of them.  Inductively (really?), we have that
+$Prob(Path(s)) = 1$.
+
+/probabilistic CTL (PCTL)/. A state s satisfy $P_{<0.5}\phi$ iff the
+sum of (all path from the state s satisfies $\phi$) is less than 0.5.
 
 * Ordered Binary Decision Diagram (OBDD)
 
