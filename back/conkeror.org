@@ -4,14 +4,21 @@
 | key     | action                         |
 |---------+--------------------------------|
 | g       | goto url                       |
+| f       | hint (can use number and TEXT) |
+|---------+--------------------------------|
+| C-u f   | open link in new buffer        |
+| C-u g   | goto url in new buffer         |
+| C-x C-b | select buffer                  |
+| q       | close current buffer           |
+| C-x k   | close buffer                   |
+|---------+--------------------------------|
 | G       | edit url                       |
 | C-x C-f | goto url in new buffer         |
-| C-x C-b | select buffer                  |
+|---------+--------------------------------|
 | B       | back                           |
 | F       | forward                        |
-| f       | hint (can use number and TEXT) |
+|---------+--------------------------------|
 | r       | reload                         |
-| C-u f   | open link in new buffer        |
 | c       | copy link url by selection     |
 | c 0     | copy current link url          |
 | i c     | copy image url                 |
@@ -22,8 +29,6 @@
 | [[      | "previous" page                |
 | \       | view source                    |
 | C-c C-c | submit form                    |
-| q       | close current buffer           |
-| C-x k   | close buffer                   |
 
 
 * Getting help
